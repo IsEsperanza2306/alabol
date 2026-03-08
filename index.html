@@ -148,6 +148,62 @@
             }
         }
 
+        /* --- DOPAMINE FEEDBACK POPUPS --- */
+        .feedback-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.5);
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--gold-bright);
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.8);
+            z-index: 5000;
+            pointer-events: none;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .feedback-popup.active {
+            transform: translate(-50%, -80%) scale(1.2);
+            opacity: 1;
+        }
+
+        .match-badge-float {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #FF3B30, #FF2D55);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 0.85rem;
+            box-shadow: 0 5px 15px rgba(255, 59, 48, 0.4);
+            z-index: 15;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            animation: pulse-badge 2s infinite;
+        }
+
+        @keyframes pulse-badge {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 5px 15px rgba(255, 59, 48, 0.4);
+            }
+
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 8px 25px rgba(255, 59, 48, 0.7);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 5px 15px rgba(255, 59, 48, 0.4);
+            }
+        }
+
         /* --- PREMIUM BUTTONS SYSTEM --- */
         .btn-premium-gold {
             background: var(--premium-gradient);
@@ -1678,9 +1734,9 @@
         </div>
 
         <div class="nav-links">
-            <a href="#inventario">Seminuevos</a>
-            <a href="#como-funciona">¿Cómo Funciona?</a>
-            <a href="#nosotros">Nosotros</a>
+            <a href="#inventario">Solteros Disponibles</a>
+            <a href="#como-funciona">Citas Seguras</a>
+            <a href="#nosotros">Nuestra Misión</a>
             <a href="./portal-agencias.html" class="btn-premium-teal" style="font-size: 0.8rem; padding: 8px 16px;">
                 <i class="fa-solid fa-user-tie"></i> Agencias
             </a>
@@ -1693,9 +1749,9 @@
     <!-- HERO SECTION (Matchmaker B2C Focus) -->
     <section class="hero">
         <div class="hero-badge">Tecnología de Búsqueda VIP</div>
-        <h1>El Tinder de los <span class="highlight">Autos</span></h1>
-        <p>Encuentra tu auto ideal de uso personal sin fricciones ni largas búsquedas. Hacemos match exacto con el
-            inventario garantizado de las mejores agencias del país.</p>
+        <h1>Encuentra tu <span class="highlight">Media Naranja</span> con Llantas 🍊🚗</h1>
+        <p>Basta de "citas a ciegas" con autos poco confiables. Deja que nuestro Cupido Automotriz te presente a tu
+            compañero ideal de las mejores agencias del país.</p>
         <div class="hero-cta-container">
             <a href="./vip/" class="btn-premium-gold" style="padding: 18px 36px; font-size: 1.1rem;">
                 <i class="fa-solid fa-heart-circle-check"></i>
@@ -1710,8 +1766,8 @@
     <!-- INVENTARIO DESTACADO B2C -->
     <section class="featured-section" id="inventario">
         <div class="section-header">
-            <h2>Nuestros <span>Solteros</span> Más Cotizados</h2>
-            <p>Seminuevos verificados en espera de su match perfecto</p>
+            <h2>Nuestros <span>Solteros</span> Más Cotizados 🔥</h2>
+            <p>Joyas verificadas esperando a su match perfecto</p>
         </div>
 
         <div class="filters-container" id="filtersSticky">
@@ -2153,7 +2209,11 @@
                 const badgeText = isAlabol ? '✓ VENTA DIRECTA' : '⭐ VERIFICADO';
                 const carImg = auto.link_fotos || auto.url_fotos || defaultImg;
 
+                // Randomly generate a high compatibility score for dopamine (92-99%)
+                const matchScore = Math.floor(Math.random() * (99 - 92 + 1)) + 92;
+
                 card.innerHTML = `
+                    <div class="match-badge-float"><i class="fa-solid fa-fire"></i> ${matchScore}% MATCH</div>
                     <div class="modal-badge" style="top:20px; left:20px; font-size:0.75rem; padding:6px 12px; border-radius:12px; backdrop-filter:blur(10px); background:rgba(212,175,55,0.9); color:black;">${badgeText}</div>
                     <img src="${carImg}" class="tinder-card-img" alt="${auto.modelo}">
                     <div class="tinder-card-body">
@@ -2194,20 +2254,29 @@
                 likeCount++;
                 if (typeof trackFunnelStep === 'function') trackFunnelStep(3, 'swipe_like_auto');
 
+                // Dopamine Popup
+                showFeedback("¡ME ENCANTA! 😍");
+
                 // Show journey overlay after 3 likes
                 if (likeCount === 3) {
                     confetti({
-                        particleCount: 150,
-                        spread: 70,
+                        particleCount: 200,
+                        spread: 80,
                         origin: { y: 0.6 },
-                        colors: ['#d4af37', '#f4e5b0', '#ffffff']
+                        colors: ['#d4af37', '#f4e5b0', '#ffffff', '#FF3B30']
                     });
+
+                    // Add a slight screen shake for impact
+                    document.body.style.animation = 'screenShake 0.5s';
+                    setTimeout(() => document.body.style.animation = '', 500);
+
                     setTimeout(() => {
                         document.getElementById('journeyOverlay').style.display = 'flex';
                     }, 500);
                 }
             } else {
                 card.style.animation = 'swipeLeft 0.7s forwards cubic-bezier(0.23, 1, 0.32, 1)';
+                showFeedback("Siguiente... 👋");
             }
 
             currentCarIndex++;

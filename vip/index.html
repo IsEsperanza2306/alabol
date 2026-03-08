@@ -70,10 +70,11 @@
             font-family: 'Poppins', sans-serif;
             background: var(--bg-dark);
             min-height: 100vh;
-            padding: 16px;
+            padding: 24px 16px;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             overflow-x: hidden;
             position: relative;
         }
@@ -143,10 +144,11 @@
         }
 
         .container {
-            max-width: 520px;
+            max-width: 550px;
             width: 100%;
             position: relative;
             z-index: 1;
+            margin: 0 auto;
         }
 
         /* VIP Badge */
@@ -267,20 +269,50 @@
         /* Main Card - Glassmorphism */
         .card {
             background: linear-gradient(135deg,
-                    rgba(15, 51, 41, 0.6) 0%,
-                    rgba(13, 41, 33, 0.6) 100%);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 32px 28px;
+                    rgba(15, 51, 41, 0.7) 0%,
+                    rgba(13, 41, 33, 0.7) 100%);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 28px;
+            padding: 40px 30px;
             border: 2px solid var(--glass-border);
             box-shadow:
-                0 24px 80px rgba(0, 0, 0, 0.6),
-                0 0 40px rgba(212, 175, 55, 0.1),
-                inset 0 1px 0 rgba(212, 175, 55, 0.1);
+                0 30px 100px rgba(0, 0, 0, 0.8),
+                0 0 50px rgba(212, 175, 55, 0.15),
+                inset 0 1px 0 rgba(212, 175, 55, 0.15);
             animation: cardIn 0.5s ease-out 0.2s both;
             position: relative;
             overflow: hidden;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 30px 20px;
+                border-radius: 20px;
+            }
+
+            .logo-container {
+                width: 100px;
+                height: 100px;
+            }
+
+            .logo-circle {
+                width: 100px;
+                height: 100px;
+            }
+
+            .logo-circle img {
+                width: 85px;
+                height: 85px;
+            }
+
+            .logo-section h1 {
+                font-size: 19px;
+            }
+
+            .logo-section p {
+                font-size: 13px;
+            }
         }
 
         /* Scan line effect */
@@ -1322,129 +1354,161 @@
         }
 
         /* Tinder Deck UI */
-        .tinder-deck {
-            display: none;
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 13px;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        /* Radar pulses */
+        .radar {
+            width: 150px;
+            height: 150px;
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+            margin: 0 auto 30px;
             position: relative;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.2) 0%, transparent 70%);
+        }
+
+        .radar::before,
+        .radar::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             width: 100%;
-            height: 480px;
-            margin-top: 10px;
+            height: 100%;
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+            animation: radarPulse 2s linear infinite;
+        }
+
+        .radar::after {
+            animation-delay: 1s;
+        }
+
+        @keyframes radarPulse {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 1;
+            }
+
+            100% {
+                width: 300px;
+                height: 300px;
+                opacity: 0;
+            }
+        }
+
+        /* Tinder-style deck */
+        .tinder-deck {
+            position: relative;
+            height: 450px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            .tinder-deck {
+                height: 400px;
+            }
         }
 
         .tinder-deck.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: block;
         }
 
         .tinder-card {
             position: absolute;
             width: 100%;
             height: 100%;
-            background: var(--bg-mid);
-            /* Replaced undefined var */
+            background: #fff;
             border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--glass-border);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 1;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            cursor: grab;
+            display: none;
         }
 
         .tinder-card.active {
-            opacity: 1;
-            transform: scale(1) translateX(0) rotate(0);
-            pointer-events: all;
-            z-index: 5;
+            display: block;
+            z-index: 10;
         }
 
         .tinder-card.next {
-            opacity: 0.6;
-            transform: scale(0.95) translateY(15px);
-            z-index: 4;
-        }
-
-        .tinder-card.swiped-left {
-            transform: translateX(-150%) rotate(-15deg);
-            opacity: 0;
-        }
-
-        .tinder-card.swiped-right {
-            transform: translateX(150%) rotate(15deg);
-            opacity: 0;
+            display: block;
+            z-index: 5;
+            transform: scale(0.95) translateY(10px);
+            opacity: 0.8;
         }
 
         .t-card-img {
             width: 100%;
             height: 60%;
             object-fit: cover;
-            border-bottom: 2px solid var(--gold);
         }
 
         .t-card-info {
-            padding: 16px;
+            padding: 20px;
             height: 40%;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            color: #333;
         }
 
         .t-card-title {
-            font-size: 22px;
-            font-weight: 800;
-            color: white;
-            line-height: 1.2;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
         }
 
         .t-card-year {
-            background: var(--gold);
-            color: black;
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 800;
-            display: inline-block;
-            margin-left: 8px;
-            vertical-align: middle;
+            font-size: 16px;
+            font-weight: 400;
+            color: #666;
         }
 
         .t-card-price {
-            font-size: 24px;
-            font-weight: 900;
-            color: #34d399;
-            /* Replaced undefined var */
-            margin-top: 8px;
+            font-size: 22px;
+            font-weight: 800;
+            color: #0d2921;
         }
 
         .t-card-details {
             display: flex;
             justify-content: space-between;
-            font-size: 12px;
-            color: var(--green-text);
-            margin-top: auto;
-            align-items: center;
+            font-size: 13px;
+            color: #666;
+            font-weight: 500;
         }
 
         .t-badge {
-            background: rgba(212, 175, 55, 0.15);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            color: var(--gold);
-            padding: 4px 8px;
-            border-radius: 8px;
-            font-size: 10px;
+            background: #f4e5b0;
+            color: #856404;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 11px;
             font-weight: 700;
-            text-transform: uppercase;
         }
 
-        /* Action Buttons */
         .tinder-actions {
             display: none;
             justify-content: center;
-            align-items: center;
             gap: 30px;
-            margin-top: 25px;
-            width: 100%;
+            margin-top: 20px;
         }
 
         .tinder-actions.active {
@@ -1452,91 +1516,128 @@
         }
 
         .t-btn {
-            width: 65px;
-            height: 65px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             border: none;
+            font-size: 24px;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 30px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            background: var(--bg-light);
-            /* Replaced undefined var */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s;
+        }
+
+        .t-btn:hover {
+            transform: scale(1.1);
         }
 
         .t-btn.pass {
-            color: #ff4757;
-            border: 2px solid rgba(255, 71, 87, 0.3);
-        }
-
-        .t-btn.pass:hover {
-            transform: scale(1.15) rotate(-10deg);
-            background: rgba(255, 71, 87, 0.15);
-            box-shadow: 0 0 30px rgba(255, 71, 87, 0.4);
+            background: #fff;
+            color: #ff4444;
+            border: 2px solid #ff4444;
         }
 
         .t-btn.match {
-            color: #34d399;
-            border: 2px solid rgba(52, 211, 153, 0.3);
-            width: 80px;
-            height: 80px;
-            font-size: 38px;
+            background: #fff;
+            color: #25D366;
+            border: 2px solid #25D366;
         }
 
-        .t-btn.match:hover {
-            transform: scale(1.15) rotate(10deg);
-            background: rgba(52, 211, 153, 0.15);
-            box-shadow: 0 0 40px rgba(52, 211, 153, 0.5);
+        /* Swiping animations */
+        .swiped-left {
+            transform: translateX(-150%) rotate(-20deg) !important;
+            opacity: 0 !important;
         }
 
-        /* Loading Matches */
+        .swiped-right {
+            transform: translateX(150%) rotate(20deg) !important;
+            opacity: 0 !important;
+        }
+
         .finding-matches {
-            text-align: center;
             display: none;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
+            text-align: center;
             padding: 40px 0;
         }
 
         .finding-matches.active {
+            display: block;
+        }
+
+        .sending-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 31, 26, 0.9);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 28px;
+        }
+
+        .sending-overlay.active {
             display: flex;
         }
 
-        .radar {
-            width: 80px;
-            height: 80px;
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(212, 175, 55, 0.1);
+            border-left-color: var(--gold);
             border-radius: 50%;
-            border: 2px solid var(--gold);
-            position: relative;
-            overflow: hidden;
-            background: rgba(212, 175, 55, 0.05);
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+            animation: spin 1s linear infinite;
         }
 
-        .radar::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 50%;
-            height: 50%;
-            background: linear-gradient(45deg, rgba(212, 175, 55, 0.8) 0%, transparent 50%);
-            transform-origin: 0% 0%;
-            animation: radarSweep 2s linear infinite;
-        }
-
-        @keyframes radarSweep {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
+        @keyframes spin {
+            to {
                 transform: rotate(360deg);
             }
+        }
+
+        .sending-text {
+            margin-top: 15px;
+            color: var(--gold);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            padding-bottom: 20px;
+        }
+
+        .footer p {
+            font-size: 12px;
+            color: rgba(168, 197, 184, 0.4);
+        }
+
+        .footer a {
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* VIP Floating Badge */
+        .vip-floating {
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: linear-gradient(135deg, #d4af37, #f4e5b0);
+            color: #0a1f1a;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+            z-index: 10;
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>

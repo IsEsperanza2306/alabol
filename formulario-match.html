@@ -2320,6 +2320,12 @@
             document.getElementById('vipForm').style.display = 'none';
             navButtons.style.display = 'none';
 
+            // --- CONSUME LOCALSTORAGE MATCHES ---
+            const savedMatches = JSON.parse(localStorage.getItem('alabol_matches') || '[]');
+            const matchesText = savedMatches.length > 0
+                ? savedMatches.map(m => `${m.brand} ${m.model} (${m.year})`).join(' | ')
+                : 'Ninguno previo';
+
             // Add a small delay for "Processing" effect
             const findingScreen = document.getElementById('findingMatchesScreen');
             findingScreen.classList.add('active');
@@ -2335,7 +2341,9 @@
                 presupuesto: `$${formData.presupuestoMin.toLocaleString()} - $${formData.presupuestoMax.toLocaleString()}`,
                 dinero_listo: formData.dineroListo,
                 prioridad: formData.prioridad, uso: formData.usoAuto,
-                notas: formData.notas || '', fuente: 'Matchmaker'
+                notas: formData.notas || '',
+                matches_tinder: matchesText, // NEW FIELD
+                fuente: 'Matchmaker'
             };
 
             // Async send data in background to Supabase Leads Table
@@ -2358,7 +2366,7 @@
                             prioridad: formData.prioridad,
                             uso_auto: formData.usoAuto,
                             caracteristicas: formData.caracteristicas,
-                            notas: formData.notas
+                            notas: formData.notas + (matchesText !== 'Ninguno previo' ? ` | MATCHES TINDER: ${matchesText}` : '')
                         }
                     ]);
                 if (error) console.error("Error saving lead to Supabase:", error);

@@ -1874,12 +1874,21 @@
             </div>
         </div>
 
-        <div class="tinder-social-proof" style="text-align:center; margin-bottom: 25px; animation: fadeIn 1s ease-out;">
+        <div class="tinder-social-proof"
+            style="text-align:center; margin-bottom: 25px; animation: fadeIn 1s ease-out; display: flex; justify-content: center; gap: 15px; align-items: center; flex-wrap: wrap;">
             <div
                 style="display:inline-flex; align-items:center; gap:8px; background: rgba(212,175,55,0.1); border: 1px solid var(--gold-dim); padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; color: var(--gold-bright);">
                 <span class="pulse-dot"
                     style="width:8px; height:8px; background:#25D366; border-radius:50%; box-shadow:0 0 10px #25D366; animation: pulse 2s infinite;"></span>
                 <strong>42 personas</strong> buscando su match ahora
+            </div>
+
+            <!-- MATCH COUNTER -->
+            <div id="matchCounter"
+                style="display:none; align-items:center; gap:8px; background: rgba(255,59,48,0.1); border: 1px solid rgba(255,59,48,0.3); padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; color: #ff3b30; cursor: pointer; transition: all 0.3s;"
+                onclick="location.href='./formulario-match.html'">
+                <i class="fa-solid fa-heart"></i>
+                <strong><span id="savedMatchCount">0</span> Matches</strong> Guardados
             </div>
         </div>
 
@@ -2014,7 +2023,7 @@
             <div class="tinder-actions">
                 <button class="action-btn btn-pass" onclick="closeModal()" title="Pasar (Cerrar)"><i
                         class="fa-solid fa-xmark"></i></button>
-                <button class="action-btn btn-match" onclick="triggerMatch()" title="¡Hacer Match!"><i
+                <button class="action-btn btn-match" onclick="heartInModal()" title="¡Hacer Match!"><i
                         class="fa-solid fa-heart"></i></button>
             </div>
         </div>
@@ -2091,6 +2100,108 @@
             if (url && url.match(/\.(jpeg|jpg|gif|png)$/i)) return url;
             return defaultImg;
         }
+
+        function showFeedback(text) {
+            const popup = document.createElement('div');
+            popup.className = 'feedback-popup';
+            popup.textContent = text;
+            document.body.appendChild(popup);
+
+            setTimeout(() => popup.classList.add('active'), 10);
+            setTimeout(() => {
+                popup.classList.remove('active');
+                setTimeout(() => popup.remove(), 400);
+            }, 800);
+        }
+
+        // --- MATCH PERSISTENCE LOGIC ---
+        function saveMatch(auto) {
+            let matches = JSON.parse(localStorage.getItem('alabol_matches') || '[]');
+            // Use a consistent ID for checking existence, prefer 'id' or 'id_interno'
+            const autoId = auto.id_interno || auto.id;
+            const exists = matches.find(m => (m.id_interno || m.id) === autoId);
+            if (!exists) {
+                matches.push({
+                    id: autoId, // Use the normalized ID
+                    brand: auto.marca || auto.brand,
+                    model: auto.modelo || auto.model,
+                    year: auto.año || auto.year,
+                    price: auto.precio_venta || auto.priceMXN
+                });
+                localStorage.setItem('alabol_matches', JSON.stringify(matches));
+                updateMatchCounter();
+            }
+        }
+
+        function updateMatchCounter() {
+            const counter = document.getElementById('matchCounter');
+            const countSpan = document.getElementById('savedMatchCount');
+            const matches = JSON.parse(localStorage.getItem('alabol_matches') || '[]');
+
+            if (matches.length > 0) {
+                counter.style.display = 'inline-flex';
+                countSpan.textContent = matches.length;
+                // Animate pulsed glow when count increases
+                counter.style.transform = 'scale(1.2)';
+                setTimeout(() => counter.style.transform = 'scale(1)', 300);
+            } else {
+                counter.style.display = 'none'; // Hide if no matches
+            }
+        }
+
+        // Override the existing triggerMatch to handle persistence
+        function triggerMatch() {
+            if (typeof trackFunnelStep === 'function') trackFunnelStep(4, 'solicitar_match_whatsapp_alabol');
+
+            // No need to grab data from active modal here, as heartInModal handles saving
+
+            window.location.href = './formulario-match.html';
+        }
+
+        // New function for heart button inside modal
+        function heartInModal() {
+            const modal = document.getElementById('tinderModal');
+            const currentAutoData = JSON.parse(decodeURIComponent(modal.dataset.currentAuto)); // Retrieve stored data
+            saveMatch(currentAutoData); // Save the car that was in the modal
+
+            showFeedback("¡MATCH GUARDADO! 💖");
+            swipe('right'); // Perform the swipe animation
+            closeModal(); // Close the modal
+            // updateMatchCounter() is called by saveMatch
+        }
+
+        // Add shake animation style dynamically if not in CSS
+        const styleTag = document.createElement('style');
+        styleTag.innerHTML = `
+            @keyframes screenShake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-10px) rotate(-1deg); }
+                50% { transform: translateX(10px) rotate(1deg); }
+                75% { transform: translateX(-10px); }
+            }
+            .feedback-popup {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) scale(0.8);
+                background: rgba(255, 255, 255, 0.9);
+                color: #333;
+                padding: 15px 30px;
+                border-radius: 30px;
+                font-size: 1.5rem;
+                font-weight: bold;
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+                opacity: 0;
+                transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                z-index: 5000;
+                pointer-events: none;
+            }
+            .feedback-popup.active {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        `;
+        document.head.appendChild(styleTag);
 
         function populateBrands() {
             // Exhaustive list + actual inventory data
@@ -2206,9 +2317,16 @@
                 card.style.transform = `translateY(${index * -10}px) scale(${1 - index * 0.05})`;
                 if (index > 2) card.style.opacity = '0';
 
+                // --- DATA NORMALIZATION (Fixing "undefined" bug) ---
+                const marca = auto.marca || auto.brand || 'Auto';
+                const modelo = auto.modelo || auto.model || 'Alabol';
+                const precio = auto.precio_venta || auto.priceMXN || 0;
+                const anio = auto.año || auto.year || '2024';
+                const version = auto.version || 'Equipado';
+                const carImg = auto.link_fotos || auto.url_fotos || defaultImg;
+
                 const isAlabol = (auto.agencia || '').toLowerCase() === 'alabol';
                 const badgeText = isAlabol ? '✓ VENTA DIRECTA' : '⭐ VERIFICADO';
-                const carImg = auto.link_fotos || auto.url_fotos || defaultImg;
 
                 // Randomly generate a high compatibility score for dopamine (92-99%)
                 const matchScore = Math.floor(Math.random() * (99 - 92 + 1)) + 92;
@@ -2216,17 +2334,18 @@
                 card.innerHTML = `
                     <div class="match-badge-float"><i class="fa-solid fa-fire"></i> ${matchScore}% MATCH</div>
                     <div class="modal-badge" style="top:20px; left:20px; font-size:0.75rem; padding:6px 12px; border-radius:12px; backdrop-filter:blur(10px); background:rgba(212,175,55,0.9); color:black;">${badgeText}</div>
-                    <img src="${carImg}" class="tinder-card-img" alt="${auto.modelo}">
+                    <img src="${carImg}" class="tinder-card-img" alt="${modelo}">
                     <div class="tinder-card-body">
-                        <div class="tinder-card-title">${auto.marca} ${auto.modelo} <span style="color:var(--gold); font-size:1.2rem; float:right;">${auto.año || auto.year}</span></div>
-                        <div class="tinder-card-version" style="opacity:0.8;">${auto.version || 'Equipado'}</div>
-                        <div style="font-size:2rem; font-weight:800; color:white; margin-top:10px;">${formatCurrency(auto.precio_venta || auto.priceMXN)} <span style="font-size:1rem; color:var(--gold);">MXN</span></div>
+                        <div class="tinder-card-title">${marca} ${modelo} <span style="color:var(--gold); font-size:1.2rem; float:right;">${anio}</span></div>
+                        <div class="tinder-card-version" style="opacity:0.8;">${version}</div>
+                        <div style="font-size:2rem; font-weight:800; color:white; margin-top:10px;">${formatCurrency(precio)} <span style="font-size:1rem; color:var(--gold);">MXN</span></div>
                     </div>
                 `;
                 container.appendChild(card);
             });
 
             updateTinderDetailsBtn();
+            updateMatchCounter(); // Call to update counter on initial load
         }
 
         function updateTinderDetailsBtn() {
@@ -2234,10 +2353,13 @@
             if (!btn || tinderCars.length === 0 || currentCarIndex >= tinderCars.length) return;
 
             const currentAuto = tinderCars[currentCarIndex];
-            const dataStr = encodeURIComponent(JSON.stringify(currentAuto));
+            // Store the full auto object in a data attribute for easy retrieval by modal
+            const modal = document.getElementById('tinderModal');
+            modal.dataset.currentAuto = encodeURIComponent(JSON.stringify(currentAuto));
+
             btn.onclick = () => {
                 if (typeof trackFunnelStep === 'function') trackFunnelStep(3, 'ver_perfil_tinder');
-                openModal(dataStr);
+                openModal(currentAuto); // Pass the object directly
             };
         }
 
@@ -2254,6 +2376,10 @@
                 card.style.animation = 'swipeRight 0.7s forwards cubic-bezier(0.23, 1, 0.32, 1)';
                 likeCount++;
                 if (typeof trackFunnelStep === 'function') trackFunnelStep(3, 'swipe_like_auto');
+
+                // PERSIST MATCH
+                const currentAuto = tinderCars[currentCarIndex];
+                saveMatch(currentAuto);
 
                 // Dopamine Popup
                 showFeedback("¡ME ENCANTA! 😍");

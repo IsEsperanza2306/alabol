@@ -1669,29 +1669,25 @@
                     <div class="brand-grid" id="marcasGrid">
                         <!-- Popular brands with logos -->
                         <div class="brand-card" data-value="Nissan"><img
-                                src="https://upload.wikimedia.org/wikipedia/commons/8/8c/Nissan_logo.png" alt="Nissan">
+                                src="https://www.carlogos.org/car-logos/nissan-logo-2020-640x550.png" alt="Nissan">
                         </div>
                         <div class="brand-card" data-value="Volkswagen"><img
-                                src="https://upload.wikimedia.org/wikipedia/commons/a/a1/Volkswagen_Logo_till_1995.svg"
+                                src="https://www.carlogos.org/car-logos/volkswagen-logo-2019-640x500.png"
                                 alt="Volkswagen"></div>
                         <div class="brand-card" data-value="Chevrolet"><img
-                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Chevrolet-logo.png/640px-Chevrolet-logo.png"
+                                src="https://www.carlogos.org/car-logos/chevrolet-logo-2013-640x350.png"
                                 alt="Chevrolet"></div>
                         <div class="brand-card" data-value="Toyota"><img
-                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Toyota_carlogo.svg/512px-Toyota_carlogo.svg.png"
-                                alt="Toyota"></div>
+                                src="https://www.carlogos.org/car-logos/toyota-logo-2020-640x450.png" alt="Toyota">
+                        </div>
                         <div class="brand-card" data-value="Kia"><img
-                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/KIA_logo2.svg/512px-KIA_logo2.svg.png"
-                                alt="Kia"></div>
+                                src="https://www.carlogos.org/car-logos/kia-logo-2021-640x350.png" alt="Kia"></div>
                         <div class="brand-card" data-value="Honda"><img
-                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Honda_Logo.svg/512px-Honda_Logo.svg.png"
-                                alt="Honda"></div>
+                                src="https://www.carlogos.org/car-logos/honda-logo-1700x1150.png" alt="Honda"></div>
                         <div class="brand-card" data-value="Mazda"><img
-                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Mazda_Logo.svg/512px-Mazda_Logo.svg.png"
-                                alt="Mazda"></div>
+                                src="https://www.carlogos.org/car-logos/mazda-logo-2018-640x500.png" alt="Mazda"></div>
                         <div class="brand-card" data-value="Ford"><img
-                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Ford_Motor_Company_Logo.svg/512px-Ford_Motor_Company_Logo.svg.png"
-                                alt="Ford"></div>
+                                src="https://www.carlogos.org/car-logos/ford-logo-2017-640x350.png" alt="Ford"></div>
                     </div>
                     <div style="margin-top: 15px;"><select id="selMasMarcas" class="styled-input">
                             <option value="">+Más Marcas (Desplegable)</option>
@@ -1996,20 +1992,40 @@
 
         // Dynamic Mexico Catalog
         const mexicoCatalog = {
-            "Volkswagen": ["Jetta", "Golf", "Polo", "Vento", "Virtus", "Tiguan", "Taos", "Caddy", "Amarok", "Saveiro", "T-Cross"],
-            "Nissan": ["Versa", "Sentra", "March", "Altima", "Kicks", "X-Trail", "Frontier", "NP300", "Maxima"],
-            "Honda": ["Civic", "Accord", "City", "CR-V", "HR-V", "BR-V", "Odyssey", "Pilot"],
-            "Toyota": ["Corolla", "Camry", "Yaris", "Prius", "RAV4", "Highlander", "Sienna", "Tacoma", "Hilux", "Avanza"],
-            "Chevrolet": ["Onix", "Aveo", "Cavalier", "Tracker", "Captiva", "Silverado", "Colorado", "Tahoe", "Suburban", "Tornado"],
-            "Ford": ["Mustang", "Escape", "Edge", "Explorer", "Expedition", "F-150", "Lobo", "Ranger", "Maverick"],
-            "Kia": ["Rio", "Forte", "Soul", "Seltos", "Sportage", "Sorento", "Sedona"],
-            "Hyundai": ["Grand i10", "Elantra", "Accent", "Creta", "Tucson", "Santa Fe"],
-            "Mazda": ["Mazda2", "Mazda3", "Mazda6", "CX-3", "CX-30", "CX-5", "CX-9"],
-            "BMW": ["Serie 1", "Serie 3", "Serie 5", "X1", "X3", "X5", "X6", "X7"],
-            "Mercedes-Benz": ["Clase A", "Clase C", "Clase E", "GLA", "GLC", "GLE", "GLS"],
-            "Audi": ["A1", "A3", "A4", "A6", "Q2", "Q3", "Q5", "Q7", "Q8"],
-            "MG": ["MG5", "GT", "ZS", "HS", "RX8"],
-            "Peugeot": ["208", "2008", "3008", "Rifter", "Partner"]
+            "Nissan": ["Versa", "Sentra", "March", "Altima", "Kicks", "X-Trail", "Frontier", "NP300", "Maxima", "Pathfinder", "V-Drive"],
+            "Volkswagen": ["Jetta", "Vento", "Virtus", "Polo", "Golf", "Tiguan", "Taos", "Nivus", "Teramont", "Saveiro", "Amarok"],
+            "Chevrolet": ["Onix", "Aveo", "Cavalier", "Tracker", "Captiva", "Silverado", "Colorado", "Tahoe", "Suburban", "Tornado", "Groove", "Trax", "Blazer"],
+            "Toyota": ["Corolla", "Camry", "Yaris", "Prius", "RAV4", "Highlander", "Sienna", "Tacoma", "Hilux", "Avanza", "Sequoia", "Land Cruiser", "Raize"],
+            "Honda": ["Civic", "Accord", "City", "CR-V", "HR-V", "BR-V", "Odyssey", "Pilot", "Insight", "Ridgeline"],
+            "Ford": ["Mustang", "Escape", "Edge", "Explorer", "Expedition", "F-150", "Lobo", "Ranger", "Maverick", "Bronco", "Territory"],
+            "Kia": ["Rio", "Forte", "Soul", "Seltos", "Sportage", "Sorento", "Sedona", "K3", "Niro", "Ev6"],
+            "Mazda": ["Mazda2", "Mazda3", "Mazda6", "CX-3", "CX-30", "CX-5", "CX-50", "CX-9", "CX-90", "MX-5"],
+            "Hyundai": ["Grand i10", "Elantra", "Accent", "Creta", "Tucson", "Santa Fe", "Palisade", "Kona", "HB20"],
+            "BMW": ["Serie 1", "Serie 2", "Serie 3", "Serie 4", "Serie 5", "X1", "X2", "X3", "X4", "X5", "X6", "X7"],
+            "Mercedes-Benz": ["Clase A", "Clase B", "Clase C", "Clase E", "GLA", "GLB", "GLC", "GLE", "GLS"],
+            "Audi": ["A1", "A3", "A4", "A5", "A6", "Q2", "Q3", "Q5", "Q7", "Q8", "e-tron"],
+            "MG": ["MG5", "GT", "ZS", "HS", "RX8", "One", "MG4"],
+            "Peugeot": ["208", "2008", "3008", "5008", "Rifter", "Partner", "Landtrek"],
+            "Renault": ["Kwid", "Stepway", "Logan", "Duster", "Captur", "Koleos", "Oroch", "Master"],
+            "Suzuki": ["Swift", "Ignis", "Baleno", "Ciaz", "Vitara", "S-Cross", "Jimny", "Ertiga"],
+            "Seat": ["Ibiza", "Leon", "Arona", "Ateca", "Tarraco"],
+            "Mitsubishi": ["Mirage G4", "L200", "Montero Sport", "Outlander", "Xpander"],
+            "Jeep": ["Wrangler", "Grand Cherokee", "Compass", "Renegade", "Gladiator", "Cherokee"],
+            "Dodge": ["Attitude", "Journey", "Durango", "Challenger"],
+            "RAM": ["700", "1500", "2500", "4000"],
+            "BYD": ["Dolphin", "Yuan Plus", "Han", "Tang", "Seal", "Song Plus"],
+            "Chirey": ["Tiggo 2", "Tiggo 4", "Tiggo 7", "Tiggo 8"],
+            "Omoda": ["O5", "O5 GT", "C5"],
+            "JAC": ["J7", "JS2", "JS3", "JS4", "JS6", "JS8", "T6", "T8", "E10X"],
+            "Cupra": ["Formentor", "Leon", "Ateca"],
+            "Volvo": ["XC40", "XC60", "XC90", "C40", "S60"],
+            "Tesla": ["Model 3", "Model Y", "Model S", "Model X"],
+            "Subaru": ["WRX", "Forester", "XV", "Outback", "BRZ"],
+            "Lexus": ["IS", "ES", "LS", "UX", "NX", "RX", "LX"],
+            "Infiniti": ["Q50", "Q60", "QX50", "QX55", "QX60", "QX80"],
+            "Acura": ["Integra", "TLX", "RDX", "MDX"],
+            "GWM": ["Haval H6", "Jolion", "Poer", "Ora 03"],
+            "Geely": ["Coolray", "Geometry C"]
         };
 
         const formData = {

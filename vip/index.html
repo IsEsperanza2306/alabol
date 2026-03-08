@@ -515,10 +515,9 @@
         }
 
         .brand-card img {
-            width: 70%;
-            height: 70%;
+            width: 75%;
+            height: 75%;
             object-fit: contain;
-            filter: brightness(0) invert(1) opacity(0.8);
             transition: all 0.3s;
         }
 
@@ -542,7 +541,8 @@
 
         /* Specific fix for colored logos to just glow white/gold when active */
         .brand-card.selected img {
-            filter: brightness(0) drop-shadow(0 0 5px #ffd700) invert(0.8) sepia(1) hue-rotate(-10deg) saturate(3);
+            transform: scale(1.15);
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.6));
         }
 
         /* Dual Range Slider Styles */
@@ -1770,25 +1770,23 @@
                     <div class="brand-grid" id="marcasGrid">
                         <!-- Popular brands with logos -->
                         <div class="brand-card" data-value="Nissan"><img
-                                src="https://www.carlogos.org/car-logos/nissan-logo-2020-640x550.png" alt="Nissan">
+                                src="https://logo.clearbit.com/nissan-global.com" alt="Nissan">
                         </div>
                         <div class="brand-card" data-value="Volkswagen"><img
-                                src="https://www.carlogos.org/car-logos/volkswagen-logo-2019-640x500.png"
-                                alt="Volkswagen"></div>
+                                src="https://logo.clearbit.com/volkswagen.com" alt="Volkswagen"></div>
                         <div class="brand-card" data-value="Chevrolet"><img
-                                src="https://www.carlogos.org/car-logos/chevrolet-logo-2013-640x350.png"
-                                alt="Chevrolet"></div>
-                        <div class="brand-card" data-value="Toyota"><img
-                                src="https://www.carlogos.org/car-logos/toyota-logo-2020-640x450.png" alt="Toyota">
+                                src="https://logo.clearbit.com/chevrolet.com" alt="Chevrolet"></div>
+                        <div class="brand-card" data-value="Toyota"><img src="https://logo.clearbit.com/toyota.com"
+                                alt="Toyota">
                         </div>
-                        <div class="brand-card" data-value="Kia"><img
-                                src="https://www.carlogos.org/car-logos/kia-logo-2021-640x350.png" alt="Kia"></div>
-                        <div class="brand-card" data-value="Honda"><img
-                                src="https://www.carlogos.org/car-logos/honda-logo-1700x1150.png" alt="Honda"></div>
-                        <div class="brand-card" data-value="Mazda"><img
-                                src="https://www.carlogos.org/car-logos/mazda-logo-2018-640x500.png" alt="Mazda"></div>
-                        <div class="brand-card" data-value="Ford"><img
-                                src="https://www.carlogos.org/car-logos/ford-logo-2017-640x350.png" alt="Ford"></div>
+                        <div class="brand-card" data-value="Kia"><img src="https://logo.clearbit.com/kia.com" alt="Kia">
+                        </div>
+                        <div class="brand-card" data-value="Honda"><img src="https://logo.clearbit.com/honda.com"
+                                alt="Honda"></div>
+                        <div class="brand-card" data-value="Mazda"><img src="https://logo.clearbit.com/mazda.com"
+                                alt="Mazda"></div>
+                        <div class="brand-card" data-value="Ford"><img src="https://logo.clearbit.com/ford.com"
+                                alt="Ford"></div>
                     </div>
                     <div style="margin-top: 15px;"><select id="selMasMarcas" class="styled-input">
                             <option value="">+Más Marcas (Desplegable)</option>

@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alabol Car Broker - Enlaces</title>
+    <meta name="description" content="Autos de subasta USA y México a precio mayorista. Ahorra 30-40% vs. agencias.">
+
+    <meta property="og:title" content="Alabol Car Broker">
+    <meta property="og:description" content="Autos de subasta USA y México a precio mayorista">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #0a1f1a;
+            min-height: 100vh;
+            padding: 0;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated gradient background - Verde Alabol */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg,
+                    #0a1f1a 0%,
+                    #0d2921 25%,
+                    #0f3329 50%,
+                    #0d2921 75%,
+                    #0a1f1a 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            z-index: -2;
+        }
+
+        /* Floating gold particles effect */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(2px 2px at 20% 30%, rgba(212, 175, 55, 0.3), transparent),
+                radial-gradient(2px 2px at 60% 70%, rgba(212, 175, 55, 0.2), transparent),
+                radial-gradient(1px 1px at 50% 50%, rgba(212, 175, 55, 0.2), transparent),
+                radial-gradient(1px 1px at 80% 10%, rgba(212, 175, 55, 0.3), transparent),
+                radial-gradient(1px 1px at 30% 80%, rgba(212, 175, 55, 0.2), transparent);
+            background-size: 200% 200%;
+            animation: float 20s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes gradientShift {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            33% {
+                transform: translate(30px, -30px);
+            }
+
+            66% {
+                transform: translate(-20px, 20px);
+            }
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Profile Section */
+        .profile {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-container {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin: 0 auto 30px;
+        }
+
+        .logo-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.4) 0%, transparent 70%);
+            border-radius: 50%;
+
+            @keyframes logoGlowPulse {
+
+                0%,
+                100% {
+                    transform: translate(-50%, -50%) scale(1);
+                    opacity: 0.6;
+                }
+
+                50% {
+                    transform: translate(-50%, -50%) scale(1.1);
+                    opacity: 0.8;
+                }
+            }
+
+            .logo-glow {
+                animation: logoGlowPulse 3s ease-in-out infinite;
+            }
+
+            .logo {
+                position: relative;
+                width: 160px;
+                height: 160px;
+                background: rgba(15, 51, 41, 0.3);
+                border-radius: 50%;
+                border: 3px solid rgba(212, 175, 55, 0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow:
+                    0 0 40px rgba(212, 175, 55, 0.3),
+                    0 10px 50px rgba(0, 0, 0, 0.5),
+                    inset 0 0 30px rgba(212, 175, 55, 0.1);
+                overflow: hidden;
+                backdrop-filter: blur(10px);
+            }
+
+            .logo img {
+                width: 140px;
+                height: 140px;
+                object-fit: contain;
+                filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.5));
+            }
+
+            .profile h1 {
+                font-size: 32px;
+                font-weight: 800;
+                background: linear-gradient(135deg,
+                        #d4af37 0%,
+                        #f4e5b0 25%,
+                        #d4af37 50%,
+                        #c9a961 75%,
+                        #d4af37 100%);
+                background-size: 200% auto;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                margin-bottom: 12px;
+                letter-spacing: 1px;
+                animation: shimmer 3s linear infinite;
+            }
+
+            @keyframes shimmer {
+                to {
+                    background-position: 200% center;
+                }
+            }
+
+            .profile .tagline {
+                font-size: 16px;
+                color: #a8c5b8;
+                font-weight: 400;
+                line-height: 1.6;
+                margin-bottom: 8px;
+            }
+
+            .profile .highlight {
+                font-size: 18px;
+                color: #d4af37;
+                font-weight: 600;
+                margin-top: 12px;
+                text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+            }
+
+            /* Links Section */
+            .links {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+                animation: fadeInUp 0.8s ease-out 0.2s both;
+            }
+
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .link {
+                position: relative;
+                background: linear-gradient(135deg,
+                        rgba(15, 51, 41, 0.6) 0%,
+                        rgba(13, 41, 33, 0.6) 100%);
+                backdrop-filter: blur(10px);
+                border: 2px solid rgba(212, 175, 55, 0.3);
+                border-radius: 16px;
+                padding: 20px 24px;
+                text-decoration: none;
+                color: white;
+                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                overflow: hidden;
+            }
+
+            .link::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg,
+                        transparent,
+                        rgba(212, 175, 55, 0.15),
+                        transparent);
+                transition: left 0.6s;
+            }
+
+            .link:hover::before {
+                left: 100%;
+            }
+
+            .link:hover {
+                transform: translateY(-4px) scale(1.02);
+                border-color: #d4af37;
+                background: linear-gradient(135deg,
+                        rgba(15, 51, 41, 0.8) 0%,
+                        rgba(13, 41, 33, 0.8) 100%);
+                box-shadow:
+                    0 0 30px rgba(212, 175, 55, 0.4),
+                    0 10px 40px rgba(0, 0, 0, 0.4);
+            }
+
+            .link:active {
+                transform: translateY(-2px) scale(1.01);
+            }
+
+            /* Priority link (CTA) - Oro cepillado */
+            .link-priority {
+                background: linear-gradient(135deg,
+                        #d4af37 0%,
+                        #f4e5b0 50%,
+                        #d4af37 100%);
+                background-size: 200% 200%;
+                border: 2px solid #c9a961;
+                box-shadow:
+                    0 0 30px rgba(212, 175, 55, 0.5),
+                    0 10px 30px rgba(0, 0, 0, 0.3),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+                animation: glow 2s ease-in-out infinite, goldShine 3s linear infinite;
+                position: relative;
+            }
+
+            /* Efecto de oro cepillado */
+            .link-priority::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(45deg,
+                        transparent 30%,
+                        rgba(255, 255, 255, 0.1) 50%,
+                        transparent 70%);
+                background-size: 200% 200%;
+                pointer-events: none;
+            }
+
+            @keyframes goldShine {
+                0% {
+                    background-position: 0% 50%;
+                }
+
+                100% {
+                    background-position: 200% 50%;
+                }
+            }
+
+            @keyframes glow {
+
+                0%,
+                100% {
+                    box-shadow:
+                        0 0 20px rgba(212, 175, 55, 0.5),
+                        0 10px 30px rgba(0, 0, 0, 0.3),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                        inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+                }
+
+                50% {
+                    box-shadow:
+                        0 0 40px rgba(212, 175, 55, 0.7),
+                        0 10px 40px rgba(0, 0, 0, 0.4),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                        inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+                }
+            }
+
+            .link-priority .link-title,
+            .link-priority .link-description {
+                color: #0a1f1a;
+                text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
+            }
+
+            .link-priority:hover {
+                transform: translateY(-6px) scale(1.03);
+                box-shadow:
+                    0 0 50px rgba(212, 175, 55, 0.7),
+                    0 15px 50px rgba(0, 0, 0, 0.5),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                    inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+            }
+
+            .link-icon {
+                font-size: 32px;
+                min-width: 50px;
+                text-align: center;
+                filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.5));
+            }
+
+            .link-priority .link-icon {
+                filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+            }
+
+            .link-content {
+                flex: 1;
+            }
+
+            .link-title {
+                font-size: 17px;
+                font-weight: 700;
+                margin-bottom: 4px;
+                letter-spacing: 0.3px;
+            }
+
+            .link-description {
+                font-size: 13px;
+                color: #a8c5b8;
+                font-weight: 400;
+            }
+
+            .link-priority .link-description {
+                color: rgba(10, 31, 26, 0.7);
+            }
+
+            /* Footer */
+            .footer {
+                text-align: center;
+                margin-top: 60px;
+                padding: 30px 20px;
+                color: #6b8a7a;
+                font-size: 14px;
+                animation: fadeIn 1s ease-out 0.4s both;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+
+                to {
+                    opacity: 1;
+                }
+            }
+
+            .footer a {
+                color: #d4af37;
+                text-decoration: none;
+                font-weight: 600;
+                transition: all 0.3s;
+            }
+
+            .footer a:hover {
+                color: #f4e5b0;
+                text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+            }
+
+            /* Responsive */
+            @media (max-width: 480px) {
+                .container {
+                    padding: 30px 16px;
+                }
+
+                .profile h1 {
+                    font-size: 26px;
+                }
+
+                .profile .tagline {
+                    font-size: 14px;
+                }
+
+                .logo-container {
+                    width: 140px;
+                    height: 140px;
+                }
+
+                .logo {
+                    width: 140px;
+                    height: 140px;
+                }
+
+                .logo img {
+                    width: 120px;
+                    height: 120px;
+                }
+
+                .link {
+                    padding: 16px 20px;
+                }
+
+                .link-title {
+                    font-size: 16px;
+                }
+
+                .link-icon {
+                    font-size: 28px;
+                    min-width: 45px;
+                }
+            }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Profile -->
+        <div class="profile">
+            <div class="logo-container">
+                <div class="logo-glow"></div>
+                <div class="logo">
+                    <img src="logo-circular.png" alt="Alabol Car Broker">
+                </div>
+            </div>
+            <h1>ALABOL CAR BROKER</h1>
+            <p class="tagline">Autos de subasta USA y México<br>a precio mayorista</p>
+            <p class="highlight">💰 Ahorra 30-40% vs. agencias</p>
+        </div>
+
+        <!-- Links (Orden optimizado para conversión) -->
+        <div class="links">
+            <!-- 1. CTA Principal: Matchmaker VIP -->
+            <a href="./vip/" class="link link-priority">
+                <div class="link-icon">🔥</div>
+                <div class="link-content">
+                    <div class="link-title">Encuentra tu Auto (Matchmaker VIP)</div>
+                    <div class="link-description">Dinos qué buscas y te encontramos ahorros del 30-40%</div>
+                </div>
+            </a>
+
+            <!-- 2. Portal de Oportunidades -->
+            <a href="./portal_profesional.html" class="link">
+                <div class="link-icon">🚗</div>
+                <div class="link-content">
+                    <div class="link-title">Portal de Oportunidades Privado</div>
+                    <div class="link-description">Descubre los vehículos Top 30 en subasta esta semana</div>
+                </div>
+            </a>
+
+            <!-- 3. Calculadora USA (Herramienta de valor) -->
+            <a href="https://alabolcar-hwh56g8k.manus.space/calculators" class="link" target="_blank" rel="noopener">
+                <div class="link-icon">📊</div>
+                <div class="link-content">
+                    <div class="link-title">Calculadoras Alabol (Gratis)</div>
+                    <div class="link-description">Calcula tu inversión exacta, fletes y aranceles</div>
+                </div>
+            </a>
+
+            <!-- 3. WhatsApp Directo (Contacto humano para calificados) -->
+            <a href="https://wa.me/52556867557571?text=Hola,%20vengo%20de%20TikTok%20y%20me%20interesa%20un%20auto"
+                class="link" target="_blank" rel="noopener">
+                <div class="link-icon">📱</div>
+                <div class="link-content">
+                    <div class="link-title">WhatsApp - Asesoría Directa</div>
+                    <div class="link-description">Chatea con un asesor ahora</div>
+                </div>
+            </a>
+
+            <!-- 4. Grupo VIP (Comunidad y FOMO) -->
+            <a href="https://chat.whatsapp.com/LOOtnIsTUXJ6kaioXSsYam" class="link" target="_blank" rel="noopener">
+                <div class="link-icon">👥</div>
+                <div class="link-content">
+                    <div class="link-title">Grupo VIP - Oportunidades Diarias</div>
+                    <div class="link-description">Únete GRATIS y recibe las mejores ofertas</div>
+                </div>
+            </a>
+
+            <!-- 5. Guía de Importación -->
+            <a href="https://alabolcar-hwh56g8k.manus.space/calculators" class="link" target="_blank" rel="noopener">
+                <div class="link-icon">📘</div>
+                <div class="link-content">
+                    <div class="link-title">Simulador de Reventa</div>
+                    <div class="link-description">Proyecta tus utilidades en segundos</div>
+                </div>
+            </a>
+
+            <!-- 6. Instagram (Social proof y seguimiento) -->
+            <a href="https://instagram.com/alabolcarbroker" class="link" target="_blank" rel="noopener">
+                <div class="link-icon">📸</div>
+                <div class="link-content">
+                    <div class="link-title">Síguenos en Instagram</div>
+                    <div class="link-description">Contenido diario y casos de éxito</div>
+                </div>
+            </a>
+
+            <!-- 7. Sitio Web (Información completa) -->
+            <a href="./index.html" class="link">
+                <div class="link-icon">🌐</div>
+                <div class="link-content">
+                    <div class="link-title">Sitio Web Oficial</div>
+                    <div class="link-description">Explora el Tinder de los Autos</div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>© 2026 Alabol Car Broker</p>
+            <p><a href="./index.html">SITIO OFICIAL</a></p>
+        </div>
+    </div>
+
+    <!-- Analytics -->
+    <script>
+        // Track clicks
+        document.querySelectorAll('.link').forEach((link, index) => {
+            link.addEventListener('click', function () {
+                const title = this.querySelector('.link-title').textContent;
+                console.log(`Click en link #${index + 1}:`, title);
+            });
+        });
+
+        // Smooth scroll effect
+        document.addEventListener('DOMContentLoaded', function () {
+            const links = document.querySelectorAll('.link');
+            links.forEach((link, index) => {
+                link.style.animationDelay = `${0.1 * index}s`;
+            });
+        });
+    </script>
+</body>
+
+</html>

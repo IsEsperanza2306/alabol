@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Espera VIP | Alabol Car Broker</title>
+    <meta name="description"
+        content="Regístrate en la Lista VIP de Alabol Car Broker. Te buscamos tu auto ideal en subastas de USA con ahorro del 30-40%.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a1f1a;
+            --bg-mid: #0d2921;
+            --bg-light: #0f3329;
+            --gold: #d4af37;
+            --gold-light: #f4e5b0;
+            --gold-dim: rgba(212, 175, 55, 0.3);
+            --green-text: #a8c5b8;
+            --glass-bg: rgba(15, 51, 41, 0.5);
+            --glass-border: rgba(212, 175, 55, 0.25);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-dark);
+            min-height: 100vh;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated gradient background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg,
+                    #0a1f1a 0%, #0d2921 25%, #0f3329 50%, #0d2921 75%, #0a1f1a 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            z-index: -2;
+        }
+
+        /* Gold particles */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(2px 2px at 20% 30%, rgba(212, 175, 55, 0.3), transparent),
+                radial-gradient(2px 2px at 60% 70%, rgba(212, 175, 55, 0.2), transparent),
+                radial-gradient(1px 1px at 50% 50%, rgba(212, 175, 55, 0.2), transparent),
+                radial-gradient(1px 1px at 80% 10%, rgba(212, 175, 55, 0.3), transparent),
+                radial-gradient(1px 1px at 30% 80%, rgba(212, 175, 55, 0.2), transparent),
+                radial-gradient(1.5px 1.5px at 10% 60%, rgba(212, 175, 55, 0.25), transparent),
+                radial-gradient(1px 1px at 90% 40%, rgba(212, 175, 55, 0.2), transparent);
+            background-size: 200% 200%;
+            animation: floatParticles 20s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes gradientShift {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        @keyframes floatParticles {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            33% {
+                transform: translate(30px, -30px);
+            }
+
+            66% {
+                transform: translate(-20px, 20px);
+            }
+        }
+
+        .container {
+            max-width: 520px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* VIP Badge */
+        .vip-badge {
+            text-align: center;
+            margin-bottom: 16px;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        .vip-badge span {
+            display: inline-block;
+            background: linear-gradient(135deg, #d4af37, #f4e5b0, #d4af37);
+            background-size: 200% auto;
+            color: var(--bg-dark);
+            font-weight: 700;
+            font-size: 11px;
+            letter-spacing: 3px;
+            padding: 8px 24px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 25px rgba(212, 175, 55, 0.5), 0 0 40px rgba(212, 175, 55, 0.2);
+            animation: shimmerBadge 3s linear infinite;
+        }
+
+        @keyframes shimmerBadge {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Main Card - Glassmorphism */
+        .card {
+            background: linear-gradient(135deg,
+                    rgba(15, 51, 41, 0.6) 0%,
+                    rgba(13, 41, 33, 0.6) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 32px 28px;
+            border: 2px solid var(--glass-border);
+            box-shadow:
+                0 24px 80px rgba(0, 0, 0, 0.6),
+                0 0 40px rgba(212, 175, 55, 0.1),
+                inset 0 1px 0 rgba(212, 175, 55, 0.1);
+            animation: cardIn 0.5s ease-out 0.2s both;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Scan line effect */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(180deg,
+                    transparent 0%,
+                    rgba(212, 175, 55, 0.03) 40%,
+                    rgba(212, 175, 55, 0.06) 50%,
+                    rgba(212, 175, 55, 0.03) 60%,
+                    transparent 100%);
+            animation: scanLine 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes scanLine {
+            0% {
+                top: -50%;
+            }
+
+            100% {
+                top: 150%;
+            }
+        }
+
+        @keyframes cardIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.97);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Logo / Header */
+        .logo-section {
+            text-align: center;
+            margin-bottom: 6px;
+            position: relative;
+        }
+
+        .logo-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 14px;
+        }
+
+        .logo-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 155px;
+            height: 155px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.4) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: logoGlowPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes logoGlowPulse {
+
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.15);
+                opacity: 0.9;
+            }
+        }
+
+        .logo-circle {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            background: rgba(15, 51, 41, 0.3);
+            border-radius: 50%;
+            border: 3px solid rgba(212, 175, 55, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow:
+                0 0 40px rgba(212, 175, 55, 0.3),
+                0 10px 50px rgba(0, 0, 0, 0.5),
+                inset 0 0 30px rgba(212, 175, 55, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-circle img {
+            width: 105px;
+            height: 105px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.5));
+        }
+
+        .logo-section h1 {
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(135deg,
+                    #d4af37 0%, #f4e5b0 25%, #d4af37 50%, #c9a961 75%, #d4af37 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1.5px;
+            animation: shimmerText 3s linear infinite;
+            margin-bottom: 4px;
+        }
+
+        @keyframes shimmerText {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        .logo-section p {
+            color: var(--green-text);
+            font-size: 14px;
+            line-height: 1.4;
+            font-weight: 300;
+        }
+
+        .logo-section .highlight {
+            color: var(--gold);
+            font-weight: 600;
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+        }
+
+        /* Trust badges */
+        .trust-row {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin: 16px 0 22px;
+            flex-wrap: wrap;
+        }
+
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            color: var(--green-text);
+            font-weight: 500;
+            background: rgba(212, 175, 55, 0.08);
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+        }
+
+        .trust-item .icon {
+            font-size: 13px;
+            filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.5));
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 28px;
+        }
+
+        .progress-segment {
+            flex: 1;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 4px;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-segment.active {
+            background: var(--gold);
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.5);
+        }
+
+        .progress-segment.active::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.6) 50%, transparent 100%);
+            animation: progressShimmer 2s infinite;
+        }
+
+        @keyframes progressShimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .progress-label {
+            font-size: 11px;
+            color: var(--gold);
+            font-weight: 600;
+            white-space: nowrap;
+            min-width: 42px;
+            text-align: right;
+            letter-spacing: 1px;
+        }
+
+        /* Steps */
+        .step {
+            display: none;
+            animation: fadeSlideIn 0.4s ease-out;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .step-header {
+            margin-bottom: 22px;
+        }
+
+        .step-icon {
+            font-size: 36px;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.4));
+        }
+
+        .step-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+
+        .step-subtitle {
+            font-size: 13px;
+            color: rgba(168, 197, 184, 0.6);
+        }
+
+        /* Form elements */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 7px;
+            color: var(--green-text);
+            font-weight: 600;
+            font-size: 13px;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group label .required {
+            color: var(--gold);
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid rgba(212, 175, 55, 0.2);
+            border-radius: 14px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.3s;
+            background: rgba(10, 31, 26, 0.6);
+            color: white;
+            backdrop-filter: blur(5px);
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2), 0 0 0 4px rgba(212, 175, 55, 0.08);
+            background: rgba(10, 31, 26, 0.8);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: rgba(168, 197, 184, 0.35);
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23d4af37' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 24px;
+            padding-right: 40px;
+        }
+
+        select option {
+            background: #0a1f1a;
+            color: white;
+        }
+
+        /* Multi-select chips */
+        .chip-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .chip {
+            padding: 10px 6px;
+            border: 2px solid rgba(212, 175, 55, 0.15);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(10, 31, 26, 0.4);
+            text-align: center;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--green-text);
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chip .chip-icon {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+
+        .chip::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .chip:hover::before {
+            left: 100%;
+        }
+
+        .chip:hover {
+            border-color: var(--gold-dim);
+            background: rgba(212, 175, 55, 0.08);
+        }
+
+        .chip.selected {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--gold-light);
+            font-weight: 700;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2), inset 0 0 15px rgba(212, 175, 55, 0.05);
+        }
+
+        .chip.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 3px;
+            right: 5px;
+            font-size: 10px;
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        /* Single select option cards */
+        .option-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .option-card {
+            padding: 14px 16px;
+            border: 2px solid rgba(212, 175, 55, 0.15);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(10, 31, 26, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.08), transparent);
+            transition: left 0.5s;
+        }
+
+        .option-card:hover::before {
+            left: 100%;
+        }
+
+        .option-card:hover {
+            border-color: var(--gold-dim);
+            transform: translateX(4px);
+            background: rgba(212, 175, 55, 0.06);
+        }
+
+        .option-card.selected {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.12);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.15), inset 0 0 20px rgba(212, 175, 55, 0.05);
+        }
+
+        .option-card .option-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+            filter: drop-shadow(0 0 6px rgba(212, 175, 55, 0.4));
+        }
+
+        .option-card .option-text {
+            flex: 1;
+        }
+
+        .option-card .option-text .main {
+            font-weight: 600;
+            color: white;
+            font-size: 14px;
+        }
+
+        .option-card .option-text .sub {
+            font-size: 11px;
+            color: rgba(168, 197, 184, 0.5);
+            margin-top: 2px;
+        }
+
+        .option-card.selected .option-text .main {
+            color: var(--gold-light);
+        }
+
+        .option-card .check {
+            width: 22px;
+            height: 22px;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            font-size: 12px;
+            color: transparent;
+        }
+
+        .option-card.selected .check {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: var(--bg-dark);
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+        }
+
+        /* Range row */
+        .range-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* Navigation */
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 28px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--green-text);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            flex: 0.4;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #d4af37 0%, #f4e5b0 50%, #d4af37 100%);
+            background-size: 200% auto;
+            color: var(--bg-dark);
+            border: none;
+            box-shadow:
+                0 0 25px rgba(212, 175, 55, 0.4),
+                0 8px 30px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            animation: goldShine 3s linear infinite;
+        }
+
+        .btn-next::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+            transition: left 0.6s;
+        }
+
+        .btn-next:hover:not(:disabled)::before {
+            left: 100%;
+        }
+
+        .btn-next:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow:
+                0 0 40px rgba(212, 175, 55, 0.6),
+                0 12px 40px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+
+        .btn-next:active:not(:disabled) {
+            transform: translateY(-1px) scale(1.01);
+        }
+
+        .btn-next:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            animation: none;
+        }
+
+        @keyframes goldShine {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            100% {
+                background-position: 200% 50%;
+            }
+        }
+
+        /* Success screen */
+        .success-screen {
+            display: none;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .success-screen.active {
+            display: block;
+            animation: fadeSlideIn 0.5s ease-out;
+        }
+
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d4af37, #f4e5b0, #d4af37);
+            background-size: 200% auto;
+            margin: 0 auto 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.5), 0 12px 40px rgba(0, 0, 0, 0.4);
+            animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55), pulseGlow 2s ease-in-out infinite 0.6s;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0);
+            }
+
+            60% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes pulseGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 30px rgba(212, 175, 55, 0.4), 0 12px 40px rgba(0, 0, 0, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 60px rgba(212, 175, 55, 0.6), 0 12px 40px rgba(0, 0, 0, 0.4);
+            }
+        }
+
+        .success-title {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #d4af37, #f4e5b0, #d4af37);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmerText 3s linear infinite;
+            margin-bottom: 10px;
+        }
+
+        .success-message {
+            font-size: 14px;
+            color: var(--green-text);
+            line-height: 1.6;
+            margin-bottom: 24px;
+            font-weight: 300;
+        }
+
+        .success-summary {
+            background: rgba(212, 175, 55, 0.06);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .success-summary h3 {
+            font-size: 12px;
+            color: var(--gold);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 7px 0;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+            font-size: 13px;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-row .label {
+            color: var(--green-text);
+            font-weight: 400;
+        }
+
+        .summary-row .value {
+            font-weight: 600;
+            color: white;
+        }
+
+        .cta-whatsapp {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 36px;
+            background: #25D366;
+            color: white;
+            border-radius: 16px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            transition: all 0.4s;
+            box-shadow: 0 0 30px rgba(37, 211, 102, 0.3), 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .cta-whatsapp:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 0 50px rgba(37, 211, 102, 0.5), 0 12px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .cta-group {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: rgba(37, 211, 102, 0.15);
+            color: #25D366;
+            border: 2px solid rgba(37, 211, 102, 0.4);
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.4s;
+            margin-top: 12px;
+        }
+
+        .cta-group:hover {
+            background: rgba(37, 211, 102, 0.25);
+            border-color: #25D366;
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(37, 211, 102, 0.3);
+        }
+
+        .cta-secondary {
+            display: block;
+            margin-top: 14px;
+            color: var(--gold);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .cta-secondary:hover {
+            color: var(--gold-light);
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 16px;
+            color: rgba(168, 197, 184, 0.3);
+            font-size: 12px;
+        }
+
+        .footer a {
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .footer a:hover {
+            color: var(--gold-light);
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+
+        /* Loading Overlay */
+        .sending-overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 31, 26, 0.92);
+            backdrop-filter: blur(10px);
+            z-index: 10;
+            border-radius: 24px;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sending-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 44px;
+            height: 44px;
+            border: 3px solid rgba(212, 175, 55, 0.2);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .sending-text {
+            font-weight: 600;
+            color: var(--gold-light);
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        .helper-text {
+            font-size: 11px;
+            color: rgba(168, 197, 184, 0.35);
+            margin-top: 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 400px) {
+            .card {
+                padding: 24px 20px;
+            }
+
+            .chip-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .logo h1 {
+                font-size: 22px;
+            }
+
+            .step-title {
+                font-size: 18px;
+            }
+
+            .trust-row {
+                gap: 8px;
+            }
+
+            .trust-item {
+                font-size: 10px;
+                padding: 4px 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="vip-badge">
+            <span>⭐ Lista de Espera VIP</span>
+        </div>
+
+        <div class="card">
+            <!-- Sending overlay -->
+            <div class="sending-overlay" id="sendingOverlay">
+                <div class="spinner"></div>
+                <div class="sending-text">Registrando tu solicitud...</div>
+            </div>
+
+            <div class="logo-section">
+                <div class="logo-container">
+                    <div class="logo-glow"></div>
+                    <div class="logo-circle">
+                        <img src="../logo-circular.png" alt="Alabol Car Broker">
+                    </div>
+                </div>
+                <h1>ALABOL CAR BROKER</h1>
+                <p>Te buscamos <span class="highlight">TU auto ideal</span> en subastas USA</p>
+            </div>
+
+            <div class="trust-row">
+                <div class="trust-item"><span class="icon">💰</span> Ahorra 30-40%</div>
+                <div class="trust-item"><span class="icon">🔍</span> Búsqueda gratis</div>
+                <div class="trust-item"><span class="icon">🔒</span> Datos seguros</div>
+            </div>
+
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-segment active"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-label" id="progressLabel">1 / 5</div>
+            </div>
+
+            <form id="vipForm" autocomplete="off">
+                <!-- STEP 1: Contact Info -->
+                <div class="step active" data-step="0">
+                    <div class="step-header">
+                        <div class="step-icon">👤</div>
+                        <div class="step-title">¿Cómo te contactamos?</div>
+                        <div class="step-subtitle">Solo necesitamos estos datos</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Nombre <span class="required">*</span></label>
+                        <input type="text" id="nombre" placeholder="Tu nombre completo" required>
+                    </div>
+                    <div class="form-group">
+                        <label>WhatsApp <span class="required">*</span></label>
+                        <input type="tel" id="whatsapp" placeholder="+52 1 55 1234 5678" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Ciudad / Estado <span class="required">*</span></label>
+                        <input type="text" id="ciudad" placeholder="Ej: Monterrey, NL" required>
+                    </div>
+                </div>
+
+                <!-- STEP 2: Vehicle Type & Brand -->
+                <div class="step" data-step="1">
+                    <div class="step-header">
+                        <div class="step-icon">🚘</div>
+                        <div class="step-title">¿Qué tipo de auto buscas?</div>
+                        <div class="step-subtitle">Selecciona las marcas que te interesan</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de vehículo <span class="required">*</span></label>
+                        <div class="option-list" id="tipoVehiculo">
+                            <div class="option-card" data-value="sedan">
+                                <span class="option-icon">🚗</span>
+                                <div class="option-text">
+                                    <div class="main">Sedán</div>
+                                    <div class="sub">Camry, Civic, Corolla, Altima...</div>
+                                </div>
+                                <div class="check"></div>
+                            </div>
+                            <div class="option-card" data-value="suv">
+                                <span class="option-icon">🚙</span>
+                                <div class="option-text">
+                                    <div class="main">SUV / Camioneta</div>
+                                    <div class="sub">CR-V, RAV4, Explorer, Highlander...</div>
+                                </div>
+                                <div class="check"></div>
+                            </div>
+                            <div class="option-card" data-value="pickup">
+                                <span class="option-icon">🛻</span>
+                                <div class="option-text">
+                                    <div class="main">Pick-up</div>
+                                    <div class="sub">RAM, F-150, Silverado, Tacoma...</div>
+                                </div>
+                                <div class="check"></div>
+                            </div>
+                            <div class="option-card" data-value="deportivo">
+                                <span class="option-icon">🏎️</span>
+                                <div class="option-text">
+                                    <div class="main">Deportivo / Lujo</div>
+                                    <div class="sub">Mustang, Camaro, BMW, Mercedes...</div>
+                                </div>
+                                <div class="check"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Marcas preferidas (selecciona varias)</label>
+                        <div class="chip-grid" id="marcasGrid">
+                            <div class="chip" data-value="Toyota"><span class="chip-icon">🇯🇵</span>Toyota</div>
+                            <div class="chip" data-value="Honda"><span class="chip-icon">🇯🇵</span>Honda</div>
+                            <div class="chip" data-value="Nissan"><span class="chip-icon">🇯🇵</span>Nissan</div>
+                            <div class="chip" data-value="Ford"><span class="chip-icon">🇺🇸</span>Ford</div>
+                            <div class="chip" data-value="Chevrolet"><span class="chip-icon">🇺🇸</span>Chevrolet</div>
+                            <div class="chip" data-value="RAM/Dodge"><span class="chip-icon">🇺🇸</span>RAM/Dodge</div>
+                            <div class="chip" data-value="BMW"><span class="chip-icon">🇩🇪</span>BMW</div>
+                            <div class="chip" data-value="Mercedes"><span class="chip-icon">🇩🇪</span>Mercedes</div>
+                            <div class="chip" data-value="Otra"><span class="chip-icon">🔧</span>Otra</div>
+                        </div>
+                        <p class="helper-text">Puedes seleccionar más de una</p>
+                    </div>
+                </div>
+
+                <!-- STEP 3: Specifics -->
+                <div class="step" data-step="2">
+                    <div class="step-header">
+                        <div class="step-icon">📋</div>
+                        <div class="step-title">Detalles del auto</div>
+                        <div class="step-subtitle">Mientras más específico, mejor el match</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Modelo específico (si ya lo sabes)</label>
+                        <input type="text" id="modelo" placeholder="Ej: CR-V, Camry, F-150...">
+                        <p class="helper-text">Déjalo vacío si estás abierto a opciones</p>
+                    </div>
+                    <div class="form-group">
+                        <label>Rango de año <span class="required">*</span></label>
+                        <div class="range-row">
+                            <select id="anioDesde">
+                                <option value="">Desde...</option>
+                                <option value="2026">2026</option>
+                                <option value="2025">2025</option>
+                                <option value="2024">2024</option>
+                                <option value="2023">2023</option>
+                                <option value="2022">2022</option>
+                                <option value="2021">2021</option>
+                                <option value="2020">2020</option>
+                                <option value="2019">2019</option>
+                                <option value="2018" selected>2018</option>
+                                <option value="2017">2017</option>
+                                <option value="2016">2016</option>
+                                <option value="2015">2015</option>
+                                <option value="2014">2014</option>
+                                <option value="2013">2013</option>
+                                <option value="2012">2012</option>
+                            </select>
+                            <select id="anioHasta">
+                                <option value="">Hasta...</option>
+                                <option value="2026" selected>2026</option>
+                                <option value="2025">2025</option>
+                                <option value="2024">2024</option>
+                                <option value="2023">2023</option>
+                                <option value="2022">2022</option>
+                                <option value="2021">2021</option>
+                                <option value="2020">2020</option>
+                                <option value="2019">2019</option>
+                                <option value="2018">2018</option>
+                                <option value="2017">2017</option>
+                                <option value="2016">2016</option>
+                                <option value="2015">2015</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Características importantes</label>
+                        <div class="chip-grid" id="caracteristicasGrid">
+                            <div class="chip" data-value="automatico"><span class="chip-icon">⚙️</span>Automático</div>
+                            <div class="chip" data-value="4x4"><span class="chip-icon">🏔️</span>4x4 / AWD</div>
+                            <div class="chip" data-value="bajo_millaje"><span class="chip-icon">📏</span>Bajo Millaje
+                            </div>
+                            <div class="chip" data-value="piel"><span class="chip-icon">💺</span>Piel</div>
+                            <div class="chip" data-value="techo"><span class="chip-icon">☀️</span>T. Solar</div>
+                            <div class="chip" data-value="no_importa"><span class="chip-icon">👍</span>Flexible</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 4: Budget -->
+                <div class="step" data-step="3">
+                    <div class="step-header">
+                        <div class="step-icon">💰</div>
+                        <div class="step-title">Presupuesto y disponibilidad</div>
+                        <div class="step-subtitle">Para buscarte opciones reales</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Presupuesto máximo (MXN) <span class="required">*</span></label>
+                        <div class="option-list" id="presupuesto">
+                            <div class="option-card" data-value="100-150k">
+                                <span class="option-icon">💵</span>
+                                <div class="option-text">
+                                    <div class="main">$100,000 - $150,000</div>
+                                </div>
+                                <div class="check"></div>
+                            </div>
+                            <div class="option-card" data-value="150-250k">
+                                <span class="option-icon">💰</span>
+                                <div class="option-text">
+                                    <div class="main">$150,000 - $250,000</div>
+                                </div>
+                                <div class="check"></div>
+                            </div>
+                            <div class="option-card" data-value="250-400k">
+                                <span class="option-icon">🤑</span>
+                                <div class="option-text">
+                                    <div class="main">$250,000 - $400,000</div>
+                                </div>
+                                <div class="check"></div>
+                            </div>
+                            <div class="option-card" data-value="400k+">
+                                <span class="option-icon">💎</span>
+                                <div class="option-text">
+                                    <div class="main">Más de $400,000</div>
+                                </div>
+                                <div class="check"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>¿Ya tienes el dinero? <span class="required">*</span></label>
+                        <div class="option-list" id="dineroListo">
+                            <div class="option-card" data-value="si" data-priority="alta">
+                                <span class="option-icon">✅</span>
+                                <div class="option-text">
+                                    <div class="main">Sí, dinero en mano</div>
+                                    <div class="sub">Listo para comprar cuando aparezca el auto</div>
+                                </div>
+                                <div class="check"></div>
+                            </div>
+                            <div class="option-card" data-value="pronto" data-priority="media">
+                                <span class="option-icon">⏳</span>
+                                <div class="option-text">
+                                    <div class="main">Lo tendré en 1-2 semanas</div>
+                                    <div class="sub">Casi listo</div>
+                                </div>
+                                <div class="check"></div>
+                            </div>
+                            <div class="option-card" data-value="ahorrando" data-priority="baja">
+                                <span class="option-icon">🏦</span>
+                                <div class="option-text">
+                                    <div class="main">Estoy ahorrando</div>
+                                    <div class="sub">Quiero ir viendo opciones</div>
+                                </div>
+                                <div class="check"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 5: Use & Notes -->
+                <div class="step" data-step="4">
+                    <div class="step-header">
+                        <div class="step-icon">🎯</div>
+                        <div class="step-title">Últimos detalles</div>
+                        <div class="step-subtitle">Para personalizar tu búsqueda</div>
+                    </div>
+                    <div class="form-group">
+                        <label>¿Para qué es el auto? <span class="required">*</span></label>
+                        <div class="option-list" id="usoAuto">
+                            <div class="option-card" data-value="personal">
+                                <span class="option-icon">👨‍👩‍👧</span>
+                                <div class="option-text">
+                                    <div class="main">Uso personal / familiar</div>
+                                </div>
+                                <div class="check"></div>
+                            </div>
+                            <div class="option-card" data-value="negocio">
+                                <span class="option-icon">💼</span>
+                                <div class="option-text">
+                                    <div class="main">Para mi negocio</div>
+                                </div>
+                                <div class="check"></div>
+                            </div>
+                            <div class="option-card" data-value="reventa">
+                                <span class="option-icon">📈</span>
+                                <div class="option-text">
+                                    <div class="main">Reventa / Inversión</div>
+                                </div>
+                                <div class="check"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>¿Algo más que debamos saber? (opcional)</label>
+                        <textarea id="notas"
+                            placeholder="Ej: Prefiero color blanco o negro, necesito que sea de bajo consumo, quiero un auto para Uber..."></textarea>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Success Screen -->
+            <div class="success-screen" id="successScreen">
+                <div class="success-icon">🎉</div>
+                <div class="success-title">¡Estás en la Lista VIP!</div>
+                <div class="success-message">
+                    Nuestro equipo ya tiene tus preferencias. Te contactaremos cuando encontremos un auto que haga match
+                    con lo que buscas.
+                </div>
+                <div class="success-summary" id="summaryBox">
+                    <h3>📋 Tu búsqueda</h3>
+                </div>
+                <a href="#" class="cta-whatsapp" id="ctaWhatsApp">💬 Escribir por WhatsApp</a>
+                <a href="https://chat.whatsapp.com/LOOtnIsTUXJ6kaioXSsYam" class="cta-group" target="_blank"
+                    rel="noopener">👥 Únete al Grupo VIP de Oportunidades</a>
+                <a href="../index.html" class="cta-secondary">🌐 Visitar alabolcar.vip</a>
+            </div>
+
+            <!-- Navigation -->
+            <div class="nav-buttons" id="navButtons">
+                <button type="button" class="btn btn-back" id="backBtn" style="display:none;">← Atrás</button>
+                <button type="button" class="btn btn-next" id="nextBtn">Siguiente →</button>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>🔒 Tus datos están protegidos · <a href="../index.html">alabolcar.vip</a></p>
+        </div>
+    </div>
+
+    <script>
+        // =====================
+        // STATE
+        // =====================
+        let currentStep = 0;
+        const totalSteps = 5;
+        const formData = {
+            nombre: '', whatsapp: '', ciudad: '',
+            tipoVehiculo: '', marcas: [], modelo: '',
+            anioDesde: '', anioHasta: '', caracteristicas: [],
+            presupuesto: '', dineroListo: '', prioridad: '',
+            usoAuto: '', notas: ''
+        };
+
+        // =====================
+        // DOM
+        // =====================
+        const steps = document.querySelectorAll('.step');
+        const progressSegments = document.querySelectorAll('.progress-segment');
+        const progressLabel = document.getElementById('progressLabel');
+        const backBtn = document.getElementById('backBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const navButtons = document.getElementById('navButtons');
+        const successScreen = document.getElementById('successScreen');
+        const sendingOverlay = document.getElementById('sendingOverlay');
+
+        // =====================
+        // CHIP MULTI-SELECT
+        // =====================
+        document.querySelectorAll('.chip-grid .chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                chip.classList.toggle('selected');
+                updateValidation();
+            });
+        });
+
+        // =====================
+        // SINGLE-SELECT
+        // =====================
+        document.querySelectorAll('.option-list').forEach(list => {
+            list.querySelectorAll('.option-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    list.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    card.querySelector('.check').textContent = '✓';
+                    list.querySelectorAll('.option-card:not(.selected) .check').forEach(c => c.textContent = '');
+                    updateValidation();
+                });
+            });
+        });
+
+        // =====================
+        // INPUT TRACKING
+        // =====================
+        document.querySelectorAll('input, select, textarea').forEach(el => {
+            el.addEventListener('input', updateValidation);
+            el.addEventListener('change', updateValidation);
+        });
+
+        // =====================
+        // NAVIGATION
+        // =====================
+        nextBtn.addEventListener('click', () => {
+            if (!validateStep(currentStep)) return;
+            collectStepData(currentStep);
+            if (currentStep < totalSteps - 1) {
+                currentStep++;
+                renderStep();
+            } else {
+                submitForm();
+            }
+        });
+
+        backBtn.addEventListener('click', () => {
+            if (currentStep > 0) { currentStep--; renderStep(); }
+        });
+
+        function renderStep() {
+            steps.forEach((s, i) => s.classList.toggle('active', i === currentStep));
+            progressSegments.forEach((seg, i) => seg.classList.toggle('active', i <= currentStep));
+            progressLabel.textContent = `${currentStep + 1} / ${totalSteps}`;
+            backBtn.style.display = currentStep > 0 ? 'block' : 'none';
+            nextBtn.textContent = currentStep === totalSteps - 1 ? '🚀 Registrarme' : 'Siguiente →';
+            updateValidation();
+            document.querySelector('.card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // =====================
+        // VALIDATION
+        // =====================
+        function updateValidation() { nextBtn.disabled = !validateStep(currentStep); }
+
+        function validateStep(step) {
+            switch (step) {
+                case 0:
+                    return document.getElementById('nombre').value.trim() !== '' &&
+                        document.getElementById('whatsapp').value.trim() !== '' &&
+                        document.getElementById('ciudad').value.trim() !== '';
+                case 1: return document.querySelector('#tipoVehiculo .option-card.selected') !== null;
+                case 2: return document.getElementById('anioDesde').value !== '' &&
+                    document.getElementById('anioHasta').value !== '';
+                case 3: return document.querySelector('#presupuesto .option-card.selected') !== null &&
+                    document.querySelector('#dineroListo .option-card.selected') !== null;
+                case 4: return document.querySelector('#usoAuto .option-card.selected') !== null;
+                default: return true;
+            }
+        }
+
+        // =====================
+        // DATA COLLECTION
+        // =====================
+        function collectStepData(step) {
+            switch (step) {
+                case 0:
+                    formData.nombre = document.getElementById('nombre').value.trim();
+                    formData.whatsapp = document.getElementById('whatsapp').value.trim();
+                    formData.ciudad = document.getElementById('ciudad').value.trim();
+                    break;
+                case 1:
+                    const tipoEl = document.querySelector('#tipoVehiculo .option-card.selected');
+                    formData.tipoVehiculo = tipoEl ? tipoEl.dataset.value : '';
+                    formData.marcas = [...document.querySelectorAll('#marcasGrid .chip.selected')].map(c => c.dataset.value);
+                    break;
+                case 2:
+                    formData.modelo = document.getElementById('modelo').value.trim();
+                    formData.anioDesde = document.getElementById('anioDesde').value;
+                    formData.anioHasta = document.getElementById('anioHasta').value;
+                    formData.caracteristicas = [...document.querySelectorAll('#caracteristicasGrid .chip.selected')].map(c => c.dataset.value);
+                    break;
+                case 3:
+                    const presEl = document.querySelector('#presupuesto .option-card.selected');
+                    formData.presupuesto = presEl ? presEl.dataset.value : '';
+                    const dineroEl = document.querySelector('#dineroListo .option-card.selected');
+                    formData.dineroListo = dineroEl ? dineroEl.dataset.value : '';
+                    formData.prioridad = dineroEl ? (dineroEl.dataset.priority || '') : '';
+                    break;
+                case 4:
+                    const usoEl = document.querySelector('#usoAuto .option-card.selected');
+                    formData.usoAuto = usoEl ? usoEl.dataset.value : '';
+                    formData.notas = document.getElementById('notas').value.trim();
+                    break;
+            }
+        }
+
+        // =====================
+        // SUBMIT
+        // =====================
+        async function submitForm() {
+            collectStepData(currentStep);
+            sendingOverlay.classList.add('active');
+
+            const payload = {
+                fecha: new Date().toISOString(),
+                nombre: formData.nombre, whatsapp: formData.whatsapp, ciudad: formData.ciudad,
+                tipo_vehiculo: formData.tipoVehiculo, marcas: formData.marcas.join(', '),
+                modelo: formData.modelo || 'Abierto a opciones',
+                anio_rango: `${formData.anioDesde} - ${formData.anioHasta}`,
+                caracteristicas: formData.caracteristicas.join(', ') || 'Flexible',
+                presupuesto: formData.presupuesto, dinero_listo: formData.dineroListo,
+                prioridad: formData.prioridad, uso: formData.usoAuto,
+                notas: formData.notas || '', fuente: 'Formulario VIP'
+            };
+
+            try {
+                const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz3aSvBccbijo6MkbS3FgGfrEDbaruIiedi6ndr6bNc6bFshebxKiz6YRhh5UTN-v0nlw/exec';
+                await fetch(SCRIPT_URL, {
+                    method: 'POST', mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (err) { console.warn('No se pudo guardar en Sheets:', err); }
+
+            console.log('📋 Datos VIP:', payload);
+            await new Promise(r => setTimeout(r, 1200));
+            sendingOverlay.classList.remove('active');
+            showSuccess();
+        }
+
+        // =====================
+        // SUCCESS
+        // =====================
+        function showSuccess() {
+            steps.forEach(s => s.classList.remove('active'));
+            navButtons.style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.querySelector('.trust-row').style.display = 'none';
+            document.querySelector('.logo-section p').innerHTML = '¡Registro completado!';
+
+            const tipoLabels = { sedan: '🚗 Sedán', suv: '🚙 SUV / Camioneta', pickup: '🛻 Pick-up', deportivo: '🏎️ Deportivo / Lujo' };
+            const presupuestoLabels = { '100-150k': '$100k - $150k', '150-250k': '$150k - $250k', '250-400k': '$250k - $400k', '400k+': '$400k+' };
+
+            const summaryBox = document.getElementById('summaryBox');
+            summaryBox.innerHTML = `
+                <h3>📋 Tu búsqueda</h3>
+                <div class="summary-row"><span class="label">Tipo</span><span class="value">${tipoLabels[formData.tipoVehiculo] || formData.tipoVehiculo}</span></div>
+                ${formData.marcas.length ? `<div class="summary-row"><span class="label">Marcas</span><span class="value">${formData.marcas.join(', ')}</span></div>` : ''}
+                ${formData.modelo ? `<div class="summary-row"><span class="label">Modelo</span><span class="value">${formData.modelo}</span></div>` : ''}
+                <div class="summary-row"><span class="label">Año</span><span class="value">${formData.anioDesde} - ${formData.anioHasta}</span></div>
+                <div class="summary-row"><span class="label">Presupuesto</span><span class="value">${presupuestoLabels[formData.presupuesto] || formData.presupuesto}</span></div>
+            `;
+
+            const msg = encodeURIComponent(
+                `Hola, me registré en la Lista VIP de Alabol 🚗\n\n` +
+                `Busco: ${tipoLabels[formData.tipoVehiculo] || formData.tipoVehiculo}\n` +
+                `${formData.marcas.length ? 'Marcas: ' + formData.marcas.join(', ') + '\n' : ''}` +
+                `${formData.modelo ? 'Modelo: ' + formData.modelo + '\n' : ''}` +
+                `Año: ${formData.anioDesde}-${formData.anioHasta}\n` +
+                `Presupuesto: ${presupuestoLabels[formData.presupuesto] || formData.presupuesto} MXN\n\n` +
+                `¡Quedo atento a opciones! 🙌`
+            );
+            document.getElementById('ctaWhatsApp').href = `https://wa.me/525568667571?text=${msg}`;
+            successScreen.classList.add('active');
+        }
+
+        // Init
+        updateValidation();
+    </script>
+</body>
+
+</html>

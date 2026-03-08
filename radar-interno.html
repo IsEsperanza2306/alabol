@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alabol | Monitor de Tráfico y Demanda Interna</title>
+    <!-- Same fonts and basic styling as the other portals for brand consistency -->
+    <link href="https://fonts.googleapis.com/css2?family=General+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Chart.js for Business Intelligence -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Simple Pre-Launch Security
+        const ACCESS_CODE = "alabol2026"; // Puedes cambiar esto
+        if (sessionStorage.getItem('alabol_admin_auth') !== 'true') {
+            const pass = prompt("Acceso Restringido - Alabol Radar\nPor favor, ingresa el código de acceso:");
+            if (pass === ACCESS_CODE) {
+                sessionStorage.setItem('alabol_admin_auth', 'true');
+            } else {
+                alert("Código incorrecto.");
+                window.location.href = "./index.html";
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --primary: #d4af37;
+            --bg-dark: #0a1f1c;
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --text: #ffffff;
+            --text-muted: #a0aab2;
+            --success: #10B981;
+            --danger: #EF4444;
+            --warning: #F59E0B;
+            --teal: #14b8a6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'General Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: rgba(0, 0, 0, 0.2);
+            border-right: 1px solid var(--border);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .nav-item {
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: var(--bg-card);
+            color: var(--primary);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        /* Tab Management */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--text-muted);
+        }
+
+        /* Metrics Row */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .metric-title {
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .metric-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Cards & Sections */
+        .dashboard-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .section-header h2 {
+            font-size: 18px;
+            color: var(--primary);
+        }
+
+        /* Leads Table & Generic Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th,
+        td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Chips */
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge.buscando {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+
+        .badge.contactado {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .brand-model-chip {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-right: 5px;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+
+        .btn-action {
+            background: none;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-action:hover {
+            background: var(--primary);
+            color: var(--bg-dark);
+        }
+
+        .whatsapp-link {
+            color: #25D366;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+        }
+
+        .whatsapp-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Alert Box */
+        .demand-alert {
+            background: rgba(212, 175, 55, 0.1);
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .demand-alert-icon {
+            font-size: 24px;
+        }
+
+        /* Charts and BI Adjustments */
+        .canvas-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .alert-card {
+            background: rgba(20, 184, 166, 0.1);
+            /* Teal tinted */
+            border-left: 4px solid var(--teal);
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .alert-card:hover {
+            background: rgba(20, 184, 166, 0.15);
+        }
+
+        .text-success {
+            color: var(--success);
+        }
+
+        .c-teal {
+            color: var(--teal);
+        }
+
+        .c-gold {
+            color: var(--primary);
+        }
+
+        /* Hot Leads Heat Badges */
+        .heat-hot {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid #ef4444;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .heat-warm {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+            border: 1px solid #f59e0b;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .heat-cold {
+            background: rgba(160, 170, 178, 0.1);
+            color: #a0aab2;
+            border: 1px solid #a0aab2;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .clicks-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .clicks-bar-fill {
+            height: 6px;
+            border-radius: 3px;
+            background: var(--primary);
+            transition: width 0.4s ease;
+        }
+
+        .opt-out-tag {
+            font-size: 11px;
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 4px;
+            padding: 2px 6px;
+            display: inline-block;
+            margin-left: 4px;
+        }
+
+        @keyframes logoGlowPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.15);
+                opacity: 0.9;
+            }
+        }
+
+        .logo-container {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .logo-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.4) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: logoGlowPulse 3s ease-in-out infinite;
+        }
+
+        .logo-img {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-container">
+                <div class="logo-glow"></div>
+                <img src="logo-circular.png" alt="Alabol" class="logo-img">
+            </div>
+            <span style="font-size: 18px; font-weight: 700;">Radar HQ</span>
+        </div>
+        <nav class="nav-items">
+            <a onclick="switchTab('radar')" id="nav-radar" class="nav-item active">🔥 Radar de Demanda</a>
+            <a onclick="switchTab('analytics')" id="nav-analytics" class="nav-item">📊 Analíticas B2B</a>
+            <a onclick="switchTab('traffic')" id="nav-traffic" class="nav-item">📈 Tráfico & Leads</a>
+            <a onclick="switchTab('hotleads')" id="nav-hotleads" class="nav-item">🎯 Hot Leads</a>
+            <a href="portal-agencias.html" class="nav-item">🏢 Portal B2B</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+
+        <!-- ============================================== -->
+        <!-- TAB 1: RADAR DE DEMANDA (WISHLIST)             -->
+        <!-- ============================================== -->
+        <div id="tab-radar" class="tab-content active">
+            <div class="header">
+                <h1>Radar de Demanda (Wishlist)</h1>
+                <p>Monitorea en tiempo real lo que los clientes están buscando para conseguirlo en la red de agencias.
+                </p>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-title">Búsquedas Activas</div>
+                    <div class="metric-value" id="valActivos">0</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">Capital Listo (En Mano)</div>
+                    <div class="metric-value" id="valCapital">$0</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">Marca Más Buscada</div>
+                    <div class="metric-value" id="valTopMarca">-</div>
+                </div>
+            </div>
+
+            <div class="demand-alert" id="demandAlert" style="display: none;">
+                <div class="demand-alert-icon">⚡</div>
+                <div>
+                    <strong>Alta Demanda Detectada:</strong> <span id="alertText">...</span>
+                </div>
+            </div>
+
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h2>Últimos Buscadores (Leads)</h2>
+                    <button class="btn-action" onclick="fetchData(true)">🔄 Actualizar Data</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Cliente</th>
+                                <th>Busca...</th>
+                                <th>Presupuesto</th>
+                                <th>Dinero Listo</th>
+                                <th>Estatus</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leadsTableBody">
+                            <tr>
+                                <td colspan="7" style="text-align: center;">Cargando radar...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- TAB 2: ANALÍTICAS B2B (DASHBOARD DIRECTIVO)    -->
+        <!-- ============================================== -->
+        <div id="tab-analytics" class="tab-content">
+            <div class="header">
+                <h1>Analíticas de Inteligencia (BI)</h1>
+                <p>Dashboard Directivo: Toma de decisiones en tiempo real cruzando Inventario vs. Demanda Líquida.</p>
+            </div>
+
+            <div class="metrics-grid">
+                <!-- KPI 1, 2, 3: New Top-Level Metrics -->
+                <div class="metric-card" style="border-top: 4px solid var(--primary);">
+                    <div class="metric-title">Ticket Promedio de Búsqueda</div>
+                    <div class="metric-value" id="kpiAvgTicket">$0</div>
+                    <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Presupuesto de leads
+                        c/dinero en mano</div>
+                </div>
+                <div class="metric-card" style="border-top: 4px solid var(--teal);">
+                    <div class="metric-title">Modelo Más Buscado (Mes)</div>
+                    <div class="metric-value" id="kpiTopCar" style="color: var(--text); font-size: 24px;">-</div>
+                    <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;" id="kpiTopCarCount">-</div>
+                </div>
+                <div class="metric-card" style="border-top: 4px solid var(--success);">
+                    <div class="metric-title">Días Promedio en Inventario</div>
+                    <div class="metric-value" id="kpiAvgDays" style="color: var(--text);">0</div>
+                    <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Rotación de red Alabol
+                    </div>
+                </div>
+            </div>
+
+            <div class="metrics-grid">
+                <!-- KPI: Termómetro Geográfico -->
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h2>Demanda por Ciudad</h2>
+                        <span style="font-size:12px; color:var(--text-muted)">*Top Búsquedas Activas</span>
+                    </div>
+                    <div class="canvas-container" style="height: 250px;">
+                        <canvas id="chartGeo"></canvas>
+                    </div>
+                </div>
+
+                <!-- KPI: Oportunidades Express (Alertas) -->
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h2 class="c-teal">Oportunidades de Cierre Express</h2>
+                        <span style="font-size:12px; color:var(--text-muted)">*Matches cercanos (5%-15%
+                            diferencia)</span>
+                    </div>
+                    <div id="expressList" style="max-height: 250px; overflow-y: auto;">
+                        <div style="text-align:center; color:var(--text-muted); padding:20px;">Analizando matches
+                            cercanos...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI 3: Top Demandas sin Stock -->
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h2>3. Índice de Rotación Asegurada ("La Lista del Súper")</h2>
+                    <span style="font-size:12px; color:var(--text-muted)">*Autos más buscados que las agencias NO tienen
+                        en venta hoy.</span>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Marca Buscada</th>
+                                <th>Modelo Específico</th>
+                                <th>Clientes Formados (Demanda)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="topMissingTable">
+                            <tr>
+                                <td colspan="3" style="text-align: center;">Calculando déficit de inventario...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ============================================== -->
+        <!-- TAB 3: TRÁFICO & LEADS                        -->
+        <!-- ============================================== -->
+        <div id="tab-traffic" class="tab-content">
+            <div class="header">
+                <h1>Tráfico & Leads</h1>
+                <p>Métricas de visitas, conversión y abandono del embudo Matchmaker en tiempo real.</p>
+            </div>
+
+            <!-- Top-level traffic KPIs -->
+            <div class="metrics-grid">
+                <div class="metric-card" style="border-top: 4px solid var(--primary);">
+                    <div class="metric-title">Visitas Totales</div>
+                    <div class="metric-value" id="trafVisitas">-</div>
+                    <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Aperturas del Matchmaker
+                    </div>
+                </div>
+                <div class="metric-card" style="border-top: 4px solid var(--success);">
+                    <div class="metric-title">Leads Completados</div>
+                    <div class="metric-value" id="trafLeads">-</div>
+                    <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Formularios enviados con
+                        éxito</div>
+                </div>
+                <div class="metric-card" style="border-top: 4px solid var(--teal);">
+                    <div class="metric-title">Tasa de Conversión</div>
+                    <div class="metric-value" id="trafConversion" style="color: var(--teal);">-</div>
+                    <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Visitas que se convirtieron
+                        en leads</div>
+                </div>
+            </div>
+
+            <div class="metrics-grid">
+                <!-- Funnel Chart -->
+                <div class="dashboard-section" style="grid-column: span 2;">
+                    <div class="section-header">
+                        <h2>Embudo de Conversión (Drop-off por Paso)</h2>
+                        <span style="font-size:12px; color:var(--text-muted)">*Cuánta gente completa cada paso del
+                            Matchmaker</span>
+                    </div>
+                    <div id="funnelChart" style="padding: 10px 0;"></div>
+                </div>
+            </div>
+
+            <div class="metrics-grid">
+                <!-- Dispositivo -->
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h2>Tipo de Dispositivo</h2>
+                        <span style="font-size:12px; color:var(--text-muted)">*Mobile vs. Desktop</span>
+                    </div>
+                    <div class="canvas-container" style="height:230px;">
+                        <canvas id="chartDevice"></canvas>
+                    </div>
+                </div>
+
+                <!-- Fuente de Tráfico -->
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h2>Fuente de Tráfico</h2>
+                        <span style="font-size:12px; color:var(--text-muted)">*De dónde vienen los visitantes
+                            (referrer)</span>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Origen</th>
+                                    <th>Visitas</th>
+                                    <th>% del Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sourceTable">
+                                <tr>
+                                    <td colspan="3" style="text-align:center; color:var(--text-muted)">Cargando...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- TAB 4: HOT LEADS (FEEDBACK LOOP)              -->
+        <!-- ============================================== -->
+        <div id="tab-hotleads" class="tab-content">
+            <div class="header">
+                <h1>🎯 Hot Leads — Clics de WhatsApp</h1>
+                <p>Leads que hicieron clic en los enlaces de WhatsApp. Los más calientes = mayor intención de compra.
+                </p>
+            </div>
+
+            <!-- KPIs Hot Leads -->
+            <div class="metrics-grid">
+                <div class="metric-card" style="border-top: 4px solid #ef4444;">
+                    <div class="metric-title">🔥 Hot (últimas 24h)</div>
+                    <div class="metric-value" id="hlCountHot" style="color:#ef4444">-</div>
+                    <div style="font-size:12px;color:var(--text-muted);margin-top:4px">≥2 clics en 24h</div>
+                </div>
+                <div class="metric-card" style="border-top: 4px solid #f59e0b;">
+                    <div class="metric-title">📞 Tibios (48h)</div>
+                    <div class="metric-value" id="hlCountWarm" style="color:#f59e0b">-</div>
+                    <div style="font-size:12px;color:var(--text-muted);margin-top:4px">1 clic en 48h</div>
+                </div>
+                <div class="metric-card" style="border-top: 4px solid var(--primary);">
+                    <div class="metric-title">📊 Clics Totales</div>
+                    <div class="metric-value" id="hlTotalClicks">-</div>
+                    <div style="font-size:12px;color:var(--text-muted);margin-top:4px">De todos los tiempos</div>
+                </div>
+                <div class="metric-card" style="border-top: 4px solid var(--teal);">
+                    <div class="metric-title">🔕 Opt-outs</div>
+                    <div class="metric-value" id="hlOptOuts" style="color:var(--teal)">-</div>
+                    <div style="font-size:12px;color:var(--text-muted);margin-top:4px">Desuscripciones activas</div>
+                </div>
+            </div>
+
+            <!-- Hot Leads Table -->
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h2>Tabla de Leads por Temperatura</h2>
+                    <button class="btn-action" onclick="fetchHotLeads()">🔄 Actualizar</button>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>🌡️ Temp</th>
+                                <th>Lead</th>
+                                <th>Busca</th>
+                                <th>Clics 24h</th>
+                                <th>Último Clic</th>
+                                <th>Alertas</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="hotLeadsBody">
+                            <tr>
+                                <td colspan="7" style="text-align:center;color:var(--text-muted)">Cargando hot leads...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Source Breakdown -->
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h2>Clics por Canal</h2>
+                    <span style="font-size:12px;color:var(--text-muted)">*wa=WhatsApp, email=Email,
+                        direct=Directo</span>
+                </div>
+                <div id="clicksBySource" style="display:flex;gap:20px;flex-wrap:wrap;"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Supabase Connection
+        const supabaseUrl = 'https://rgnunjngtsgqgvplawfr.supabase.co';
+        const supabaseKey = 'sb_publishable_G6asVlNL8PHZamCS6r1_lQ_VeV-wsL3';
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        // Global State Memory
+        let globalLeads = [];
+        let globalInventory = [];
+
+        // Chart.js Instances
+        let chart1Obj = null;
+        let chart2Obj = null;
+        let chartDeviceObj = null;
+
+        // Common Chart Defaults for Dark Theme
+        Chart.defaults.color = '#a0aab2';
+        Chart.defaults.font.family = "'General Sans', sans-serif";
+
+        // =====================
+        // TAB NAVIGATION
+        // =====================
+        function switchTab(tabId) {
+            // Update Sidebar UI
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(`nav-${tabId}`).classList.add('active');
+
+            // Switch Views
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+
+            // Load tab-specific data
+            if (tabId === 'analytics') {
+                renderAnalyticsDashboard();
+            } else if (tabId === 'traffic') {
+                fetchTrafficData();
+            } else if (tabId === 'hotleads') {
+                fetchHotLeads();
+            }
+        }
+
+        // =====================
+        // TRAFFIC DATA (Phase 12)
+        // =====================
+        async function fetchTrafficData() {
+            try {
+                // Parallel fetch of visits, funnel events, and leads
+                const [visitsRes, funnelRes, leadsRes] = await Promise.all([
+                    supabaseClient.from('page_visits').select('*'),
+                    supabaseClient.from('funnel_events').select('*'),
+                    supabaseClient.from('leads_matchmaker').select('id, created_at')
+                ]);
+
+                const visits = visitsRes.data || [];
+                const funnelEvents = funnelRes.data || [];
+                const leads = leadsRes.data || [];
+
+                // --- KPI Cards ---
+                const totalVisits = visits.length;
+                const totalLeads = leads.length;
+                const conversion = totalVisits > 0 ? ((totalLeads / totalVisits) * 100).toFixed(1) : '0.0';
+                document.getElementById('trafVisitas').textContent = totalVisits;
+                document.getElementById('trafLeads').textContent = totalLeads;
+                document.getElementById('trafConversion').textContent = conversion + '%';
+
+                // --- Funnel Chart (horizontal bars) ---
+                const stepLabels = {
+                    1: 'Tipo de Vehículo',
+                    2: 'Marca & Modelo',
+                    3: 'Presupuesto',
+                    4: 'Tiempo',
+                    5: 'Datos de Contacto'
+                };
+                const stepCounts = {};
+                funnelEvents.forEach(ev => {
+                    stepCounts[ev.step_number] = (stepCounts[ev.step_number] || 0) + 1;
+                });
+
+                const funnelContainer = document.getElementById('funnelChart');
+                funnelContainer.innerHTML = '';
+                const maxCount = Math.max(...Object.values(stepCounts), totalVisits, 1);
+
+                // Visits as entry level row
+                const allRows = [{ label: 'Visitantes', count: totalVisits, step: 0 }];
+                for (let i = 1; i <= 5; i++) {
+                    allRows.push({ label: stepLabels[i] || `Paso ${i}`, count: stepCounts[i] || 0, step: i });
+                }
+                allRows.push({ label: 'Leads Completados', count: totalLeads, step: 6 });
+
+                allRows.forEach((row) => {
+                    const pct = maxCount > 0 ? (row.count / maxCount * 100) : 0;
+                    const prevCount = row.step > 0 ? (allRows[row.step - 1]?.count || 0) : null;
+                    const dropPct = prevCount > 0 ? (((prevCount - row.count) / prevCount) * 100).toFixed(0) : null;
+                    const dropBadge = dropPct !== null && Number(dropPct) > 0 ? `<span style="font-size:11px; color:#ef4444; margin-left:8px;">▼ ${dropPct}% abandono</span>` : '';
+                    const barColor = row.step === 0 ? 'var(--primary)' : row.step === 6 ? 'var(--success)' : 'var(--teal)';
+
+                    funnelContainer.innerHTML += `
+                        <div style="margin-bottom: 12px;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:13px;">
+                                <span style="color:var(--text)">${row.label}${dropBadge}</span>
+                                <span style="font-weight:700; color:var(--text)">${row.count}</span>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.05); border-radius:6px; height:10px; overflow:hidden;">
+                                <div style="height:100%; width:${pct}%; background:${barColor}; border-radius:6px; transition: width 0.5s ease;"></div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                // --- Device Doughnut ---
+                const devices = {};
+                visits.forEach(v => { devices[v.user_agent || 'desktop'] = (devices[v.user_agent || 'desktop'] || 0) + 1; });
+
+                if (chartDeviceObj) chartDeviceObj.destroy();
+                const ctxDev = document.getElementById('chartDevice').getContext('2d');
+                chartDeviceObj = new Chart(ctxDev, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(devices).map(k => k.charAt(0).toUpperCase() + k.slice(1)),
+                        datasets: [{ data: Object.values(devices), backgroundColor: ['#14b8a6', '#d4af37', '#8b5cf6'], borderWidth: 0 }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom' } },
+                        cutout: '68%'
+                    }
+                });
+
+                // --- Traffic Source Table ---
+                const sources = {};
+                visits.forEach(v => { const src = v.referrer || 'directo'; sources[src] = (sources[src] || 0) + 1; });
+                const tbody = document.getElementById('sourceTable');
+                tbody.innerHTML = '';
+                Object.entries(sources).sort((a, b) => b[1] - a[1]).forEach(([src, cnt]) => {
+                    const pct = totalVisits > 0 ? ((cnt / totalVisits) * 100).toFixed(1) : '0';
+                    tbody.innerHTML += `<tr>
+                        <td><strong style="color: var(--text)">${src}</strong></td>
+                        <td>${cnt}</td>
+                        <td><span style="color: var(--teal); font-weight:600">${pct}%</span></td>
+                    </tr>`;
+                });
+                if (!tbody.innerHTML) tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:var(--text-muted)">Sin datos aún. Genera visitas primero.</td></tr>';
+
+            } catch (err) {
+                console.error('Error fetching traffic data:', err);
+            }
+        }
+
+        // =====================
+        // HOT LEADS (Feedback Loop)
+        // =====================
+        async function fetchHotLeads() {
+            document.getElementById('hotLeadsBody').innerHTML =
+                '<tr><td colspan="7" style="text-align:center;color:var(--text-muted)">Cargando...</td></tr>';
+
+            try {
+                const now = new Date();
+                const ago24h = new Date(now - 24 * 60 * 60 * 1000).toISOString();
+                const ago48h = new Date(now - 48 * 60 * 60 * 1000).toISOString();
+
+                // Parallel fetch: clicks + leads
+                const [clicksRes, leadsRes] = await Promise.all([
+                    supabaseClient.from('link_clicks').select('*').order('created_at', { ascending: false }),
+                    supabaseClient.from('leads_matchmaker').select('id,nombre,whatsapp,marcas,modelos,presupuesto_max,active_alerts,last_notified_at,estatus')
+                ]);
+
+                const clicks = clicksRes.data || [];
+                const leads = leadsRes.data || [];
+
+                // ---- KPIs ----
+                const totalClicks = clicks.length;
+                const optOuts = leads.filter(l => l.active_alerts === false).length;
+
+                // Group clicks per lead
+                const clickMap = {};
+                clicks.forEach(c => {
+                    if (!c.lead_id) return;
+                    if (!clickMap[c.lead_id]) clickMap[c.lead_id] = { total: 0, last: null, c24: 0, c48: 0, byChannel: {} };
+                    clickMap[c.lead_id].total++;
+                    if (!clickMap[c.lead_id].last || c.created_at > clickMap[c.lead_id].last) clickMap[c.lead_id].last = c.created_at;
+                    if (c.created_at >= ago24h) clickMap[c.lead_id].c24++;
+                    if (c.created_at >= ago48h) clickMap[c.lead_id].c48++;
+                    const ch = c.src || 'wa';
+                    clickMap[c.lead_id].byChannel[ch] = (clickMap[c.lead_id].byChannel[ch] || 0) + 1;
+                });
+
+                // Heat score per lead
+                const leadsScored = leads.map(l => {
+                    const cm = clickMap[l.id] || { total: 0, last: null, c24: 0, c48: 0 };
+                    let heat = 'cold';
+                    if (cm.c24 >= 2) heat = 'hot';
+                    else if (cm.c48 >= 1) heat = 'warm';
+                    return { ...l, ...cm, heat };
+                }).sort((a, b) => {
+                    const rank = { hot: 2, warm: 1, cold: 0 };
+                    return rank[b.heat] - rank[a.heat] || b.total - a.total;
+                });
+
+                const countHot = leadsScored.filter(l => l.heat === 'hot').length;
+                const countWarm = leadsScored.filter(l => l.heat === 'warm').length;
+
+                document.getElementById('hlCountHot').textContent = countHot;
+                document.getElementById('hlCountWarm').textContent = countWarm;
+                document.getElementById('hlTotalClicks').textContent = totalClicks;
+                document.getElementById('hlOptOuts').textContent = optOuts;
+
+                // ---- Table ----
+                const maxClicks = Math.max(...leadsScored.map(l => l.c24), 1);
+                const tbody = document.getElementById('hotLeadsBody');
+                tbody.innerHTML = '';
+
+                if (leadsScored.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted)">Sin datos aún. Envía mensajes de WhatsApp primero.</td></tr>';
+                    return;
+                }
+
+                leadsScored.forEach(lead => {
+                    const heatEmoji = { hot: '🔥', warm: '📞', cold: '💤' };
+                    const heatClass = `heat-${lead.heat}`;
+                    const heatLabel = { hot: 'HOT', warm: 'TIBIO', cold: 'FRÍO' };
+                    const pct = lead.c24 > 0 ? Math.round((lead.c24 / maxClicks) * 100) : 0;
+                    const lastClic = lead.last
+                        ? timeSince(new Date(lead.last))
+                        : 'Sin clics';
+                    const buscaChips = (lead.marcas || []).map(m => `<span class="brand-model-chip">${m}</span>`).join('') ||
+                        '<span style="color:var(--text-muted);font-size:12px">Abierto</span>';
+                    const alertStatus = lead.active_alerts === false
+                        ? '<span class="opt-out-tag">🔕 Opt-out</span>'
+                        : '<span style="color:var(--success);font-size:12px">✅ Activo</span>';
+
+                    tbody.innerHTML += `<tr>
+                        <td><span class="${heatClass}">${heatEmoji[lead.heat]} ${heatLabel[lead.heat]}</span></td>
+                        <td><strong>${lead.nombre}</strong><br>
+                            <span style="font-size:12px;color:var(--text-muted)">$${(lead.presupuesto_max || 0).toLocaleString()} MXN</span></td>
+                        <td>${buscaChips}</td>
+                        <td>
+                            <div class="clicks-bar">
+                                <strong style="color:var(--primary)">${lead.c24}</strong>
+                                <div style="flex:1;background:rgba(255,255,255,0.05);border-radius:3px;height:6px;overflow:hidden">
+                                    <div class="clicks-bar-fill" style="width:${pct}%"></div>
+                                </div>
+                            </div>
+                            <div style="font-size:11px;color:var(--text-muted);margin-top:3px">Total: ${lead.total}</div>
+                        </td>
+                        <td style="font-size:13px;color:var(--text-muted)">${lastClic}</td>
+                        <td>${alertStatus}</td>
+                        <td><a href="https://wa.me/${(lead.whatsapp || '').replace(/\D/g, '')}" target="_blank" class="whatsapp-link">💬 Contactar</a></td>
+                    </tr>`;
+                });
+
+                // ---- Channel breakdown ----
+                const channelTotals = {};
+                clicks.forEach(c => {
+                    const ch = c.src || 'wa';
+                    channelTotals[ch] = (channelTotals[ch] || 0) + 1;
+                });
+                const srcColors = { wa: '#25D366', email: '#d4af37', direct: '#14b8a6' };
+                const srcDiv = document.getElementById('clicksBySource');
+                srcDiv.innerHTML = Object.entries(channelTotals).map(([ch, cnt]) =>
+                    `<div class="metric-card" style="min-width:140px;border-top:4px solid ${srcColors[ch] || '#fff'}">
+                        <div class="metric-title">${ch.toUpperCase()}</div>
+                        <div class="metric-value" style="font-size:28px;color:${srcColors[ch] || '#fff'}">${cnt}</div>
+                        <div style="font-size:12px;color:var(--text-muted)">${((cnt / totalClicks) * 100).toFixed(0)}% del total</div>
+                    </div>`
+                ).join('') || '<p style="color:var(--text-muted)">Sin clics registrados aún.</p>';
+
+            } catch (err) {
+                console.error('Error fetching hot leads:', err);
+                document.getElementById('hotLeadsBody').innerHTML =
+                    `<tr><td colspan="7" style="text-align:center;color:#ef4444">Error: ${err.message}</td></tr>`;
+            }
+        }
+
+        function timeSince(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            if (seconds < 60) return 'hace segundos';
+            if (seconds < 3600) return `hace ${Math.floor(seconds / 60)}m`;
+            if (seconds < 86400) return `hace ${Math.floor(seconds / 3600)}h`;
+            return `hace ${Math.floor(seconds / 86400)}d`;
+        }
+
+        // =====================
+        // DATA FETCHING (JOIN CONCEPT)
+        // =====================
+        async function fetchData(forceRefresh = false) {
+            if (forceRefresh) {
+                document.getElementById('leadsTableBody').innerHTML = `<tr><td colspan="7" style="text-align: center;">Cargando radares...</td></tr>`;
+            }
+
+            try {
+                // Fetch Leads
+                const resLeads = await supabaseClient.from('leads_matchmaker').select('*').order('created_at', { ascending: false });
+                if (resLeads.error) throw resLeads.error;
+                globalLeads = resLeads.data || [];
+
+                // Fetch Inventory (To compute BI KPIs)
+                const resInv = await supabaseClient.from('inventario').select('*').eq('estatus', 'disponible');
+                if (resInv.error) throw resInv.error;
+                globalInventory = resInv.data || [];
+
+                // Render Radar View By Default
+                renderLeadsBoard(globalLeads);
+                calculateBasicDemands(globalLeads);
+
+                // If Analytics tab is currently active, render it too
+                if (document.getElementById('tab-analytics').classList.contains('active')) {
+                    renderAnalyticsDashboard();
+                }
+
+            } catch (err) {
+                console.error("Error fetching cross-data:", err);
+                alert("Error de conexión Supabase. Revisa la consola.");
+            }
+        }
+
+        // =====================
+        // RADAR VIEW FUNCTIONS
+        // =====================
+        function renderLeadsBoard(leads) {
+            const tbody = document.getElementById('leadsTableBody');
+            if (leads.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center;">El radar está limpio.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            leads.forEach(lead => {
+                const tr = document.createElement('tr');
+                const dateObj = new Date(lead.created_at);
+                const dateStr = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                let prefsHtml = '';
+                if (lead.marcas?.length > 0) lead.marcas.forEach(m => prefsHtml += `<span class="brand-model-chip">${m}</span>`);
+                if (lead.modelos?.length > 0) {
+                    prefsHtml += '<br>';
+                    lead.modelos.forEach(m => prefsHtml += `<span class="brand-model-chip" style="border: 1px solid var(--primary); background: transparent; color: var(--primary)">${m}</span>`);
+                }
+                if (!prefsHtml) prefsHtml = `<span class="brand-model-chip">Abierto a opciones</span>`;
+
+                tr.innerHTML = `
+                    <td style="color: var(--text-muted); font-size: 13px;">${dateStr}</td>
+                    <td><strong>${lead.nombre}</strong><br><span style="font-size: 12px; color: var(--text-muted)">📍 ${lead.ciudad}</span></td>
+                    <td>${prefsHtml}</td>
+                    <td style="color: var(--primary); font-weight: bold;">
+                        $${lead.presupuesto_min ? lead.presupuesto_min.toLocaleString() : '0'} - <br>
+                        $${lead.presupuesto_max ? lead.presupuesto_max.toLocaleString() : '0'}
+                    </td>
+                    <td>${lead.dinero_listo === 'si' ? '✅ En mano' : '⏳ Pronto'}</td>
+                    <td><span class="badge ${lead.estatus}">${lead.estatus.toUpperCase()}</span></td>
+                    <td><a href="https://wa.me/${lead.whatsapp.replace(/\D/g, '')}" target="_blank" class="whatsapp-link">💬 Contactar</a></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function calculateBasicDemands(leads) {
+            const activos = leads.filter(l => l.estatus === 'buscando');
+            document.getElementById('valActivos').textContent = activos.length;
+
+            let totalCapital = 0, brandCounts = {};
+            activos.forEach(l => {
+                if (l.dinero_listo === 'si') totalCapital += Number(l.presupuesto_max || 0);
+                if (l.marcas?.length > 0) l.marcas.forEach(m => brandCounts[m] = (brandCounts[m] || 0) + 1);
+            });
+
+            document.getElementById('valCapital').textContent = `$${totalCapital.toLocaleString()}`;
+
+            let topBrand = '-', maxCount = 0;
+            for (const brand in brandCounts) {
+                if (brandCounts[brand] > maxCount) { maxCount = brandCounts[brand]; topBrand = brand; }
+            }
+            document.getElementById('valTopMarca').textContent = topBrand;
+
+            if (maxCount >= 2) { // Lowered threshold for demo
+                const alertEl = document.getElementById('demandAlert');
+                document.getElementById('alertText').textContent = `Alta concentración: ${maxCount} perfiles cazando agresivamente autos marca ${topBrand}.`;
+                alertEl.style.display = 'flex';
+            }
+        }
+
+        // =====================
+        // B2B ANALYTICS EXPERT
+        // =====================
+        function renderAnalyticsDashboard() {
+            if (!globalLeads || !globalInventory) return;
+
+            const leadsBuscando = globalLeads.filter(l => l.estatus === 'buscando');
+
+            // --- KPI 1: Ticket Promedio ---
+            let sumPresupuestos = 0;
+            let countConDinero = 0;
+            leadsBuscando.forEach(l => {
+                if (l.dinero_listo === 'si' && l.presupuesto_max) {
+                    sumPresupuestos += Number(l.presupuesto_max);
+                    countConDinero++;
+                }
+            });
+            const avgTicket = countConDinero > 0 ? (sumPresupuestos / countConDinero) : 0;
+            document.getElementById('kpiAvgTicket').textContent = `$${Math.round(avgTicket).toLocaleString()}`;
+
+            // --- KPI 2: Modelo Más Buscado (Mes) ---
+            const carSpecs = {};
+            leadsBuscando.forEach(l => {
+                l.marcas?.forEach(marca => {
+                    let mods = l.modelos?.length > 0 ? l.modelos : ['Cualquier'];
+                    mods.forEach(mod => {
+                        const key = `${marca} ${mod}`;
+                        carSpecs[key] = (carSpecs[key] || 0) + 1;
+                    });
+                });
+            });
+
+            let topModelName = '-';
+            let topModelCount = 0;
+            for (let key in carSpecs) {
+                if (carSpecs[key] > topModelCount) {
+                    topModelCount = carSpecs[key];
+                    topModelName = key;
+                }
+            }
+            document.getElementById('kpiTopCar').textContent = topModelName;
+            document.getElementById('kpiTopCarCount').textContent = `${topModelCount} búsquedas directas`;
+
+            // --- KPI 3: Días Promedio en Inventario ---
+            // Calculating days since 'created_at' for all inventory
+            let sumDays = 0;
+            const now = new Date();
+            globalInventory.forEach(car => {
+                if (car.created_at) {
+                    const carDate = new Date(car.created_at);
+                    const diffTime = Math.abs(now - carDate);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    sumDays += diffDays;
+                }
+            });
+            const avgDays = globalInventory.length > 0 ? (sumDays / globalInventory.length) : 0;
+            document.getElementById('kpiAvgDays').textContent = Math.round(avgDays);
+
+            // --- KPI: Termómetro Geográfico (Doughnut) ---
+            const cityMap = {};
+            leadsBuscando.forEach(l => {
+                const c = l.ciudad.toUpperCase();
+                cityMap[c] = (cityMap[c] || 0) + 1;
+            });
+            const topCities = Object.keys(cityMap).sort((a, b) => cityMap[b] - cityMap[a]).slice(0, 5);
+            const cityData = topCities.map(c => cityMap[c]);
+
+            if (chart2Obj) chart2Obj.destroy();
+            const ctx2 = document.getElementById('chartGeo').getContext('2d');
+            chart2Obj = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: topCities,
+                    datasets: [{
+                        data: cityData,
+                        backgroundColor: ['#d4af37', '#14b8a6', '#3b82f6', '#8b5cf6', '#ef4444'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'right' } },
+                    cutout: '70%'
+                }
+            });
+
+            // --- KPI 3: Índice de Rotación Asegurada (Top Missing) ---
+            const tbodyMissing = document.getElementById('topMissingTable');
+            tbodyMissing.innerHTML = '';
+
+            const sortedDemand = Object.keys(carSpecs).map(k => ({ key: k, count: carSpecs[k] })).sort((a, b) => b.count - a.count);
+            let missingPrinted = 0;
+
+            sortedDemand.forEach(item => {
+                // Split by first space to separate Brand and Model
+                const firstSpaceIdx = item.key.indexOf(' ');
+                if (firstSpaceIdx === -1) return;
+
+                const marca = item.key.substring(0, firstSpaceIdx);
+                const modelo = item.key.substring(firstSpaceIdx + 1);
+
+                // Inventory check
+                const matchFound = globalInventory.some(car => {
+                    const brandOk = car.marca.toLowerCase().includes(marca.toLowerCase());
+                    const modOk = modelo === 'Cualquier' || car.modelo.toLowerCase().includes(modelo.toLowerCase());
+                    return brandOk && modOk;
+                });
+
+                // ONLY print if the agency DOES NOT have it
+                if (!matchFound && missingPrinted < 10) {
+                    tbodyMissing.innerHTML += `
+                        <tr>
+                            <td><strong class="c-gold">${marca}</strong></td>
+                            <td>${modelo}</td>
+                            <td class="text-success" style="font-weight:700; font-size:16px;">${item.count} <span style="font-size:12px; font-weight:400; color:var(--text-muted)">esperando</span></td>
+                        </tr>
+                    `;
+                    missingPrinted++;
+                }
+            });
+
+            if (missingPrinted === 0) tbodyMissing.innerHTML = '<tr><td colspan="3" style="text-align:center; color:var(--text-muted)">Inventario alineado perfectamente a la demanda actual.</td></tr>';
+
+            // --- KPI 4: Cierre Express (Almost Matches) ---
+            const expressList = document.getElementById('expressList');
+            expressList.innerHTML = '';
+            let expressCount = 0;
+
+            leadsBuscando.forEach(lead => {
+                if (!lead.presupuesto_max) return;
+
+                globalInventory.forEach(car => {
+                    if (!car.precio_venta) return;
+
+                    const brandOk = lead.marcas?.some(m => car.marca.toLowerCase().includes(m.toLowerCase()));
+                    const modOk = !lead.modelos || lead.modelos.length === 0 || lead.modelos.some(m => car.modelo.toLowerCase().includes(m.toLowerCase()));
+
+                    if (brandOk && modOk) {
+                        // Math: Si el presupuesto del lead está entre el 85% y 99.9% del precio del coche (Casi llegan al precio)
+                        const budgetRatio = lead.presupuesto_max / car.precio_venta;
+
+                        if (budgetRatio >= 0.85 && budgetRatio < 1.0) {
+                            const difAjuste = car.precio_venta - lead.presupuesto_max;
+
+                            expressList.innerHTML += `
+                                <div class="alert-card">
+                                    <div>
+                                        <div style="font-weight:700; color:var(--text)">${car.marca} ${car.modelo} ${car.anio}</div>
+                                        <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">
+                                            Cliente: ${lead.nombre} &bull; Precio Agn: $${car.precio_venta.toLocaleString()}
+                                        </div>
+                                    </div>
+                                    <div style="text-align:right;">
+                                        <div class="c-teal" style="font-weight:600; font-size:14px; margin-bottom:4px;">Faltan: $${difAjuste.toLocaleString()}</div>
+                                        <a href="https://wa.me/${lead.whatsapp.replace(/\D/g, '')}" target="_blank" class="btn-action" style="text-decoration:none; display:inline-block; font-size:11px;">Ofrecer Descuento</a>
+                                    </div>
+                                </div>
+                            `;
+                            expressCount++;
+                        }
+                    }
+                });
+            });
+
+            if (expressCount === 0) expressList.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px;">No se detectaron "Cierres Express". Las diferencias de precio son muy anchas o no hay coincidencia de modelos.</div>';
+        }
+
+        // Kick off
+        fetchData();
+    </script>
+</body>
+
+</html>

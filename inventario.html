@@ -1,0 +1,1597 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario Seminuevos VIP | Alabol</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #0a1f1a;
+            --bg-mid: #0d2921;
+            --bg-light: #0f3329;
+            --gold: #d4af37;
+            --gold-light: #f4e5b0;
+            --gold-dim: rgba(212, 175, 55, 0.3);
+            --green-text: #a8c5b8;
+            --glass-bg: rgba(15, 51, 41, 0.5);
+            --glass-border: rgba(212, 175, 55, 0.25);
+            --danger: #ef4444;
+            --alabol-blue: #3b82f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-dark);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated gradient background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a1f1a 0%, #0d2921 25%, #0f3329 50%, #0d2921 75%, #0a1f1a 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            z-index: -2;
+        }
+
+        /* Gold particles */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(2px 2px at 20% 30%, rgba(212, 175, 55, 0.3), transparent),
+                radial-gradient(2px 2px at 60% 70%, rgba(212, 175, 55, 0.2), transparent),
+                radial-gradient(1px 1px at 50% 50%, rgba(212, 175, 55, 0.2), transparent);
+            background-size: 200% 200%;
+            animation: floatParticles 20s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes gradientShift {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        @keyframes floatParticles {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            33% {
+                transform: translate(30px, -30px);
+            }
+
+            66% {
+                transform: translate(-20px, 20px);
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header / Logo */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 15px;
+        }
+
+        .logo-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 130px;
+            height: 130px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.4) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: logoGlowPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes logoGlowPulse {
+
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.15);
+                opacity: 0.9;
+            }
+        }
+
+        .logo-circle {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            background: rgba(15, 51, 41, 0.3);
+            border-radius: 50%;
+            border: 2px solid rgba(212, 175, 55, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3), inset 0 0 20px rgba(212, 175, 55, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .logo-circle:hover {
+            transform: scale(1.05) rotate(5deg);
+            border-color: var(--gold);
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.5);
+        }
+
+        .logo-text {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--gold);
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+            line-height: 1;
+        }
+
+        .logo-accent {
+            position: absolute;
+            width: 150%;
+            height: 20%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.2), transparent);
+            transform: rotate(-45deg);
+            animation: logoShine 4s linear infinite;
+        }
+
+        @keyframes logoShine {
+            0% {
+                top: -100%;
+                left: -100%;
+            }
+
+            20% {
+                top: 100%;
+                left: 100%;
+            }
+
+            100% {
+                top: 100%;
+                left: 100%;
+            }
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #d4af37 0%, #f4e5b0 25%, #d4af37 50%, #c9a961 75%, #d4af37 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            color: var(--green-text);
+            font-size: 15px;
+            font-weight: 300;
+        }
+
+        /* FILTER CONSOLE (GLASSMORPHISM) */
+        .filter-console {
+            background: rgba(15, 51, 41, 0.6);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr;
+            gap: 15px;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            animation: fadeInDown 0.8s ease-out 0.1s both;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+        }
+
+        .search-input-wrapper i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gold);
+            opacity: 0.6;
+        }
+
+        .glass-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: white;
+            padding: 12px 15px 12px 40px;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .glass-input:focus {
+            border-color: var(--gold);
+            background: rgba(0, 0, 0, 0.6);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-group label {
+            font-size: 13px;
+            color: var(--gold);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .glass-select {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: white;
+            padding: 12px 15px;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 14px;
+            appearance: none;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .glass-select:focus,
+        .glass-select:hover {
+            border-color: var(--gold);
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .glass-select option {
+            background: var(--bg-dark);
+            color: white;
+        }
+
+        .slider-group input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+
+        .slider-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: var(--gold);
+            cursor: pointer;
+            margin-top: -8px;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.8);
+        }
+
+        .slider-group input[type="range"]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+        }
+
+        /* GRID SYSTEM */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        /* CARD (GLASSMORPHISM) */
+        .card {
+            background: linear-gradient(135deg, rgba(15, 51, 41, 0.6) 0%, rgba(13, 41, 33, 0.8) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 20px rgba(212, 175, 55, 0.05);
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5), 0 0 30px rgba(212, 175, 55, 0.2);
+            border-color: rgba(212, 175, 55, 0.6);
+        }
+
+        /* IMAGE PLACEHOLDER (TINDER STYLE) */
+        .card-img-container {
+            width: 100%;
+            height: 220px;
+            background: #000;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-img-placeholder {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .card:hover .card-img-placeholder {
+            opacity: 1;
+        }
+
+        /* BADGES OVERLAY */
+        .badge-container {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .badge {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .badge-agency {
+            border-color: rgba(212, 175, 55, 0.5);
+            color: var(--gold-light);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+
+        .badge-alabol {
+            border-color: rgba(59, 130, 246, 0.5);
+            color: #93c5fd;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+        }
+
+        /* CARD CONTENT */
+        .card-body {
+            padding: 20px;
+            position: relative;
+        }
+
+        .car-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 2px;
+            line-height: 1.2;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .car-version {
+            font-size: 13px;
+            color: var(--green-text);
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+
+        .price-tag {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--gold);
+            margin-bottom: 18px;
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+            display: flex;
+            align-items: baseline;
+            gap: 5px;
+        }
+
+        .price-tag span {
+            font-size: 14px;
+            color: var(--green-text);
+            font-weight: 400;
+        }
+
+        /* SPECS GRID */
+        .specs {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .spec-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .spec-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: var(--green-text);
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+
+        .spec-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: white;
+        }
+
+        /* SPECS GRID */
+        .modal-specs-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .modal-spec-box {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .modal-spec-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: var(--gold);
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .modal-spec-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: white;
+        }
+
+        .modal-description {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border-left: 3px solid var(--gold);
+        }
+
+        .modal-description-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--gold);
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .modal-description-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--green-text);
+            font-weight: 300;
+        }
+
+        /* ACTION BUTTONS (TINDER STYLE LIKE/DISLIKE BUT B2B) */
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold) 0%, #c9a961 100%);
+            color: var(--bg-dark);
+            border: none;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.6);
+            filter: brightness(1.1);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* STATS BAR */
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+            background: rgba(15, 51, 41, 0.6);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            animation: fadeInDown 0.8s ease-out 0.2s both;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--gold);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--green-text);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-item.clickable {
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .stat-item.clickable:hover {
+            transform: translateY(-3px);
+            filter: brightness(1.2);
+        }
+
+        .stat-item.active {
+            border-color: var(--gold);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .fav-count-badge {
+            background: var(--danger);
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            position: absolute;
+            top: -5px;
+            right: -10px;
+            font-weight: 700;
+        }
+
+        .card {
+            animation: cardIn 0.6s ease-out both;
+        }
+
+        .card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .card:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .card:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        @keyframes cardIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-bar {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        .wishlist-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 35px;
+            height: 35px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 5;
+            transition: all 0.3s;
+        }
+
+        .wishlist-btn.active {
+            background: var(--danger);
+            border-color: var(--danger);
+            color: white;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, var(--bg-mid) 0%, var(--bg-dark) 100%);
+            width: 100%;
+            max-width: 1000px;
+            max-height: 90vh;
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            position: relative;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes modalPop {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .modal-gallery {
+            position: relative;
+            background: #000;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .gallery-main-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: opacity 0.2s ease;
+        }
+
+        .gallery-nav.gallery-prev {
+            left: 10px;
+        }
+
+        .gallery-nav.gallery-next {
+            right: 10px;
+        }
+
+        .image-counter {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: white;
+        }
+
+        .modal-info {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .modal-price {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--gold);
+            margin-bottom: 25px;
+        }
+
+        .btn-whatsapp {
+            background: #25D366;
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+            margin-bottom: 15px;
+            transition: 0.3s;
+        }
+
+        .btn-whatsapp:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .filter-console {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 15px;
+            }
+
+            .modal-content {
+                grid-template-columns: 1fr;
+                max-height: 95vh;
+                border-radius: 20px 20px 0 0;
+                position: fixed;
+                bottom: 0;
+                top: auto;
+            }
+
+            .modal-gallery {
+                height: 300px;
+            }
+
+            .modal-specs-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .title {
+                font-size: 24px;
+            }
+
+            .header {
+                margin-bottom: 20px;
+            }
+
+            @keyframes pulseDot {
+                0% {
+                    transform: scale(0.95);
+                    box-shadow: 0 0 0 0 rgba(255, 75, 43, 0.7);
+                }
+
+                70% {
+                    transform: scale(1);
+                    box-shadow: 0 0 0 10px rgba(255, 75, 43, 0);
+                }
+
+                100% {
+                    transform: scale(0.95);
+                    box-shadow: 0 0 0 0 rgba(255, 75, 43, 0);
+                }
+            }
+        }
+
+        @keyframes logoGlowPulse {
+
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.15);
+                opacity: 0.9;
+            }
+        }
+
+        .logo-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 15px;
+        }
+
+        .logo-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 140px;
+            height: 140px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.4) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: logoGlowPulse 3s ease-in-out infinite;
+        }
+
+        .logo-img {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="header">
+            <div class="logo-container">
+                <div class="logo-glow"></div>
+                <img src="logo-circular.png" alt="Alabol Logo" class="logo-pulsing"
+                    style="width: 100px; height: 100px; object-fit: contain; position: relative; z-index: 2;">
+            </div>
+            <h1 class="title">Alabol | Inventario VIP</h1>
+            <p class="subtitle">Descubre tu próximo auto entre nuestra selección premium garantizada.</p>
+        </div>
+
+        <!-- Botón Volver -->
+        <div style="text-align: center; margin-bottom: 20px;">
+            <a href="index.html"
+                style="color: var(--gold); text-decoration: none; border: 1px solid var(--gold); padding: 8px 20px; border-radius: 20px; font-size: 14px;"><i
+                    class="fa-solid fa-arrow-left"></i> Volver al Inicio</a>
+        </div>
+
+        <!-- FILTER BAR -->
+        <div class="filter-console">
+            <div class="filter-group">
+                <label>Buscador</label>
+                <div class="search-input-wrapper">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="invSearchText" class="glass-input" placeholder="Ej: Mini Cooper S..."
+                        oninput="triggerInvFilter()">
+                </div>
+            </div>
+            <div class="filter-group">
+                <label for="invBrandSelect">Marca</label>
+                <select id="invBrandSelect" class="glass-select" onchange="onInvBrandChanged()">
+                    <option value="all">Todas las Marcas</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="invModelSelect">Modelo</label>
+                <select id="invModelSelect" class="glass-select" disabled onchange="triggerInvFilter()">
+                    <option value="all">Selecciona Marca</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="invYearSelect">Año Mínimo</label>
+                <select id="invYearSelect" class="glass-select" onchange="triggerInvFilter()">
+                    <option value="all">Todos los años</option>
+                    <option value="2026">2026</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2021">2021</option>
+                    <option value="2020">2020</option>
+                    <option value="2019">2019</option>
+                    <option value="2018">2018</option>
+                    <option value="2017">2017</option>
+                    <option value="older">2016 o anterior</option>
+                </select>
+            </div>
+            <div class="filter-group slider-group">
+                <label>Presupuesto Max</label>
+                <input type="range" id="invPriceMax" min="100000" max="1000000" step="10000" value="1000000"
+                    oninput="updateInvSlider()" onchange="triggerInvFilter()">
+                <div id="invPriceDisplay" style="color:var(--gold); font-size:12px; font-weight:600; text-align:right;">
+                    Todas las gamas</div>
+            </div>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value" id="totalAutos">0</div>
+                <div class="stat-label">Unidades Mostradas</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">100%</div>
+                <div class="stat-label">Garantizados</div>
+            </div>
+            <div class="stat-item clickable" id="favToggle" onclick="toggleFavoritesFilter()">
+                <div class="stat-value" id="favCount">0 <div class="fav-count-badge" id="favBadge"
+                        style="display:none;"></div>
+                </div>
+                <div class="stat-label"><i class="fa-solid fa-heart" id="heartIcon" style="color:var(--danger)"></i> Mis
+                    Favoritos</div>
+            </div>
+        </div>
+
+        <!-- VEHICLES GRID -->
+        <div class="grid" id="vehiculosGrid"></div>
+
+    </div>
+
+    <!-- MODAL OVERLAY -->
+    <div class="modal-overlay" id="carModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="modal-gallery">
+                <button class="gallery-nav gallery-prev" onclick="changeImage(-1)">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <img src="" alt="Auto" class="gallery-main-img" id="modalMainImg">
+                <button class="gallery-nav gallery-next" onclick="changeImage(1)">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+                <div class="image-counter" id="imageCounter">1 / 1</div>
+            </div>
+
+            <div class="modal-info">
+                <div class="live-activity" id="liveActivity"
+                    style="display:none; align-items:center; gap:8px; background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.3); padding:8px 15px; border-radius:30px; margin-bottom:15px; font-size: 12px; color: var(--gold-bright); width: fit-content;">
+                    <span class="pulse-dot"
+                        style="display:inline-block; width:8px; height:8px; background:#ff4b2b; border-radius:50%; animation: pulseDot 1.5s infinite;"></span>
+                    <span id="liveActivityText">3 personas están viendo este auto ahora</span>
+                </div>
+                <div id="modalBadges" style="display:flex; gap:10px;"></div>
+                <h2 class="modal-title" id="modalTitle">Nombre del Auto</h2>
+                <div class="modal-price" id="modalPrice">$0 <small>MXN</small></div>
+
+                <div class="modal-specs-grid">
+                    <div class="modal-spec-box">
+                        <span class="modal-spec-label">Kilometraje</span>
+                        <span class="modal-spec-value" id="modalKm">0 km</span>
+                    </div>
+                    <div class="modal-spec-box">
+                        <span class="modal-spec-label">Transmisión</span>
+                        <span class="modal-spec-value" id="modalTrans">Automática</span>
+                    </div>
+                    <div class="modal-spec-box">
+                        <span class="modal-spec-label">Motor</span>
+                        <span class="modal-spec-value" id="modalMotor">No especificado</span>
+                    </div>
+                    <div class="modal-spec-box">
+                        <span class="modal-spec-label">Tracción</span>
+                        <span class="modal-spec-value" id="modalDrive">No especificado</span>
+                    </div>
+                    <div class="modal-spec-box">
+                        <span class="modal-spec-label">Combustible</span>
+                        <span class="modal-spec-value" id="modalFuel">Gasolina</span>
+                    </div>
+                    <div class="modal-spec-box">
+                        <span class="modal-spec-label">Ubicación</span>
+                        <span class="modal-spec-value" id="modalAgency">Alabol VIP</span>
+                    </div>
+                </div>
+
+                <div class="modal-description">
+                    <div class="modal-description-title">Comentarios del Valuador</div>
+                    <div class="modal-description-text" id="modalDescription">
+                        Este vehículo ha pasado por nuestra inspección de 150 puntos. Se encuentra en excelentes
+                        condiciones mecánicas y estéticas, listo para reestrenar.
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <a href="#" id="modalWaBtn" class="btn-whatsapp" target="_blank">
+                        <i class="fa-brands fa-whatsapp"></i> Apartar con WhatsApp
+                    </a>
+                    <a href="vip/" class="btn btn-primary"
+                        style="width:100%; margin-bottom: 15px; background: linear-gradient(135deg, #d4af37, #f4e5b0); color: #0a1f1a; font-weight: 800;">
+                        💘 ¿No es tu media naranja? Haz Match
+                    </a>
+                    <button class="btn btn-secondary" style="width:100%;" onclick="closeModal()">
+                        Seguir Explorando
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SUPABASE TRACKING / ANALYTICS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- INVENTARIO DATA -->
+    <script src="inventariodata.js"></script>
+
+    <script>
+        let database_inventory = [];
+        try {
+            if (typeof INVENTARIO_AGENCIAS !== 'undefined') {
+                database_inventory = Object.values(INVENTARIO_AGENCIAS).map(car => ({
+                    id: car.id_interno || car.id,
+                    agencia: car.agencia,
+                    ubicacion: getGenericLocation(car.agencia),
+                    vehicle: `${car.marca} ${car.modelo} ${car.año}`.toUpperCase(),
+                    version: car.version,
+                    priceMXN: car.precio_venta || 0,
+                    km: car.kilometraje || 0,
+                    color: car.color || 'N/A',
+                    transmision: car.transmision || 'N/A',
+                    motor: car.motor || 'No especificado',
+                    traccion: car.traccion || 'No especificado',
+                    combustible: car.combustible || 'Gasolina',
+                    descripcion: car.descripcion || `Este ${car.marca} ${car.modelo} ${car.año} ha sido inspeccionado y está listo para entrega inmediata. Un auto premium con excelente manejo y condiciones estéticas impecables.`,
+                    url_fotos: car.link_fotos
+                }));
+            }
+        } catch (e) {
+            console.error("Error processing INVENTARIO_AGENCIAS:", e);
+        }
+
+        const SUPABASE_URL = 'https://rgnunjngtsgqgvplawfr.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_G6asVlNL8PHZamCS6r1_lQ_VeV-wsL3';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        function getSessionId() {
+            let sid = sessionStorage.getItem('alabol_session');
+            if (!sid) {
+                sid = 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                sessionStorage.setItem('alabol_session', sid);
+            }
+            return sid;
+        }
+
+        async function trackVisit() {
+            try {
+                const referrer = document.referrer ? new URL(document.referrer).hostname : 'directo';
+                const ua = navigator.userAgent;
+                const device = /Mobi|Android/i.test(ua) ? 'mobile' : 'desktop';
+                await supabaseClient.from('page_visits').insert([{
+                    session_id: getSessionId(),
+                    page: 'inventario_b2c',
+                    referrer: referrer,
+                    user_agent: device
+                }]);
+            } catch (e) { /* silent fail */ }
+        }
+
+        // --- BLIND MODEL HELPER ---
+        function getGenericLocation(agencia) {
+            if (!agencia || agencia.toLowerCase() === 'alabol') return 'Alabol VIP';
+
+            // Extract the location/zone part (e.g., "Kavak Sur" -> "Sur", "Dalton Honda" -> "Guadalajara" or similar)
+            // For now, let's keep it simple: take the last word if it's a common zone name
+            const zones = ['sur', 'norte', 'poniente', 'oriente', 'centro', 'lindavista', 'santa fe', 'interlomas', 'condesa', 'polanco'];
+            const tokens = agencia.toLowerCase().split(' ');
+            for (let token of tokens) {
+                if (zones.includes(token)) return token.charAt(0).toUpperCase() + token.slice(1);
+            }
+
+            // If No specific zone found, return a generic "Zona Metropolitana" or similar
+            return 'Zona Metropolitana';
+        }
+
+        async function trackFunnelStep(stepNum, stepName) {
+            try {
+                await supabaseClient.from('funnel_events').insert([{
+                    session_id: getSessionId(),
+                    step_number: stepNum,
+                    step_name: stepName
+                }]);
+            } catch (e) { /* silent fail */ }
+        }
+
+        trackVisit();
+
+        // --- WISHLIST PERSISTENCE ---
+        let wishlist = JSON.parse(localStorage.getItem('alabol_wishlist')) || [];
+
+        function updateFavCounter() {
+            const count = wishlist.length;
+            document.getElementById('favCount').innerHTML = `${count} ${count > 0 ? `<div class="fav-count-badge">${count}</div>` : ''}`;
+            document.getElementById('heartIcon').style.opacity = count > 0 ? '1' : '0.5';
+        }
+
+        function toggleFavoritesFilter() {
+            const toggle = document.getElementById('favToggle');
+            toggle.classList.toggle('active');
+            triggerInvFilter();
+        }
+
+        function toggleWishlist(id, btn) {
+            const index = wishlist.indexOf(id);
+            if (index > -1) {
+                wishlist.splice(index, 1);
+                btn.classList.remove('active');
+            } else {
+                wishlist.push(id);
+                btn.classList.add('active');
+            }
+            localStorage.setItem('alabol_wishlist', JSON.stringify(wishlist));
+            updateFavCounter();
+            if (document.getElementById('favToggle').classList.contains('active')) {
+                triggerInvFilter(); // Refresh if we are viewing only favorites
+            }
+        }
+
+        function isLiked(id) {
+            return wishlist.includes(id);
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('es-MX', {
+                style: 'currency', currency: 'MXN', minimumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function createCard(auto) {
+            const isAlabol = auto.agencia.toLowerCase() === 'alabol' || auto.agencia.trim() === '';
+            const badgeClass = isAlabol ? 'badge-alabol' : 'badge-agency';
+            const badgeIcon = isAlabol ? 'fa-check-circle' : 'fa-star';
+            const badgeText = isAlabol ? 'Venta Directa' : 'Verificado';
+
+            let imgUrl = "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&w=800";
+            if (auto.url_fotos) {
+                // If it's an array, take the first one
+                if (Array.isArray(auto.url_fotos)) {
+                    imgUrl = auto.url_fotos[0];
+                } else if (typeof auto.url_fotos === 'string' && auto.url_fotos.trim() !== '') {
+                    imgUrl = auto.url_fotos;
+                }
+            }
+
+            const likedClass = isLiked(auto.id) ? 'active' : '';
+
+            return `
+                <div class="card" onclick="openCarDetails('${auto.id}')" style="cursor:pointer;">
+                    <button class="wishlist-btn ${likedClass}" onclick="event.stopPropagation(); toggleWishlist('${auto.id}', this)">
+                        <i class="fa-regular fa-heart"></i>
+                    </button>
+                    <div class="card-img-container">
+                        <img src="${imgUrl}" alt="${auto.vehicle}" class="card-img-placeholder">
+                        <div class="badge-container">
+                            <div class="badge ${badgeClass}">
+                                <i class="fa-solid ${badgeIcon}"></i> ${badgeText}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="car-title">${auto.vehicle}</div>
+                        <div class="car-version" style="height: 40px; overflow: hidden; opacity: 0.7;">${auto.version}</div>
+                        
+                        <div class="price-tag">
+                            ${formatCurrency(auto.priceMXN)} <span style="font-size: 10px; opacity: 0.6">MXN</span>
+                        </div>
+                        
+                        <div class="specs">
+                            <div class="spec-item">
+                                <span class="spec-label">KM</span>
+                                <span class="spec-value">${auto.km.toLocaleString()}</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Transmisión</span>
+                                <span class="spec-value">${auto.transmision}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="actions">
+                            <button class="btn btn-primary" style="width:100%; letter-spacing: 1px; font-weight: 800;">
+                                VER DETALLES <i class="fa-solid fa-arrow-right" style="font-size: 10px"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function populateInvBrands() {
+            const exhaustiveBrands = ["Acura", "Audi", "BMW", "Chevrolet", "Chrysler", "Dodge", "Fiat", "Ford", "GMC", "Honda", "Hyundai", "Jeep", "Kia", "Mazda", "Mercedes-Benz", "MG", "Mini", "Mitsubishi", "Nissan", "Peugeot", "RAM", "Renault", "Seat", "Subaru", "Suzuki", "Toyota", "Volkswagen", "Volvo"];
+
+            database_inventory.forEach(c => {
+                if (c.vehicle) {
+                    const brand = c.vehicle.split(' ')[0];
+                    if (!exhaustiveBrands.includes(brand)) exhaustiveBrands.push(brand);
+                }
+            });
+            exhaustiveBrands.sort();
+
+            const brandSelect = document.getElementById('invBrandSelect');
+            exhaustiveBrands.forEach(b => {
+                const opt = document.createElement('option');
+                opt.value = b;
+                opt.textContent = b;
+                brandSelect.appendChild(opt);
+            });
+        }
+
+        function onInvBrandChanged(triggerRender = true) {
+            const brand = document.getElementById('invBrandSelect').value;
+            const modelSelect = document.getElementById('invModelSelect');
+            modelSelect.innerHTML = '<option value="all">Todos los Modelos</option>';
+
+            if (brand === 'all') {
+                modelSelect.disabled = true;
+                modelSelect.innerHTML = '<option value="all">Selecciona Marca Primero</option>';
+            } else {
+                modelSelect.disabled = false;
+                const brandModels = [...new Set(database_inventory.filter(c => c.vehicle.toLowerCase().includes(brand.toLowerCase())).map(c => {
+                    const parts = c.vehicle.split(' ');
+                    return parts.length > 1 ? parts[1] : '';
+                }).filter(m => m !== ''))].sort();
+
+                brandModels.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m;
+                    opt.textContent = m;
+                    modelSelect.appendChild(opt);
+                });
+            }
+            if (triggerRender) triggerInvFilter();
+        }
+
+        function updateInvSlider() {
+            const maxVal = parseInt(document.getElementById('invPriceMax').value);
+            let displayStr = formatCurrency(maxVal);
+            if (maxVal >= 1000000) displayStr = "+ " + displayStr;
+            document.getElementById('invPriceDisplay').textContent = displayStr;
+        }
+
+        function triggerInvFilter() {
+            const searchText = document.getElementById('invSearchText').value.toLowerCase();
+            const brand = document.getElementById('invBrandSelect').value;
+            const model = document.getElementById('invModelSelect').value;
+            const year = document.getElementById('invYearSelect').value;
+            const maxPrice = parseInt(document.getElementById('invPriceMax').value);
+            const showOnlyFavorites = document.getElementById('favToggle').classList.contains('active');
+
+            // Filter data
+            const filtered = database_inventory.filter(car => {
+                let matchSearch = car.vehicle.toLowerCase().includes(searchText) || car.version.toLowerCase().includes(searchText);
+                let matchBrand = brand === 'all' || car.vehicle.toLowerCase().includes(brand.toLowerCase());
+                let matchModel = model === 'all' || car.vehicle.toLowerCase().includes(model.toLowerCase());
+                let matchFav = !showOnlyFavorites || isLiked(car.id);
+
+                let carYearMatch = car.vehicle.match(/\b(20\d{2})\b/);
+                let carYear = carYearMatch ? parseInt(carYearMatch[1]) : 0;
+                let matchYear = true;
+                if (year !== 'all') {
+                    if (year === 'older') matchYear = carYear <= 2016;
+                    else matchYear = carYear >= parseInt(year);
+                }
+
+                let matchPrice = maxPrice >= 1000000 ? true : car.priceMXN <= maxPrice;
+
+                return matchSearch && matchBrand && matchModel && matchYear && matchPrice && matchFav;
+            });
+
+            renderGrid(filtered);
+        }
+
+        function initFiltersFromURL() {
+            populateInvBrands();
+
+            const params = new URLSearchParams(window.location.search);
+            const pBrand = params.get('brand') || 'all';
+            const pModel = params.get('model') || 'all';
+            const pYear = params.get('year') || 'all';
+            const pPrice = params.get('budget') ? parseInt(params.get('budget')) : 1000000;
+
+            document.getElementById('invBrandSelect').value = pBrand;
+            onInvBrandChanged(false); // populate models without triggering filter
+
+            if (pModel !== 'all' && !document.getElementById('invModelSelect').disabled) {
+                // Ensure the model exists in the dropdown, if not add it
+                const modelSelect = document.getElementById('invModelSelect');
+                let found = false;
+                for (let i = 0; i < modelSelect.options.length; i++) {
+                    if (modelSelect.options[i].value.toLowerCase() === pModel.toLowerCase()) {
+                        modelSelect.selectedIndex = i;
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    const opt = document.createElement('option');
+                    opt.value = pModel;
+                    opt.textContent = pModel;
+                    modelSelect.appendChild(opt);
+                    modelSelect.value = pModel;
+                }
+            }
+
+            document.getElementById('invYearSelect').value = pYear;
+            document.getElementById('invPriceMax').value = pPrice;
+            updateInvSlider();
+
+            triggerInvFilter(); // Render initial state based on URL
+        }
+
+        function renderGrid(dataToRender) {
+            const grid = document.getElementById('vehiculosGrid');
+            document.getElementById('totalAutos').textContent = dataToRender.length;
+
+            if (dataToRender.length === 0) {
+                grid.innerHTML = `
+                    <div style="text-align:center; padding: 60px 20px; grid-column: 1/-1; background: rgba(212,175,55,0.05); border-radius: 30px; border: 1px dashed var(--gold-dim); animation: fadeIn 0.5s ease-out;">
+                        <div style="font-size: 50px; margin-bottom: 20px;">🔍💔</div>
+                        <h3 style="color: white; font-size: 24px; margin-bottom: 10px;">¡No encontramos a tu media naranja aún!</h3>
+                        <p style="color: var(--green-text); margin-bottom: 30px; max-width: 500px; margin-left: auto; margin-right: auto;">
+                            Parece que tu auto ideal está jugando al escondite. No te preocupes, nuestro algoritmos de Matchmaker puede encontrarlo por ti.
+                        </p>
+                        <a href="vip/" class="btn btn-primary" style="display: inline-block; padding: 15px 40px; border-radius: 50px; text-decoration: none; font-weight: 800; background: linear-gradient(135deg, var(--gold), #f4e5b0);">
+                            💘 BUSCAR MI MEDIA NARANJA CON RUEDAS
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = dataToRender.map(auto => createCard(auto)).join('');
+        }
+
+        // --- MODAL LOGIC ---
+        let currentAuto = null;
+        let currentImgIdx = 0;
+        let carPhotos = [];
+
+        function openCarDetails(id) {
+            const auto = database_inventory.find(a => a.id === id);
+            if (!auto) return;
+
+            currentAuto = auto;
+            currentImgIdx = 0;
+
+            // Handle gallery photos
+            if (auto.url_fotos && Array.isArray(auto.url_fotos)) {
+                carPhotos = auto.url_fotos;
+            } else if (auto.url_fotos && (auto.url_fotos.includes('mercadolibre.com.mx') || auto.url_fotos.includes('drive.google.com'))) {
+                // For links that are not direct images, we use placeholders until we have a real scraper/source
+                carPhotos = [
+                    "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&w=1200",
+                    "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=1200",
+                    "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=1200"
+                ];
+            } else if (auto.url_fotos) {
+                carPhotos = [auto.url_fotos];
+            } else {
+                carPhotos = ["https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&w=1200"];
+            }
+
+            // Live Activity Social Proof
+            const liveActivity = document.getElementById('liveActivity');
+            const liveActivityText = document.getElementById('liveActivityText');
+            if (liveActivity && liveActivityText) {
+                const randomWatchers = Math.floor(Math.random() * 5) + 2;
+                liveActivityText.textContent = `${randomWatchers} personas están viendo este auto ahora`;
+                liveActivity.style.display = 'flex';
+            }
+
+            // Fill UI
+            document.getElementById('modalTitle').textContent = auto.vehicle;
+            document.getElementById('modalPrice').innerHTML = `${formatCurrency(auto.priceMXN)} <small>MXN</small>`;
+            document.getElementById('modalKm').textContent = `${auto.km.toLocaleString()} km`;
+            document.getElementById('modalTrans').textContent = auto.transmision;
+            document.getElementById('modalMotor').textContent = auto.motor;
+            document.getElementById('modalDrive').textContent = auto.traccion;
+            document.getElementById('modalFuel').textContent = auto.combustible;
+            document.getElementById('modalAgency').textContent = auto.ubicacion;
+            document.getElementById('modalDescription').textContent = auto.descripcion;
+
+            const waMsg = encodeURIComponent(`¡Hola Alabol! Me interesa el ${auto.vehicle} (${auto.id}) que vi en su inventario. ¿Sigue disponible?`);
+            document.getElementById('modalWaBtn').href = `https://wa.me/525568667571?text=${waMsg}`;
+
+            updateGalleryUI();
+
+            document.getElementById('carModal').classList.add('active');
+            document.body.style.overflow = 'hidden'; // Lock scroll
+
+            if (typeof trackFunnelStep === 'function') trackFunnelStep(4, 'ver_detalle_auto_' + id);
+        }
+
+        function closeModal() {
+            document.getElementById('carModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function changeImage(delta) {
+            currentImgIdx = (currentImgIdx + delta + carPhotos.length) % carPhotos.length;
+            updateGalleryUI();
+        }
+
+        function updateGalleryUI() {
+            const img = document.getElementById('modalMainImg');
+            img.style.opacity = '0';
+            setTimeout(() => {
+                img.src = carPhotos[currentImgIdx];
+                img.style.opacity = '1';
+                document.getElementById('imageCounter').textContent = `${currentImgIdx + 1} / ${carPhotos.length}`;
+            }, 200);
+        }
+
+        // Close on backdrop click
+        document.getElementById('carModal').addEventListener('click', (e) => {
+            if (e.target.id === 'carModal') closeModal();
+        });
+
+        // Keyboard support
+        document.addEventListener('keydown', (e) => {
+            if (!document.getElementById('carModal').classList.contains('active')) return;
+            if (e.key === 'Escape') closeModal();
+            if (e.key === 'ArrowLeft') changeImage(-1);
+            if (e.key === 'ArrowRight') changeImage(1);
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Re-verify that database_inventory has data
+            if (!window.database_inventory || window.database_inventory.length === 0) {
+                console.warn("Database inventory empty or not loaded yet. Retrying from INVENTARIO_AGENCIAS...");
+                if (typeof INVENTARIO_AGENCIAS !== 'undefined') {
+                    window.database_inventory = Object.values(INVENTARIO_AGENCIAS).map(car => ({
+                        id: car.id_interno || car.id,
+                        agencia: car.agencia,
+                        vehicle: `${car.marca} ${car.modelo} ${car.año}`.toUpperCase(),
+                        version: car.version,
+                        priceMXN: car.precio_venta,
+                        km: car.kilometraje,
+                        color: car.color,
+                        transmision: car.transmision,
+                        url_fotos: car.link_fotos
+                    }));
+                }
+            }
+            updateFavCounter();
+            initFiltersFromURL();
+        });
+    </script>
+</body>
+
+</html>

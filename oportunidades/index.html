@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oportunidades de Subasta | Alabol Car Broker</title>
+    <meta name="description"
+        content="Autos de subasta con hasta 50% de ahorro. Alabol Car Broker te consigue tu auto ideal.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a1f1a;
+            --bg-mid: #0d2921;
+            --bg-light: #0f3329;
+            --gold: #d4af37;
+            --gold-light: #f4e5b0;
+            --gold-dim: rgba(212, 175, 55, 0.3);
+            --green-text: #a8c5b8;
+            --glass-bg: rgba(15, 51, 41, 0.5);
+            --glass-border: rgba(212, 175, 55, 0.25);
+            --white: #ffffff;
+            --green-badge: #25D366;
+            --red-badge: #e74c3c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-dark);
+            min-height: 100vh;
+            padding: 16px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated gradient background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg,
+                    #0a1f1a 0%, #0d2921 25%, #0f3329 50%, #0d2921 75%, #0a1f1a 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            z-index: -2;
+        }
+
+        /* Gold particles */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(2px 2px at 20% 30%, rgba(212, 175, 55, 0.25), transparent),
+                radial-gradient(2px 2px at 60% 70%, rgba(212, 175, 55, 0.15), transparent),
+                radial-gradient(1px 1px at 50% 50%, rgba(212, 175, 55, 0.15), transparent),
+                radial-gradient(1px 1px at 80% 10%, rgba(212, 175, 55, 0.25), transparent),
+                radial-gradient(1px 1px at 30% 80%, rgba(212, 175, 55, 0.15), transparent);
+            background-size: 200% 200%;
+            animation: floatParticles 20s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes gradientShift {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        @keyframes floatParticles {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            33% {
+                transform: translate(30px, -30px);
+            }
+
+            66% {
+                transform: translate(-20px, 20px);
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========== HEADER ========== */
+        .header {
+            text-align: center;
+            padding: 24px 20px;
+            margin-bottom: 24px;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-container {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 12px;
+        }
+
+        .logo-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.35) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: logoGlowPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes logoGlowPulse {
+
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.15);
+                opacity: 0.9;
+            }
+        }
+
+        .logo-circle {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            background: rgba(15, 51, 41, 0.3);
+            border-radius: 50%;
+            border: 2px solid rgba(212, 175, 55, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.25), inset 0 0 20px rgba(212, 175, 55, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-img {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.5));
+        }
+
+        .header h1 {
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(135deg,
+                    #d4af37 0%, #f4e5b0 25%, #d4af37 50%, #c9a961 75%, #d4af37 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1.5px;
+            animation: shimmerText 3s linear infinite;
+            margin-bottom: 4px;
+        }
+
+        @keyframes shimmerText {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        .header .subtitle {
+            color: var(--green-text);
+            font-size: 14px;
+            font-weight: 300;
+        }
+
+        .header .subtitle .highlight {
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        /* Stats row */
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 16px 0;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--green-text);
+            font-weight: 500;
+            background: rgba(212, 175, 55, 0.08);
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+        }
+
+        .stat-item .stat-num {
+            color: var(--gold);
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        /* ========== FILTERS ========== */
+        .filters {
+            background: linear-gradient(135deg,
+                    rgba(15, 51, 41, 0.5) 0%,
+                    rgba(13, 41, 33, 0.5) 100%);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            animation: fadeInDown 0.6s ease-out 0.2s both;
+        }
+
+        .filters-label {
+            font-size: 11px;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .filter-groups {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 7px 14px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 20px;
+            background: rgba(10, 31, 26, 0.4);
+            color: var(--green-text);
+            font-family: 'Poppins', sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--gold-dim);
+            background: rgba(212, 175, 55, 0.08);
+        }
+
+        .filter-btn.active {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--gold-light);
+            font-weight: 600;
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.15);
+        }
+
+        .filter-separator {
+            width: 1px;
+            background: rgba(212, 175, 55, 0.2);
+            margin: 0 4px;
+        }
+
+        /* ========== GRID ========== */
+        .cars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        /* ========== CAR CARD ========== */
+        .car-card {
+            background: linear-gradient(135deg,
+                    rgba(15, 51, 41, 0.55) 0%,
+                    rgba(13, 41, 33, 0.55) 100%);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: cardIn 0.5s ease-out both;
+            position: relative;
+        }
+
+        .car-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(212, 175, 55, 0.4);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 30px rgba(212, 175, 55, 0.1);
+        }
+
+        @keyframes cardIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.97);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Photo */
+        .car-photo {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, rgba(15, 51, 41, 0.8), rgba(13, 41, 33, 0.8));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .car-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .car-photo .placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: rgba(168, 197, 184, 0.4);
+        }
+
+        .car-photo .placeholder .icon {
+            font-size: 40px;
+            filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.3));
+        }
+
+        .car-photo .placeholder span {
+            font-size: 12px;
+        }
+
+        /* Badges on photo */
+        .badge-origin {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(8px);
+        }
+
+        .badge-origin.mexico {
+            background: rgba(0, 150, 60, 0.85);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .badge-origin.usa {
+            background: rgba(0, 60, 150, 0.85);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .badge-savings {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            background: rgba(212, 175, 55, 0.9);
+            color: var(--bg-dark);
+            box-shadow: 0 2px 12px rgba(212, 175, 55, 0.4);
+        }
+
+        .badge-deadline {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 600;
+            background: rgba(0, 0, 0, 0.6);
+            color: var(--gold-light);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .badge-deadline.urgent {
+            background: rgba(231, 76, 60, 0.85);
+            color: white;
+            border-color: rgba(231, 76, 60, 0.5);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        /* Card body */
+        .car-info {
+            padding: 18px;
+        }
+
+        .car-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 2px;
+        }
+
+        .car-year {
+            font-size: 13px;
+            color: var(--gold);
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .car-damage {
+            font-size: 12px;
+            color: var(--green-text);
+            background: rgba(212, 175, 55, 0.06);
+            padding: 6px 10px;
+            border-radius: 8px;
+            border-left: 3px solid var(--gold-dim);
+            margin-bottom: 14px;
+            line-height: 1.4;
+        }
+
+        .car-notes {
+            font-size: 11px;
+            color: rgba(168, 197, 184, 0.6);
+            font-style: italic;
+            margin-bottom: 14px;
+        }
+
+        /* Price section */
+        .price-section {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        .price-main {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .price-label {
+            font-size: 10px;
+            color: var(--green-text);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .price-value {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #d4af37, #f4e5b0, #d4af37);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmerText 3s linear infinite;
+        }
+
+        .price-market {
+            text-align: right;
+        }
+
+        .price-market .price-label {
+            color: rgba(168, 197, 184, 0.4);
+        }
+
+        .price-market .price-original {
+            font-size: 16px;
+            color: rgba(168, 197, 184, 0.35);
+            text-decoration: line-through;
+            font-weight: 500;
+        }
+
+        .savings-text {
+            font-size: 13px;
+            color: var(--green-badge);
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+
+        /* CTA */
+        .cta-interest {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 13px;
+            background: #25D366;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.4s;
+            box-shadow: 0 0 20px rgba(37, 211, 102, 0.25);
+        }
+
+        .cta-interest:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 35px rgba(37, 211, 102, 0.4), 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* No results */
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--green-text);
+        }
+
+        .no-results .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3));
+        }
+
+        .no-results p {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .no-results .sub {
+            font-size: 13px;
+            color: rgba(168, 197, 184, 0.5);
+            margin-top: 4px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 24px;
+            color: rgba(168, 197, 184, 0.4);
+            font-size: 12px;
+        }
+
+        .footer a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        .footer .cta-group-footer {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 12px;
+            padding: 8px 20px;
+            background: rgba(37, 211, 102, 0.12);
+            color: #25D366;
+            border: 1px solid rgba(37, 211, 102, 0.3);
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .footer .cta-group-footer:hover {
+            background: rgba(37, 211, 102, 0.2);
+            border-color: #25D366;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .cars-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 18px;
+            }
+
+            .filter-groups {
+                flex-direction: column;
+            }
+
+            .filter-separator {
+                display: none;
+            }
+
+            .stats-row {
+                gap: 8px;
+            }
+
+            .stat-item {
+                font-size: 11px;
+                padding: 5px 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo-container">
+                <div class="logo-glow"></div>
+                <div class="logo-circle">
+                    <img src="../logo-circular.png" alt="Alabol Car Broker" class="logo-img">
+                </div>
+            </div>
+            <h1>OPORTUNIDADES DE SUBASTA</h1>
+            <p class="subtitle">Autos con hasta <span class="highlight">50% de ahorro</span> vs agencia</p>
+
+            <div class="stats-row">
+                <div class="stat-item">
+                    <span class="stat-num" id="totalCount">0</span> oportunidades
+                </div>
+                <div class="stat-item">
+                    🇲🇽 <span class="stat-num" id="mxCount">0</span> México
+                </div>
+                <div class="stat-item">
+                    🇺🇸 <span class="stat-num" id="usCount">0</span> USA
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <div class="filters-label">🔍 Filtrar</div>
+            <div class="filter-groups">
+                <div class="filter-group" id="filterTipo">
+                    <button class="filter-btn active" data-filter="todos">Todos</button>
+                    <button class="filter-btn" data-filter="sedan">🚗 Sedán</button>
+                    <button class="filter-btn" data-filter="suv">🚙 SUV</button>
+                    <button class="filter-btn" data-filter="pickup">🛻 Pick-up</button>
+                    <button class="filter-btn" data-filter="deportivo">🏎️ Deportivo</button>
+                </div>
+                <div class="filter-separator"></div>
+                <div class="filter-group" id="filterOrigen">
+                    <button class="filter-btn active" data-filter="todos">🌎 Todos</button>
+                    <button class="filter-btn" data-filter="mexico">🇲🇽 México</button>
+                    <button class="filter-btn" data-filter="usa">🇺🇸 USA</button>
+                </div>
+                <div class="filter-separator"></div>
+                <div class="filter-group" id="filterPrecio">
+                    <button class="filter-btn active" data-filter="todos">💰 Todos</button>
+                    <button class="filter-btn" data-filter="150">Hasta $150k</button>
+                    <button class="filter-btn" data-filter="250">$150k - $250k</button>
+                    <button class="filter-btn" data-filter="400">$250k - $400k</button>
+                    <button class="filter-btn" data-filter="400plus">$400k+</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cars Grid -->
+        <div class="cars-grid" id="carsGrid"></div>
+
+        <!-- No results -->
+        <div class="no-results" id="noResults" style="display:none;">
+            <div class="icon">🔍</div>
+            <p>No hay oportunidades con estos filtros</p>
+            <div class="sub">Intenta cambiar los filtros o revisa pronto — actualizamos seguido</div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>🔒 Alabol Car Broker · <a href="../index.html">alabolcar.vip</a></p>
+            <a href="https://chat.whatsapp.com/LOOtnIsTUXJ6kaioXSsYam" class="cta-group-footer" target="_blank"
+                rel="noopener">
+                👥 Únete al Grupo VIP de Oportunidades
+            </a>
+        </div>
+    </div>
+
+    <script src="oportunidades-data.js"></script>
+    <script>
+        // =====================
+        // STATE
+        // =====================
+        const WHATSAPP_NUMBER = '525568667571';
+        let activeFilters = {
+            tipo: 'todos',
+            origen: 'todos',
+            precio: 'todos'
+        };
+
+        // =====================
+        // HELPERS
+        // =====================
+        function formatMoney(n) {
+            return '$' + n.toLocaleString('es-MX');
+        }
+
+        function calcSavings(market, total) {
+            return Math.round(((market - total) / market) * 100);
+        }
+
+        function getDaysLeft(fecha) {
+            const diff = new Date(fecha) - new Date();
+            return Math.ceil(diff / (1000 * 60 * 60 * 24));
+        }
+
+        function formatDeadline(fecha) {
+            const days = getDaysLeft(fecha);
+            if (days <= 0) return { text: '⚠️ Finalizada', urgent: true };
+            if (days <= 2) return { text: `🔥 ${days} día${days > 1 ? 's' : ''} restante${days > 1 ? 's' : ''}`, urgent: true };
+            if (days <= 5) return { text: `⏳ ${days} días restantes`, urgent: false };
+            const d = new Date(fecha);
+            return { text: `📅 Hasta ${d.getDate()}/${d.getMonth() + 1}`, urgent: false };
+        }
+
+        // =====================
+        // RENDER
+        // =====================
+        function renderCars() {
+            const grid = document.getElementById('carsGrid');
+            const noResults = document.getElementById('noResults');
+
+            const filtered = OPORTUNIDADES.filter(car => {
+                if (!car.disponible) return false;
+
+                // Tipo filter
+                if (activeFilters.tipo !== 'todos' && car.tipo !== activeFilters.tipo) return false;
+
+                // Origen filter
+                if (activeFilters.origen !== 'todos' && car.origen !== activeFilters.origen) return false;
+
+                // Precio filter
+                if (activeFilters.precio !== 'todos') {
+                    if (activeFilters.precio === '150' && car.precioTotal > 150000) return false;
+                    if (activeFilters.precio === '250' && (car.precioTotal <= 150000 || car.precioTotal > 250000)) return false;
+                    if (activeFilters.precio === '400' && (car.precioTotal <= 250000 || car.precioTotal > 400000)) return false;
+                    if (activeFilters.precio === '400plus' && car.precioTotal <= 400000) return false;
+                }
+
+                return true;
+            });
+
+            // Update stats
+            const disponibles = OPORTUNIDADES.filter(c => c.disponible);
+            document.getElementById('totalCount').textContent = disponibles.length;
+            document.getElementById('mxCount').textContent = disponibles.filter(c => c.origen === 'mexico').length;
+            document.getElementById('usCount').textContent = disponibles.filter(c => c.origen === 'usa').length;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                noResults.style.display = 'block';
+                return;
+            }
+
+            noResults.style.display = 'none';
+
+            grid.innerHTML = filtered.map((car, i) => {
+                const savings = calcSavings(car.precioMercado, car.precioTotal);
+                const ahorroMXN = car.precioMercado - car.precioTotal;
+                const deadline = formatDeadline(car.fechaLimite);
+                const originLabel = car.origen === 'mexico' ? '🇲🇽 Subasta México' : '🇺🇸 Subasta USA';
+                const originClass = car.origen === 'mexico' ? 'mexico' : 'usa';
+
+                const msg = encodeURIComponent(
+                    `Hola Alabol 👋\n\n` +
+                    `Me interesa esta oportunidad:\n` +
+                    `🚗 ${car.marca} ${car.modelo} ${car.anio}\n` +
+                    `💰 Precio: ${formatMoney(car.precioTotal)} MXN\n\n` +
+                    `¿Sigue disponible? ¿Qué pasos sigo?`
+                );
+
+                const photoHTML = car.foto
+                    ? `<img src="${car.foto}" alt="${car.marca} ${car.modelo}">`
+                    : `<div class="placeholder"><span class="icon">🚗</span><span>${car.marca} ${car.modelo}</span></div>`;
+
+                return `
+                    <div class="car-card" style="animation-delay: ${i * 0.1}s">
+                        <div class="car-photo">
+                            ${photoHTML}
+                            <div class="badge-origin ${originClass}">${originLabel}</div>
+                            <div class="badge-savings">-${savings}%</div>
+                            <div class="badge-deadline ${deadline.urgent ? 'urgent' : ''}">${deadline.text}</div>
+                        </div>
+                        <div class="car-info">
+                            <div class="car-title">${car.marca} ${car.modelo}</div>
+                            <div class="car-year">${car.anio} · ${car.tipo === 'sedan' ? 'Sedán' : car.tipo === 'suv' ? 'SUV' : car.tipo === 'pickup' ? 'Pick-up' : 'Deportivo'}</div>
+                            <div class="car-damage">🔧 ${car.danio}</div>
+                            ${car.notas ? `<div class="car-notes">💡 ${car.notas}</div>` : ''}
+                            <div class="price-section">
+                                <div class="price-main">
+                                    <span class="price-label">Precio Alabol</span>
+                                    <span class="price-value">${formatMoney(car.precioTotal)}</span>
+                                </div>
+                                <div class="price-market">
+                                    <span class="price-label">Mercado</span>
+                                    <span class="price-original">${formatMoney(car.precioMercado)}</span>
+                                </div>
+                            </div>
+                            <div class="savings-text">💚 Ahorras ${formatMoney(ahorroMXN)} MXN</div>
+                            <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${msg}" class="cta-interest" target="_blank" rel="noopener">
+                                💬 Me interesa este auto
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // =====================
+        // FILTERS
+        // =====================
+        function setupFilters() {
+            document.getElementById('filterTipo').addEventListener('click', e => {
+                if (!e.target.classList.contains('filter-btn')) return;
+                document.querySelectorAll('#filterTipo .filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                activeFilters.tipo = e.target.dataset.filter;
+                renderCars();
+            });
+
+            document.getElementById('filterOrigen').addEventListener('click', e => {
+                if (!e.target.classList.contains('filter-btn')) return;
+                document.querySelectorAll('#filterOrigen .filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                activeFilters.origen = e.target.dataset.filter;
+                renderCars();
+            });
+
+            document.getElementById('filterPrecio').addEventListener('click', e => {
+                if (!e.target.classList.contains('filter-btn')) return;
+                document.querySelectorAll('#filterPrecio .filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                activeFilters.precio = e.target.dataset.filter;
+                renderCars();
+            });
+        }
+
+        // =====================
+        // INIT
+        // =====================
+        setupFilters();
+        renderCars();
+    </script>
+</body>
+
+</html>

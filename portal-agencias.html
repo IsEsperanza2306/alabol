@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alabol BackOffice | Portal de Agencias</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a1f1a;
+            --bg-mid: #0d2921;
+            --bg-light: #0f3329;
+            --gold: #d4af37;
+            --gold-light: #f4e5b0;
+            --gold-dim: rgba(212, 175, 55, 0.2);
+            --green-text: #a8c5b8;
+            --red-urgent: #ff4757;
+            --emerald: #34d399;
+            --glass-bg: rgba(15, 51, 41, 0.7);
+            --glass-border: rgba(212, 175, 55, 0.25);
+            --sidebar-width: 250px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-dark);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* Animated Grid Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                linear-gradient(rgba(212, 175, 55, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(212, 175, 55, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        /* Ambient Glow */
+        .ambient-glow {
+            position: fixed;
+            top: -20vh;
+            right: -10vw;
+            width: 60vw;
+            height: 60vh;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: -1;
+            filter: blur(50px);
+            pointer-events: none;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: rgba(10, 31, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--glass-border);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .brand-logo {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--gold) 0%, #a3821a 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--bg-dark);
+            box-shadow: 0 0 20px var(--gold-dim);
+        }
+
+        .brand-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 1px;
+        }
+
+        .brand-sub {
+            font-size: 11px;
+            color: var(--gold);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            color: var(--green-text);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .nav-item:hover {
+            color: white;
+            background: rgba(212, 175, 55, 0.05);
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            color: var(--gold);
+            background: var(--gold-dim);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
+        }
+
+        .nav-icon {
+            font-size: 18px;
+        }
+
+        .agency-profile {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .agency-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-mid);
+            border: 2px solid var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 40px 50px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .page-title h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .page-title p {
+            color: var(--green-text);
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold) 0%, #f4e5b0 50%, var(--gold) 100%);
+            background-size: 200% auto;
+            color: var(--bg-dark);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
+        }
+
+        /* Metrics Row */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .metric-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 24px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .metric-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .icon-gold {
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--gold);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .icon-emerald {
+            background: rgba(52, 211, 153, 0.15);
+            color: var(--emerald);
+            border: 1px solid rgba(52, 211, 153, 0.3);
+        }
+
+        .icon-blue {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .metric-info h3 {
+            font-size: 32px;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 5px;
+        }
+
+        .metric-info p {
+            color: var(--green-text);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* Sections (Views) */
+        .view-section {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- MODULE: UPLOAD INVENTORY --- */
+        .upload-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .panel-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--gold-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Drag & Drop Zone */
+        .dropzone {
+            border: 2px dashed rgba(212, 175, 55, 0.4);
+            border-radius: 16px;
+            padding: 40px 20px;
+            text-align: center;
+            background: rgba(10, 31, 26, 0.5);
+            transition: all 0.3s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            height: 250px;
+        }
+
+        .dropzone:hover,
+        .dropzone.dragover {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+            transform: scale(1.02);
+        }
+
+        .drop-icon {
+            font-size: 48px;
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.4));
+        }
+
+        .drop-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .drop-sub {
+            font-size: 13px;
+            color: var(--green-text);
+        }
+
+        /* Gamified Manual Form */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--green-text);
+        }
+
+        .chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .chip {
+            padding: 10px 16px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--green-text);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            user-select: none;
+        }
+
+        .chip:hover {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: rgba(212, 175, 55, 0.3);
+            color: white;
+        }
+
+        .chip.active {
+            background: var(--gold-dim);
+            border-color: var(--gold);
+            color: var(--gold-light);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+        }
+
+        .styled-input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-family: inherit;
+            font-size: 15px;
+            transition: border 0.3s;
+        }
+
+        .styled-input:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .price-input-wrapper {
+            position: relative;
+        }
+
+        .price-prefix {
+            position: absolute;
+            left: 16px;
+            top: 14px;
+            color: var(--gold);
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .price-input-wrapper .styled-input {
+            padding-left: 35px;
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--emerald);
+        }
+
+        /* Mock Image Uploader */
+        .img-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .img-slot {
+            aspect-ratio: 1;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .img-slot:hover {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+            color: var(--gold);
+        }
+
+        .img-slot img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* --- MODULE: ACTIVE INVENTORY --- */
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .car-card {
+            background: rgba(10, 31, 26, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .car-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(212, 175, 55, 0.3);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .car-img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-bottom: 2px solid var(--gold-dim);
+        }
+
+        .car-info {
+            padding: 16px;
+        }
+
+        .car-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .car-price {
+            font-size: 18px;
+            color: var(--emerald);
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .car-meta {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .meta-badge {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            color: var(--green-text);
+        }
+
+        .btn-danger {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            color: var(--red-urgent);
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-danger:hover {
+            background: var(--red-urgent);
+            color: white;
+        }
+
+        /* Simple notification toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--emerald);
+            color: var(--bg-dark);
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(52, 211, 153, 0.4);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Sortable Grid Styling */
+        .img-grid.sortable .img-slot {
+            cursor: grab;
+        }
+
+        .img-grid.sortable .img-slot:active {
+            cursor: grabbing;
+        }
+
+        .img-slot.dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+
+        .portada-badge {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background: var(--gold);
+            color: var(--bg-dark);
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+            z-index: 10;
+        }
+
+        /* Preview Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 12, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Auth Overlay Styles */
+        .auth-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(7, 18, 15, 0.97);
+            backdrop-filter: blur(20px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-box {
+            background: rgba(15, 51, 41, 0.9);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 48px;
+            width: 100%;
+            max-width: 460px;
+            box-shadow: 0 0 60px rgba(212, 175, 55, 0.1);
+        }
+
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .auth-logo .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--gold) 0%, #a3821a 100%);
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 16px;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+        }
+
+        .auth-logo h2 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .auth-logo p {
+            font-size: 13px;
+            color: var(--green-text);
+        }
+
+        .auth-tab-bar {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 4px;
+            margin-bottom: 28px;
+            gap: 4px;
+        }
+
+        .auth-tab {
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--green-text);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .auth-tab.active {
+            background: var(--gold);
+            color: var(--bg-dark);
+        }
+
+        .auth-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 14px 16px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+            margin-bottom: 14px;
+            font-family: 'Poppins', sans-serif;
+            transition: border-color 0.2s;
+        }
+
+        .auth-input:focus {
+            border-color: var(--gold);
+        }
+
+        .auth-input::placeholder {
+            color: var(--green-text);
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--gold) 0%, #c9a227 100%);
+            color: var(--bg-dark);
+            border: none;
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+            margin-top: 6px;
+        }
+
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+        }
+
+        .auth-error {
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            color: #ff4757;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            margin-bottom: 12px;
+            display: none;
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            margin-top: auto;
+            font-size: 13px;
+        }
+
+        .user-badge .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--bg-dark);
+        }
+
+        .btn-logout {
+            background: none;
+            border: none;
+            color: var(--red-urgent);
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: auto;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        @keyframes logoGlowPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.15);
+                opacity: 0.9;
+            }
+        }
+
+        .logo-container {
+            position: relative;
+            width: 45px;
+            height: 45px;
+            margin-right: 12px;
+        }
+
+        .logo-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 65px;
+            height: 65px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.4) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: logoGlowPulse 3s ease-in-out infinite;
+        }
+
+        .logo-img {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    </style>
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+    <div class="ambient-glow"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-logo">A</div>
+            <div>
+                <div class="brand-name">Alabol UI</div>
+                <div class="brand-sub">Agency Portal</div>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <a class="nav-item active" onclick="switchView(event, 'overview')">
+                <span class="nav-icon">📊</span> Overview
+            </a>
+            <a class="nav-item" onclick="switchView(event, 'upload')">
+                <span class="nav-icon">⚡</span> Cargar Autos
+            </a>
+            <a class="nav-item" onclick="switchView(event, 'inventory')">
+                <span class="nav-icon">🚘</span> Mi Inventario
+            </a>
+        </nav>
+
+        <div class="agency-profile" style="margin-top: auto;">
+            <div class="agency-avatar">🏢</div>
+            <div>
+                <div style="font-size: 13px; font-weight: 600;">Kavak Sur</div>
+                <div style="font-size: 11px; color: var(--green-text);">ID: KVK-001</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- CONTENT -->
+    <main class="main-content">
+
+        <!-- HEADER -->
+        <header class="header">
+            <div class="page-title">
+                <h1 id="pageTitle">Panel de Control</h1>
+                <p id="pageDesc">Monitorea tus KPIs y la rotación de tu inventario en tiempo real.</p>
+            </div>
+            <button class="btn-primary" onclick="switchView(event, 'upload')">
+                <span>➕</span> Nuevo Auto
+            </button>
+        </header>
+
+        <!-- VIEW: OVERVIEW -->
+        <section id="view-overview" class="view-section active">
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon icon-gold">🚘</div>
+                    <div class="metric-info">
+                        <h3>42</h3>
+                        <p>Autos Activos en Alabol</p>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon icon-emerald">💖</div>
+                    <div class="metric-info">
+                        <h3>18</h3>
+                        <p>Matches esta semana</p>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon icon-blue">👀</div>
+                    <div class="metric-info">
+                        <h3>850</h3>
+                        <p>Impresiones a clientes</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-title"><span>🚀</span> Quick Actions</div>
+                <p style="color: var(--green-text); font-size: 14px; margin-bottom: 20px;">Mantén tu inventario fresco
+                    para el motor inteligente. Lo que no está aquí, no se cruza con los clientes.</p>
+                <button class="btn-primary" onclick="switchView(event, 'upload')" style="display: inline-flex;">Cargar
+                    Lote de
+                    Autos (CSV)</button>
+            </div>
+        </section>
+
+        <!-- VIEW: UPLOAD -->
+        <section id="view-upload" class="view-section">
+            <div class="upload-container">
+                <!-- CSV Dropzone -->
+                <div class="panel">
+                    <div class="panel-title"><span>📂</span> Carga Masiva (CSV / Excel)</div>
+                    <p style="font-size: 13px; color: var(--green-text); margin-bottom: 20px;">Rápido y cero fricción.
+                        Arrastra tu listado mensual de autos. Nosotros normalizamos los datos por ti.</p>
+
+                    <div class="dropzone" id="csvDropzone" onclick="document.getElementById('fileInput').click()">
+                        <div class="drop-icon">📑</div>
+                        <div class="drop-title">Arrastra tu archivo aquí</div>
+                        <div class="drop-sub">Soporta .CSV, .XLSX (Max 10MB)</div>
+                        <input type="file" id="fileInput" hidden accept=".csv, .xlsx">
+                    </div>
+                </div>
+
+                <!-- Gamified Manual Upload -->
+                <div class="panel">
+                    <div class="panel-title"><span>⚡</span> Alta Rápida Inteligente</div>
+
+                    <div class="form-group">
+                        <label class="form-label">Marca</label>
+                        <select id="selMarca" class="styled-input" style="margin-bottom: 10px;"
+                            onchange="updateModels()">
+                            <option value="">Selecciona la Marca</option>
+                        </select>
+
+                        <label class="form-label">Modelo</label>
+                        <select id="selModelo" class="styled-input" disabled>
+                            <option value="">Primero selecciona una Marca</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Año</label>
+                        <select id="selAnio" class="styled-input">
+                            <option value="">Selecciona el Año</option>
+                            <!-- Script will populate this -->
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Transmisión</label>
+                        <div class="chips-container" id="chipTrans">
+                            <div class="chip active" onclick="toggleChip(this, true)">⚙️ Automática</div>
+                            <div class="chip" onclick="toggleChip(this, true)">🕹️ Manual</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Precio de Venta</label>
+                        <div class="price-input-wrapper">
+                            <span class="price-prefix">$</span>
+                            <input type="number" id="inpPrecio" class="styled-input" placeholder="350000">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Kilometraje</label>
+                        <input type="number" id="inpKms" class="styled-input" placeholder="Ej. 45000">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Descripción del Vehículo</label>
+                        <textarea id="inpDesc" class="styled-input"
+                            placeholder="Detalla las condiciones generales, historial de servicios, equipamento especial..."
+                            rows="3" style="resize: vertical;"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Fotografías (Ordena arrastrando. La primera será la Portada)</label>
+                        <div class="img-grid sortable" id="photoGrid">
+                            <div class="img-slot" id="btnAddPhoto"
+                                onclick="document.getElementById('filePhoto').click()" style="order: 999;">+</div>
+                        </div>
+                        <input type="file" id="filePhoto" hidden accept="image/*" multiple
+                            onchange="handlePhotoSelection(event)">
+                        <p style="font-size: 11px; margin-top: 5px; color: var(--gold-dim);">Arrastra las fotos para
+                            cambiar el orden.</p>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; margin-top: 25px;">
+                        <button class="btn-primary"
+                            style="flex: 1; background: transparent; border: 1px solid var(--gold); color: var(--gold); justify-content: center;"
+                            onclick="previewAd()">
+                            👁️ Vista Previa
+                        </button>
+                        <button class="btn-primary" id="btnPublish" style="flex: 2; justify-content: center;"
+                            onclick="uploadCarToSupabase()">
+                            Publicar en el Matchmaker
+                        </button>
+                    </div>
+                    <div id="uploadStatus"
+                        style="text-align: center; margin-top: 10px; font-size: 12px; color: var(--emerald);"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: INVENTORY -->
+        <section id="view-inventory" class="view-section">
+            <div class="panel" style="margin-bottom: 25px;">
+                <input type="text" class="styled-input" placeholder="🔍 Buscar por marca, modelo o ID de placa...">
+            </div>
+
+            <div class="inventory-grid" id="inventoryGrid">
+                <!-- Cars will be injected here via JS -->
+            </div>
+        </section>
+
+        <!-- VIEW: MATCHES (Removed) -->
+    </main>
+
+    <!-- Preview Modal -->
+    <div id="previewModal" class="modal">
+        <div style="max-width: 400px; width: 100%; position: relative;">
+            <button onclick="document.getElementById('previewModal').style.display='none'"
+                style="position:absolute; top:-40px; right:0; background:none; border:none; color:white; font-size:24px; cursor:pointer;">&times;</button>
+            <h3 style="color: white; margin-bottom: 15px; text-align: center;">Así lo verán los clientes</h3>
+            <div id="previewContent" class="car-card" style="margin: 0 auto;">
+                <!-- Content injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <span id="toastMsg">Notificación</span>
+    </div>
+
+    <!-- Error Banner for debugging -->
+    <div id="debugBanner"
+        style="display:none; position:fixed; top:0; left:0; width:100%; background:red; color:white; padding:10px; z-index:9999; font-family:monospace; font-size:12px;">
+    </div>
+
+    <!-- ============================================ -->
+    <!-- AUTH OVERLAY (Login / Register)              -->
+    <!-- ============================================ -->
+    <div id="authOverlay" class="auth-overlay">
+        <div class="auth-box">
+            <div class="auth-logo">
+                <div class="logo-icon">🏹</div>
+                <h2>Alabol BackOffice</h2>
+                <p>Acceso exclusivo para agencias afiliadas</p>
+            </div>
+
+            <div class="auth-tab-bar">
+                <div class="auth-tab active" onclick="switchAuthTab('login')">Iniciar Sesión</div>
+                <div class="auth-tab" onclick="switchAuthTab('register')">Crear Cuenta</div>
+            </div>
+
+            <div id="authError" class="auth-error"></div>
+
+            <!-- Login Form -->
+            <div id="formLogin">
+                <input id="loginEmail" class="auth-input" type="email" placeholder="📧 Correo de la Agencia"
+                    autocomplete="email">
+                <input id="loginPass" class="auth-input" type="password" placeholder="🔑 Contraseña">
+                <button class="auth-btn" onclick="handleLogin()">Entrar al Panel →</button>
+            </div>
+
+            <!-- Register Form -->
+            <div id="formRegister" style="display:none;">
+                <input id="regName" class="auth-input" type="text" placeholder="🏢 Nombre de la Agencia">
+                <input id="regEmail" class="auth-input" type="email" placeholder="📧 Correo Corporativo"
+                    autocomplete="email">
+                <input id="regPass" class="auth-input" type="password" placeholder="🔑 Contraseña (mín. 6 caracteres)">
+                <button class="auth-btn" onclick="handleRegister()">Crear Mi Cuenta →</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Catch any global errors and display them on screen
+        window.onerror = function (msg, url, lineNo, columnNo, error) {
+            const banner = document.getElementById('debugBanner');
+            banner.style.display = 'block';
+            banner.innerHTML += `ERROR: ${msg} en linea ${lineNo}<br>`;
+            return false;
+        };
+
+        // Supabase Initialization
+        const SUPABASE_URL = 'https://rgnunjngtsgqgvplawfr.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_G6asVlNL8PHZamCS6r1_lQ_VeV-wsL3';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        console.log("Supabase Client Init:", !!supabaseClient);
+
+        // Multi-Tenant: Current authenticated user context
+        let currentUser = null;
+        let AGENCY_ID = null; // Will be set after auth
+        let stagedFiles = []; // Array of { id, file, url } for Drag & Drop sorting
+
+        // ============================================
+        // AUTH SYSTEM (Login / Register / Logout)
+        // ============================================
+        function switchAuthTab(tab) {
+            document.querySelectorAll('.auth-tab').forEach(el => el.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('formLogin').style.display = tab === 'login' ? 'block' : 'none';
+            document.getElementById('formRegister').style.display = tab === 'register' ? 'block' : 'none';
+            document.getElementById('authError').style.display = 'none';
+        }
+
+        function showAuthError(msg) {
+            const el = document.getElementById('authError');
+            el.textContent = msg;
+            el.style.display = 'block';
+        }
+
+        async function handleLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPass').value;
+            if (!email || !pass) { showAuthError('Ingresa tu correo y contraseña.'); return; }
+
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pass });
+            if (error) { showAuthError('Credenciales inválidas. Verifica tu correo y contraseña.'); return; }
+            onAuthSuccess(data.user);
+        }
+
+        async function handleRegister() {
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const pass = document.getElementById('regPass').value;
+            if (!name || !email || !pass) { showAuthError('Por favor llena todos los campos.'); return; }
+            if (pass.length < 6) { showAuthError('La contraseña debe tener al menos 6 caracteres.'); return; }
+
+            const { data, error } = await supabaseClient.auth.signUp({
+                email,
+                password: pass,
+                options: { data: { agency_name: name } } // Metadata guardado en auth.users
+            });
+            if (error) { showAuthError('Error al crear cuenta: ' + error.message); return; }
+            // Auto-login after register
+            if (data.session) {
+                onAuthSuccess(data.user);
+            } else {
+                showAuthError('¡Registro exitoso! Revisa tu correo para confirmarlo.');
+            }
+        }
+
+        function onAuthSuccess(user) {
+            currentUser = user;
+            AGENCY_ID = user.id; // Unique agency ID = their Supabase user ID
+
+            // Hide Auth Overlay, Show App
+            document.getElementById('authOverlay').style.display = 'none';
+
+            // Inject User Badge in sidebar
+            const agencyName = user.user_metadata?.agency_name || user.email.split('@')[0];
+            const sidebar = document.querySelector('.nav-menu');
+            sidebar.insertAdjacentHTML('afterend', `
+                <div class="user-badge">
+                    <div class="user-avatar">${agencyName.charAt(0).toUpperCase()}</div>
+                    <div>
+                        <div style="font-weight:600; font-size:12px; color:white">${agencyName}</div>
+                        <div style="font-size:10px; color:var(--green-text)">${user.email}</div>
+                    </div>
+                    <button class="btn-logout" onclick="handleLogout()">Salir</button>
+                </div>
+            `);
+
+            // Pull real inventory filtered to this agency only
+            fetchInventory();
+        }
+
+        async function handleLogout() {
+            await supabaseClient.auth.signOut();
+            window.location.reload();
+        }
+
+        // ============================================
+        // SESSION CHECK ON LOAD
+        // ============================================
+        async function checkSession() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session?.user) {
+                onAuthSuccess(session.user);
+            }
+            // else: AuthOverlay stays visible (user must log in)
+        }
+        checkSession();
+
+        supabaseClient.auth.onAuthStateChange((_event, session) => {
+            if (session?.user && !currentUser) {
+                onAuthSuccess(session.user);
+            }
+        });
+
+        // Tab Navigation Logic
+        const titles = {
+            'overview': { title: 'Panel de Control', desc: 'Monitorea tus KPIs y rotación de inventario.' },
+            'upload': { title: 'Cargar Inventario', desc: 'Alta masiva o manual de vehículos en la red Alabol.' },
+            'inventory': { title: 'Mi Inventario Activo', desc: 'Gestiona existencias y da de baja autos vendidos.' }
+        };
+
+        function switchView(event, viewId) {
+            // Update Sidebar Highlights
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+            // If the element clicked is a nav-item, highlight it. Otherwise find the matching nav-item
+            if (event.currentTarget.classList.contains('nav-item')) {
+                event.currentTarget.classList.add('active');
+            } else {
+                const targetNav = Array.from(document.querySelectorAll('.nav-item')).find(el => el.getAttribute('onclick').includes(viewId));
+                if (targetNav) targetNav.classList.add('active');
+            }
+
+            // Show selected view
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById(`view-${viewId}`).classList.add('active');
+
+            // Update Header Titles
+            document.getElementById('pageTitle').textContent = titles[viewId].title;
+            document.getElementById('pageDesc').textContent = titles[viewId].desc;
+        }
+
+        // Dynamic Mexico Catalog
+        const mexicoCatalog = {
+            "Volkswagen": ["Jetta", "Golf", "Polo", "Vento", "Virtus", "Tiguan", "Taos", "Caddy", "Amarok", "Saveiro", "T-Cross"],
+            "Nissan": ["Versa", "Sentra", "March", "Altima", "Kicks", "X-Trail", "Frontier", "NP300", "Maxima"],
+            "Honda": ["Civic", "Accord", "City", "CR-V", "HR-V", "BR-V", "Odyssey", "Pilot"],
+            "Toyota": ["Corolla", "Camry", "Yaris", "Prius", "RAV4", "Highlander", "Sienna", "Tacoma", "Hilux", "Avanza"],
+            "Chevrolet": ["Onix", "Aveo", "Cavalier", "Tracker", "Captiva", "Silverado", "Colorado", "Tahoe", "Suburban", "Tornado"],
+            "Ford": ["Mustang", "Escape", "Edge", "Explorer", "Expedition", "F-150", "Lobo", "Ranger", "Maverick"],
+            "Kia": ["Rio", "Forte", "Soul", "Seltos", "Sportage", "Sorento", "Sedona"],
+            "Hyundai": ["Grand i10", "Elantra", "Accent", "Creta", "Tucson", "Santa Fe"],
+            "Mazda": ["Mazda2", "Mazda3", "Mazda6", "CX-3", "CX-30", "CX-5", "CX-9"],
+            "BMW": ["Serie 1", "Serie 3", "Serie 5", "X1", "X3", "X5", "X6", "X7"],
+            "Mercedes-Benz": ["Clase A", "Clase C", "Clase E", "GLA", "GLC", "GLE", "GLS"],
+            "Audi": ["A1", "A3", "A4", "A6", "Q2", "Q3", "Q5", "Q7", "Q8"]
+        };
+
+        function initCatalog() {
+            // Populate Makes
+            const selMarca = document.getElementById('selMarca');
+            Object.keys(mexicoCatalog).sort().forEach(marca => {
+                selMarca.innerHTML += `<option value="${marca}">${marca}</option>`;
+            });
+
+            // Populate Years (Current Year down to 2005)
+            const selAnio = document.getElementById('selAnio');
+            const currentYear = new Date().getFullYear();
+            for (let i = currentYear + 1; i >= 2005; i--) {
+                selAnio.innerHTML += `<option value="${i}">${i}</option>`;
+            }
+        }
+
+        function updateModels() {
+            const selMarca = document.getElementById('selMarca');
+            const selModelo = document.getElementById('selModelo');
+            const selectedMarca = selMarca.value;
+
+            selModelo.innerHTML = '<option value="">Selecciona el Modelo</option>';
+
+            if (selectedMarca && mexicoCatalog[selectedMarca]) {
+                selModelo.disabled = false;
+                mexicoCatalog[selectedMarca].sort().forEach(modelo => {
+                    selModelo.innerHTML += `<option value="${modelo}">${modelo}</option>`;
+                });
+            } else {
+                selModelo.disabled = true;
+                selModelo.innerHTML = '<option value="">Primero selecciona una Marca</option>';
+            }
+        }
+
+        // Gamified Chips Logic
+        function toggleChip(element, singleSelectGroup = false) {
+            if (singleSelectGroup) {
+                Array.from(element.parentElement.children).forEach(sibling => sibling.classList.remove('active'));
+            }
+            element.classList.toggle('active');
+        }
+
+        // Photo Selection and Sorting Logic
+        function handlePhotoSelection(event) {
+            const files = event.target.files;
+            if (!files.length) return;
+
+            const grid = document.getElementById('photoGrid');
+
+            for (let file of files) {
+                const fileId = 'staged-' + Date.now() + Math.floor(Math.random() * 1000);
+                const objectUrl = URL.createObjectURL(file);
+
+                stagedFiles.push({ id: fileId, file: file, url: objectUrl });
+
+                const slotHTML = `
+                    <div class="img-slot staged-img" id="${fileId}" draggable="true" style="position:relative;">
+                        <img src="${objectUrl}" alt="Auto Preview" style="width:100%;height:100%;object-fit:cover;">
+                        <div class="remove-btn" onclick="removePhoto('${fileId}')" style="position:absolute; top:5px; right:5px; background:rgba(255,0,0,0.7); color:white; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;">✕</div>
+                    </div>
+                `;
+
+                // Insert before the Add button
+                const btnAdd = document.getElementById('btnAddPhoto');
+                btnAdd.insertAdjacentHTML('beforebegin', slotHTML);
+            }
+
+            updatePortadaBadge();
+            initDragAndDrop();
+        }
+
+        function removePhoto(id) {
+            stagedFiles = stagedFiles.filter(f => f.id !== id);
+            document.getElementById(id).remove();
+            updatePortadaBadge();
+        }
+
+        function updatePortadaBadge() {
+            // Remove all existing badges
+            document.querySelectorAll('.portada-badge').forEach(el => el.remove());
+            // Add badge to the first staged image visually
+            const firstImg = document.querySelector('.staged-img');
+            if (firstImg) {
+                firstImg.insertAdjacentHTML('afterbegin', '<div class="portada-badge">PORTADA</div>');
+            }
+        }
+
+        function initDragAndDrop() {
+            const draggables = document.querySelectorAll('.staged-img');
+            const container = document.getElementById('photoGrid');
+
+            draggables.forEach(draggable => {
+                draggable.addEventListener('dragstart', () => {
+                    draggable.classList.add('dragging');
+                });
+
+                draggable.addEventListener('dragend', () => {
+                    draggable.classList.remove('dragging');
+                    updatePortadaBadge();
+
+                    // Re-sync array based on DOM order
+                    const newOrder = [];
+                    document.querySelectorAll('.staged-img').forEach(el => {
+                        const match = stagedFiles.find(f => f.id === el.id);
+                        if (match) newOrder.push(match);
+                    });
+                    stagedFiles = newOrder;
+                });
+            });
+
+            container.addEventListener('dragover', e => {
+                e.preventDefault();
+                const afterElement = getDragAfterElement(container, e.clientX, e.clientY);
+                const draggable = document.querySelector('.dragging');
+                if (afterElement == null) {
+                    container.insertBefore(draggable, document.getElementById('btnAddPhoto'));
+                } else {
+                    container.insertBefore(draggable, afterElement);
+                }
+            });
+        }
+
+        function getDragAfterElement(container, x, y) {
+            const draggableElements = [...container.querySelectorAll('.staged-img:not(.dragging)')];
+
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                // Find horizontal center
+                const offset = x - box.left - box.width / 2;
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        function previewAd() {
+            const marca = document.getElementById('selMarca').value || 'Marca';
+            const modelo = document.getElementById('selModelo').value || 'Modelo';
+            const anio = document.getElementById('selAnio').value || '2024';
+            const precioRaw = document.getElementById('inpPrecio').value || 0;
+            const kmsRaw = document.getElementById('inpKms').value || 0;
+            const transmision = document.querySelector('#chipTrans .chip.active')?.textContent.replace(/[^a-zA-Záéíóú]/g, '').trim() || 'Auto';
+
+            const formatPrice = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(precioRaw);
+            const formatKms = new Intl.NumberFormat('es-MX').format(kmsRaw) + ' km';
+            const coverPhoto = stagedFiles.length > 0 ? stagedFiles[0].url : 'https://via.placeholder.com/400x250?text=Sin+Foto';
+
+            const previewHTML = `
+                <img src="${coverPhoto}" alt="Cover" class="car-img" style="height:250px;">
+                <div class="car-info">
+                    <div class="car-title">${marca} ${modelo} ${anio}</div>
+                    <div class="car-price">${formatPrice}</div>
+                    <div class="car-meta">
+                        <span class="meta-badge">${formatKms}</span>
+                        <span class="meta-badge">${transmision}</span>
+                    </div>
+                    <button class="btn-primary" style="width:100%; margin-top:15px; background:var(--gold); color:var(--bg-dark);">💖 Me Interesa</button>
+                </div>
+            `;
+
+            document.getElementById('previewContent').innerHTML = previewHTML;
+            document.getElementById('previewModal').style.display = 'flex';
+        }
+
+        // Upload single car to Database
+        async function uploadCarToSupabase() {
+            const btn = document.getElementById('btnPublish');
+            const status = document.getElementById('uploadStatus');
+            btn.innerHTML = 'Subiendo... ⏳';
+            btn.disabled = true;
+
+            try {
+                // Gather data
+                const marca = document.getElementById('selMarca').value;
+                const modelo = document.getElementById('selModelo').value;
+                const anio = document.getElementById('selAnio').value;
+                const descripcion = document.getElementById('inpDesc').value;
+                const transmision = document.querySelector('#chipTrans .chip.active')?.textContent.replace(/[^a-zA-Záéíóú]/g, '').trim() || 'Automatica';
+                const precio = document.getElementById('inpPrecio').value;
+                const kms = document.getElementById('inpKms').value || 0;
+
+                if (!marca || !modelo || !anio || !precio) {
+                    throw new Error("Por favor completa Marca, Modelo, Año y Precio.");
+                }
+
+                // First upload the sorted images
+                let finalPhotoUrls = [];
+                for (let i = 0; i < stagedFiles.length; i++) {
+                    const staged = stagedFiles[i];
+                    document.getElementById(staged.id).innerHTML = '⏳';
+
+                    const fileExt = staged.file.name.split('.').pop();
+                    const fileName = `${AGENCY_ID}/${Date.now()}-${i}.${fileExt}`;
+
+                    const { data: uploadData, error: uploadError } = await supabaseClient.storage.from('vehicle_photos').upload(fileName, staged.file);
+                    if (uploadError) throw new Error("Fallo subiendo imagen " + i);
+
+                    const { data: { publicUrl } } = supabaseClient.storage.from('vehicle_photos').getPublicUrl(fileName);
+                    finalPhotoUrls.push(publicUrl);
+                }
+
+                // Insert into Database with the sorted URLs (user_id auto-linked via RLS)
+                const { data, error } = await supabaseClient
+                    .from('inventario')
+                    .insert([
+                        {
+                            agencia_id: AGENCY_ID,
+                            user_id: currentUser.id, // Links to auth.users
+                            marca: marca,
+                            modelo: modelo,
+                            anio: parseInt(anio),
+                            descripcion: descripcion,
+                            transmision: transmision,
+                            precio_venta: parseFloat(precio),
+                            kilometraje: parseInt(kms),
+                            estatus: 'disponible',
+                            fotos: finalPhotoUrls // Array of Ordered URLs
+                        }
+                    ]);
+
+                if (error) throw error;
+
+                // Success
+                status.textContent = '✅ Vehículo publicado en Matchmaker';
+                showToast('Auto publicado correctamente');
+
+                // Refresh Inventory view
+                fetchInventory();
+
+                // Clear Form
+                document.getElementById('selMarca').value = '';
+                document.getElementById('selModelo').value = '';
+                document.getElementById('selModelo').disabled = true;
+                document.getElementById('selAnio').value = '';
+                document.getElementById('inpDesc').value = '';
+                document.getElementById('inpPrecio').value = '';
+                document.getElementById('inpKms').value = '';
+
+                // Reset Staged Files
+                stagedFiles = [];
+                document.querySelectorAll('.staged-img').forEach(el => el.remove());
+
+            } catch (err) {
+                console.error(err);
+                status.textContent = '❌ Error: ' + err.message;
+                status.style.color = '#ff4757';
+            } finally {
+                btn.innerHTML = 'Publicar en el Matchmaker';
+                btn.disabled = false;
+                setTimeout(() => status.textContent = '', 4000);
+            }
+        }
+
+        // CSV Dropzone Interaction
+        const dropzone = document.getElementById('csvDropzone');
+        dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+        dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('dragover');
+            dropzone.innerHTML = `<div class="drop-icon">✅</div><div class="drop-title">Archivo Cargado Exitosamente</div><div class="drop-sub">Analizando datos en segundo plano...</div>`;
+            setTimeout(() => showToast("Módulo CSV en desarrollo"), 1500);
+        });
+
+        // Fetch Inventory from Database
+        async function fetchInventory() {
+            const grid = document.getElementById('inventoryGrid');
+            grid.innerHTML = '<div style="color:white; text-align:center; padding: 20px;">Cargando inventario...</div>';
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('inventario')
+                    .select('*')
+                    .eq('user_id', currentUser.id) // Filter by this agency's user_id (Multi-tenant)
+                    .eq('estatus', 'disponible')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    grid.innerHTML = '<div style="color:var(--green-text); text-align:center; padding: 20px;">No hay autos activos.</div>';
+                    return;
+                }
+
+                grid.innerHTML = ''; // Clear loading
+                data.forEach(car => {
+                    const formatPrice = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(car.precio_venta);
+                    const formatKms = new Intl.NumberFormat('es-MX').format(car.kilometraje) + ' km';
+                    const coverPhoto = (car.fotos && car.fotos.length > 0) ? car.fotos[0] : 'https://via.placeholder.com/400x250?text=Sin+Foto';
+
+                    const card = `
+                        <div class="car-card" id="car-${car.id}">
+                            <img src="${coverPhoto}" alt="${car.marca} ${car.modelo}" class="car-img">
+                            <div class="car-info">
+                                <div class="car-title">${car.marca} ${car.modelo} ${car.anio}</div>
+                                <div class="car-price">${formatPrice}</div>
+                                <div class="car-meta">
+                                    <span class="meta-badge">${formatKms}</span>
+                                    <span class="meta-badge">${car.transmision}</span>
+                                </div>
+                                <button class="btn-danger" onclick="markAsSold(${car.id})">
+                                    <span>💰</span> Marcar como Vendido (Baja)
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    grid.insertAdjacentHTML('beforeend', card);
+                });
+
+            } catch (err) {
+                console.error("Error fetching inventory:", err);
+                grid.innerHTML = '<div style="color:red; text-align:center; padding: 20px;">Error al cargar inventario.</div>';
+            }
+        }
+
+        // Real Delete/Sold Logic
+        async function markAsSold(carId) {
+            const cardElement = document.getElementById(`car-${carId}`);
+            if (cardElement) {
+                cardElement.style.opacity = '0.5';
+                cardElement.style.pointerEvents = 'none';
+            }
+
+            try {
+                const { error } = await supabaseClient
+                    .from('inventario')
+                    .update({ estatus: 'vendido' })
+                    .eq('id', carId);
+
+                if (error) throw error;
+
+                showToast("🚗 Vehículo dado de baja en todos los matches activos.");
+                if (cardElement) cardElement.remove();
+
+            } catch (err) {
+                console.error("Error updating status:", err);
+                showToast("❌ Hubo un error al dar de baja el vehículo.");
+                if (cardElement) {
+                    cardElement.style.opacity = '1';
+                    cardElement.style.pointerEvents = 'all';
+                }
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3500);
+        }
+
+        // Initialize Data on Load
+        initCatalog();
+        // NOTE: fetchInventory() is now called from onAuthSuccess() after the user logs in
+    </script>
+</body>
+
+</html>

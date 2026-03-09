@@ -247,22 +247,51 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script>
         const form = document.getElementById('vendeAutoForm');
 
-        // Basic VIN validation color code
+        // Supabase Session Management & Auto-fill
+        const sbUrl = 'https://rgnunjngtsgqgvplawfr.supabase.co';
+        const sbKey = 'sb_publishable_G6asVlNL8PHZamCS6r1_lQ_VeV-wsL3';
+        const sb = window.supabase.createClient(sbUrl, sbKey);
+
+        async function initSession() {
+            const { data: { session } } = await sb.auth.getSession();
+            if (session) {
+                const user = session.user.user_metadata;
+                if (user.full_name) document.getElementById('nombre').value = user.full_name;
+                if (user.whatsapp) document.getElementById('whatsapp').value = user.whatsapp;
+
+                // Optional: Show a "Welcome back" message or similar
+                console.log('Sesión activa para:', user.full_name);
+            }
+        }
+        initSession();
+
+        // ISO 3779 VIN Validation (17 chars, no I, O, Q)
         document.getElementById('vin').addEventListener('input', (e) => {
-            const vin = e.target.value.toUpperCase();
+            let vin = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+            // Prevent I, O, Q
+            vin = vin.replace(/[IOQ]/g, '');
             e.target.value = vin;
+
             const status = document.getElementById('vinStatus');
             status.style.display = 'block';
 
-            if (vin.length === 17) {
-                status.textContent = '✓ VIN identificado. El Búnker ya lo está rastreando...';
+            const vinRegex = /^[A-HJ-NPR-Z0-9]{17}$/;
+            const isValid = vinRegex.test(vin);
+
+            if (isValid) {
+                status.textContent = '✓ VIN Válido (Formato ISO). El Búnker ya lo está rastreando...';
                 status.style.color = '#25D366';
             } else {
-                status.textContent = `Faltan ${17 - vin.length} caracteres para que el búnker esté seguro.`;
+                if (vin.length < 17) {
+                    status.textContent = `Faltan ${17 - vin.length} caracteres para validar el blindaje.`;
+                } else {
+                    status.textContent = 'VIN Inválido. Revisa que no tenga letras prohibidas (I, O, Q).';
+                }
                 status.style.color = '#ff3b30';
             }
         });
@@ -286,7 +315,15 @@
             };
 
             try {
-                // n8n Placeholder
+                // n8n Production Webhook
+                const webhookUrl = 'https://n8n.alabol.mx/webhook/bunker-capture-pro';
+
+                await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
                 console.log('Captando para n8n:', payload);
 
                 setTimeout(() => {

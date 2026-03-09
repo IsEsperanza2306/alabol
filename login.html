@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrar al Club | Alabol Matchmaker</title>
+    <link href="https://fonts.googleapis.com/css2?family=General+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://kit.fontawesome.com/your-code.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="style.css"> <!-- Reusing global styles if available -->
+    <style>
+        :root {
+            --emerald-deep: #0a1f1a;
+            --emerald-light: #143d33;
+            --gold-premium: #d4af37;
+            --gold-glow: rgba(212, 175, 55, 0.4);
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'General Sans', sans-serif;
+        }
+
+        body {
+            background: var(--emerald-deep);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Ambient Background Glows */
+        .glow-1 {
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 50%;
+            height: 50%;
+            background: radial-gradient(circle, rgba(20, 148, 136, 0.15) 0%, transparent 70%);
+            z-index: 0;
+        }
+
+        .glow-2 {
+            position: absolute;
+            bottom: -10%;
+            right: -10%;
+            width: 50%;
+            height: 50%;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+            z-index: 0;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+            padding: 40px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+            text-align: center;
+            animation: fadeInScale 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .logo-area {
+            margin-bottom: 30px;
+        }
+
+        .logo-img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 15px var(--gold-glow));
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+            color: var(--gold-premium);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--gold-premium);
+            background: rgba(255, 255, 255, 0.07);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: var(--gold-premium);
+            border: none;
+            border-radius: 12px;
+            color: var(--emerald-deep);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+            filter: brightness(1.1);
+        }
+
+        .toggle-mode {
+            margin-top: 25px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .toggle-mode a {
+            color: var(--gold-premium);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .toggle-mode a:hover {
+            text-decoration: underline;
+        }
+
+        .error-msg {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        /* Success screen animation override */
+        .success-checkmark {
+            display: none;
+            color: #25D366;
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="glow-1"></div>
+    <div class="glow-2"></div>
+
+    <div class="login-container">
+        <div class="logo-area">
+            <img src="logo-circular.png" alt="Alabol" class="logo-img">
+        </div>
+
+        <div id="authContent">
+            <h1 id="authTitle">Bienvenido al Club</h1>
+            <p class="subtitle" id="authSubtitle">Tu pasaporte VIP al mundo de los autos certificados.</p>
+
+            <div class="error-msg" id="errorBox">Credenciales incorrectas. Intenta de nuevo.</div>
+
+            <form id="authForm">
+                <div class="form-group" id="nameGroup" style="display:none;">
+                    <label for="fullName">Nombre Completo</label>
+                    <input type="text" id="fullName" placeholder="Ej. Juan Pérez">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="tu@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+
+                <div class="form-group" id="whatsappGroup" style="display:none;">
+                    <label for="whatsapp">WhatsApp</label>
+                    <input type="tel" id="whatsapp" placeholder="55 1234 5678">
+                </div>
+
+                <button type="submit" class="btn-primary" id="submitBtn">Entrar</button>
+            </form>
+
+            <div class="toggle-mode">
+                <span id="toggleText">¿No tienes cuenta?</span>
+                <a href="#" id="toggleBtn">Regístrate aquí</a>
+            </div>
+        </div>
+
+        <!-- Success Result -->
+        <div id="successContent" style="display:none;">
+            <div class="success-checkmark">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <h1 id="successMsg">¡Acceso Concedido!</h1>
+            <p class="subtitle">Redirigiendo a tu Búnker Personal...</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Use placeholder values - the user will replace them with their own eventually
+        const supabaseUrl = 'https://rgnunjngtsgqgvplawfr.supabase.co';
+        const supabaseKey = 'sb_publishable_G6asVlNL8PHZamCS6r1_lQ_VeV-wsL3';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        const authForm = document.getElementById('authForm');
+        const toggleBtn = document.getElementById('toggleBtn');
+        const errorBox = document.getElementById('errorBox');
+
+        // State
+        let isLogin = true;
+
+        toggleBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            isLogin = !isLogin;
+
+            document.getElementById('nameGroup').style.display = isLogin ? 'none' : 'block';
+            document.getElementById('whatsappGroup').style.display = isLogin ? 'none' : 'block';
+            document.getElementById('authTitle').textContent = isLogin ? 'Bienvenido al Club' : 'Crea tu Perfil VIP';
+            document.getElementById('authSubtitle').textContent = isLogin ? 'Tu pasaporte VIP al mundo de los autos certificados.' : 'Únete a la red más exclusiva de CDMX.';
+            document.getElementById('submitBtn').textContent = isLogin ? 'Entrar' : 'Registrarme';
+            document.getElementById('toggleText').textContent = isLogin ? '¿No tienes cuenta?' : '¿Ya eres miembro?';
+            toggleBtn.textContent = isLogin ? 'Regístrate aquí' : 'Inicia sesión';
+            errorBox.style.display = 'none';
+        });
+
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorBox.style.display = 'none';
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'PROCESANDO...';
+            submitBtn.disabled = true;
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                let result;
+                if (isLogin) {
+                    result = await supabase.auth.signInWithPassword({ email, password });
+                } else {
+                    const fullName = document.getElementById('fullName').value;
+                    const whatsapp = document.getElementById('whatsapp').value;
+                    result = await supabase.auth.signUp({
+                        email,
+                        password,
+                        options: {
+                            data: { full_name: fullName, whatsapp: whatsapp }
+                        }
+                    });
+                }
+
+                if (result.error) throw result.error;
+
+                // Success Flow
+                document.getElementById('authContent').style.display = 'none';
+                const successContent = document.getElementById('successContent');
+                successContent.style.display = 'block';
+                document.querySelector('.success-checkmark').style.display = 'block';
+
+                if (!isLogin && result.data.user && result.data.session === null) {
+                    document.getElementById('successMsg').textContent = '¡Casi listo!';
+                    successContent.querySelector('.subtitle').textContent = 'Revisa tu email para confirmar tu cuenta y activar tu Búnker.';
+                } else {
+                    setTimeout(() => {
+                        window.location.href = 'index.html'; // Or dashboard.html once created
+                    }, 2000);
+                }
+
+            } catch (err) {
+                errorBox.textContent = err.message;
+                errorBox.style.display = 'block';
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>

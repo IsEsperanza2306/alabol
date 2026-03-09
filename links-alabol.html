@@ -137,345 +137,344 @@
             height: 180px;
             background: radial-gradient(circle, rgba(212, 175, 55, 0.4) 0%, transparent 70%);
             border-radius: 50%;
+            animation: logoGlowPulse 3s ease-in-out infinite;
+        }
 
-            @keyframes logoGlowPulse {
+        @keyframes logoGlowPulse {
 
-                0%,
-                100% {
-                    transform: translate(-50%, -50%) scale(1);
-                    opacity: 0.6;
-                }
-
-                50% {
-                    transform: translate(-50%, -50%) scale(1.1);
-                    opacity: 0.8;
-                }
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.6;
             }
 
-            .logo-glow {
-                animation: logoGlowPulse 3s ease-in-out infinite;
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        .logo {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            background: rgba(15, 51, 41, 0.3);
+            border-radius: 50%;
+            border: 3px solid rgba(212, 175, 55, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow:
+                0 0 40px rgba(212, 175, 55, 0.3),
+                0 10px 50px rgba(0, 0, 0, 0.5),
+                inset 0 0 30px rgba(212, 175, 55, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            margin: 0 auto;
+        }
+
+        .logo img {
+            width: 140px;
+            height: 140px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.5));
+        }
+
+        .profile h1 {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg,
+                    #d4af37 0%,
+                    #f4e5b0 25%,
+                    #d4af37 50%,
+                    #c9a961 75%,
+                    #d4af37 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+            animation: shimmer 3s linear infinite;
+        }
+
+        @keyframes shimmer {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        .profile .tagline {
+            font-size: 16px;
+            color: #a8c5b8;
+            font-weight: 400;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .profile .highlight {
+            font-size: 18px;
+            color: #d4af37;
+            font-weight: 600;
+            margin-top: 12px;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        /* Links Section */
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
             }
 
-            .logo {
-                position: relative;
-                width: 160px;
-                height: 160px;
-                background: rgba(15, 51, 41, 0.3);
-                border-radius: 50%;
-                border: 3px solid rgba(212, 175, 55, 0.5);
-                display: flex;
-                align-items: center;
-                justify-content: center;
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .link {
+            position: relative;
+            background: linear-gradient(135deg,
+                    rgba(15, 51, 41, 0.6) 0%,
+                    rgba(13, 41, 33, 0.6) 100%);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 16px;
+            padding: 20px 24px;
+            text-decoration: none;
+            color: white;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            overflow: hidden;
+        }
+
+        .link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(212, 175, 55, 0.15),
+                    transparent);
+            transition: left 0.6s;
+        }
+
+        .link:hover::before {
+            left: 100%;
+        }
+
+        .link:hover {
+            transform: translateY(-4px) scale(1.02);
+            border-color: #d4af37;
+            background: linear-gradient(135deg,
+                    rgba(15, 51, 41, 0.8) 0%,
+                    rgba(13, 41, 33, 0.8) 100%);
+            box-shadow:
+                0 0 30px rgba(212, 175, 55, 0.4),
+                0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .link:active {
+            transform: translateY(-2px) scale(1.01);
+        }
+
+        /* Priority link (CTA) - Oro cepillado */
+        .link-priority {
+            background: linear-gradient(135deg,
+                    #d4af37 0%,
+                    #f4e5b0 50%,
+                    #d4af37 100%);
+            background-size: 200% 200%;
+            border: 2px solid #c9a961;
+            box-shadow:
+                0 0 30px rgba(212, 175, 55, 0.5),
+                0 10px 30px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+            animation: glow 2s ease-in-out infinite, goldShine 3s linear infinite;
+            position: relative;
+        }
+
+        /* Efecto de oro cepillado */
+        .link-priority::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg,
+                    transparent 30%,
+                    rgba(255, 255, 255, 0.1) 50%,
+                    transparent 70%);
+            background-size: 200% 200%;
+            pointer-events: none;
+        }
+
+        @keyframes goldShine {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            100% {
+                background-position: 200% 50%;
+            }
+        }
+
+        @keyframes glow {
+
+            0%,
+            100% {
                 box-shadow:
-                    0 0 40px rgba(212, 175, 55, 0.3),
-                    0 10px 50px rgba(0, 0, 0, 0.5),
-                    inset 0 0 30px rgba(212, 175, 55, 0.1);
-                overflow: hidden;
-                backdrop-filter: blur(10px);
-            }
-
-            .logo img {
-                width: 140px;
-                height: 140px;
-                object-fit: contain;
-                filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.5));
-            }
-
-            .profile h1 {
-                font-size: 32px;
-                font-weight: 800;
-                background: linear-gradient(135deg,
-                        #d4af37 0%,
-                        #f4e5b0 25%,
-                        #d4af37 50%,
-                        #c9a961 75%,
-                        #d4af37 100%);
-                background-size: 200% auto;
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-                margin-bottom: 12px;
-                letter-spacing: 1px;
-                animation: shimmer 3s linear infinite;
-            }
-
-            @keyframes shimmer {
-                to {
-                    background-position: 200% center;
-                }
-            }
-
-            .profile .tagline {
-                font-size: 16px;
-                color: #a8c5b8;
-                font-weight: 400;
-                line-height: 1.6;
-                margin-bottom: 8px;
-            }
-
-            .profile .highlight {
-                font-size: 18px;
-                color: #d4af37;
-                font-weight: 600;
-                margin-top: 12px;
-                text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
-            }
-
-            /* Links Section */
-            .links {
-                display: flex;
-                flex-direction: column;
-                gap: 16px;
-                animation: fadeInUp 0.8s ease-out 0.2s both;
-            }
-
-            @keyframes fadeInUp {
-                from {
-                    opacity: 0;
-                    transform: translateY(30px);
-                }
-
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-
-            .link {
-                position: relative;
-                background: linear-gradient(135deg,
-                        rgba(15, 51, 41, 0.6) 0%,
-                        rgba(13, 41, 33, 0.6) 100%);
-                backdrop-filter: blur(10px);
-                border: 2px solid rgba(212, 175, 55, 0.3);
-                border-radius: 16px;
-                padding: 20px 24px;
-                text-decoration: none;
-                color: white;
-                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                display: flex;
-                align-items: center;
-                gap: 16px;
-                overflow: hidden;
-            }
-
-            .link::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: -100%;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(90deg,
-                        transparent,
-                        rgba(212, 175, 55, 0.15),
-                        transparent);
-                transition: left 0.6s;
-            }
-
-            .link:hover::before {
-                left: 100%;
-            }
-
-            .link:hover {
-                transform: translateY(-4px) scale(1.02);
-                border-color: #d4af37;
-                background: linear-gradient(135deg,
-                        rgba(15, 51, 41, 0.8) 0%,
-                        rgba(13, 41, 33, 0.8) 100%);
-                box-shadow:
-                    0 0 30px rgba(212, 175, 55, 0.4),
-                    0 10px 40px rgba(0, 0, 0, 0.4);
-            }
-
-            .link:active {
-                transform: translateY(-2px) scale(1.01);
-            }
-
-            /* Priority link (CTA) - Oro cepillado */
-            .link-priority {
-                background: linear-gradient(135deg,
-                        #d4af37 0%,
-                        #f4e5b0 50%,
-                        #d4af37 100%);
-                background-size: 200% 200%;
-                border: 2px solid #c9a961;
-                box-shadow:
-                    0 0 30px rgba(212, 175, 55, 0.5),
+                    0 0 20px rgba(212, 175, 55, 0.5),
                     0 10px 30px rgba(0, 0, 0, 0.3),
                     inset 0 1px 0 rgba(255, 255, 255, 0.3),
                     inset 0 -1px 0 rgba(0, 0, 0, 0.2);
-                animation: glow 2s ease-in-out infinite, goldShine 3s linear infinite;
-                position: relative;
             }
 
-            /* Efecto de oro cepillado */
-            .link-priority::after {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: linear-gradient(45deg,
-                        transparent 30%,
-                        rgba(255, 255, 255, 0.1) 50%,
-                        transparent 70%);
-                background-size: 200% 200%;
-                pointer-events: none;
-            }
-
-            @keyframes goldShine {
-                0% {
-                    background-position: 0% 50%;
-                }
-
-                100% {
-                    background-position: 200% 50%;
-                }
-            }
-
-            @keyframes glow {
-
-                0%,
-                100% {
-                    box-shadow:
-                        0 0 20px rgba(212, 175, 55, 0.5),
-                        0 10px 30px rgba(0, 0, 0, 0.3),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.3),
-                        inset 0 -1px 0 rgba(0, 0, 0, 0.2);
-                }
-
-                50% {
-                    box-shadow:
-                        0 0 40px rgba(212, 175, 55, 0.7),
-                        0 10px 40px rgba(0, 0, 0, 0.4),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.4),
-                        inset 0 -1px 0 rgba(0, 0, 0, 0.3);
-                }
-            }
-
-            .link-priority .link-title,
-            .link-priority .link-description {
-                color: #0a1f1a;
-                text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
-            }
-
-            .link-priority:hover {
-                transform: translateY(-6px) scale(1.03);
+            50% {
                 box-shadow:
-                    0 0 50px rgba(212, 175, 55, 0.7),
-                    0 15px 50px rgba(0, 0, 0, 0.5),
+                    0 0 40px rgba(212, 175, 55, 0.7),
+                    0 10px 40px rgba(0, 0, 0, 0.4),
                     inset 0 1px 0 rgba(255, 255, 255, 0.4),
                     inset 0 -1px 0 rgba(0, 0, 0, 0.3);
             }
+        }
 
-            .link-icon {
-                font-size: 32px;
-                min-width: 50px;
-                text-align: center;
-                filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.5));
+        .link-priority .link-title,
+        .link-priority .link-description {
+            color: #0a1f1a;
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
+        }
+
+        .link-priority:hover {
+            transform: translateY(-6px) scale(1.03);
+            box-shadow:
+                0 0 50px rgba(212, 175, 55, 0.7),
+                0 15px 50px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .link-icon {
+            font-size: 32px;
+            min-width: 50px;
+            text-align: center;
+            filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.5));
+        }
+
+        .link-priority .link-icon {
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .link-content {
+            flex: 1;
+        }
+
+        .link-title {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            letter-spacing: 0.3px;
+        }
+
+        .link-description {
+            font-size: 13px;
+            color: #a8c5b8;
+            font-weight: 400;
+        }
+
+        .link-priority .link-description {
+            color: rgba(10, 31, 26, 0.7);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 30px 20px;
+            color: #6b8a7a;
+            font-size: 14px;
+            animation: fadeIn 1s ease-out 0.4s both;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
             }
 
-            .link-priority .link-icon {
-                filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+            to {
+                opacity: 1;
+            }
+        }
+
+        .footer a {
+            color: #d4af37;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .footer a:hover {
+            color: #f4e5b0;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 16px;
             }
 
-            .link-content {
-                flex: 1;
+            .profile h1 {
+                font-size: 26px;
+            }
+
+            .profile .tagline {
+                font-size: 14px;
+            }
+
+            .logo-container {
+                width: 140px;
+                height: 140px;
+            }
+
+            .logo {
+                width: 140px;
+                height: 140px;
+            }
+
+            .logo img {
+                width: 120px;
+                height: 120px;
+            }
+
+            .link {
+                padding: 16px 20px;
             }
 
             .link-title {
-                font-size: 17px;
-                font-weight: 700;
-                margin-bottom: 4px;
-                letter-spacing: 0.3px;
+                font-size: 16px;
             }
 
-            .link-description {
-                font-size: 13px;
-                color: #a8c5b8;
-                font-weight: 400;
+            .link-icon {
+                font-size: 28px;
+                min-width: 45px;
             }
-
-            .link-priority .link-description {
-                color: rgba(10, 31, 26, 0.7);
-            }
-
-            /* Footer */
-            .footer {
-                text-align: center;
-                margin-top: 60px;
-                padding: 30px 20px;
-                color: #6b8a7a;
-                font-size: 14px;
-                animation: fadeIn 1s ease-out 0.4s both;
-            }
-
-            @keyframes fadeIn {
-                from {
-                    opacity: 0;
-                }
-
-                to {
-                    opacity: 1;
-                }
-            }
-
-            .footer a {
-                color: #d4af37;
-                text-decoration: none;
-                font-weight: 600;
-                transition: all 0.3s;
-            }
-
-            .footer a:hover {
-                color: #f4e5b0;
-                text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
-            }
-
-            /* Responsive */
-            @media (max-width: 480px) {
-                .container {
-                    padding: 30px 16px;
-                }
-
-                .profile h1 {
-                    font-size: 26px;
-                }
-
-                .profile .tagline {
-                    font-size: 14px;
-                }
-
-                .logo-container {
-                    width: 140px;
-                    height: 140px;
-                }
-
-                .logo {
-                    width: 140px;
-                    height: 140px;
-                }
-
-                .logo img {
-                    width: 120px;
-                    height: 120px;
-                }
-
-                .link {
-                    padding: 16px 20px;
-                }
-
-                .link-title {
-                    font-size: 16px;
-                }
-
-                .link-icon {
-                    font-size: 28px;
-                    min-width: 45px;
-                }
-            }
+        }
     </style>
 </head>
 
@@ -505,7 +504,16 @@
                 </div>
             </a>
 
-            <!-- 2. Portal de Oportunidades -->
+            <!-- 2. Novedad: Búnker de Seguridad (Vender tu Auto) -->
+            <a href="./vende-tu-auto.html" class="link">
+                <div class="link-icon">🛡️</div>
+                <div class="link-content">
+                    <div class="link-title">Vende tu Auto (Búnker Alabol)</div>
+                    <div class="link-description">Certifica tu auto y recibe ofertas de agencias VIP</div>
+                </div>
+            </a>
+
+            <!-- 3. Portal de Oportunidades -->
             <a href="./portal_profesional.html" class="link">
                 <div class="link-icon">🚗</div>
                 <div class="link-content">

@@ -254,34 +254,53 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Use placeholder values - the user will replace them with their own eventually
-        const supabaseUrl = 'https://rgnunjngtsgqgvplawfr.supabase.co';
-        const supabaseKey = 'sb_publishable_G6asVlNL8PHZamCS6r1_lQ_VeV-wsL3';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
+        // --- 1. UI TOGGLE LOGIC (Must work even if Supabase fails) ---
         const authForm = document.getElementById('authForm');
         const toggleBtn = document.getElementById('toggleBtn');
         const errorBox = document.getElementById('errorBox');
-
-        // State
         let isLogin = true;
 
-        toggleBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            isLogin = !isLogin;
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                isLogin = !isLogin;
 
-            document.getElementById('nameGroup').style.display = isLogin ? 'none' : 'block';
-            document.getElementById('whatsappGroup').style.display = isLogin ? 'none' : 'block';
-            document.getElementById('authTitle').textContent = isLogin ? 'Bienvenido al Club' : 'Crea tu Perfil VIP';
-            document.getElementById('authSubtitle').textContent = isLogin ? 'Tu pasaporte VIP al mundo de los autos certificados.' : 'Únete a la red más exclusiva de CDMX.';
-            document.getElementById('submitBtn').textContent = isLogin ? 'Entrar' : 'Registrarme';
-            document.getElementById('toggleText').textContent = isLogin ? '¿No tienes cuenta?' : '¿Ya eres miembro?';
-            toggleBtn.textContent = isLogin ? 'Regístrate aquí' : 'Inicia sesión';
-            errorBox.style.display = 'none';
-        });
+                document.getElementById('nameGroup').style.display = isLogin ? 'none' : 'block';
+                document.getElementById('whatsappGroup').style.display = isLogin ? 'none' : 'block';
+                document.getElementById('authTitle').textContent = isLogin ? 'Bienvenido al Club' : 'Crea tu Perfil VIP';
+                document.getElementById('authSubtitle').textContent = isLogin ? 'Tu pasaporte VIP al mundo de los autos certificados.' : 'Únete a la red más exclusiva de CDMX.';
+                document.getElementById('submitBtn').textContent = isLogin ? 'Entrar' : 'Registrarme';
+                document.getElementById('toggleText').textContent = isLogin ? '¿No tienes cuenta?' : '¿Ya eres miembro?';
+                toggleBtn.textContent = isLogin ? 'Regístrate aquí' : 'Inicia sesión';
+                errorBox.style.display = 'none';
+                console.log('Modo cambiado a:', isLogin ? 'Login' : 'Registro');
+            });
+        }
 
+        // --- 2. SUPABASE INITIALIZATION ---
+        const supabaseUrl = 'https://rgnunjngtsgqgvplawfr.supabase.co';
+        const supabaseKey = 'sb_publishable_G6asVlNL8PHZamCS6r1_lQ_VeV-wsL3';
+        let supabase;
+
+        try {
+            if (window.supabase) {
+                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+            } else {
+                console.error('Supabase SDK no cargó correctamente.');
+            }
+        } catch (e) {
+            console.error('Error al inicializar Supabase:', e);
+        }
+
+        // --- 3. AUTH SUBMISSION ---
         authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            if (!supabase) {
+                errorBox.textContent = "Error de conexión con el servidor. Por favor recarga la página.";
+                errorBox.style.display = 'block';
+                return;
+            }
+
             errorBox.style.display = 'none';
             const submitBtn = document.getElementById('submitBtn');
             const originalText = submitBtn.textContent;
@@ -320,7 +339,7 @@
                     successContent.querySelector('.subtitle').textContent = 'Revisa tu email para confirmar tu cuenta y activar tu Búnker.';
                 } else {
                     setTimeout(() => {
-                        window.location.href = 'index.html'; // Or dashboard.html once created
+                        window.location.href = 'index.html';
                     }, 2000);
                 }
 

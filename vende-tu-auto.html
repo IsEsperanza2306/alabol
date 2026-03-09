@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certifica y Vende tu Auto | Alabol Búnker</title>
+    <link rel="stylesheet" href="../index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --emerald-bunker: #0a1f1a;
+            --gold-premium: #d4af37;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background-color: var(--emerald-bunker);
+            color: #e0e0e0;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .bunker-header {
+            padding: 40px 20px;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(212, 175, 55, 0.05) 0%, transparent 100%);
+        }
+
+        .bunker-container {
+            max-width: 600px;
+            margin: -20px auto 100px;
+            padding: 20px;
+        }
+
+        .form-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+
+        .step-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .step-dot.active {
+            background: var(--gold-premium);
+            box-shadow: 0 0 15px var(--gold-premium);
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: var(--gold-premium);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 15px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--gold-premium);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .upload-zone {
+            border: 2px dashed var(--glass-border);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--gold-premium);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(45deg, var(--gold-premium), #f4e5b0);
+            color: black;
+            border: none;
+            padding: 18px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .vin-status {
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .security-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(37, 211, 102, 0.1);
+            color: #25D366;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bunker-header">
+        <h1 style="font-size: 2.5rem; margin-bottom: 10px; color: white;">Búnker de Seguridad <span
+                style="color: var(--gold-premium);">Alabol</span></h1>
+        <p style="opacity: 0.7; font-size: 1.1rem;">Vende tu auto a agencias con certificación Buró Vehicular 🛡️</p>
+    </div>
+
+    <div class="bunker-container">
+        <div class="form-card">
+            <div class="security-badge">
+                <i class="fa-solid fa-shield-halved"></i> Conexión Segura CDMX
+            </div>
+
+            <form id="vendeAutoForm">
+                <!-- STEP 1: Vehículo -->
+                <div id="step1">
+                    <div class="input-group">
+                        <label for="vin">VIN (Número de Serie)</label>
+                        <input type="text" id="vin" placeholder="17 caracteres..." maxlength="17" required>
+                        <div id="vinStatus" class="vin-status"></div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="input-group">
+                            <label for="marca">Marca</label>
+                            <input type="text" id="marca" placeholder="Ej. BMW" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="modelo">Modelo</label>
+                            <input type="text" id="modelo" placeholder="Ej. Serie 3" required>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="input-group">
+                            <label for="anio">Año</label>
+                            <input type="number" id="anio" placeholder="2021" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="km">Kilometraje</label>
+                            <input type="number" id="km" placeholder="45000" required>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Fotos del Auto (Mínimo 4)</label>
+                        <div class="upload-zone" onclick="document.getElementById('filePhotos').click()">
+                            <i class="fa-solid fa-camera" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                            <p>Toca para subir fotos (Exterior, Interior, Motor)</p>
+                            <input type="file" id="filePhotos" multiple style="display:none">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="nombre">Tu Nombre</label>
+                        <input type="text" id="nombre" placeholder="Nombre completo" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="whatsapp">WhatsApp CDMX</label>
+                        <input type="tel" id="whatsapp" placeholder="55 0000 0000" required>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="submitBtn">Enviar al Búnker 🔥</button>
+                    <p style="text-align: center; font-size: 0.8rem; margin-top: 20px; opacity: 0.6;">
+                        Al enviar, autorizas a Alabol a procesar tu peritaje legal y presentar tu auto a agencias
+                        aliadas.
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('vendeAutoForm');
+
+        // Basic VIN validation color code
+        document.getElementById('vin').addEventListener('input', (e) => {
+            const vin = e.target.value.toUpperCase();
+            e.target.value = vin;
+            const status = document.getElementById('vinStatus');
+            status.style.display = 'block';
+
+            if (vin.length === 17) {
+                status.textContent = '✓ VIN Válido (Formato)';
+                status.style.color = '#25D366';
+            } else {
+                status.textContent = `Faltan ${17 - vin.length} caracteres...`;
+                status.style.color = '#ff3b30';
+            }
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.textContent = 'PROCESANDO SEGURIDAD...';
+            btn.disabled = true;
+
+            const payload = {
+                vin: document.getElementById('vin').value,
+                marca: document.getElementById('marca').value,
+                modelo: document.getElementById('modelo').value,
+                anio: document.getElementById('anio').value,
+                km: document.getElementById('km').value,
+                nombre: document.getElementById('nombre').value,
+                whatsapp: document.getElementById('whatsapp').value,
+                fuente: 'Bunker_Particular_CDMX',
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                // SIMULACIÓN DE ENVÍO A WEBHOOK N8N
+                // En producción: fetch('YOUR_N8N_WEBHOOK_URL', { method: 'POST', body: JSON.stringify(payload) })
+                console.log('Enviando a n8n:', payload);
+
+                setTimeout(() => {
+                    alert('¡Auto enviado al Búnker! Israel te contactará por WhatsApp para la certificación Buró Vehicular.');
+                    btn.textContent = 'SENT TO BUNKER ✓';
+                    form.reset();
+                }, 1500);
+
+            } catch (err) {
+                alert('Hubo un problema. Por favor reintenta.');
+                btn.disabled = false;
+                btn.textContent = 'REINTENTAR ENVÍO';
+            }
+        });
+    </script>
+</body>
+
+</html>

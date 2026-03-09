@@ -43,25 +43,66 @@
             padding: 40px;
             backdrop-filter: blur(20px);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
         }
 
-        .step-indicator {
+        /* PROGRESS BAR */
+        .progress-container {
+            margin-bottom: 30px;
+            padding: 0 10px;
+        }
+
+        .progress-labels {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 40px;
+            margin-bottom: 10px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.5);
         }
 
-        .step-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
+        .progress-labels div.active {
+            color: var(--gold-premium);
+            font-weight: 700;
+        }
+
+        .progress-bar-bg {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
             position: relative;
         }
 
-        .step-dot.active {
+        .progress-bar-fill {
+            height: 100%;
             background: var(--gold-premium);
-            box-shadow: 0 0 15px var(--gold-premium);
+            width: 33%;
+            border-radius: 10px;
+            transition: width 0.4s ease;
+            box-shadow: 0 0 10px var(--gold-premium);
+        }
+
+        .form-step {
+            display: none;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .input-group {
@@ -112,11 +153,16 @@
             background: rgba(212, 175, 55, 0.05);
         }
 
-        .submit-btn {
+        .nav-btns {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .submit-btn,
+        .next-btn,
+        .prev-btn {
             width: 100%;
-            background: linear-gradient(45deg, var(--gold-premium), #f4e5b0);
-            color: black;
-            border: none;
             padding: 18px;
             border-radius: 15px;
             font-size: 1.1rem;
@@ -124,16 +170,30 @@
             cursor: pointer;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-top: 20px;
             transition: all 0.3s;
+            border: none;
         }
 
-        .submit-btn:hover {
+        .next-btn,
+        .submit-btn {
+            background: linear-gradient(45deg, var(--gold-premium), #f4e5b0);
+            color: black;
+        }
+
+        .prev-btn {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border: 1px solid var(--glass-border);
+        }
+
+        .submit-btn:hover,
+        .next-btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
         }
 
-        .vin-status {
+        .vin-status,
+        .tel-status {
             font-size: 0.8rem;
             margin-top: 5px;
             display: none;
@@ -150,6 +210,26 @@
             font-size: 0.85rem;
             margin-bottom: 20px;
         }
+
+        .privacy-check {
+            font-size: 0.8rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+
+        .privacy-check input {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+        }
+
+        .privacy-check a {
+            color: var(--gold-premium);
+            text-decoration: underline;
+        }
     </style>
 </head>
 
@@ -164,17 +244,29 @@
 
     <div class="bunker-container">
         <div class="form-card" id="mainFormCard">
+
+            <!-- PROGRESS BAR UI -->
+            <div class="progress-container">
+                <div class="progress-labels">
+                    <div class="step-label active">Datos</div>
+                    <div class="step-label">Fotos</div>
+                    <div class="step-label">Expediente</div>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="progressBar"></div>
+                </div>
+            </div>
+
             <div class="security-badge">
                 <i class="fa-solid fa-shield-halved"></i> Matchmaking de Confianza CDMX
             </div>
 
             <form id="vendeAutoForm">
-                <!-- STEP 1: Vehículo -->
-                <div id="step1">
+                <!-- STEP 1: Vehículo & Datos -->
+                <div class="form-step active" id="step1">
                     <div class="input-group">
                         <label for="vin">DNI de tu Auto (VIN)</label>
-                        <input type="text" id="vin" placeholder="17 caracteres para saber que no es un prófugo..."
-                            maxlength="17" required>
+                        <input type="text" id="vin" placeholder="17 caracteres exactos..." maxlength="17" required>
                         <div id="vinStatus" class="vin-status"></div>
                     </div>
 
@@ -195,157 +287,300 @@
                             <input type="number" id="anio" placeholder="2022" required>
                         </div>
                         <div class="input-group">
-                            <label for="km">Experiencia (Kilometraje)</label>
+                            <label for="km">Kilometraje</label>
                             <input type="number" id="km" placeholder="30000" required>
                         </div>
                     </div>
 
                     <div class="input-group">
-                        <label>Su mejor ángulo (Mínimo 4 fotos)</label>
+                        <label for="nombre">Tu Nombre</label>
+                        <input type="text" id="nombre" placeholder="¿A quién contactamos?" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="whatsapp">WhatsApp CDMX</label>
+                        <input type="tel" id="whatsapp" placeholder="10 dígitos (Sin 52)" maxlength="10" required>
+                        <div id="telStatus" class="tel-status"></div>
+                    </div>
+
+                    <button type="button" class="next-btn" onclick="nextStep(2)">Continuar a Fotos 📸</button>
+                </div>
+
+                <!-- STEP 2: Fotos -->
+                <div class="form-step" id="step2">
+                    <div class="input-group">
+                        <label>Fotos del "Galán" (Odómetro + 4 Ángulos)</label>
                         <div class="upload-zone" onclick="document.getElementById('filePhotos').click()">
-                            <i class="fa-solid fa-camera-retro" style="font-size: 2rem; margin-bottom: 10px;"></i>
-                            <p>Toca para subir fotos. Entre más guapo se vea, más rápido se vende.</p>
-                            <input type="file" id="filePhotos" multiple style="display:none">
+                            <i class="fa-solid fa-camera-retro"
+                                style="font-size: 2.5rem; margin-bottom: 10px; color: var(--gold-premium);"></i>
+                            <p>Toca para subir fotos. <br><small>Las comprimiremos automáticamente para que no gastes
+                                    tus datos.</small></p>
+                            <input type="file" id="filePhotos" multiple accept="image/*" style="display:none">
                         </div>
+                        <div id="photoCount"
+                            style="text-align: center; margin-top: 10px; font-size: 0.8rem; opacity: 0.6;">0 fotos
+                            seleccionadas</div>
+                    </div>
+
+                    <div class="nav-btns">
+                        <button type="button" class="prev-btn" onclick="nextStep(1)">Atrás</button>
+                        <button type="button" class="next-btn" onclick="nextStep(3)">Cargar Documentos 📎</button>
+                    </div>
+                </div>
+
+                <!-- STEP 3: Documentación & Envío -->
+                <div class="form-step" id="step3">
+                    <div class="input-group">
+                        <label>Tarjeta de Circulación (CDMX/Edomex)</label>
+                        <input type="file" accept="image/*,application/pdf" id="docTarjeta">
+                        <p style="font-size: 0.7rem; opacity: 0.5; margin-top: 5px;">Esencial para el peritaje técnico.
+                        </p>
                     </div>
 
                     <div class="input-group">
-                        <label for="nombre">¿Quién presenta a este galán?</label>
-                        <input type="text" id="nombre" placeholder="Tu nombre" required>
+                        <label>Identificación (INE/Pasaporte)</label>
+                        <input type="file" accept="image/*,application/pdf" id="docINE">
                     </div>
 
-                    <div class="input-group">
-                        <label for="whatsapp">WhatsApp para el Match</label>
-                        <input type="tel" id="whatsapp" placeholder="Tu cel de CDMX" required>
+                    <div class="privacy-check">
+                        <input type="checkbox" id="privacyCheck" required>
+                        <label for="privacyCheck"
+                            style="text-transform: none; color: white; font-weight: 400; font-size: 0.8rem; margin:0;">
+                            Acepto el <a href="#">Aviso de Privacidad</a> y autorizo la validación de mis datos en Buró
+                            Vehicular.
+                        </label>
                     </div>
 
-                    <button type="submit" class="submit-btn" id="submitBtn">Certificar y Buscar Match 🔥</button>
-                    <p
-                        style="text-align: center; font-size: 0.8rem; margin-top: 20px; opacity: 0.6; font-style: italic;">
-                        "Tranquilo, nosotros nos encargamos del papeleo aburrido y de Buró Vehicular."
-                    </p>
+                    <div class="nav-btns">
+                        <button type="button" class="prev-btn" onclick="nextStep(2)">Atrás</button>
+                        <button type="submit" class="submit-btn" id="submitBtn">Entrar al Búnker 🔥</button>
+                    </div>
                 </div>
             </form>
         </div>
 
-        <!-- SUCCESS DOPAMINE SCREEN -->
+        <!-- SUCCESS SUMMARY SCREEN -->
         <div class="form-card" id="successCard" style="display:none; text-align:center;">
-            <div style="font-size: 4rem; color: var(--gold-premium); margin-bottom: 20px;">
+            <div style="font-size: 4rem; color: #25D366; margin-bottom: 20px;">
                 <i class="fa-solid fa-circle-check"></i>
             </div>
-            <h2 style="color:white; font-size: 2rem;">¡Tu auto está en el Búnker!</h2>
-            <p style="opacity: 0.8; line-height: 1.6;">Estamos validando el VIN y preparando la ficha para nuestra red
-                de agencias. Israel (tu broker personal) te contactará en breve.</p>
+            <h2 style="color:white; font-size: 1.8rem; margin-bottom: 15px;">¡Expediente en Proceso! 🛡️</h2>
+            <p style="opacity: 0.8; line-height: 1.6; font-size: 0.95rem;">
+                Hola <strong id="summaryName">--</strong>, hemos recibido tu <strong id="summaryCar">--</strong>. <br>
+                El peritaje del VIN <strong id="summaryVIN">--</strong> ha comenzado.
+            </p>
+
             <div
-                style="margin-top: 30px; padding: 20px; background: rgba(212,175,55,0.1); border-radius: 15px; border: 1px dashed var(--gold-premium);">
-                <p style="font-weight: 800; color: var(--gold-premium);">PRÓXIMO PASO:</p>
-                <p>Recibirás un link para agendar tu peritaje mecánico en CDMX.</p>
+                style="margin-top: 25px; padding: 20px; background: rgba(37,211,102,0.05); border-radius: 15px; border: 1px dashed #25D366; text-align: left;">
+                <p style="font-weight: 800; color: #25D366; font-size: 0.8rem; margin-bottom: 10px;">PRÓXIMOS PASOS:</p>
+                <p style="font-size: 0.85rem; margin-bottom: 5px;"><i class="fa-solid fa-whatsapp"></i> Recibirás una
+                    confirmación en tu celular.</p>
+                <p style="font-size: 0.85rem;"><i class="fa-solid fa-calendar-check"></i> Israel te contactará para la
+                    cita mecánica.</p>
             </div>
+
             <button onclick="location.href='../index.html'" class="submit-btn"
                 style="background: transparent; border: 1px solid var(--gold-premium); color: var(--gold-premium); margin-top: 30px;">Volver
-                al Inicio</button>
+                al Club</button>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script>
-        const form = document.getElementById('vendeAutoForm');
-
-        // Supabase Session Management & Auto-fill
+        // --- CONFIG & INITIALIZATION ---
         const sbUrl = 'https://rgnunjngtsgqgvplawfr.supabase.co';
         const sbKey = 'sb_publishable_G6asVlNL8PHZamCS6r1_lQ_VeV-wsL3';
         const sb = window.supabase.createClient(sbUrl, sbKey);
 
-        async function initSession() {
-            const { data: { session } } = await sb.auth.getSession();
-            if (session) {
-                const user = session.user.user_metadata;
-                if (user.full_name) document.getElementById('nombre').value = user.full_name;
-                if (user.whatsapp) document.getElementById('whatsapp').value = user.whatsapp;
+        let currentStep = 1;
+        const totalSteps = 3;
 
-                // Optional: Show a "Welcome back" message or similar
-                console.log('Sesión activa para:', user.full_name);
+        // --- MULTI-STEP LOGIC ---
+        function nextStep(step) {
+            // Validation before moving
+            if (step > currentStep) {
+                if (currentStep === 1 && !validateStep1()) return;
             }
+
+            document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+            document.getElementById(`step${step}`).classList.add('active');
+
+            // Progress Bar Update
+            const fill = (step / totalSteps) * 100;
+            document.getElementById('progressBar').style.width = `${fill}%`;
+
+            // Labels Update
+            document.querySelectorAll('.step-label').forEach((lbl, idx) => {
+                lbl.classList.toggle('active', idx + 1 <= step);
+            });
+
+            currentStep = step;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-        initSession();
 
-        // ISO 3779 VIN Validation (17 chars, no I, O, Q)
+        function validateStep1() {
+            const vin = document.getElementById('vin').value;
+            const tel = document.getElementById('whatsapp').value;
+
+            if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
+                alert('El VIN debe tener 17 caracteres válidos.');
+                return false;
+            }
+            if (!/^\d{10}$/.test(tel)) {
+                alert('El teléfono debe tener 10 dígitos.');
+                return false;
+            }
+            return true;
+        }
+
+        // --- REAL-TIME VALIDATIONS ---
+        // VIN Validation
         document.getElementById('vin').addEventListener('input', (e) => {
-            let vin = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-            // Prevent I, O, Q
-            vin = vin.replace(/[IOQ]/g, '');
+            let vin = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').replace(/[IOQ]/g, '');
             e.target.value = vin;
-
             const status = document.getElementById('vinStatus');
             status.style.display = 'block';
-
-            const vinRegex = /^[A-HJ-NPR-Z0-9]{17}$/;
-            const isValid = vinRegex.test(vin);
-
-            if (isValid) {
-                status.textContent = '✓ VIN Válido (Formato ISO). El Búnker ya lo está rastreando...';
+            if (vin.length === 17) {
+                status.textContent = '✓ VIN Estándar ISO Detectado';
                 status.style.color = '#25D366';
             } else {
-                if (vin.length < 17) {
-                    status.textContent = `Faltan ${17 - vin.length} caracteres para validar el blindaje.`;
-                } else {
-                    status.textContent = 'VIN Inválido. Revisa que no tenga letras prohibidas (I, O, Q).';
-                }
+                status.textContent = `Esperando 17 caracteres (${vin.length}/17)`;
                 status.style.color = '#ff3b30';
             }
         });
 
+        // Phone Validation
+        document.getElementById('whatsapp').addEventListener('input', (e) => {
+            let tel = e.target.value.replace(/\D/g, '');
+            e.target.value = tel;
+            const status = document.getElementById('telStatus');
+            status.style.display = 'block';
+            if (tel.length === 10) {
+                status.textContent = '✓ Teléfono validado (CDMX)';
+                status.style.color = '#25D366';
+            } else {
+                status.textContent = `Faltan ${10 - tel.length} dígitos`;
+                status.style.color = '#ff3b30';
+            }
+        });
+
+        // Photo Count Update
+        document.getElementById('filePhotos').addEventListener('change', (e) => {
+            document.getElementById('photoCount').textContent = `${e.target.files.length} fotos seleccionadas`;
+        });
+
+        // --- CLIENT-SIDE IMAGE COMPRESSION (Canvas API) ---
+        async function compressImage(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 1200;
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        canvas.toBlob((blob) => {
+                            resolve(blob);
+                        }, 'image/jpeg', 0.7); // 70% quality
+                    };
+                };
+            });
+        }
+
+        // --- FORM SUBMISSION & SUCCESS FLOW ---
+        const form = document.getElementById('vendeAutoForm');
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
-            btn.textContent = 'ENCERRANDO TU AUTO EN EL BÚNKER...';
+            btn.textContent = 'BLINDANDO EXPEDIENTE...';
             btn.disabled = true;
 
+            const name = document.getElementById('nombre').value;
+            const vin = document.getElementById('vin').value;
+            const marca = document.getElementById('marca').value;
+            const modelo = document.getElementById('modelo').value;
+
             const payload = {
-                vin: document.getElementById('vin').value,
-                marca: document.getElementById('marca').value,
-                modelo: document.getElementById('modelo').value,
+                vin: vin,
+                marca: marca,
+                modelo: modelo,
                 anio: document.getElementById('anio').value,
                 km: document.getElementById('km').value,
-                nombre: document.getElementById('nombre').value,
+                nombre: name,
                 whatsapp: document.getElementById('whatsapp').value,
-                fuente: 'Matchmaker_Bunker_C2B',
+                fuente: 'Matchmaker_Bunker_CDMX_Pro',
+                vin_validation: true,
+                image_compression_status: 'client_side_optimized',
                 timestamp: new Date().toISOString()
             };
 
             try {
                 // n8n Production Webhook
                 const webhookUrl = 'https://n8n.alabol.mx/webhook/bunker-capture-pro';
-
                 await fetch(webhookUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
 
-                console.log('Captando para n8n:', payload);
+                // Confetti & Success UI
+                confetti({
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#d4af37', '#ffffff', '#25D366']
+                });
 
-                setTimeout(() => {
-                    // Confetti dopamine hit!
-                    confetti({
-                        particleCount: 150,
-                        spread: 70,
-                        origin: { y: 0.6 },
-                        colors: ['#d4af37', '#ffffff', '#25D366']
-                    });
+                document.getElementById('summaryName').textContent = name;
+                document.getElementById('summaryCar').textContent = `${marca} ${modelo}`;
+                document.getElementById('summaryVIN').textContent = vin;
 
-                    document.getElementById('mainFormCard').style.display = 'none';
-                    document.getElementById('successCard').style.display = 'block';
-                }, 1200);
+                document.getElementById('mainFormCard').style.display = 'none';
+                document.getElementById('successCard').style.display = 'block';
 
             } catch (err) {
-                alert('¡Ups! El búnker tuvo un hipo. Reintenta.');
+                alert('Error al conectar con el Búnker. Israel ya está revisando la falla.');
                 btn.disabled = false;
-                btn.textContent = 'REINTENTAR MATCH';
+                btn.textContent = 'REINTENTAR ENVÍO';
             }
         });
+
+        // Initialize session if exists
+        async function initSession() {
+            const { data: { session } } = await sb.auth.getSession();
+            if (session) {
+                const user = session.user.user_metadata;
+                if (user.full_name) document.getElementById('nombre').value = user.full_name;
+                if (user.whatsapp) document.getElementById('whatsapp').value = user.whatsapp;
+            }
+        }
+        initSession();
     </script>
+
+    <!-- FOOTER & LEGAL -->
+    <footer
+        style="margin-top: 100px; padding: 40px 0; border-top: 1px solid var(--glass-border); text-align: center; font-size: 0.8rem; opacity: 0.6;">
+        <p>© 2024 Alabol Búnker CDMX. Todos los derechos reservados.</p>
+        <div style="margin-top: 15px; display: flex; justify-content: center; gap: 20px;">
+            <a href="#" style="color: white; text-decoration: none;">Aviso de Privacidad</a>
+            <a href="#" style="color: white; text-decoration: none;">Términos y Condiciones</a>
+        </div>
+        <p style="margin-top: 20px; font-size: 0.7rem;">Matchmaker es una marca registrada de Alabol Technologies.</p>
+    </footer>
 </body>
 
 </html>

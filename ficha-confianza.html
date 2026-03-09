@@ -340,25 +340,39 @@
         <!-- CERTIFICATION GRID -->
         <div class="certification-grid">
             <div class="cert-card">
-                <div class="cert-icon status-verified"><i class="fa-solid fa-file-shield"></i></div>
-                <div class="cert-status status-verified">Legal Buró</div>
-                <h3 style="margin: 0; font-size: 1.2rem;">VERIFICADO</h3>
-                <p style="font-size: 0.8rem; opacity: 0.6; margin-top: 10px;">Cero reportes de robo o adeudos fiscales.
+                <div class="cert-icon status-verified">
+                    <!-- Placeholder Seal: Buró Vehicular -->
+                    <div
+                        style="border: 2px solid #25D366; border-radius: 50%; width: 60px; height: 60px; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 900; line-height: 1;">
+                        BURÓ<br>VEHICULAR</div>
+                </div>
+                <div class="cert-status status-verified">Estatus Legal</div>
+                <h3 style="margin: 0; font-size: 1.2rem;">CALIFICADO</h3>
+                <p style="font-size: 0.8rem; opacity: 0.6; margin-top: 10px;">Validación en tiempo real contra bases de
+                    datos federales.
                 </p>
             </div>
 
             <div class="cert-card">
-                <div class="cert-icon status-gold"><i class="fa-solid fa-gears"></i></div>
-                <div class="cert-status status-gold">Mecánico 360</div>
-                <h3 style="margin: 0; font-size: 1.2rem;">CERTIFICADO</h3>
-                <p style="font-size: 0.8rem; opacity: 0.6; margin-top: 10px;">Motor, transmisión y frenos evaluados.</p>
+                <div class="cert-icon status-gold">
+                    <!-- Placeholder Seal: Taller Aliado -->
+                    <div
+                        style="border: 2px solid var(--gold); border-radius: 10px; width: 70px; height: 50px; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 900; line-height: 1; transform: rotate(-5deg);">
+                        TALLER<br>ALIADO</div>
+                </div>
+                <div class="cert-status status-gold">Certificación Mecánica</div>
+                <h3 style="margin: 0; font-size: 1.2rem;">360° CHECK</h3>
+                <p style="font-size: 0.8rem; opacity: 0.6; margin-top: 10px;">Inspección de 125 puntos críticos
+                    realizada por expertos.</p>
             </div>
 
             <div class="cert-card">
-                <div class="cert-icon status-verified"><i class="fa-solid fa-certificate"></i></div>
-                <div class="cert-status status-verified">Alabol Trust</div>
-                <h3 style="margin: 0; font-size: 1.2rem;">CALIDAD AAA</h3>
-                <p style="font-size: 0.8rem; opacity: 0.6; margin-top: 10px;">Propiedad de particular, sin sorpresas.
+                <div class="cert-icon status-verified"><i class="fa-solid fa-certificate" style="font-size: 3rem;"></i>
+                </div>
+                <div class="cert-status status-verified">Alabol Matchmaker</div>
+                <h3 style="margin: 0; font-size: 1.2rem;">ALTA CONFIANZA</h3>
+                <p style="font-size: 0.8rem; opacity: 0.6; margin-top: 10px;">Vehículo seleccionado bajo estándares de
+                    calidad Alabol.
                 </p>
             </div>
         </div>
@@ -414,6 +428,18 @@
                 </div>
             </div>
         </div>
+
+        <!-- FOOTER & LEGAL -->
+        <footer
+            style="margin-top: 100px; padding: 40px 0; border-top: 1px solid var(--glass-border); text-align: center; font-size: 0.8rem; opacity: 0.6;">
+            <p>© 2024 Alabol Búnker CDMX. Todos los derechos reservados.</p>
+            <div style="margin-top: 15px; display: flex; justify-content: center; gap: 20px;">
+                <a href="#" style="color: white; text-decoration: none;">Aviso de Privacidad</a>
+                <a href="#" style="color: white; text-decoration: none;">Términos y Condiciones</a>
+            </div>
+            <p style="margin-top: 20px; font-size: 0.7rem;">Matchmaker es una marca registrada de Alabol Technologies.
+            </p>
+        </footer>
     </div>
 
     <!-- CTA FIXED BAR -->
@@ -430,14 +456,24 @@
         </div>
     </div>
 
+    <!-- TRACKING SCROTS (META / GTM) SLOT -->
     <script>
-        // Placeholder for dynamic data loading in Phase 2
+        // Meta Pixel Integration Placeholder
+        // !function(f,b,e,v,n,t,s){...}(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
+        // fbq('init', 'YOUR_PIXEL_ID');
+        // fbq('track', 'PageView');
+    </script>
+    <script>
+        // Google Tag Manager Integration Placeholder
+        // (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});...})(window,document,'script','dataLayer','GTM-XXXX');
+    </script>
+
+    <script>
         window.addEventListener('load', () => {
             console.log('Alabol Búnker: Ficha de Confianza Activa');
-            // Check for URL params to fill details dynamically
             const params = new URLSearchParams(window.location.search);
             if (params.has('id')) {
-                // Logic to fetch from Supabase inventory table
+                // Future Supabase Dynamic Load
             }
         });
     </script>

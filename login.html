@@ -7,8 +7,7 @@
     <title>Entrar al Club | Alabol Matchmaker</title>
     <link href="https://fonts.googleapis.com/css2?family=General+Sans:wght@400;500;600;700&display=swap"
         rel="stylesheet">
-    <script src="https://kit.fontawesome.com/your-code.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="style.css"> <!-- Reusing global styles if available -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --emerald-deep: #0a1f1a;
@@ -255,27 +254,41 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // --- 1. UI TOGGLE LOGIC (Must work even if Supabase fails) ---
-        const authForm = document.getElementById('authForm');
-        const toggleBtn = document.getElementById('toggleBtn');
-        const errorBox = document.getElementById('errorBox');
-        let isLogin = true;
+        window.onload = function () {
+            const authForm = document.getElementById('authForm');
+            const toggleBtn = document.getElementById('toggleBtn');
+            const errorBox = document.getElementById('errorBox');
+            let isLogin = true;
 
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                isLogin = !isLogin;
+            console.log('DOM Cargado. Buscando toggleBtn:', toggleBtn);
 
-                document.getElementById('nameGroup').style.display = isLogin ? 'none' : 'block';
-                document.getElementById('whatsappGroup').style.display = isLogin ? 'none' : 'block';
-                document.getElementById('authTitle').textContent = isLogin ? 'Bienvenido al Club' : 'Crea tu Perfil VIP';
-                document.getElementById('authSubtitle').textContent = isLogin ? 'Tu pasaporte VIP al mundo de los autos certificados.' : 'Únete a la red más exclusiva de CDMX.';
-                document.getElementById('submitBtn').textContent = isLogin ? 'Entrar' : 'Registrarme';
-                document.getElementById('toggleText').textContent = isLogin ? '¿No tienes cuenta?' : '¿Ya eres miembro?';
-                toggleBtn.textContent = isLogin ? 'Regístrate aquí' : 'Inicia sesión';
-                errorBox.style.display = 'none';
-                console.log('Modo cambiado a:', isLogin ? 'Login' : 'Registro');
-            });
-        }
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    isLogin = !isLogin;
+
+                    const nameGroup = document.getElementById('nameGroup');
+                    const whatsappGroup = document.getElementById('whatsappGroup');
+                    const authTitle = document.getElementById('authTitle');
+                    const authSubtitle = document.getElementById('authSubtitle');
+                    const submitBtn = document.getElementById('submitBtn');
+                    const toggleText = document.getElementById('toggleText');
+
+                    if (nameGroup) nameGroup.style.display = isLogin ? 'none' : 'block';
+                    if (whatsappGroup) whatsappGroup.style.display = isLogin ? 'none' : 'block';
+                    if (authTitle) authTitle.textContent = isLogin ? 'Bienvenido al Club' : 'Crea tu Perfil VIP';
+                    if (authSubtitle) authSubtitle.textContent = isLogin ? 'Tu pasaporte VIP al mundo de los autos certificados.' : 'Únete a la red más exclusiva de CDMX.';
+                    if (submitBtn) submitBtn.textContent = isLogin ? 'Entrar' : 'Registrarme';
+                    if (toggleText) toggleText.textContent = isLogin ? '¿No tienes cuenta?' : '¿Ya eres miembro?';
+
+                    toggleBtn.textContent = isLogin ? 'Regístrate aquí' : 'Inicia sesión';
+                    errorBox.style.display = 'none';
+                    console.log('Modo cambiado exitosamente a:', isLogin ? 'Login' : 'Registro');
+                });
+            } else {
+                console.error('CRÍTICO: No habia toggleBtn en el DOM.');
+            }
+        };
 
         // --- 2. SUPABASE INITIALIZATION ---
         const supabaseUrl = 'https://rgnunjngtsgqgvplawfr.supabase.co';

@@ -158,75 +158,96 @@
     <div class="bunker-header">
         <h1 style="font-size: 2.5rem; margin-bottom: 10px; color: white;">Búnker de Seguridad <span
                 style="color: var(--gold-premium);">Alabol</span></h1>
-        <p style="opacity: 0.7; font-size: 1.1rem;">Vende tu auto a agencias con certificación Buró Vehicular 🛡️</p>
+        <p style="opacity: 0.7; font-size: 1.1rem;">"Porque vender tu auto no debería ser una cita a ciegas con el
+            peligro." 🛡️🚗</p>
     </div>
 
     <div class="bunker-container">
-        <div class="form-card">
+        <div class="form-card" id="mainFormCard">
             <div class="security-badge">
-                <i class="fa-solid fa-shield-halved"></i> Conexión Segura CDMX
+                <i class="fa-solid fa-shield-halved"></i> Matchmaking de Confianza CDMX
             </div>
 
             <form id="vendeAutoForm">
                 <!-- STEP 1: Vehículo -->
                 <div id="step1">
                     <div class="input-group">
-                        <label for="vin">VIN (Número de Serie)</label>
-                        <input type="text" id="vin" placeholder="17 caracteres..." maxlength="17" required>
+                        <label for="vin">DNI de tu Auto (VIN)</label>
+                        <input type="text" id="vin" placeholder="17 caracteres para saber que no es un prófugo..."
+                            maxlength="17" required>
                         <div id="vinStatus" class="vin-status"></div>
                     </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                         <div class="input-group">
-                            <label for="marca">Marca</label>
-                            <input type="text" id="marca" placeholder="Ej. BMW" required>
+                            <label for="marca">Personalidad (Marca)</label>
+                            <input type="text" id="marca" placeholder="Ej. Audi" required>
                         </div>
                         <div class="input-group">
-                            <label for="modelo">Modelo</label>
-                            <input type="text" id="modelo" placeholder="Ej. Serie 3" required>
+                            <label for="modelo">Nombre (Modelo)</label>
+                            <input type="text" id="modelo" placeholder="Ej. Q3" required>
                         </div>
                     </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                         <div class="input-group">
-                            <label for="anio">Año</label>
-                            <input type="number" id="anio" placeholder="2021" required>
+                            <label for="anio">Edad (Año)</label>
+                            <input type="number" id="anio" placeholder="2022" required>
                         </div>
                         <div class="input-group">
-                            <label for="km">Kilometraje</label>
-                            <input type="number" id="km" placeholder="45000" required>
+                            <label for="km">Experiencia (Kilometraje)</label>
+                            <input type="number" id="km" placeholder="30000" required>
                         </div>
                     </div>
 
                     <div class="input-group">
-                        <label>Fotos del Auto (Mínimo 4)</label>
+                        <label>Su mejor ángulo (Mínimo 4 fotos)</label>
                         <div class="upload-zone" onclick="document.getElementById('filePhotos').click()">
-                            <i class="fa-solid fa-camera" style="font-size: 2rem; margin-bottom: 10px;"></i>
-                            <p>Toca para subir fotos (Exterior, Interior, Motor)</p>
+                            <i class="fa-solid fa-camera-retro" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                            <p>Toca para subir fotos. Entre más guapo se vea, más rápido se vende.</p>
                             <input type="file" id="filePhotos" multiple style="display:none">
                         </div>
                     </div>
 
                     <div class="input-group">
-                        <label for="nombre">Tu Nombre</label>
-                        <input type="text" id="nombre" placeholder="Nombre completo" required>
+                        <label for="nombre">¿Quién presenta a este galán?</label>
+                        <input type="text" id="nombre" placeholder="Tu nombre" required>
                     </div>
 
                     <div class="input-group">
-                        <label for="whatsapp">WhatsApp CDMX</label>
-                        <input type="tel" id="whatsapp" placeholder="55 0000 0000" required>
+                        <label for="whatsapp">WhatsApp para el Match</label>
+                        <input type="tel" id="whatsapp" placeholder="Tu cel de CDMX" required>
                     </div>
 
-                    <button type="submit" class="submit-btn" id="submitBtn">Enviar al Búnker 🔥</button>
-                    <p style="text-align: center; font-size: 0.8rem; margin-top: 20px; opacity: 0.6;">
-                        Al enviar, autorizas a Alabol a procesar tu peritaje legal y presentar tu auto a agencias
-                        aliadas.
+                    <button type="submit" class="submit-btn" id="submitBtn">Certificar y Buscar Match 🔥</button>
+                    <p
+                        style="text-align: center; font-size: 0.8rem; margin-top: 20px; opacity: 0.6; font-style: italic;">
+                        "Tranquilo, nosotros nos encargamos del papeleo aburrido y de Buró Vehicular."
                     </p>
                 </div>
             </form>
         </div>
+
+        <!-- SUCCESS DOPAMINE SCREEN -->
+        <div class="form-card" id="successCard" style="display:none; text-align:center;">
+            <div style="font-size: 4rem; color: var(--gold-premium); margin-bottom: 20px;">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <h2 style="color:white; font-size: 2rem;">¡Tu auto está en el Búnker!</h2>
+            <p style="opacity: 0.8; line-height: 1.6;">Estamos validando el VIN y preparando la ficha para nuestra red
+                de agencias. Israel (tu broker personal) te contactará en breve.</p>
+            <div
+                style="margin-top: 30px; padding: 20px; background: rgba(212,175,55,0.1); border-radius: 15px; border: 1px dashed var(--gold-premium);">
+                <p style="font-weight: 800; color: var(--gold-premium);">PRÓXIMO PASO:</p>
+                <p>Recibirás un link para agendar tu peritaje mecánico en CDMX.</p>
+            </div>
+            <button onclick="location.href='../index.html'" class="submit-btn"
+                style="background: transparent; border: 1px solid var(--gold-premium); color: var(--gold-premium); margin-top: 30px;">Volver
+                al Inicio</button>
+        </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script>
         const form = document.getElementById('vendeAutoForm');
 
@@ -238,10 +259,10 @@
             status.style.display = 'block';
 
             if (vin.length === 17) {
-                status.textContent = '✓ VIN Válido (Formato)';
+                status.textContent = '✓ VIN identificado. El Búnker ya lo está rastreando...';
                 status.style.color = '#25D366';
             } else {
-                status.textContent = `Faltan ${17 - vin.length} caracteres...`;
+                status.textContent = `Faltan ${17 - vin.length} caracteres para que el búnker esté seguro.`;
                 status.style.color = '#ff3b30';
             }
         });
@@ -249,7 +270,7 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
-            btn.textContent = 'PROCESANDO SEGURIDAD...';
+            btn.textContent = 'ENCERRANDO TU AUTO EN EL BÚNKER...';
             btn.disabled = true;
 
             const payload = {
@@ -260,28 +281,38 @@
                 km: document.getElementById('km').value,
                 nombre: document.getElementById('nombre').value,
                 whatsapp: document.getElementById('whatsapp').value,
-                fuente: 'Bunker_Particular_CDMX',
+                fuente: 'Matchmaker_Bunker_C2B',
                 timestamp: new Date().toISOString()
             };
 
             try {
-                // SIMULACIÓN DE ENVÍO A WEBHOOK N8N
-                // En producción: fetch('YOUR_N8N_WEBHOOK_URL', { method: 'POST', body: JSON.stringify(payload) })
-                console.log('Enviando a n8n:', payload);
+                // n8n Placeholder
+                console.log('Captando para n8n:', payload);
 
                 setTimeout(() => {
-                    alert('¡Auto enviado al Búnker! Israel te contactará por WhatsApp para la certificación Buró Vehicular.');
-                    btn.textContent = 'SENT TO BUNKER ✓';
-                    form.reset();
-                }, 1500);
+                    // Confetti dopamine hit!
+                    confetti({
+                        particleCount: 150,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: ['#d4af37', '#ffffff', '#25D366']
+                    });
+
+                    document.getElementById('mainFormCard').style.display = 'none';
+                    document.getElementById('successCard').style.display = 'block';
+                }, 1200);
 
             } catch (err) {
-                alert('Hubo un problema. Por favor reintenta.');
+                alert('¡Ups! El búnker tuvo un hipo. Reintenta.');
                 btn.disabled = false;
-                btn.textContent = 'REINTENTAR ENVÍO';
+                btn.textContent = 'REINTENTAR MATCH';
             }
         });
     </script>
+</body>
+
+</html>
+
 </body>
 
 </html>

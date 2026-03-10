@@ -219,6 +219,7 @@
             background: linear-gradient(135deg, #d4af37 0%, #f4e5b0 25%, #d4af37 50%, #c9a961 75%, #d4af37 100%);
             background-size: 200% auto;
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
             letter-spacing: -1px;
             margin-bottom: 5px;
@@ -303,6 +304,8 @@
             border-radius: 12px;
             font-family: inherit;
             font-size: 14px;
+            -webkit-appearance: none;
+            -moz-appearance: none;
             appearance: none;
             outline: none;
             cursor: pointer;
@@ -322,12 +325,14 @@
 
         .slider-group input[type="range"] {
             -webkit-appearance: none;
+            appearance: none;
             width: 100%;
             background: transparent;
         }
 
         .slider-group input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
+            appearance: none;
             height: 20px;
             width: 20px;
             border-radius: 50%;
@@ -1194,6 +1199,20 @@
 
         // --- WISHLIST PERSISTENCE ---
         let wishlist = JSON.parse(localStorage.getItem('alabol_wishlist')) || [];
+
+        // Sync with Tinder Matches
+        let tinderMatches = JSON.parse(localStorage.getItem('alabol_matches')) || [];
+        let updatedWishlist = false;
+        tinderMatches.forEach(match => {
+            const matchId = match.id || match.id_interno;
+            if (matchId && !wishlist.includes(matchId)) {
+                wishlist.push(matchId);
+                updatedWishlist = true;
+            }
+        });
+        if (updatedWishlist) {
+            localStorage.setItem('alabol_wishlist', JSON.stringify(wishlist));
+        }
 
         function updateFavCounter() {
             const count = wishlist.length;

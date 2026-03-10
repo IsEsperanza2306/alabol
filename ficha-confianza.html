@@ -456,7 +456,7 @@
         </div>
     </div>
 
-    <!-- TRACKING SCROTS (META / GTM) SLOT -->
+    <!-- TRACKING SCRIPTS (META / GTM) SLOT -->
     <script>
         // Meta Pixel Integration Placeholder
         // !function(f,b,e,v,n,t,s){...}(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
@@ -468,14 +468,81 @@
         // (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});...})(window,document,'script','dataLayer','GTM-XXXX');
     </script>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script> <!-- Will initialize window.supabaseClient -->
+
     <script>
-        window.addEventListener('load', () => {
+        window.addEventListener('load', async () => {
             console.log('Alabol Búnker: Ficha de Confianza Activa');
             const params = new URLSearchParams(window.location.search);
-            if (params.has('id')) {
-                // Future Supabase Dynamic Load
+            const carId = params.get('id');
+
+            if (carId && window.supabaseClient) {
+                try {
+                    // Try exact match on 'id' first, or 'id_interno' if your DB uses that primary key
+                    const { data, error } = await window.supabaseClient
+                        .from('inventario')
+                        .select('*')
+                        .eq('id', carId)
+                        .single();
+
+                    if (error) {
+                        // Fallback check on id_interno just in case
+                        const dest = await window.supabaseClient.from('inventario').select('*').eq('id_interno', carId).single();
+                        if (dest.error) throw dest.error;
+                        renderCarData(dest.data);
+                    } else if (data) {
+                        renderCarData(data);
+                    }
+                } catch (e) {
+                    console.error("Error fetching car details via Supabase:", e);
+                    document.getElementById('carName').innerHTML = `Auto <span style="color: var(--gold);">No Encontrado</span>`;
+                    document.getElementById('carPrice').innerHTML = `--- <span>MXN</span>`;
+                }
             }
         });
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('es-MX', {
+                style: 'currency', currency: 'MXN', minimumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function renderCarData(car) {
+            // Title & Specs
+            document.title = `Expediente: ${car.marca} ${car.modelo} | Alabol Búnker`;
+            document.getElementById('carName').innerHTML = `${car.marca} <span style="color: var(--gold);">${car.modelo}</span>`;
+            document.getElementById('carPrice').innerHTML = `${formatCurrency(car.precio_venta || 0)} <span>MXN</span>`;
+
+            const specsContainer = document.querySelector('.car-specs');
+            specsContainer.innerHTML = `<span>${car.anio}</span> • <span>${(car.kilometraje || 0).toLocaleString()} km</span> • <span>${car.version || 'Base'}</span>`;
+
+            // Display Image dynamically
+            let carImgUrl = "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&w=1200";
+            if (car.fotos && Array.isArray(car.fotos) && car.fotos.length > 0) {
+                carImgUrl = car.fotos[0];
+            } else if (typeof car.fotos === 'string' && car.fotos.startsWith('[')) {
+                try {
+                    const parsed = JSON.parse(car.fotos);
+                    if (parsed.length > 0) carImgUrl = parsed[0];
+                } catch (e) { }
+            } else if (car.link_fotos) {
+                carImgUrl = car.link_fotos;
+            } else if (car.url_fotos) {
+                carImgUrl = car.url_fotos;
+            }
+            document.getElementById('carImg').src = carImgUrl;
+
+            // Expediente overlay ID
+            document.querySelector('.trust-badge-overlay').innerHTML = `<i class="fa-solid fa-shield-check"></i> Exp. #${String(car.id_interno || car.id).substring(0, 8).toUpperCase()}`;
+
+            // Ensure CTA points to correct whatsapp link dynamically
+            const wBtn = document.querySelector('.cta-box .btn-gold');
+            if (wBtn) {
+                const waMsg = encodeURIComponent(`Hola Israel, estoy sumamente interesado en el ${car.marca} ${car.modelo} (${car.anio}) que vi en su Búnker de confianza. Código: ${car.id_interno || car.id}.`);
+                wBtn.href = `https://wa.me/525568667571?text=${waMsg}`;
+            }
+        }
     </script>
 </body>
 

@@ -560,16 +560,14 @@
                 // Insert into Supabase table to trigger Make.com Webhook
                 if (typeof window.supabaseClient !== 'undefined') {
                     const { error } = await window.supabaseClient.from('inventario').insert([{
-                        vin: vin,
                         marca: marca,
                         modelo: modelo,
                         anio: parseInt(document.getElementById('anio').value),
                         kilometraje: parseInt(document.getElementById('km').value),
                         precio_venta: 0, // Pending evaluation
                         estatus: 'evaluacion', // New cars start in evaluation/bunker phase
-                        vendedor_nombre: name,
-                        vendedor_whatsapp: document.getElementById('whatsapp').value,
-                        fuente: 'Bunker_Pro',
+                        agencia_id: 'PARTICULAR', // Essential for the DB NOT-NULL constraint
+                        descripcion: `🚨 LEAD BUNKER PRO: \nVIN: ${vin} \nContacto: ${name} \nWhatsApp: ${document.getElementById('whatsapp').value} \nFuente: Bunker_Pro`
                     }]);
                     if (error) {
                         console.error("Error saving inventory to Supabase:", error);

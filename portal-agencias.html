@@ -856,6 +856,8 @@
     </style>
     <!-- Supabase CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Alabol Global Config -->
+    <script src="config.js"></script>
 </head>
 
 <body>
@@ -1124,10 +1126,8 @@
         };
 
         // Supabase Initialization
-        const SUPABASE_URL = 'https://rgnunjngtsgqgvplawfr.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_G6asVlNL8PHZamCS6r1_lQ_VeV-wsL3';
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        console.log("Supabase Client Init:", !!supabaseClient);
+        // using window.supabaseClient from config.js
+        console.log("Supabase Client Init:", !!window.supabaseClient);
 
         // Multi-Tenant: Current authenticated user context
         let currentUser = null;

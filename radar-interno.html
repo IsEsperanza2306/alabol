@@ -915,11 +915,11 @@
 
     <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Alabol Global Config -->
+    <script src="config.js"></script>
     <script>
         // Supabase Connection
-        const supabaseUrl = 'https://rgnunjngtsgqgvplawfr.supabase.co';
-        const supabaseKey = 'sb_publishable_G6asVlNL8PHZamCS6r1_lQ_VeV-wsL3';
-        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+        const supabaseClient = window.supabaseClient;
 
         // Global State Memory
         let globalLeads = [];

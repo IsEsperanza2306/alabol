@@ -2135,7 +2135,7 @@
 
     <!-- SCRIPTS DE FILTRADO JS -->
     <script>
-        const inventoryData = [{ "id": "INV-001", "agencia": "Kavak Sur", "brand": "Volkswagen", "model": "Jetta", "year": 2021, "version": "Highline", "priceMXN": 350000, "km": 45000, "color": "Rojo", "transmision": "Automatica", "url_fotos": "https://drive.google.com/vwjetta" }, { "id": "INV-002", "agencia": "Kavak Sur", "brand": "Nissan", "model": "Versa", "year": 2022, "version": "Advance", "priceMXN": 280000, "km": 25000, "color": "Gris", "transmision": "Manual", "url_fotos": "https://drive.google.com/versa" }, { "id": "INV-003", "agencia": "Dalton Honda", "brand": "Honda", "model": "Civic", "year": 2020, "version": "EX-L", "priceMXN": 420000, "km": 55000, "color": "Blanco", "transmision": "Automatica", "url_fotos": "https://drive.google.com/civic" }, { "id": "INV-004", "agencia": "Autos Lindavista", "brand": "Chevrolet", "model": "Tracker", "year": 2023, "version": "LTZ", "priceMXN": 410000, "km": 15000, "color": "Azul", "transmision": "Automatica", "url_fotos": "https://drive.google.com/tracker" }, { "id": "INV-005", "agencia": "Mazda", "brand": "Mazda", "model": "3", "year": 2019, "version": "i Grand Touring", "priceMXN": 320000, "km": 70000, "color": "Rojo", "transmision": "Automatica", "url_fotos": "https://drive.google.com/mazda3" }, { "id": "AUTO-001", "agencia": "Automundo", "brand": "Mini", "model": "Cooper", "year": 2024, "version": "S Hot Chili 5 Puertas L4 2.0 T 192 Hp Aut", "priceMXN": 625000, "km": 21013, "color": "Gris oscuro", "transmision": "Aut", "url_fotos": "https://auto.mercadolibre.com.mx/MLM-3392477382-mini-cooper-s-hot-chili-2024-_JM" }, { "id": "AUTO-002", "agencia": "Automundo", "brand": "Acura", "model": "Ilx", "year": 2021, "version": "A - Spec L4 2.4l 201 Hp 8vel", "priceMXN": 479000, "km": 34976, "color": "Rojo", "transmision": "Aut", "url_fotos": "https://auto.mercadolibre.com.mx/MLM-2182103425-acura-ilx-2021-24-a-spec-at-_JM" }, { "id": "AUTO-003", "agencia": "Automundo", "brand": "Honda", "model": "Civic", "year": 2018, "version": "Turbo Plus Sedan 1.5 Cvt", "priceMXN": 339000, "km": 82000, "color": "Blanco", "transmision": "Cvt", "url_fotos": "https://auto.mercadolibre.com.mx/MLM-2178229865-honda-civic-2018-15-turbo-plus-cvt-_JM" }, { "id": "AUTO-004", "agencia": "Automundo", "brand": "Mazda", "model": "Cx-5", "year": 2022, "version": "S Grand Touring L4 2.5 188 Hp Aut", "priceMXN": 449000, "km": 54226, "color": "Blanco", "transmision": "Aut", "url_fotos": "https://auto.mercadolibre.com.mx/MLM-3561939106-mazda-cx-5-s-grand-touring-2022-_JM" }, { "id": "AUTO-005", "agencia": "Automundo", "brand": "Chevrolet", "model": "Silverado", "year": 2021, "version": "1500 V6 4.3 Doble Cabina 4x2", "priceMXN": 469000, "km": 48723, "color": "Blanco", "transmision": "Aut", "url_fotos": "https://auto.mercadolibre.com.mx/MLM-3413569524-chevrolet-silverado-2500-2021-_JM" }];
+        // No longer relying on static inventoryData. Fetching dynamically from Supabase.
         const defaultImg = "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
 
         function formatCurrency(num) { return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0 }).format(num); }
@@ -2251,8 +2251,9 @@
             // Exhaustive list + actual inventory data
             const exhaustiveBrands = ["Acura", "Audi", "BMW", "Chevrolet", "Chrysler", "Dodge", "Fiat", "Ford", "GMC", "Honda", "Hyundai", "Jeep", "Kia", "Mazda", "Mercedes-Benz", "MG", "Mini", "Mitsubishi", "Nissan", "Peugeot", "RAM", "Renault", "Seat", "Subaru", "Suzuki", "Toyota", "Volkswagen", "Volvo"];
 
-            inventoryData.forEach(c => {
-                if (c.brand && !exhaustiveBrands.includes(c.brand)) exhaustiveBrands.push(c.brand);
+            globalInventoryData.forEach(c => {
+                const brand = c.marca || c.brand;
+                if (brand && !exhaustiveBrands.includes(brand)) exhaustiveBrands.push(brand);
             });
             exhaustiveBrands.sort();
 
@@ -2277,8 +2278,9 @@
                 modelSelect.innerHTML = '<option value="all">Selecciona Marca Primero</option>';
             } else {
                 modelSelect.disabled = false;
-                const brandModels = [...new Set(inventoryData.filter(c => c.brand === brand).map(c => c.model))].sort();
+                const brandModels = [...new Set(globalInventoryData.filter(c => (c.marca || c.brand) === brand).map(c => c.modelo || c.model))].sort();
                 brandModels.forEach(m => {
+                    if (!m) return;
                     const opt = document.createElement('option');
                     opt.value = m;
                     opt.textContent = m;
@@ -2336,21 +2338,39 @@
         let currentCarIndex = 0;
         let tinderCars = [];
         let likeCount = 0;
+        let globalInventoryData = [];
 
-        function renderCards(cars) {
+        async function fetchLiveInventory() {
+            try {
+                const { data, error } = await sb.from('inventario')
+                    .select('*')
+                    .eq('estatus', 'disponible')
+                    .order('created_at', { ascending: false });
+
+                if (error) {
+                    console.error("Error fetching live inventory:", error);
+                    return [];
+                }
+                return data || [];
+            } catch (err) {
+                console.error("Unexpected error fetching inventory:", err);
+                return [];
+            }
+        }
+
+        async function renderCards() {
             const container = document.getElementById('tinder-container');
             if (!container) return;
+            container.innerHTML = '<p style="text-align:center; color:#a8c5b8; padding: 2rem;">Cargando inventario en vivo...</p>';
+
+            globalInventoryData = await fetchLiveInventory();
+
             container.innerHTML = '';
 
-            // Importante: Usamos los datos reales del archivo inventariodata.js (Featured 6-10)
-            if (typeof INVENTARIO_AGENCIAS !== 'undefined') {
-                tinderCars = Object.values(INVENTARIO_AGENCIAS).slice(0, 8);
-            } else {
-                tinderCars = [...inventoryData].slice(0, 8);
-            }
+            tinderCars = globalInventoryData.slice(0, 8); // Display first 8
 
             if (tinderCars.length === 0) {
-                container.innerHTML = '<p style="text-align:center; color:#a8c5b8; padding: 2rem;">Buscando mas matches...</p>';
+                container.innerHTML = '<p style="text-align:center; color:#a8c5b8; padding: 2rem;">No hay autos disponibles en este momento.</p>';
                 return;
             }
 
@@ -2508,9 +2528,9 @@
             window.location.href = './formulario-match.html';
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            populateBrands();
-            renderCards(inventoryData);
+        document.addEventListener('DOMContentLoaded', async () => {
+            await renderCards(); // Wait for data to load
+            populateBrands(); // Call after globalInventoryData is set
             createBubbles();
         });
 

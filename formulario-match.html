@@ -1935,14 +1935,8 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
     <script>
-        // =====================
-        // SUPABASE BACKEND
-        // =====================
-        const SUPABASE_URL = 'https://rgnunjngtsgqgvplawfr.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_G6asVlNL8PHZamCS6r1_lQ_VeV-wsL3';
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
         // =====================
         // STATE
         // =====================
@@ -1971,7 +1965,7 @@
                 const referrer = document.referrer ? new URL(document.referrer).hostname : 'directo';
                 const ua = navigator.userAgent;
                 const device = /Mobi|Android/i.test(ua) ? 'mobile' : 'desktop';
-                await supabaseClient.from('page_visits').insert([{
+                await supabase.from('page_visits').insert([{
                     session_id: getSessionId(),
                     page: 'matchmaker',
                     referrer: referrer,
@@ -1982,7 +1976,7 @@
 
         async function trackFunnelStep(stepNum, stepName) {
             try {
-                await supabaseClient.from('funnel_events').insert([{
+                await supabase.from('funnel_events').insert([{
                     session_id: getSessionId(),
                     step_number: stepNum,
                     step_name: stepName
@@ -2265,7 +2259,7 @@
         async function findMatches() {
             try {
                 // Fetch active inventory from live database
-                const { data: invData, error } = await supabaseClient
+                const { data: invData, error } = await supabase
                     .from('inventario')
                     .select('*')
                     .eq('estatus', 'disponible');

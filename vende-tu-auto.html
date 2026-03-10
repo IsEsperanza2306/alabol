@@ -265,8 +265,8 @@
                 <!-- STEP 1: Vehículo & Datos -->
                 <div class="form-step active" id="step1">
                     <div class="input-group">
-                        <label for="vin">DNI de tu Auto (VIN)</label>
-                        <input type="text" id="vin" placeholder="17 caracteres exactos..." maxlength="17" required>
+                        <label for="vin">DNI de tu Auto (VIN) *Opcional pero da + Seguridad*</label>
+                        <input type="text" id="vin" placeholder="17 caracteres exactos..." maxlength="17">
                         <div id="vinStatus" class="vin-status"></div>
                     </div>
 
@@ -346,7 +346,9 @@
                         <input type="checkbox" id="privacyCheck" required>
                         <label for="privacyCheck"
                             style="text-transform: none; color: white; font-weight: 400; font-size: 0.8rem; margin:0;">
-                            Acepto el <a href="#">Aviso de Privacidad</a> y autorizo la validación de mis datos en Buró
+                            Acepto el <a href="#"
+                                onclick="alert('AVISO DE PRIVACIDAD: Tus datos están protegidos y solo se compartirán internamente para evaluar la compra o venta de tu auto de acuerdo con la Ley Federal de Protección de Datos Personales.'); return false;">Aviso
+                                de Privacidad</a> y autorizo la validación de mis datos en Buró
                             Vehicular.
                         </label>
                     </div>
@@ -387,13 +389,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="../config.js"></script>
     <script>
-        // --- CONFIG & INITIALIZATION ---
-        const sbUrl = 'https://rgnunjngtsgqgvplawfr.supabase.co';
-        const sbKey = 'sb_publishable_G6asVlNL8PHZamCS6r1_lQ_VeV-wsL3';
-        const sb = window.supabase.createClient(sbUrl, sbKey);
-
-        let currentStep = 1;
+        // --- MULTI-STEP LOGIC ---
         const totalSteps = 3;
 
         // --- MULTI-STEP LOGIC ---
@@ -423,8 +421,8 @@
             const vin = document.getElementById('vin').value;
             const tel = document.getElementById('whatsapp').value;
 
-            if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
-                alert('El VIN debe tener 17 caracteres válidos.');
+            if (vin.length > 0 && !/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
+                alert('Si proporcionas el VIN, debe tener 17 caracteres válidos.');
                 return false;
             }
             if (!/^\d{10}$/.test(tel)) {
@@ -440,13 +438,18 @@
             let vin = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').replace(/[IOQ]/g, '');
             e.target.value = vin;
             const status = document.getElementById('vinStatus');
-            status.style.display = 'block';
-            if (vin.length === 17) {
-                status.textContent = '✓ VIN Estándar ISO Detectado';
-                status.style.color = '#25D366';
+
+            if (vin.length === 0) {
+                status.style.display = 'none';
             } else {
-                status.textContent = `Esperando 17 caracteres (${vin.length}/17)`;
-                status.style.color = '#ff3b30';
+                status.style.display = 'block';
+                if (vin.length === 17) {
+                    status.textContent = '✓ VIN Estándar ISO Detectado (+ Seguridad)';
+                    status.style.color = '#25D366';
+                } else {
+                    status.textContent = `Esperando 17 caracteres (${vin.length}/17)`;
+                    status.style.color = '#ff3b30';
+                }
             }
         });
 
@@ -510,9 +513,15 @@
             btn.disabled = true;
 
             const name = document.getElementById('nombre').value;
-            const vin = document.getElementById('vin').value;
+            let vin = document.getElementById('vin').value;
             const marca = document.getElementById('marca').value;
             const modelo = document.getElementById('modelo').value;
+
+            // Generate a temporary VIN if one wasn't provided, to satisfy DB unique constraint
+            const isGeneratedVin = vin.length === 0;
+            if (isGeneratedVin) {
+                vin = 'PENDING-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+            }
 
             const payload = {
                 vin: vin,
@@ -523,19 +532,44 @@
                 nombre: name,
                 whatsapp: document.getElementById('whatsapp').value,
                 fuente: 'Matchmaker_Bunker_CDMX_Pro',
-                vin_validation: true,
+                vin_validation: !isGeneratedVin,
                 image_compression_status: 'client_side_optimized',
                 timestamp: new Date().toISOString()
             };
 
             try {
-                // n8n Production Webhook
+                // n8n Production Webhook (legacy/backup)
                 const webhookUrl = 'https://n8n.alabol.mx/webhook/bunker-capture-pro';
-                await fetch(webhookUrl, {
+                fetch(webhookUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
-                });
+                }).catch(e => console.warn('n8n hook err', e));
+
+                // Insert into Supabase table to trigger Make.com Webhook
+                if (typeof window.supabaseClient !== 'undefined') {
+                    const { error } = await window.supabaseClient.from('inventario').insert([{
+                        vin: vin,
+                        marca: marca,
+                        modelo: modelo,
+                        anio: parseInt(document.getElementById('anio').value),
+                        kilometraje: parseInt(document.getElementById('km').value),
+                        precio_venta: 0, // Pending evaluation
+                        estatus: 'evaluacion', // New cars start in evaluation/bunker phase
+                        vendedor_nombre: name,
+                        vendedor_whatsapp: document.getElementById('whatsapp').value,
+                        fuente: 'Bunker_Pro',
+                    }]);
+                    if (error) {
+                        console.error("Error saving inventory to Supabase:", error);
+                        throw new Error(error.message); // throw error so the catch block triggers and the UI resets
+                    } else {
+                        console.log("✅ Auto enviado al búnker (Supabase)");
+                    }
+                } else {
+                    console.error("Supabase client is not defined. config.js might be missing or failed to load.");
+                    throw new Error("Supabase client is not ready.");
+                }
 
                 // Confetti & Success UI
                 confetti({
@@ -553,7 +587,7 @@
                 document.getElementById('successCard').style.display = 'block';
 
             } catch (err) {
-                alert('Error al conectar con el Búnker. Israel ya está revisando la falla.');
+                alert('Error al conectar con el Búnker. Detalles de la falla: ' + err.message);
                 btn.disabled = false;
                 btn.textContent = 'REINTENTAR ENVÍO';
             }
@@ -561,11 +595,13 @@
 
         // Initialize session if exists
         async function initSession() {
-            const { data: { session } } = await sb.auth.getSession();
-            if (session) {
-                const user = session.user.user_metadata;
-                if (user.full_name) document.getElementById('nombre').value = user.full_name;
-                if (user.whatsapp) document.getElementById('whatsapp').value = user.whatsapp;
+            if (typeof window.supabaseClient !== 'undefined') {
+                const { data: { session } } = await window.supabaseClient.auth.getSession();
+                if (session) {
+                    const user = session.user.user_metadata;
+                    if (user.full_name) document.getElementById('nombre').value = user.full_name;
+                    if (user.whatsapp) document.getElementById('whatsapp').value = user.whatsapp;
+                }
             }
         }
         initSession();

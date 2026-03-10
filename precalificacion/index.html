@@ -488,6 +488,8 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../config.js"></script>
     <script>
         let currentQuestion = 0;
         const totalQuestions = 6;
@@ -672,6 +674,47 @@
             };
 
             console.log('Datos a guardar:', data);
+
+            // Fetch dynamic values to map precalificacion to matchmaker table
+            let dinero_listo = 'ahorrando';
+            if (answers.q1?.value === 'A') dinero_listo = 'si';
+            else if (answers.q1?.value === 'B') dinero_listo = 'pronto';
+
+            let uso_auto = 'personal';
+            if (answers.q2?.value === 'B' || answers.q2?.value === 'C') uso_auto = 'reventa';
+
+            let presupuesto_min = 100000;
+            let presupuesto_max = 150000;
+            if (answers.q3?.value === 'A') { presupuesto_min = 150000; presupuesto_max = 300000; }
+            else if (answers.q3?.value === 'B') { presupuesto_min = 300000; presupuesto_max = 800000; }
+            else if (answers.q3?.value === 'D') { presupuesto_min = 50000; presupuesto_max = 100000; }
+
+            let prioridad = totalScore >= 80 ? 'alta' : totalScore >= 60 ? 'media' : 'baja';
+
+            // Async save to Supabase
+            if (typeof supabase !== 'undefined') {
+                supabase.from('leads_matchmaker').insert([{
+                    nombre: data.nombre,
+                    whatsapp: data.telefono,
+                    ciudad: 'Pendiente (Precalificación)',
+                    tipo_vehiculo: 'abierto',
+                    marcas: [],
+                    modelos: [],
+                    presupuesto_min: presupuesto_min,
+                    presupuesto_max: presupuesto_max,
+                    dinero_listo: dinero_listo,
+                    prioridad: prioridad,
+                    uso_auto: uso_auto,
+                    notas: `Score: ${totalScore} (${data.categoria}) | Email: ${data.email} | Importó antes: ${answers.q4?.value} | Urgencia: ${answers.q5?.value}`
+                }]).then(({ error }) => {
+                    if (error) console.error("Error saving lead to Supabase:", error);
+                    else {
+                        console.log("✅ Lead successfully saved to Supabase (Precalificación)");
+                        if (typeof gtag !== 'undefined') gtag('event', 'lead_precalificado', { score: totalScore, categoria: data.categoria });
+                        if (typeof fbq !== 'undefined') fbq('track', 'Lead');
+                    }
+                });
+            }
 
             try {
                 fetch('https://script.google.com/macros/s/AKfycbz3aSvBccbijo6MkbS3FgGfrEDbaruIiedi6ndr6bNc6bFshebxKiz6YRhh5UTN-v0nlw/exec', {

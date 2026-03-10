@@ -1264,6 +1264,12 @@
             if (index > -1) {
                 wishlist.splice(index, 1);
                 btn.classList.remove('active');
+
+                // ALSO explicitly remove from Tinder matches to prevent ghost reappearance
+                let tinderLocal = JSON.parse(localStorage.getItem('alabol_matches')) || [];
+                tinderLocal = tinderLocal.filter(m => (m.id !== id && m.id_interno !== id));
+                localStorage.setItem('alabol_matches', JSON.stringify(tinderLocal));
+
             } else {
                 wishlist.push(id);
                 btn.classList.add('active');

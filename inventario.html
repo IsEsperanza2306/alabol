@@ -1114,32 +1114,65 @@
     <!-- SUPABASE TRACKING / ANALYTICS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- INVENTARIO DATA -->
-    <script src="inventariodata.js"></script>
+    <!-- DEPRECATED: <script src="inventariodata.js"></script> -->
 
     <script>
         let database_inventory = [];
-        try {
-            if (typeof INVENTARIO_AGENCIAS !== 'undefined') {
-                database_inventory = Object.values(INVENTARIO_AGENCIAS).map(car => ({
-                    id: car.id_interno || car.id,
-                    agencia: car.agencia,
-                    ubicacion: getGenericLocation(car.agencia),
-                    vehicle: `${car.marca} ${car.modelo} ${car.año}`.toUpperCase(),
-                    version: car.version,
-                    priceMXN: car.precio_venta || 0,
-                    km: car.kilometraje || 0,
-                    color: car.color || 'N/A',
-                    transmision: car.transmision || 'N/A',
-                    motor: car.motor || 'No especificado',
-                    traccion: car.traccion || 'No especificado',
-                    combustible: car.combustible || 'Gasolina',
-                    descripcion: car.descripcion || `Este ${car.marca} ${car.modelo} ${car.año} ha sido inspeccionado y está listo para entrega inmediata. Un auto premium con excelente manejo y condiciones estéticas impecables.`,
-                    url_fotos: car.link_fotos
-                }));
+
+        // Default Image for missing URLs
+        const defaultImg = "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
+
+        async function fetchLiveInventory() {
+            try {
+                // Fetch ONLY available cars from Supabase 'inventario' table
+                const { data, error } = await supabaseClient.from('inventario')
+                    .select('*')
+                    .eq('estatus', 'disponible')
+                    .order('created_at', { ascending: false });
+
+                if (error) {
+                    console.error("Error fetching live inventory from Supabase:", error);
+                    return;
+                }
+
+                if (data && data.length > 0) {
+                    // Map live database rows into our frontend 'database_inventory' array
+                    database_inventory = data.map(car => {
+                        let carImg = defaultImg;
+                        if (car.fotos && Array.isArray(car.fotos) && car.fotos.length > 0) {
+                            carImg = car.fotos[0];
+                        } else if (typeof car.fotos === 'string' && car.fotos.startsWith('[')) {
+                            try {
+                                const parsed = JSON.parse(car.fotos);
+                                if (parsed.length > 0) carImg = parsed[0];
+                            } catch (e) { }
+                        } else if (car.link_fotos) {
+                            carImg = car.link_fotos;
+                        } else if (car.url_fotos) {
+                            carImg = car.url_fotos;
+                        }
+
+                        return {
+                            id: car.id_interno || car.id,
+                            agencia: car.agencia || 'Alabol',
+                            ubicacion: getGenericLocation(car.agencia),
+                            vehicle: `${car.marca || car.brand || ''} ${car.modelo || car.model || ''} ${car.año || car.year || ''}`.trim().toUpperCase(),
+                            version: car.version || 'Equipado',
+                            priceMXN: car.precio_venta || car.precio || 0,
+                            km: car.kilometraje || 0,
+                            color: car.color || 'N/A',
+                            transmision: car.transmision || 'N/A',
+                            motor: car.motor || 'No especificado',
+                            traccion: car.traccion || 'No especificado',
+                            combustible: car.combustible || 'Gasolina',
+                            descripcion: car.descripcion || `Este vehículo ha sido inspeccionado y está listo para entrega inmediata. Un auto garantizado The Alabol Way.`,
+                            url_fotos: carImg
+                        };
+                    });
+                }
+            } catch (err) {
+                console.error("Unexpected error parsing live inventory:", err);
             }
-        } catch (e) {
-            console.error("Error processing INVENTARIO_AGENCIAS:", e);
         }
 
         const SUPABASE_URL = 'https://rgnunjngtsgqgvplawfr.supabase.co';
@@ -1396,7 +1429,8 @@
             renderGrid(filtered);
         }
 
-        function initFiltersFromURL() {
+        async function initFiltersFromURL() {
+            await fetchLiveInventory(); // Ensures data is loaded from Supabase first
             populateInvBrands();
 
             const params = new URLSearchParams(window.location.search);
@@ -1555,26 +1589,9 @@
             if (e.key === 'ArrowRight') changeImage(1);
         });
 
-        document.addEventListener('DOMContentLoaded', () => {
-            // Re-verify that database_inventory has data
-            if (!window.database_inventory || window.database_inventory.length === 0) {
-                console.warn("Database inventory empty or not loaded yet. Retrying from INVENTARIO_AGENCIAS...");
-                if (typeof INVENTARIO_AGENCIAS !== 'undefined') {
-                    window.database_inventory = Object.values(INVENTARIO_AGENCIAS).map(car => ({
-                        id: car.id_interno || car.id,
-                        agencia: car.agencia,
-                        vehicle: `${car.marca} ${car.modelo} ${car.año}`.toUpperCase(),
-                        version: car.version,
-                        priceMXN: car.precio_venta,
-                        km: car.kilometraje,
-                        color: car.color,
-                        transmision: car.transmision,
-                        url_fotos: car.link_fotos
-                    }));
-                }
-            }
+        document.addEventListener('DOMContentLoaded', async () => {
             updateFavCounter();
-            initFiltersFromURL();
+            await initFiltersFromURL();
         });
     </script>
 </body>

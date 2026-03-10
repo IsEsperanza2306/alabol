@@ -419,8 +419,18 @@
         }
 
         function validateStep1() {
-            const vin = document.getElementById('vin').value;
-            const tel = document.getElementById('whatsapp').value;
+            const marca = document.getElementById('marca').value.trim();
+            const modelo = document.getElementById('modelo').value.trim();
+            const anio = document.getElementById('anio').value.trim();
+            const km = document.getElementById('km').value.trim();
+            const nombre = document.getElementById('nombre').value.trim();
+            const vin = document.getElementById('vin').value.trim();
+            const tel = document.getElementById('whatsapp').value.trim();
+
+            if (!marca || !modelo || !anio || !km || !nombre) {
+                alert('Por favor, completa todos los campos obligatorios antes de continuar.');
+                return false;
+            }
 
             if (vin.length > 0 && !/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
                 alert('Si proporcionas el VIN, debe tener 17 caracteres válidos.');

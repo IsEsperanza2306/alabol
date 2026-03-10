@@ -2384,13 +2384,7 @@
                 console.warn('Background Supabase save failed:', err);
             }
 
-            // Legacy Fallback (Google Sheets)
-            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzuQu7jmI31nP6pSrB4sz_jnCXXmNudfZ-xoElo-eZphNkTnLcls-CUdEC3MYifmmDOBQ/exec';
-            fetch(SCRIPT_URL, {
-                method: 'POST', mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify(payload)
-            }).catch(err => console.warn('Background Sheets save failed:', err));
+            // Removidos los POST a Google Sheets y Make directo, ya que Supabase dispara el Webhook vía Trigger.
 
             // Minimum visual drama delay while backend fetches
             const fetchPromise = findMatches();
@@ -2563,34 +2557,6 @@
                     `¡Quedo atento a opciones! 🙌`
                 );
             }
-
-            // ==========================================
-            // N8N / MAKE WEBHOOK PUSH (Lead Capture)
-            // ==========================================
-            const finalPayload = {
-                fecha: new Date().toISOString(),
-                nombre: formData.nombre,
-                whatsapp: formData.whatsapp,
-                ciudad: formData.ciudad,
-                presupuesto_str: presupuestoText,
-                presupuesto_min: formData.presupuestoMin,
-                presupuesto_max: formData.presupuestoMax,
-                marcas_interes: formData.marcas.join(', '),
-                modelos_interes: modelosStr,
-                tipo_vehiculo: formData.tipoVehiculo,
-                dinero_listo: formData.dineroListo,
-                prioridad: formData.prioridad,
-                autos_likeados: likedCars || [],
-                tiene_matches: likedCars && likedCars.length > 0
-            };
-
-            const N8N_WEBHOOK_URL = 'https://hook.us2.make.com/z9xj6uu5nfuj54ko2eepzox336fly4ib';
-            fetch(N8N_WEBHOOK_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(finalPayload)
-            }).catch(err => console.warn('N8N Webhook connection failed:', err));
-
             document.getElementById('ctaWhatsApp').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
             successScreen.classList.add('active');
 

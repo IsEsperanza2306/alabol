@@ -211,6 +211,20 @@
 
             <div class="error-msg" id="errorBox">Credenciales incorrectas. Intenta de nuevo.</div>
 
+            <button type="button" id="btnGoogle"
+                style="width:100%; padding:14px; background:white; color:#333; border:none; border-radius:12px; font-weight:700; font-size:1rem; cursor:pointer; margin-bottom:15px; display:flex; align-items:center; justify-content:center; gap:10px; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google"
+                    style="width:20px;">
+                Continuar con Google
+            </button>
+
+            <div style="display:flex; align-items:center; margin-bottom:15px; opacity:0.6;">
+                <div style="flex:1; height:1px; background:var(--gold-premium);"></div>
+                <div style="padding:0 10px; font-size:0.8rem; color:white; text-transform:uppercase;">o regístrate con
+                    tu email</div>
+                <div style="flex:1; height:1px; background:var(--gold-premium);"></div>
+            </div>
+
             <form id="authForm">
                 <div class="form-group" id="nameGroup" style="display:none;">
                     <label for="fullName">Nombre Completo</label>
@@ -253,12 +267,13 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // --- 1. UI TOGGLE LOGIC (Must work even if Supabase fails) ---
+        // --- 1. UI TOGGLE LOGIC ---
+        let isLogin = true;
+
         window.onload = function () {
             const authForm = document.getElementById('authForm');
             const toggleBtn = document.getElementById('toggleBtn');
             const errorBox = document.getElementById('errorBox');
-            let isLogin = true;
 
             console.log('DOM Cargado. Buscando toggleBtn:', toggleBtn);
 
@@ -306,6 +321,25 @@
         }
 
         // --- 3. AUTH SUBMISSION ---
+        const authForm = document.getElementById('authForm');
+        const errorBox = document.getElementById('errorBox');
+
+        document.getElementById('btnGoogle').addEventListener('click', async () => {
+            if (!supabase) return;
+            try {
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: window.location.origin + window.location.pathname.replace('login.html', 'index.html')
+                    }
+                });
+                if (error) throw error;
+            } catch (err) {
+                errorBox.textContent = err.message;
+                errorBox.style.display = 'block';
+            }
+        });
+
         authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             if (!supabase) {

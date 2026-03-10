@@ -1886,7 +1886,7 @@
             <!-- MATCH COUNTER -->
             <div id="matchCounter"
                 style="display:none; align-items:center; gap:8px; background: rgba(255,59,48,0.1); border: 1px solid rgba(255,59,48,0.3); padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; color: #ff3b30; cursor: pointer; transition: all 0.3s;"
-                onclick="location.href='./formulario-match.html'">
+                onclick="if(typeof trackFunnelStep==='function') trackFunnelStep(3, 'click_matches_guardados'); location.href='./inventario.html?saved_matches=true'">
                 <i class="fa-solid fa-heart"></i>
                 <strong><span id="savedMatchCount">0</span> Matches</strong> Guardados
             </div>
@@ -1903,8 +1903,9 @@
         </div>
 
         <div class="view-all-container">
-            <a href="./inventario.html" class="btn-view-all">Ver Todo el Inventario <i
-                    class="fa-solid fa-arrow-right"></i></a>
+            <a href="./inventario.html" class="btn-view-all"
+                onclick="if(typeof trackFunnelStep === 'function') trackFunnelStep(3, 'click_ver_todo_inventario');">Ver
+                Todo el Inventario <i class="fa-solid fa-arrow-right"></i></a>
         </div>
     </section>
 
@@ -2381,13 +2382,26 @@
                 card.style.transform = `translateY(${index * -10}px) scale(${1 - index * 0.05})`;
                 if (index > 2) card.style.opacity = '0';
 
-                // --- DATA NORMALIZATION (Fixing "undefined" bug) ---
+                // --- DATA NORMALIZATION (Fixing "undefined" bug and images) ---
                 const marca = auto.marca || auto.brand || 'Auto';
                 const modelo = auto.modelo || auto.model || 'Alabol';
                 const precio = auto.precio_venta || auto.priceMXN || 0;
                 const anio = auto.año || auto.year || '2024';
                 const version = auto.version || 'Equipado';
-                const carImg = auto.link_fotos || auto.url_fotos || defaultImg;
+
+                let carImg = defaultImg;
+                if (auto.fotos && Array.isArray(auto.fotos) && auto.fotos.length > 0) {
+                    carImg = auto.fotos[0];
+                } else if (typeof auto.fotos === 'string' && auto.fotos.startsWith('[')) {
+                    try {
+                        const parsed = JSON.parse(auto.fotos);
+                        if (parsed.length > 0) carImg = parsed[0];
+                    } catch (e) { }
+                } else if (auto.link_fotos) {
+                    carImg = auto.link_fotos;
+                } else if (auto.url_fotos) {
+                    carImg = auto.url_fotos;
+                }
 
                 const isAlabol = (auto.agencia || '').toLowerCase() === 'alabol';
                 const badgeText = isAlabol ? '✓ VENTA DIRECTA' : '⭐ VERIFICADO';
@@ -2692,7 +2706,9 @@
                     Contacto</div>
                 <nav style="display:flex;flex-direction:column;gap:0.6rem;">
                     <a href="https://wa.me/525568675571?text=Hola%2C+vengo+del+sitio+web+y+me+interesa+un+auto"
-                        target="_blank" style="color:#25D366;text-decoration:none;font-size:0.9rem;">📱 WhatsApp
+                        target="_blank" style="color:#25D366;text-decoration:none;font-size:0.9rem;"
+                        onclick="if(typeof trackFunnelStep === 'function') trackFunnelStep(5, 'click_whatsapp_footer');">📱
+                        WhatsApp
                         Directo</a>
                     <a href="https://instagram.com/alabolcarbroker" target="_blank"
                         style="color:#a8c5b8;text-decoration:none;font-size:0.9rem;transition:color 0.2s;"

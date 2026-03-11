@@ -2137,6 +2137,20 @@
     window.SUPABASE_URL = SU;
     console.log('Alabol: Supabase client ready');
   }
+  // Auto-reload inventory after DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+      if (typeof fetchLiveInventory === 'function' && window.supabaseClient) {
+        fetchLiveInventory().then(function(data) {
+          if (data && data.length > 0) {
+            window.globalInventoryData = data;
+            if (typeof filterCars === 'function') filterCars();
+            console.log('Alabol: Inventory loaded - ' + data.length + ' autos');
+          }
+        }).catch(function(e) { console.warn('Alabol: Inventory reload failed', e); });
+      }
+    }, 500);
+  });
 })();
 </script>
     <script>

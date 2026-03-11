@@ -266,6 +266,18 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// === ALABOL GLOBAL SUPABASE INIT (single source of truth) ===
+(function() {
+  var SU = 'https://rgnunjngtsgqgvplawfr.supabase.co';
+  var SK = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8';
+  if (window.supabase && window.supabase.createClient && !window.supabaseClient) {
+    window.supabaseClient = window.supabase.createClient(SU, SK);
+    window.SUPABASE_URL = SU;
+    console.log('Alabol: Supabase client ready');
+  }
+})();
+</script>
     <script>
         // --- 1. UI TOGGLE LOGIC ---
         let isLogin = true;

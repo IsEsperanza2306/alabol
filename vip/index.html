@@ -2435,105 +2435,85 @@
         }
 
         async function submitForm() {
-            collectStepData(currentStep);
+      const allData = {};
+      for (let s = 0; s <= currentStep; s++) Object.assign(allData, collectStepData(s));
 
-            // Show finding matches animation instead of boring spinner
-            document.querySelector('.logo-section').style.display = 'none';
-            document.querySelector('.trust-row').style.display = 'none';
-            document.querySelector('.progress-bar').style.display = 'none';
-            document.getElementById('vipForm').style.display = 'none';
-            navButtons.style.display = 'none';
+      if (!allData.nombre || !allData.whatsapp) {
+        showCustomAlert('error', 'Datos incompletos', 'Por favor llena tu nombre y WhatsApp.');
+        return;
+      }
 
-            // Add a small delay for "Processing" effect
-            const findingScreen = document.getElementById('findingMatchesScreen');
-            findingScreen.classList.add('active');
+      const loader = document.getElementById('loaderOverlay');
+      if (loader) loader.style.display = 'flex';
 
-            const payload = {
-                fecha: new Date().toISOString(),
-                nombre: formData.nombre, whatsapp: formData.whatsapp, ciudad: formData.ciudad,
-                tipo_vehiculo: formData.tipoVehiculo,
-                marcas: formData.marcas.join(', '),
-                modelos: formData.modelos.join(', ') || 'Abierto a opciones',
-                anio_rango: `${formData.anioDesde} - ${formData.anioHasta}`,
-                caracteristicas: formData.caracteristicas.join(', ') || 'Flexible',
-                presupuesto: `$${formData.presupuestoMin.toLocaleString()} - $${formData.presupuestoMax.toLocaleString()}`,
-                dinero_listo: formData.dineroListo,
-                prioridad: formData.prioridad, uso: formData.usoAuto,
-                notas: formData.notas || '', fuente: 'Formulario VIP'
-            };
+      const payload = {
+        nombre: allData.nombre,
+        whatsapp: allData.whatsapp,
+        ciudad: allData.ciudad || 'No especificada',
+        tipo_vehiculo: allData.tipoVehiculo || null,
+        marcas: allData.marcas || [],
+        modelos: allData.modelos || [],
+        anio_min: allData.anioDesde ? parseInt(allData.anioDesde) : null,
+        anio_max: allData.anioHasta ? parseInt(allData.anioHasta) : null,
+        presupuesto_min: allData.presupuestoMin ? parseInt(allData.presupuestoMin) : 150000,
+        presupuesto_max: allData.presupuestoMax ? parseInt(allData.presupuestoMax) : 350000,
+        dinero_listo: allData.dineroListo || null,
+        uso_auto: allData.usoAuto || null,
+        caracteristicas: allData.caracteristicas || [],
+        notas: allData.notas || '',
+        fuente: new URLSearchParams(window.location.search).get('utm_source') || 'vip'
+      };
 
-            // Async send data in background to Supabase Leads Table
-            try {
-                const { error } = await supabase
-                    .from('leads_matchmaker')
-                    .insert([
-                        {
-                            nombre: formData.nombre,
-                            whatsapp: formData.whatsapp,
-                            ciudad: formData.ciudad,
-                            tipo_vehiculo: formData.tipoVehiculo,
-                            marcas: formData.marcas,
-                            modelos: formData.modelos,
-                            anio_min: parseInt(formData.anioDesde) || null,
-                            anio_max: parseInt(formData.anioHasta) || null,
-                            presupuesto_min: formData.presupuestoMin,
-                            presupuesto_max: formData.presupuestoMax,
-                            dinero_listo: formData.dineroListo,
-                            prioridad: formData.prioridad,
-                            uso_auto: formData.usoAuto,
-                            caracteristicas: formData.caracteristicas,
-                            notas: formData.notas
-                        }
-                    ]);
-                if (error) console.error("Error saving lead to Supabase:", error);
-                else {
-                    console.log("✅ Lead successfully saved to Supabase Wishlist");
-
-                    // --- GA4: Lead Conversion Event (Phase 11) ---
-                    if (typeof gtag !== 'undefined') {
-                        gtag('event', 'lead_submitted', {
-                            presupuesto_max: formData.presupuestoMax,
-                            dinero_listo: formData.dineroListo,
-                            marcas: formData.marcas.join(', ')
-                        });
-                    }
-                    // --- Meta Pixel: Lead Conversion Event ---
-                    if (typeof fbq !== 'undefined') {
-                        fbq('track', 'Lead');
-                    }
-                }
-            } catch (err) {
-                console.warn('Background Supabase save failed:', err);
-            }
-
-            // Legacy Fallback (Google Sheets)
-            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz3aSvBccbijo6MkbS3FgGfrEDbaruIiedi6ndr6bNc6bFshebxKiz6YRhh5UTN-v0nlw/exec';
-            fetch(SCRIPT_URL, {
-                method: 'POST', mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify(payload)
-            }).catch(err => console.warn('Background Sheets save failed:', err));
-
-            // Minimum visual drama delay while backend fetches
-            const fetchPromise = findMatches();
-            const timerPromise = new Promise(r => setTimeout(r, 2000));
-
-            // Run Match Engine (Await both Supabase fetch and Timer)
-            await Promise.all([fetchPromise, timerPromise]);
-            matchStack = await fetchPromise;
-            findingScreen.classList.remove('active');
-
-            if (matchStack.length > 0) {
-                initTinderDeck();
-            } else {
-                showSuccess(); // Fallback to classic success screen
-            }
+      fetch(SUPABASE_URL + '/functions/v1/matchmaker-submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(response => response.json())
+      .then(result => {
+        if (loader) loader.style.display = 'none';
+        if (result.success) {
+          console.log('VIP Matchmaker result:', result);
+          sessionStorage.setItem('matchResult', JSON.stringify(result));
+          try {
+            if (typeof gtag === 'function') gtag('event', 'generate_lead', { event_category: 'matchmaker_vip', event_label: payload.ciudad, value: payload.presupuesto_max });
+            if (typeof fbq === 'function') fbq('track', 'Lead', { content_name: 'Matchmaker VIP', currency: 'MXN', value: payload.presupuesto_max });
+          } catch(e) {}
+          if (result.top_matches && result.top_matches.length > 0) {
+            window._backendMatches = result.top_matches;
+            showSuccess(result);
+          } else {
+            findMatches(allData);
+            new Promise(r => setTimeout(r, 2000)).then(() => showSuccess(result));
+          }
+          showCustomAlert('success', 'Match Perfecto', result.message || 'Encontramos ' + (result.total_matches || 0) + ' opciones para ti.');
+        } else {
+          showCustomAlert('error', 'Error', result.error || 'Intenta de nuevo.');
         }
+      })
+      .catch(err => {
+        console.warn('Edge Function failed, fallback:', err);
+        if (typeof supabase !== 'undefined') {
+          supabase.from('leads_matchmaker').insert({
+            nombre: payload.nombre, whatsapp: payload.whatsapp, ciudad: payload.ciudad,
+            tipo_vehiculo: payload.tipo_vehiculo, marcas: payload.marcas, modelos: payload.modelos,
+            anio_min: payload.anio_min, anio_max: payload.anio_max,
+            presupuesto_min: payload.presupuesto_min, presupuesto_max: payload.presupuesto_max,
+            dinero_listo: payload.dinero_listo, uso_auto: payload.uso_auto,
+            caracteristicas: payload.caracteristicas, notas: payload.notas, fuente: payload.fuente
+          }).then(({ error }) => {
+            if (loader) loader.style.display = 'none';
+            if (error) { showCustomAlert('error', 'Error', 'Escr\u00edbenos por WhatsApp.'); }
+            else { findMatches(allData); new Promise(r => setTimeout(r, 2000)).then(() => showSuccess({ success: true, total_matches: 0, message: 'Te contactaremos pronto.' })); }
+          });
+        } else {
+          if (loader) loader.style.display = 'none';
+          showCustomAlert('error', 'Error', 'Error de conexi\u00f3n.');
+        }
+      });
+    }
 
-        // =====================
-        // TINDER UI LOGIC
-        // =====================
-        function initTinderDeck() {
+    function initTinderDeck() {
             const deck = document.getElementById('tinderDeck');
             const actions = document.getElementById('tinderActions');
             deck.innerHTML = '';

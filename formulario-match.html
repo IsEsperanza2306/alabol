@@ -2305,107 +2305,124 @@
         }
 
         async function submitForm() {
-            collectStepData(currentStep);
+      const allData = {};
+      for (let s = 0; s <= currentStep; s++) Object.assign(allData, collectStepData(s));
 
-            // Show finding matches animation instead of boring spinner
-            document.querySelector('.logo-section').style.display = 'none';
-            document.querySelector('.trust-row').style.display = 'none';
-            document.querySelector('.progress-bar').style.display = 'none';
-            document.getElementById('vipForm').style.display = 'none';
-            navButtons.style.display = 'none';
+      if (!allData.nombre || !allData.whatsapp) {
+        showCustomAlert('error', 'Datos incompletos', 'Por favor llena tu nombre y WhatsApp.');
+        return;
+      }
 
-            // --- CONSUME LOCALSTORAGE MATCHES ---
-            const savedMatches = JSON.parse(localStorage.getItem('alabol_matches') || '[]');
-            const matchesText = savedMatches.length > 0
-                ? savedMatches.map(m => `${m.brand} ${m.model} (${m.year})`).join(' | ')
-                : 'Ninguno previo';
+      const loader = document.getElementById('loaderOverlay');
+      if (loader) loader.style.display = 'flex';
 
-            // Add a small delay for "Processing" effect
-            const findingScreen = document.getElementById('findingMatchesScreen');
-            findingScreen.classList.add('active');
+      const payload = {
+        nombre: allData.nombre,
+        whatsapp: allData.whatsapp,
+        ciudad: allData.ciudad || 'No especificada',
+        tipo_vehiculo: allData.tipoVehiculo || null,
+        marcas: allData.marcas || [],
+        modelos: allData.modelos || [],
+        anio_min: allData.anioDesde ? parseInt(allData.anioDesde) : null,
+        anio_max: allData.anioHasta ? parseInt(allData.anioHasta) : null,
+        presupuesto_min: allData.presupuestoMin ? parseInt(allData.presupuestoMin) : 150000,
+        presupuesto_max: allData.presupuestoMax ? parseInt(allData.presupuestoMax) : 350000,
+        dinero_listo: allData.dineroListo || null,
+        uso_auto: allData.usoAuto || null,
+        caracteristicas: allData.caracteristicas || [],
+        notas: allData.notas || '',
+        fuente: new URLSearchParams(window.location.search).get('utm_source') || 'web'
+      };
 
-            const payload = {
-                fecha: new Date().toISOString(),
-                nombre: formData.nombre, whatsapp: formData.whatsapp, ciudad: formData.ciudad,
-                tipo_vehiculo: formData.tipoVehiculo,
-                marcas: formData.marcas.join(', '),
-                modelos: formData.modelos.join(', ') || 'Abierto a opciones',
-                anio_rango: `${formData.anioDesde} - ${formData.anioHasta}`,
-                caracteristicas: formData.caracteristicas.join(', ') || 'Flexible',
-                presupuesto: `$${formData.presupuestoMin.toLocaleString()} - $${formData.presupuestoMax.toLocaleString()}`,
-                dinero_listo: formData.dineroListo,
-                prioridad: formData.prioridad, uso: formData.usoAuto,
-                notas: formData.notas || '',
-                matches_tinder: matchesText, // NEW FIELD
-                fuente: 'Matchmaker'
-            };
+      // Call Edge Function - handles matching, scoring, WhatsApp notifications
+      fetch(SUPABASE_URL + '/functions/v1/matchmaker-submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(response => response.json())
+      .then(result => {
+        if (loader) loader.style.display = 'none';
 
-            // Async send data in background to Supabase Leads Table
-            try {
-                const { error } = await supabase
-                    .from('leads_matchmaker')
-                    .insert([
-                        {
-                            nombre: formData.nombre,
-                            whatsapp: formData.whatsapp,
-                            ciudad: formData.ciudad,
-                            tipo_vehiculo: formData.tipoVehiculo,
-                            marcas: formData.marcas,
-                            modelos: formData.modelos,
-                            anio_min: parseInt(formData.anioDesde) || null,
-                            anio_max: parseInt(formData.anioHasta) || null,
-                            presupuesto_min: formData.presupuestoMin,
-                            presupuesto_max: formData.presupuestoMax,
-                            dinero_listo: formData.dineroListo,
-                            prioridad: formData.prioridad,
-                            uso_auto: formData.usoAuto,
-                            caracteristicas: formData.caracteristicas,
-                            notas: formData.notas + (matchesText !== 'Ninguno previo' ? ` | MATCHES TINDER: ${matchesText}` : '')
-                        }
-                    ]);
-                if (error) console.error("Error saving lead to Supabase:", error);
-                else {
-                    console.log("✅ Lead successfully saved to Supabase Wishlist");
+        if (result.success) {
+          console.log('Matchmaker result:', result);
+          sessionStorage.setItem('matchResult', JSON.stringify(result));
 
-                    // --- GA4: Lead Conversion Event (Phase 11) ---
-                    if (typeof gtag !== 'undefined') {
-                        gtag('event', 'lead_submitted', {
-                            presupuesto_max: formData.presupuestoMax,
-                            dinero_listo: formData.dineroListo,
-                            marcas: formData.marcas.join(', ')
-                        });
-                    }
-                    // --- Meta Pixel: Lead Conversion Event ---
-                    if (typeof fbq !== 'undefined') {
-                        fbq('track', 'Lead');
-                    }
-                }
-            } catch (err) {
-                console.warn('Background Supabase save failed:', err);
+          // Analytics
+          try {
+            if (typeof gtag === 'function') {
+              gtag('event', 'generate_lead', {
+                event_category: 'matchmaker',
+                event_label: payload.ciudad,
+                value: payload.presupuesto_max
+              });
             }
-
-            // Removidos los POST a Google Sheets y Make directo, ya que Supabase dispara el Webhook vía Trigger.
-
-            // Minimum visual drama delay while backend fetches
-            const fetchPromise = findMatches();
-            const timerPromise = new Promise(r => setTimeout(r, 2000));
-
-            // Run Match Engine (Await both Supabase fetch and Timer)
-            await Promise.all([fetchPromise, timerPromise]);
-            matchStack = await fetchPromise;
-            findingScreen.classList.remove('active');
-
-            if (matchStack.length > 0) {
-                initTinderDeck();
-            } else {
-                showSuccess(); // Fallback to classic success screen
+            if (typeof fbq === 'function') {
+              fbq('track', 'Lead', { content_name: 'Matchmaker', currency: 'MXN', value: payload.presupuesto_max });
             }
+          } catch(e) { console.warn('Analytics error:', e); }
+
+          // Use backend matches if available, otherwise run local findMatches
+          if (result.top_matches && result.top_matches.length > 0) {
+            const backendMatches = result.top_matches.map(m => ({
+              score: m.score,
+              auto: m.auto || {}
+            }));
+            window._backendMatches = backendMatches;
+            showSuccess(result);
+          } else {
+            // Fallback to local matching (legacy)
+            findMatches(allData);
+            new Promise(r => setTimeout(r, 2000)).then(() => showSuccess(result));
+          }
+
+          showCustomAlert('success', 'Match Perfecto', result.message || 'Encontramos ' + (result.total_matches || 0) + ' opciones para ti.');
+        } else {
+          showCustomAlert('error', 'Error', result.error || 'Intenta de nuevo.');
         }
+      })
+      .catch(err => {
+        console.warn('Edge Function failed, using direct Supabase:', err);
 
-        // =====================
-        // TINDER UI LOGIC
-        // =====================
-        function initTinderDeck() {
+        // Fallback: direct Supabase insert (triggers still fire)
+        if (typeof supabase !== 'undefined') {
+          supabase.from('leads_matchmaker').insert({
+            nombre: payload.nombre,
+            whatsapp: payload.whatsapp,
+            ciudad: payload.ciudad,
+            tipo_vehiculo: payload.tipo_vehiculo,
+            marcas: payload.marcas,
+            modelos: payload.modelos,
+            anio_min: payload.anio_min,
+            anio_max: payload.anio_max,
+            presupuesto_min: payload.presupuesto_min,
+            presupuesto_max: payload.presupuesto_max,
+            dinero_listo: payload.dinero_listo,
+            uso_auto: payload.uso_auto,
+            caracteristicas: payload.caracteristicas,
+            notas: payload.notas,
+            fuente: payload.fuente
+          }).then(({ data, error }) => {
+            if (loader) loader.style.display = 'none';
+            if (error) {
+              console.error('Supabase insert error:', error);
+              showCustomAlert('error', 'Error', 'No pudimos guardar. Escr\u00edbenos por WhatsApp.');
+            } else {
+              findMatches(allData);
+              new Promise(r => setTimeout(r, 2000)).then(() => {
+                showSuccess({ success: true, total_matches: 0, message: 'Recibimos tu b\u00fasqueda. Te contactaremos pronto.' });
+              });
+              showCustomAlert('success', 'Recibido', 'Tu b\u00fasqueda est\u00e1 activa. Te avisaremos.');
+            }
+          });
+        } else {
+          if (loader) loader.style.display = 'none';
+          showCustomAlert('error', 'Error', 'Error de conexi\u00f3n. Intenta de nuevo.');
+        }
+      });
+    }
+
+    function initTinderDeck() {
             const deck = document.getElementById('tinderDeck');
             const actions = document.getElementById('tinderActions');
             deck.innerHTML = '';

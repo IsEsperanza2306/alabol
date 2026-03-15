@@ -2122,10 +2122,47 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
                     <div class="spec-item"><i class="fa-solid fa-gear"></i> <span id="modalTrans">Aut</span></div>
                     <div class="spec-item"><i class="fa-solid fa-palette"></i> <span id="modalColor">Color</span></div>
                 </div>
+
+                <!-- Detalles extra -->
+                <div id="modalExtra" style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                    <div style="background:rgba(13,38,28,0.6);border:1px solid rgba(212,175,55,0.15);border-radius:10px;padding:8px 10px;text-align:center;">
+                        <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:0.05em;opacity:0.7;">Tipo</div>
+                        <div style="font-size:13px;color:white;font-weight:600;" id="modalTipo">—</div>
+                    </div>
+                    <div style="background:rgba(13,38,28,0.6);border:1px solid rgba(212,175,55,0.15);border-radius:10px;padding:8px 10px;text-align:center;">
+                        <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:0.05em;opacity:0.7;">Combustible</div>
+                        <div style="font-size:13px;color:white;font-weight:600;" id="modalFuel">—</div>
+                    </div>
+                    <div style="background:rgba(13,38,28,0.6);border:1px solid rgba(212,175,55,0.15);border-radius:10px;padding:8px 10px;text-align:center;">
+                        <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:0.05em;opacity:0.7;">Ciudad</div>
+                        <div style="font-size:13px;color:white;font-weight:600;" id="modalCity">—</div>
+                    </div>
+                    <div style="background:rgba(13,38,28,0.6);border:1px solid rgba(212,175,55,0.15);border-radius:10px;padding:8px 10px;text-align:center;">
+                        <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:0.05em;opacity:0.7;">Origen</div>
+                        <div style="font-size:13px;color:white;font-weight:600;" id="modalOrigen">—</div>
+                    </div>
+                </div>
+
+                <!-- Descripción -->
+                <div id="modalDesc" style="margin-top:12px;font-size:12px;color:#a8c5b8;line-height:1.6;max-height:60px;overflow:hidden;display:none;"></div>
+
+                <!-- CTAs principales -->
+                <div style="display:flex;gap:8px;margin-top:16px;">
+                    <a id="modalWaBtn" href="#" target="_blank" rel="noopener"
+                       style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;background:#25D366;color:white;padding:12px 16px;border-radius:12px;text-decoration:none;font-weight:700;font-size:13px;transition:all 0.25s;box-shadow:0 4px 12px rgba(37,211,102,0.3);"
+                       onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <i class="fa-brands fa-whatsapp" style="font-size:18px;"></i> Me Interesa
+                    </a>
+                    <a id="modalFichaBtn" href="#"
+                       style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,var(--gold),#c9a961);color:#0a1f1a;padding:12px 16px;border-radius:12px;text-decoration:none;font-weight:700;font-size:13px;transition:all 0.25s;box-shadow:0 4px 12px rgba(212,175,55,0.3);"
+                       onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <i class="fa-solid fa-file-shield"></i> Ver Perfil Completo
+                    </a>
+                </div>
             </div>
 
             <div class="tinder-actions">
-                <button class="action-btn btn-pass" onclick="closeModal()" title="Pasar (Cerrar)"><i
+                <button class="action-btn btn-pass" onclick="closeModal()" title="Pasar"><i
                         class="fa-solid fa-xmark"></i></button>
                 <button class="action-btn btn-match" onclick="heartInModal()" title="¡Hacer Match!"><i
                         class="fa-solid fa-heart"></i></button>
@@ -2527,7 +2564,20 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
                         <div class="tinder-card-version" style="opacity:0.8;">${version}</div>
                         <div style="font-size:2rem; font-weight:800; color:white; margin-top:10px;">${formatCurrency(precio)} <span style="font-size:1rem; color:var(--gold);">MXN</span></div>
                     </div>
+                    <div style="position:absolute;bottom:12px;right:12px;background:rgba(212,175,55,0.15);border:1px solid rgba(212,175,55,0.3);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--gold);backdrop-filter:blur(8px);pointer-events:none;">
+                        <i class="fa-solid fa-hand-pointer"></i> Toca para ver más
+                    </div>
                 `;
+
+                // Click/tap en la tarjeta abre el modal
+                card.addEventListener('click', function(e) {
+                    if (e.target.closest('.tinder-controls') || e.target.closest('.action-btn')) return;
+                    const modal = document.getElementById('tinderModal');
+                    modal.dataset.currentAuto = encodeURIComponent(JSON.stringify(auto));
+                    openModal(auto);
+                });
+                card.style.cursor = 'pointer';
+
                 container.appendChild(card);
             });
 
@@ -2617,24 +2667,62 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
             }
         }
 
-        function openModal(dataStr) {
-            const auto = JSON.parse(decodeURIComponent(dataStr));
+        // --- TINDER MODAL LOGIC (unified) ---
+        function openModal(auto) {
+            // Support both object and encoded string
+            if (typeof auto === 'string') {
+                try { auto = JSON.parse(decodeURIComponent(auto)); } catch(e) { return; }
+            }
             const modal = document.getElementById('tinderModal');
+            modal.dataset.currentAuto = encodeURIComponent(JSON.stringify(auto));
 
-            document.getElementById('modalImg').src = getImgUrl(auto.link_fotos);
-            document.getElementById('modalTitle').textContent = `${auto.marca} ${auto.modelo}`;
-            document.getElementById('modalVersion').textContent = `${auto.version || 'Equipado'} • ${auto.año}`;
-            document.getElementById('modalPrice').textContent = formatCurrency(auto.precio_venta);
+            // Normalize fields (Supabase vs legacy)
+            const marca = auto.marca || auto.brand || '';
+            const modelo = auto.modelo || auto.model || '';
+            const anio = auto.año || auto.year || auto.anio || '';
+            const precio = auto.precio_venta || auto.priceMXN || 0;
+            const km = auto.kilometraje || auto.km || 0;
+            const img = auto.fotos && Array.isArray(auto.fotos) && auto.fotos[0]
+                ? auto.fotos[0]
+                : getImgUrl(auto.link_fotos || auto.url_fotos);
 
-            document.getElementById('modalKm').textContent = new Intl.NumberFormat('en-US').format(auto.kilometraje || 0);
+            document.getElementById('modalImg').src = img;
+            document.getElementById('modalTitle').textContent = `${marca} ${modelo}`;
+            document.getElementById('modalVersion').textContent = `${auto.version || 'Equipado'} \u2022 ${anio}`;
+            document.getElementById('modalPrice').textContent = formatCurrency(precio);
+            document.getElementById('modalKm').textContent = new Intl.NumberFormat('es-MX').format(km);
             document.getElementById('modalTrans').textContent = auto.transmision || 'Aut';
             document.getElementById('modalColor').textContent = auto.color || 'N/A';
 
-            const isAlabol = (auto.agencia || '').toLowerCase() === 'alabol';
+            // Extra fields
+            document.getElementById('modalTipo').textContent = auto.tipo_vehiculo || auto.tipo || '—';
+            document.getElementById('modalFuel').textContent = auto.combustible || '—';
+            document.getElementById('modalCity').textContent = auto.ciudad || '—';
+            document.getElementById('modalOrigen').textContent = auto.origen || auto.agencia || '—';
+
+            // Description
+            const descEl = document.getElementById('modalDesc');
+            if (auto.descripcion && auto.descripcion.trim()) {
+                descEl.textContent = auto.descripcion;
+                descEl.style.display = 'block';
+            } else {
+                descEl.style.display = 'none';
+            }
+
+            // Badge
+            const isAlabol = (auto.agencia || auto.origen || '').toLowerCase().includes('alabol') || (auto.agencia || '') === '';
             const b = document.getElementById('modalBadge');
-            b.textContent = isAlabol ? '✓ VENTA DIRECTA' : '⭐ VERIFICADO ALABOL';
+            b.textContent = isAlabol ? '\u2713 VENTA DIRECTA' : '\u2B50 VERIFICADO';
             b.style.background = isAlabol ? 'rgba(13, 148, 136, 0.95)' : 'rgba(212, 175, 55, 0.95)';
             b.style.color = isAlabol ? 'white' : 'black';
+
+            // WhatsApp CTA
+            const waMsg = encodeURIComponent(`Hola Alabol, me interesa el ${marca} ${modelo} ${anio} que vi en su sitio web. ¿Sigue disponible?`);
+            document.getElementById('modalWaBtn').href = `https://wa.me/525568667571?text=${waMsg}`;
+
+            // Ficha completa CTA
+            const fichaId = auto.id || auto.id_interno || '';
+            document.getElementById('modalFichaBtn').href = `ficha-confianza.html?id=${fichaId}`;
 
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -2652,54 +2740,10 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            await renderCards(); // Wait for data to load
-            populateBrands(); // Call after globalInventoryData is set
+            await renderCards();
+            populateBrands();
             createBubbles();
         });
-
-        // --- TINDER MODAL LOGIC ---
-        function openModal(dataStr) {
-            const auto = JSON.parse(decodeURIComponent(dataStr));
-            const modal = document.getElementById('tinderModal');
-
-            // Populate data
-            document.getElementById('modalImg').src = getImgUrl(auto.url_fotos);
-            document.getElementById('modalTitle').textContent = `${auto.brand} ${auto.model}`;
-            document.getElementById('modalVersion').textContent = `${auto.version || 'Equipado'} \u2022 ${auto.year}`;
-            document.getElementById('modalPrice').textContent = formatCurrency(auto.priceMXN);
-
-            document.getElementById('modalKm').textContent = new Intl.NumberFormat('en-US').format(auto.km || 0);
-            document.getElementById('modalTrans').textContent = auto.transmision || 'Aut';
-            document.getElementById('modalColor').textContent = auto.color || 'N/A';
-
-            const isAlabol = (auto.agencia || '').toLowerCase() === 'alabol' || (auto.agencia || '').trim() === '';
-            const b = document.getElementById('modalBadge');
-            b.textContent = isAlabol ? '\u2713 VENTA DIRECTA' : '\u2B50 VERIFICADO AGENCIA';
-            b.style.background = isAlabol ? 'rgba(13, 148, 136, 0.95)' : 'rgba(212, 175, 55, 0.95)';
-            b.style.color = isAlabol ? 'white' : 'black';
-
-            // Show modal
-            modal.classList.add('active');
-
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('tinderModal');
-            modal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-
-        function triggerMatch() {
-            if (typeof trackFunnelStep === 'function') trackFunnelStep(4, 'solicitar_match_whatsapp_alabol');
-            const modalBox = document.querySelector('.tinder-modal');
-            modalBox.style.transform = 'scale(1.05)';
-            setTimeout(() => {
-                modalBox.style.transform = 'scale(1)';
-                // Redirect to Matchmaker (VIP)
-                window.location.href = './vip/';
-            }, 200);
-        }
 
         // Generate Golden Bubbles Effect
         function createBubbles() {

@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Alabol - Portal Vendedor</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;font-family:-apple-system,'Segoe UI',sans-serif;background:#070f16;color:#c8dae4}
+body{padding-bottom:80px}
+button,input,select,textarea{font-family:inherit;outline:none}
+.dn{display:none!important}
+.hdr{position:sticky;top:0;z-index:9;background:#0a1520;border-bottom:1px solid #1a3040;padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
+.lring{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#1a7a40,#f0c040);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:#0a1520;flex-shrink:0}
+.lname{font-size:15px;font-weight:700;color:#e0ecf4}
+.lsub{font-size:10px;color:#3a5a6a;text-transform:uppercase;letter-spacing:.06em}
+.hright{display:flex;align-items:center;gap:10px}
+.uav{width:30px;height:30px;border-radius:50%;background:#1e3040;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#f0c040;overflow:hidden;flex-shrink:0}
+.uav img{width:100%;height:100%;object-fit:cover}
+.uname{font-size:12px;color:#8aaab8;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bout{padding:6px 12px;border-radius:8px;border:1px solid #1e3040;background:transparent;color:#4a6a7a;font-size:12px;cursor:pointer}
+.bout:hover{border-color:#f0c040;color:#f0c040}
+#spin{display:flex;align-items:center;justify-content:center;min-height:100vh}
+.sp{width:34px;height:34px;border:3px solid #1e3040;border-top-color:#f0c040;border-radius:50%;animation:rot .7s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+#login{display:none;align-items:center;justify-content:center;min-height:100vh;padding:20px;flex-direction:column}
+.lbox{max-width:380px;width:100%;text-align:center}
+.lico{font-size:48px;margin-bottom:14px}
+.lbox h1{font-size:22px;font-weight:700;color:#e0ecf4;margin-bottom:6px}
+.lbox p{color:#4a6a7a;font-size:13px;line-height:1.7;margin-bottom:20px}
+.lcard{background:#0f1e28;border:1px solid #1e3040;border-radius:14px;padding:24px}
+.tabs{display:flex;gap:4px;margin-bottom:16px}
+.tab{flex:1;padding:8px;border-radius:7px;border:none;background:#0a1520;color:#4a6a7a;font-size:13px;font-weight:600;cursor:pointer}
+.tab.on{background:rgba(240,192,64,0.1);color:#f0c040;border:1px solid rgba(240,192,64,0.25)}
+.bgoog{width:100%;padding:12px;border-radius:9px;border:1px solid #2a4050;background:#0a1520;color:#d0e4ec;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px}
+.bgoog:hover{border-color:#f0c040}
+.bgoog svg{width:16px;height:16px;flex-shrink:0}
+.dvdr{display:flex;align-items:center;gap:10px;margin-bottom:12px;color:#2a4050;font-size:11px}
+.dvdr::before,.dvdr::after{content:'';flex:1;height:1px;background:#1a3040}
+.inp{width:100%;padding:11px 13px;border-radius:9px;background:#0a1520;border:1px solid #1e3040;color:#d0e4ec;font-size:13px;margin-bottom:8px;display:block}
+.inp:focus{border-color:#f0c040}
+.bgold{width:100%;padding:12px;border-radius:9px;border:none;background:linear-gradient(135deg,#f0c040,#d4a820);color:#0a1520;font-size:14px;font-weight:800;cursor:pointer}
+.aerr{color:#e07070;font-size:12px;min-height:16px;margin:3px 0 6px}
+#dash{display:none;padding-bottom:60px}
+.hero{padding:18px 18px 0;max-width:620px;margin:0 auto}
+.gsub{font-size:12px;color:#3a5a6a;margin-bottom:3px}
+.gname{font-size:20px;font-weight:700;color:#e0ecf4}
+.strow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+.stbox{background:#0f1e28;border:1px solid #1e3040;border-radius:11px;padding:12px;text-align:center}
+.stnum{font-size:22px;font-weight:800;color:#f0c040}
+.stlbl{font-size:10px;color:#3a5a6a;margin-top:2px}
+.sechdr{display:flex;align-items:center;justify-content:space-between;max-width:620px;margin:16px auto 8px;padding:0 18px}
+.sectit{font-size:14px;font-weight:700;color:#b0c8d4}
+.bnew{padding:8px 14px;border-radius:9px;border:none;background:linear-gradient(135deg,#f0c040,#d4a820);color:#0a1520;font-size:12px;font-weight:800;cursor:pointer}
+.carlist{max-width:620px;margin:0 auto;padding:0 10px}
+.ccard{background:#0f1e28;border:1px solid #1e3040;border-radius:12px;overflow:hidden;margin-bottom:12px;display:flex}
+.cthumb{width:88px;min-width:88px;height:70px;background:#0a1520;display:flex;align-items:center;justify-content:center;color:#1e3040;font-size:22px;overflow:hidden}
+.cthumb img{width:100%;height:100%;object-fit:cover}
+.cinfo{flex:1;padding:9px 11px;min-width:0}
+.cname{font-size:13px;font-weight:700;color:#d8eaf0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmeta{font-size:11px;color:#3a5a6a;margin-top:2px}
+.cprice{font-size:14px;font-weight:800;color:#f0c040;margin-top:2px}
+.cpill{display:inline-block;padding:1px 7px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;margin-top:2px}
+.pd{background:#1a4a2a;color:#6ae0a0}
+.pv{background:#1a3a6a;color:#60a0f0}
+.pr{background:#4a3a10;color:#f0c040}
+.cacts{display:flex;flex-direction:column;justify-content:center;gap:5px;padding:6px 8px}
+.bedit{padding:5px 9px;border-radius:7px;border:1px solid #1e3040;background:transparent;color:#7aaab8;font-size:11px;cursor:pointer}
+.bedit:hover{border-color:#f0c040;color:#f0c040}
+.bdel{padding:5px 9px;border-radius:7px;border:1px solid #1e3040;background:transparent;color:#7a4a4a;font-size:11px;cursor:pointer}
+.bdel:hover{border-color:#e07070;color:#e07070}
+.empty{text-align:center;padding:40px 20px;color:#2a4050}
+.mbg{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;display:none;align-items:flex-end;justify-content:center}
+.mbg.open{display:flex}
+.mbg.ctr{align-items:center}
+.modal{background:#0f1e28;border:1px solid #1e3040;border-radius:18px 18px 0 0;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;padding:20px 16px 36px}
+.modal.ctr{border-radius:14px}
+.mhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.mtit{font-size:16px;font-weight:700;color:#e0ecf4}
+.bx{background:none;border:none;color:#4a6a7a;font-size:22px;cursor:pointer;line-height:1}
+.ff{margin-bottom:10px}
+.ff label{display:block;font-size:10px;font-weight:600;color:#6a8a9a;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.fi{width:100%;padding:10px 12px;border-radius:8px;background:#0a1520;border:1px solid #1e3040;color:#d0e4ec;font-size:13px}
+.fi:focus{border-color:#f0c040}
+textarea.fi{resize:vertical;min-height:60px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ferr{color:#e07070;font-size:12px;min-height:14px;margin-bottom:6px}
+.bsub{width:100%;padding:12px;border-radius:9px;border:none;background:linear-gradient(135deg,#f0c040,#d4a820);color:#0a1520;font-size:14px;font-weight:800;cursor:pointer;margin-top:4px}
+.bsub:disabled{background:#1e3040;color:#2a4050;cursor:default}
+.cbox{max-width:300px;width:calc(100% - 32px)}
+.cmsg{font-size:13px;color:#8aaab8;margin-bottom:16px;line-height:1.6}
+.cbts{display:flex;gap:8px}
+.bcan{flex:1;padding:10px;border-radius:9px;border:1px solid #1e3040;background:transparent;color:#4a6a7a;font-size:13px;cursor:pointer}
+.bdanger{flex:1;padding:10px;border-radius:9px;border:none;background:#7a1a1a;color:#f07070;font-size:13px;font-weight:700;cursor:pointer}
+@media(min-width:500px){.mbg{align-items:center}.modal{border-radius:14px}}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<div class="hdr dn" id="hdr">
+  <div style="display:flex;align-items:center;gap:10px">
+    <div class="lring">A</div>
+    <div><div class="lname">Alabol</div><div class="lsub">Portal vendedor</div></div>
+  </div>
+  <div class="hright">
+    <div class="uav" id="uav"></div>
+    <span class="uname" id="uname"></span>
+    <button class="bout" onclick="signOut()">Salir</button>
+  </div>
+</div>
+
+<!-- ── SPINNER ── -->
+<div id="spin"><div class="sp"></div></div>
+
+<!-- ── LOGIN ── -->
+<div id="login">
+  <div class="lbox">
+    <div class="lico">&#128663;</div>
+    <h1>Vende tu auto</h1>
+    <p>Publica y gestiona tus veh&iacute;culos en Alabol.</p>
+    <div class="lcard">
+      <div class="tabs">
+        <button class="tab on" id="tl" onclick="setTab(0)">Entrar</button>
+        <button class="tab" id="tr" onclick="setTab(1)">Registrarme</button>
+      </div>
+      <button class="bgoog" onclick="goGoogle()">
+        <svg viewBox="0 0 24 24"><path fill="#EA4335" d="M5.27 9.77A7.2 7.2 0 0 1 12 4.8c1.73 0 3.29.63 4.51 1.65l3.37-3.37A12 12 0 0 0 0 12c0 1.99.49 3.86 1.35 5.52l3.92-3.04a7.2 7.2 0 0 1 0-4.71z"/><path fill="#FBBC05" d="M12 24c3.24 0 5.95-1.08 7.94-2.91l-3.66-2.84A7.17 7.17 0 0 1 12 19.2a7.2 7.2 0 0 1-6.82-4.91L1.35 17.51A12 12 0 0 0 12 24z"/><path fill="#4285F4" d="M23.76 12.27c0-.85-.07-1.67-.2-2.47H12v4.67h6.6a5.64 5.64 0 0 1-2.45 3.71l3.66 2.84c2.14-1.97 3.95-5.15 3.95-8.75z"/><path fill="#34A853" d="M5.18 14.3A7.2 7.2 0 0 1 4.8 12c0-.81.14-1.59.38-2.33L1.26 6.63A12 12 0 0 0 0 12c0 1.93.46 3.75 1.27 5.37l3.91-3.07z"/></svg>
+        Continuar con Google
+      </button>
+      <div class="dvdr">o con email</div>
+      <div id="fl">
+        <input class="inp" id="le" type="email" placeholder="tu@email.com">
+        <input class="inp" id="lp" type="password" placeholder="Contrase&ntilde;a">
+        <div class="aerr" id="lerr"></div>
+        <button class="bgold" onclick="doLogin()">Entrar</button>
+      </div>
+      <div id="fr" class="dn">
+        <input class="inp" id="rn" placeholder="Tu nombre">
+        <input class="inp" id="re" type="email" placeholder="tu@email.com">
+        <input class="inp" id="rp" type="password" placeholder="Contrase&ntilde;a (m&iacute;n 6)">
+        <div class="aerr" id="rerr"></div>
+        <button class="bgold" onclick="doReg()">Crear cuenta</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── DASHBOARD ── -->
+<div id="dash">
+  <div class="hero">
+    <div class="gsub">Bienvenido,</div>
+    <div class="gname" id="gn">...</div>
+    <div class="strow">
+      <div class="stbox"><div class="stnum" id="s0">-</div><div class="stlbl">Publicados</div></div>
+      <div class="stbox"><div class="stnum" id="s1">-</div><div class="stlbl">Disponibles</div></div>
+      <div class="stbox"><div class="stnum" id="s2">-</div><div class="stlbl">Matches</div></div>
+    </div>
+  </div>
+  <div class="sechdr">
+    <div class="sectit">Mis veh&iacute;culos</div>
+    <button class="bnew" onclick="openForm(null)">+ Publicar</button>
+  </div>
+  <div class="carlist" id="cl"></div>
+</div>
+
+<!-- ── MODAL FORMULARIO ── -->
+<div class="mbg" id="mF">
+  <div class="modal">
+    <div class="mhdr"><div class="mtit" id="ftit">Publicar auto</div><button class="bx" onclick="closeForm()">&times;</button></div>
+    <div class="g2">
+      <div class="ff"><label>Marca *</label><input class="fi" id="fm" placeholder="Toyota"></div>
+      <div class="ff"><label>Modelo *</label><input class="fi" id="fmo" placeholder="Corolla"></div>
+    </div>
+    <div class="g2">
+      <div class="ff"><label>A&ntilde;o *</label><input class="fi" id="fa" type="number" placeholder="2020"></div>
+      <div class="ff"><label>Precio MXN *</label><input class="fi" id="fp" type="number" placeholder="180000"></div>
+    </div>
+    <div class="g2">
+      <div class="ff"><label>Kil&oacute;metros</label><input class="fi" id="fk" type="number" placeholder="60000"></div>
+      <div class="ff"><label>Ciudad</label><input class="fi" id="fci" placeholder="Canc&uacute;n"></div>
+    </div>
+    <div class="g2">
+      <div class="ff"><label>Tipo</label><select class="fi" id="fti"><option value="sedan">Sedan</option><option value="suv">SUV</option><option value="pickup">Pickup</option><option value="hatchback">Hatchback</option><option value="coupe">Coup&eacute;</option><option value="van">Van</option><option value="otro">Otro</option></select></div>
+      <div class="ff"><label>Transmisi&oacute;n</label><select class="fi" id="ftr"><option value="Automatico">Autom&aacute;tico</option><option value="Manual">Manual</option></select></div>
+    </div>
+    <div class="g2">
+      <div class="ff"><label>Color</label><input class="fi" id="fcol" placeholder="Blanco"></div>
+      <div class="ff"><label>Combustible</label><select class="fi" id="fco"><option value="gasolina">Gasolina</option><option value="diesel">Di&eacute;sel</option><option value="hibrido">H&iacute;brido</option><option value="electrico">El&eacute;ctrico</option></select></div>
+    </div>
+    <div class="ff"><label>Descripci&oacute;n</label><textarea class="fi" id="fd" placeholder="Estado del auto, extras..."></textarea></div>
+    <div class="ff"><label>Estado del anuncio</label><select class="fi" id="fst"><option value="disponible">Disponible</option><option value="reservado">Reservado</option><option value="vendido">Vendido</option></select></div>
+    <div class="ferr" id="ferr"></div>
+    <button class="bsub" id="bsub" onclick="submitForm()">Publicar</button>
+  </div>
+</div>
+
+<!-- ── MODAL CONFIRMAR ELIMINAR ── -->
+<div class="mbg ctr" id="mC">
+  <div class="modal ctr cbox">
+    <div class="mhdr"><div class="mtit">Eliminar auto</div><button class="bx" onclick="closeConfirm()">&times;</button></div>
+    <div class="cmsg">&iquest;Eliminar este veh&iacute;culo? Esta acci&oacute;n no se puede deshacer.</div>
+    <div class="cbts">
+      <button class="bcan" onclick="closeConfirm()">Cancelar</button>
+      <button class="bdanger" id="bdd" onclick="doDelete()">S&iacute;, eliminar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CONFIGURACIÓN ──────────────────────────────────────────────────
+var S = 'https://rgnunjngtsgqgvplawfr.supabase.co';
+var K = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA5OTg3MzgsImV4cCI6MjA1NjU3NDczOH0.KNoxBmsFX-_5y-XPIy9dC5Rn5yMoFqAIDPDuvn8CYt0';
+
+var tok = null, uid = null, cars = [], eid = null, did = null;
+
+function g(id) { return document.getElementById(id); }
+
+// ── PANTALLAS ──────────────────────────────────────────────────────
+function show(s) {
+  g('spin').style.display = 'none';
+  g('login').style.display = 'none';
+  g('dash').style.display = 'none';
+  g('hdr').classList.add('dn');
+  if (s === 'spin') g('spin').style.display = 'flex';
+  else if (s === 'login') g('login').style.display = 'flex';
+  else if (s === 'dash') { g('dash').style.display = 'block'; g('hdr').classList.remove('dn'); }
+}
+
+function ah(t) {
+  return { 'Content-Type': 'application/json', 'apikey': K, 'Authorization': 'Bearer ' + (t || K) };
+}
+
+// ── ARRANQUE ───────────────────────────────────────────────────────
+function boot() {
+  show('spin');
+  // OAuth callback — el hash contiene el token de Google
+  var h = location.hash;
+  if (h && h.indexOf('access_token') >= 0) {
+    var p = new URLSearchParams(h.replace(/^#/, ''));
+    var t = p.get('access_token');
+    if (t) { tok = t; history.replaceState(null, '', location.pathname); }
+  }
+  if (!tok) { show('login'); return; }
+  fetch(S + '/auth/v1/user', { headers: ah(tok) })
+    .then(function(r) { if (!r.ok) throw new Error(); return r.json(); })
+    .then(function(u) {
+      if (!u || !u.id) throw new Error();
+      uid = u.id;
+      var m = u.user_metadata || {};
+      var nm = m.full_name || m.name || u.email || 'Vendedor';
+      var fn = nm.split(' ')[0];
+      g('gn').textContent = fn;
+      g('uname').textContent = fn;
+      var pic = m.avatar_url || m.picture;
+      if (pic) { var img = document.createElement('img'); img.src = pic; g('uav').appendChild(img); }
+      else g('uav').textContent = (nm[0] || '?').toUpperCase();
+      show('dash');
+      loadCars();
+    })
+    .catch(function() { tok = null; show('login'); });
+}
+
+// ── AUTH ───────────────────────────────────────────────────────────
+function goGoogle() {
+  var me = location.href.split('#')[0].split('?')[0];
+  location.href = S + '/auth/v1/authorize?provider=google&redirect_to=' + encodeURIComponent(me);
+}
+
+function doLogin() {
+  var e = g('le').value.trim(), p = g('lp').value;
+  g('lerr').textContent = '';
+  if (!e || !p) { g('lerr').textContent = 'Completa todos los campos.'; return; }
+  fetch(S + '/auth/v1/token?grant_type=password', {
+    method: 'POST', headers: ah(), body: JSON.stringify({ email: e, password: p })
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.access_token) { tok = d.access_token; boot(); }
+      else g('lerr').textContent = 'Email o contrase\u00f1a incorrectos.';
+    })
+    .catch(function() { g('lerr').textContent = 'Error de conexi\u00f3n.'; });
+}
+
+function doReg() {
+  var n = g('rn').value.trim(), e = g('re').value.trim(), p = g('rp').value;
+  g('rerr').textContent = '';
+  if (!n || !e || !p) { g('rerr').textContent = 'Completa todos los campos.'; return; }
+  if (p.length < 6) { g('rerr').textContent = 'M\u00ednimo 6 caracteres.'; return; }
+  fetch(S + '/auth/v1/signup', {
+    method: 'POST', headers: ah(),
+    body: JSON.stringify({ email: e, password: p, data: { full_name: n } })
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.id || d.access_token) { g('rerr').style.color = '#6ae0a0'; g('rerr').textContent = '\u00a1Revisa tu email para confirmar!'; }
+      else g('rerr').textContent = d.msg || d.error_description || 'Error al registrar.';
+    })
+    .catch(function() { g('rerr').textContent = 'Error de conexi\u00f3n.'; });
+}
+
+function signOut() {
+  if (tok) fetch(S + '/auth/v1/logout', { method: 'POST', headers: ah(tok) }).catch(function() {});
+  tok = null; uid = null;
+  show('login');
+}
+
+function setTab(n) {
+  g('fl').classList.toggle('dn', n !== 0);
+  g('fr').classList.toggle('dn', n !== 1);
+  g('tl').classList.toggle('on', n === 0);
+  g('tr').classList.toggle('on', n === 1);
+}
+
+// ── AUTOS ──────────────────────────────────────────────────────────
+function fmt(n) {
+  try { return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 }).format(n || 0); }
+  catch(e) { return '$' + (n || 0); }
+}
+
+function loadCars() {
+  g('cl').innerHTML = '<div style="text-align:center;padding:30px"><div class="sp" style="margin:0 auto"></div></div>';
+  fetch(S + '/rest/v1/inventario?user_id=eq.' + uid + '&order=created_at.desc', { headers: ah(tok) })
+    .then(function(r) { return r.json(); })
+    .then(function(d) { cars = d || []; render(); })
+    .catch(function() { g('cl').innerHTML = '<div class="empty">Error cargando autos.</div>'; });
+}
+
+function render() {
+  var t = cars.length;
+  var d = cars.filter(function(a) { return a.estatus === 'disponible'; }).length;
+  var m = cars.reduce(function(s, a) { return s + (a.total_matches || 0); }, 0);
+  g('s0').textContent = t; g('s1').textContent = d; g('s2').textContent = m;
+  if (!t) {
+    g('cl').innerHTML = '<div class="empty"><div style="font-size:32px;margin-bottom:8px">&#128663;</div><div>A\u00fan no tienes autos publicados.</div></div>';
+    return;
+  }
+  g('cl').innerHTML = cars.map(function(a) {
+    var f = (a.fotos && a.fotos.length) ? '<img src="' + a.fotos[0] + '" alt="">' : '&#128663;';
+    var pc = a.estatus === 'disponible' ? 'pd' : a.estatus === 'vendido' ? 'pv' : 'pr';
+    var pl = a.estatus === 'disponible' ? 'Disponible' : a.estatus === 'vendido' ? 'Vendido' : 'Reservado';
+    return '<div class="ccard">'
+      + '<div class="cthumb">' + f + '</div>'
+      + '<div class="cinfo">'
+        + '<div class="cname">' + a.marca + ' ' + a.modelo + ' ' + a.anio + '</div>'
+        + '<div class="cmeta">' + new Intl.NumberFormat('es-MX').format(a.kilometraje || 0) + ' km &middot; ' + (a.ciudad || '') + '</div>'
+        + '<div class="cprice">' + fmt(a.precio_venta) + '</div>'
+        + '<span class="cpill ' + pc + '">' + pl + '</span>'
+      + '</div>'
+      + '<div class="cacts">'
+        + '<button class="bedit" onclick="openForm(\'' + a.id + '\')">&#9998;</button>'
+        + '<button class="bdel" onclick="openDel(\'' + a.id + '\')">&times;</button>'
+      + '</div>'
+    + '</div>';
+  }).join('');
+}
+
+// ── FORMULARIO ─────────────────────────────────────────────────────
+function openForm(id) {
+  eid = id;
+  g('ferr').textContent = '';
+  g('bsub').disabled = false;
+  if (id) {
+    var a = cars.find(function(x) { return x.id === id; });
+    if (!a) return;
+    g('ftit').textContent = 'Editar auto';
+    g('bsub').textContent = 'Guardar cambios';
+    g('fm').value = a.marca || ''; g('fmo').value = a.modelo || '';
+    g('fa').value = a.anio || ''; g('fp').value = a.precio_venta || '';
+    g('fk').value = a.kilometraje || ''; g('fci').value = a.ciudad || '';
+    g('fti').value = a.tipo_vehiculo || 'sedan';
+    g('ftr').value = a.transmision || 'Automatico';
+    g('fcol').value = a.color || ''; g('fco').value = a.combustible || 'gasolina';
+    g('fd').value = a.descripcion || ''; g('fst').value = a.estatus || 'disponible';
+  } else {
+    g('ftit').textContent = 'Publicar auto';
+    g('bsub').textContent = 'Publicar';
+    ['fm','fmo','fa','fp','fk','fci','fcol','fd'].forEach(function(i) { g(i).value = ''; });
+    g('fti').value = 'sedan'; g('ftr').value = 'Automatico';
+    g('fco').value = 'gasolina'; g('fst').value = 'disponible';
+  }
+  g('mF').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeForm() { g('mF').classList.remove('open'); document.body.style.overflow = ''; eid = null; }
+
+function submitForm() {
+  var marca = g('fm').value.trim(), modelo = g('fmo').value.trim();
+  var anio = parseInt(g('fa').value) || 0, precio = parseFloat(g('fp').value) || 0;
+  g('ferr').textContent = '';
+  if (!marca || !modelo || !anio || !precio) {
+    g('ferr').textContent = 'Marca, modelo, a\u00f1o y precio son obligatorios.';
+    return;
+  }
+  g('bsub').disabled = true; g('bsub').textContent = 'Guardando...';
+  var body = {
+    marca: marca, modelo: modelo, anio: anio, precio_venta: precio,
+    kilometraje: parseInt(g('fk').value) || 0,
+    ciudad: g('fci').value.trim() || 'CDMX',
+    tipo_vehiculo: g('fti').value, transmision: g('ftr').value,
+    color: g('fcol').value.trim(), combustible: g('fco').value,
+    descripcion: g('fd').value.trim(), estatus: g('fst').value,
+    user_id: uid, agencia_id: 'particular', origen: 'particular',
+    updated_at: new Date().toISOString()
+  };
+  var url = S + '/rest/v1/inventario', method = 'POST';
+  var hd = Object.assign({}, ah(tok), { 'Prefer': 'return=minimal' });
+  if (eid) { url += '?id=eq.' + eid + '&user_id=eq.' + uid; method = 'PATCH'; }
+  else body.created_at = new Date().toISOString();
+  fetch(url, { method: method, headers: hd, body: JSON.stringify(body) })
+    .then(function(r) {
+      if (r.ok || r.status === 201 || r.status === 204) { closeForm(); loadCars(); }
+      else r.json().then(function(e) {
+        g('ferr').textContent = 'Error: ' + (e.message || e.error || r.status);
+        g('bsub').disabled = false; g('bsub').textContent = eid ? 'Guardar cambios' : 'Publicar';
+      });
+    })
+    .catch(function() {
+      g('ferr').textContent = 'Error de red.';
+      g('bsub').disabled = false; g('bsub').textContent = eid ? 'Guardar cambios' : 'Publicar';
+    });
+}
+
+// ── ELIMINAR ───────────────────────────────────────────────────────
+function openDel(id) { did = id; g('mC').classList.add('open'); document.body.style.overflow = 'hidden'; }
+function closeConfirm() { g('mC').classList.remove('open'); document.body.style.overflow = ''; did = null; }
+function doDelete() {
+  if (!did) return;
+  g('bdd').textContent = 'Eliminando...';
+  fetch(S + '/rest/v1/inventario?id=eq.' + did + '&user_id=eq.' + uid, {
+    method: 'DELETE', headers: ah(tok)
+  })
+    .then(function() { closeConfirm(); loadCars(); })
+    .catch(function() { closeConfirm(); loadCars(); });
+}
+
+// ── CERRAR MODALES CON CLICK FUERA ────────────────────────────────
+g('mF').addEventListener('click', function(e) { if (e.target === e.currentTarget) closeForm(); });
+g('mC').addEventListener('click', function(e) { if (e.target === e.currentTarget) closeConfirm(); });
+
+// ── ARRANCAR ──────────────────────────────────────────────────────
+boot();
+</script>
+</body>
+</html>

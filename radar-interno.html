@@ -10,18 +10,19 @@
         rel="stylesheet">
     <!-- Chart.js for Business Intelligence -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Simple Pre-Launch Security
-        const ACCESS_CODE = "alabol2026"; // Puedes cambiar esto
-        if (sessionStorage.getItem('alabol_admin_auth') !== 'true') {
-            const pass = prompt("Acceso Restringido - Alabol Radar\nPor favor, ingresa el código de acceso:");
-            if (pass === ACCESS_CODE) {
-                sessionStorage.setItem('alabol_admin_auth', 'true');
-            } else {
-                alert("Código incorrecto.");
-                window.location.href = "./index.html";
+        // Auth guard — requiere sesión de Supabase activa
+        (async function() {
+            var SU = 'https://rgnunjngtsgqgvplawfr.supabase.co';
+            var SK = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8';
+            var sb = window.supabase.createClient(SU, SK);
+            var { data: { session } } = await sb.auth.getSession();
+            if (!session) {
+                alert('Acceso restringido — inicia sesión primero.');
+                window.location.href = './login.html';
             }
-        }
+        })();
     </script>
     <style>
         :root {

@@ -1277,6 +1277,10 @@
                 <div class="stat-label"><i class="fa-solid fa-heart" id="heartIcon" style="color:var(--danger)"></i> Mis
                     Favoritos</div>
             </div>
+            <div class="stat-item clickable" id="clearFavsBtn" onclick="clearAllFavorites()" style="display:none;">
+                <div class="stat-value" style="font-size:16px;"><i class="fa-solid fa-trash-can" style="color:var(--danger);"></i></div>
+                <div class="stat-label">Limpiar Favs</div>
+            </div>
         </div>
 
         <!-- VEHICLES GRID -->
@@ -1527,6 +1531,18 @@
             const count = wishlist.length;
             document.getElementById('favCount').innerHTML = `${count} ${count > 0 ? `<div class="fav-count-badge">${count}</div>` : ''}`;
             document.getElementById('heartIcon').style.opacity = count > 0 ? '1' : '0.5';
+            const clearBtn = document.getElementById('clearFavsBtn');
+            if (clearBtn) clearBtn.style.display = count > 0 ? '' : 'none';
+        }
+
+        function clearAllFavorites() {
+            wishlist = [];
+            localStorage.removeItem('alabol_wishlist');
+            localStorage.removeItem('alabol_matches');
+            updateFavCounter();
+            document.getElementById('favToggle').classList.remove('active');
+            triggerInvFilter();
+            document.querySelectorAll('.wishlist-btn.active').forEach(b => b.classList.remove('active'));
         }
 
         function toggleFavoritesFilter() {
@@ -1760,12 +1776,8 @@
             document.getElementById('invPriceMax').value = pPrice;
             updateInvSlider();
 
-            const pSavedMatches = params.get('saved_matches') === 'true';
-            if (pSavedMatches) {
-                document.getElementById('favToggle').classList.add('active');
-            }
-
-            triggerInvFilter(); // Render initial state based on URL
+            // Siempre arrancar mostrando todo — sin filtros pre-cargados
+            triggerInvFilter();
         }
 
         function renderGrid(dataToRender) {

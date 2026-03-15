@@ -2552,11 +2552,20 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
                 const isAlabol = (auto.agencia || '').toLowerCase() === 'alabol';
                 const badgeText = isAlabol ? '✓ VENTA DIRECTA' : '⭐ VERIFICADO';
 
-                // Randomly generate a high compatibility score for dopamine (92-99%)
-                const matchScore = Math.floor(Math.random() * (99 - 92 + 1)) + 92;
+                // Trust score basado en datos reales del auto
+                const hasPhotos = (auto.fotos && Array.isArray(auto.fotos) && auto.fotos.length > 0) || auto.link_fotos || auto.url_fotos;
+                const hasDesc = auto.descripcion && auto.descripcion.trim().length > 10;
+                const hasKm = (auto.kilometraje || auto.km || 0) > 0;
+                const hasCity = auto.ciudad && auto.ciudad.trim().length > 0;
+                let trustBadge = '';
+                if (hasPhotos && hasDesc && hasKm) {
+                    trustBadge = '<div class="match-badge-float"><i class="fa-solid fa-shield-halved"></i> VERIFICADO</div>';
+                } else if (hasPhotos) {
+                    trustBadge = '<div class="match-badge-float" style="background:rgba(245,158,11,0.9);"><i class="fa-solid fa-clock"></i> EN REVISIÓN</div>';
+                }
 
                 card.innerHTML = `
-                    <div class="match-badge-float"><i class="fa-solid fa-fire"></i> ${matchScore}% MATCH</div>
+                    ${trustBadge}
                     <div class="modal-badge" style="top:20px; left:20px; font-size:0.75rem; padding:6px 12px; border-radius:12px; backdrop-filter:blur(10px); background:rgba(212,175,55,0.9); color:black;">${badgeText}</div>
                     <img src="${carImg}" class="tinder-card-img" alt="${modelo}">
                     <div class="tinder-card-body">

@@ -695,7 +695,7 @@
         </div>
         <div style="display: flex; gap: 10px;">
             <a href="#" class="btn btn-outline" style="font-size: 0.9rem;">Ver Reporte Completo</a>
-            <a href="https://wa.me/525568667571?text=Hola%20Israel,%20interesado%20en%20el%20Acura%20ILX%20de%20particular"
+            <a href="https://wa.me/525568667571?text=Hola%20Alabol,%20me%20interesa%20un%20auto%20que%20vi%20en%20su%20sitio"
                 class="btn btn-gold" style="font-size: 0.9rem;">Me Interesa</a>
         </div>
     </div>
@@ -795,7 +795,7 @@
             // Ensure CTA points to correct whatsapp link dynamically
             const wBtn = document.querySelector('.cta-box .btn-gold');
             if (wBtn) {
-                const waMsg = encodeURIComponent(`Hola Israel, estoy sumamente interesado en el ${car.marca} ${car.modelo} (${car.anio}) que vi en su Búnker de confianza. Código: ${car.id_interno || car.id}.`);
+                const waMsg = encodeURIComponent(`Hola Alabol, me interesa el ${car.marca} ${car.modelo} (${car.anio}) que vi en su sitio. Código: ${car.id_interno || car.id}.`);
                 wBtn.href = `https://wa.me/525568667571?text=${waMsg}`;
             }
         }

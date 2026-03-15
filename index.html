@@ -2144,7 +2144,7 @@
         fetchLiveInventory().then(function(data) {
           if (data && data.length > 0) {
             window.globalInventoryData = data;
-            if (typeof filterCars === 'function') filterCars();
+            if (typeof populateBrands === 'function') populateBrands();
             console.log('Alabol: Inventory loaded - ' + data.length + ' autos');
           }
         }).catch(function(e) { console.warn('Alabol: Inventory reload failed', e); });

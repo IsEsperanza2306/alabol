@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
-
+<script>
+// Redirect auth callbacks (recovery, magic link) to login.html
+if (window.location.hash.includes('type=recovery') || window.location.hash.includes('type=magiclink')) {
+  window.location.replace('login.html' + window.location.hash);
+}
+</script>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

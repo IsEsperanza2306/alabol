@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asignaciones | Alabol CRM</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-dark: #0a1f1a;
+      --bg-mid: #0d2921;
+      --gold: #d4af37;
+      --gold-dim: rgba(212,175,55,0.2);
+      --green-text: #a8c5b8;
+      --glass-bg: rgba(15,51,41,0.5);
+      --glass-border: rgba(212,175,55,0.18);
+      --hot: #ef4444;
+      --warm: #f59e0b;
+      --cold: #3b82f6;
+      --success: #10b981;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-dark);
+      color: white;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background: radial-gradient(ellipse at 20% 20%, rgba(212,175,55,0.04) 0%, transparent 60%),
+                  radial-gradient(ellipse at 80% 80%, rgba(16,185,129,0.04) 0%, transparent 60%),
+                  linear-gradient(135deg, #0a1f1a, #0d2921);
+      z-index: -1;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      position: sticky; top:0; z-index:100;
+      background: rgba(10,31,26,0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--glass-border);
+      height: 60px;
+      display: flex; align-items: center;
+      padding: 0 24px; gap: 16px;
+    }
+
+    .topbar-logo { display:flex; align-items:center; gap:8px; text-decoration:none; }
+    .topbar-logo img { width:32px; height:32px; object-fit:contain; filter:drop-shadow(0 0 6px rgba(212,175,55,0.5)); }
+    .topbar-logo span { font-weight:800; font-size:15px; color:var(--gold); }
+    .topbar-sep { width:1px; height:22px; background:var(--glass-border); }
+    .topbar-title { font-size:13px; font-weight:600; color:var(--green-text); }
+
+    .btn {
+      display:inline-flex; align-items:center; gap:6px;
+      padding: 7px 16px; border-radius:20px;
+      font-family:inherit; font-size:12px; font-weight:600;
+      cursor:pointer; transition:all 0.2s; border:none; text-decoration:none;
+    }
+    .btn-ghost { background:rgba(255,255,255,0.05); color:var(--green-text); border:1px solid rgba(255,255,255,0.1); }
+    .btn-ghost:hover { background:rgba(255,255,255,0.1); color:white; }
+    .btn-gold { background:linear-gradient(135deg,var(--gold),#c9a961); color:var(--bg-dark); box-shadow:0 4px 10px rgba(212,175,55,0.3); margin-left:auto; }
+    .btn-gold:hover { transform:translateY(-1px); filter:brightness(1.05); }
+
+    /* ── LAYOUT ── */
+    .layout {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 0;
+      height: calc(100vh - 60px);
+      overflow: hidden;
+    }
+
+    /* ── PANEL IZQUIERDO — Leads sin asignar ── */
+    .leads-panel {
+      border-right: 1px solid var(--glass-border);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 16px 20px 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .panel-title {
+      font-size: 13px; font-weight: 700;
+      color: var(--gold); text-transform: uppercase;
+      letter-spacing: 1px; margin-bottom: 10px;
+    }
+
+    .search-bar {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--glass-border);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-family: inherit; font-size: 12px;
+      outline: none; width: 100%;
+      transition: all 0.2s;
+    }
+    .search-bar:focus { border-color: var(--gold); }
+    .search-bar::placeholder { color: rgba(255,255,255,0.3); }
+
+    .leads-list {
+      flex: 1; overflow-y: auto;
+      padding: 12px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+
+    .lead-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 14px;
+      cursor: pointer;
+      transition: all 0.25s;
+      position: relative;
+    }
+
+    .lead-card:hover, .lead-card.selected {
+      border-color: rgba(212,175,55,0.5);
+      background: rgba(212,175,55,0.06);
+      transform: translateX(3px);
+    }
+
+    .lead-card.selected { border-color: var(--gold); }
+
+    .lead-top {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap:8px;
+      margin-bottom: 8px;
+    }
+
+    .lead-name { font-size: 13px; font-weight: 700; }
+    .lead-date { font-size: 10px; color: var(--green-text); opacity: 0.6; }
+
+    .temp-badge {
+      font-size: 10px; font-weight: 700;
+      padding: 2px 8px; border-radius: 10px;
+      flex-shrink: 0;
+    }
+    .temp-hot { background:rgba(239,68,68,0.2); color:#fca5a5; }
+    .temp-warm { background:rgba(245,158,11,0.2); color:#fcd34d; }
+    .temp-cold { background:rgba(59,130,246,0.2); color:#93c5fd; }
+
+    .lead-criteria {
+      display: flex; gap: 6px; flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .criteria-tag {
+      font-size: 10px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 2px 8px; border-radius: 8px;
+      color: var(--green-text);
+    }
+
+    .lead-footer {
+      display: flex; justify-content: space-between; align-items: center;
+    }
+
+    .lead-wa {
+      font-size: 10px; color: #25D366;
+      display: flex; align-items: center; gap: 4px;
+    }
+
+    .matches-count {
+      font-size: 10px; color: var(--gold);
+      background: rgba(212,175,55,0.1);
+      padding: 2px 8px; border-radius: 8px;
+    }
+
+    /* ── PANEL DERECHO — Asignación ── */
+    .assign-panel {
+      display: flex; flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .assign-empty {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 16px; text-align: center; padding: 40px;
+      opacity: 0.4;
+    }
+
+    .assign-empty i { font-size: 48px; color: var(--gold); }
+    .assign-empty p { font-size: 14px; color: var(--green-text); }
+
+    .assign-content { padding: 24px; }
+
+    /* Lead summary */
+    .lead-summary-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--gold-dim);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .summary-header {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .lead-avatar {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), #c9a961);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 800; color: var(--bg-dark);
+      flex-shrink: 0;
+    }
+
+    .summary-name { font-size: 18px; font-weight: 800; }
+    .summary-phone { font-size: 12px; color: var(--green-text); margin-top: 2px; }
+
+    .criteria-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+
+    .criteria-item {
+      background: rgba(0,0,0,0.2);
+      border-radius: 10px; padding: 10px;
+    }
+    .criteria-item .label { font-size: 9px; color: var(--green-text); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+    .criteria-item .value { font-size: 12px; font-weight: 600; }
+
+    /* Matches section */
+    .section-title {
+      font-size: 11px; font-weight: 700;
+      color: var(--gold); text-transform: uppercase;
+      letter-spacing: 1.5px; margin-bottom: 12px;
+    }
+
+    .matches-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px; margin-bottom: 20px;
+    }
+
+    .match-card {
+      background: rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px; padding: 12px;
+      transition: all 0.2s; cursor: pointer;
+    }
+
+    .match-card:hover { border-color: var(--gold-dim); background: rgba(212,175,55,0.04); }
+    .match-card.top-match { border-color: rgba(212,175,55,0.4); background: rgba(212,175,55,0.06); }
+
+    .match-score {
+      font-size: 22px; font-weight: 800; color: var(--gold);
+      margin-bottom: 4px;
+    }
+    .match-auto { font-size: 11px; font-weight: 600; margin-bottom: 2px; }
+    .match-price { font-size: 10px; color: var(--green-text); }
+    .top-badge {
+      display: inline-block; font-size: 9px;
+      background: rgba(212,175,55,0.2); color: var(--gold);
+      padding: 1px 6px; border-radius: 6px;
+      margin-bottom: 6px; font-weight: 700;
+    }
+
+    /* Asesores */
+    .asesores-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 10px; margin-bottom: 20px;
+    }
+
+    .asesor-card {
+      background: rgba(0,0,0,0.2);
+      border: 2px solid rgba(255,255,255,0.07);
+      border-radius: 14px; padding: 14px;
+      cursor: pointer; transition: all 0.25s;
+    }
+
+    .asesor-card:hover { border-color: var(--gold-dim); }
+    .asesor-card.selected { border-color: var(--gold); background: rgba(212,175,55,0.06); }
+
+    .asesor-top { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+    .asesor-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: linear-gradient(135deg, #1a3a2e, #2a5a45);
+      border: 2px solid var(--gold-dim);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; color: var(--gold);
+    }
+    .asesor-name { font-size: 13px; font-weight: 600; }
+    .asesor-role { font-size: 10px; color: var(--green-text); opacity: 0.7; }
+
+    .asesor-stats {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 4px;
+    }
+    .asesor-stat { text-align: center; }
+    .asesor-stat .n { font-size: 14px; font-weight: 700; color: var(--gold); }
+    .asesor-stat .l { font-size: 9px; color: var(--green-text); opacity: 0.6; }
+
+    /* Nota */
+    .nota-input {
+      width: 100%;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--glass-border);
+      color: white;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-family: inherit; font-size: 13px;
+      outline: none; resize: vertical;
+      min-height: 80px; margin-bottom: 16px;
+      transition: all 0.2s;
+    }
+    .nota-input:focus { border-color: var(--gold); }
+    .nota-input::placeholder { color: rgba(255,255,255,0.3); }
+
+    /* Assign button */
+    .assign-btn {
+      width: 100%; padding: 14px;
+      background: linear-gradient(135deg, var(--gold), #c9a961);
+      color: var(--bg-dark); border: none;
+      border-radius: 16px; font-family: inherit;
+      font-size: 15px; font-weight: 800;
+      cursor: pointer; transition: all 0.25s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      box-shadow: 0 4px 16px rgba(212,175,55,0.35);
+    }
+    .assign-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(212,175,55,0.5); }
+    .assign-btn:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
+
+    .success-toast {
+      position: fixed; bottom:24px; right:24px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white; padding: 14px 20px;
+      border-radius: 14px; font-size: 13px; font-weight: 600;
+      display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 8px 24px rgba(16,185,129,0.4);
+      transform: translateY(80px); opacity: 0;
+      transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+      z-index: 200;
+    }
+    .success-toast.show { transform: translateY(0); opacity: 1; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 4px; }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+      .leads-panel { height: 300px; border-right: none; border-bottom: 1px solid var(--glass-border); }
+      .criteria-grid, .matches-grid, .asesores-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="radar-interno.html" class="topbar-logo">
+    <img src="logo-circular.png" alt="Alabol">
+    <span>Alabol</span>
+  </a>
+  <div class="topbar-sep"></div>
+  <span class="topbar-title"><i class="fa-solid fa-user-tag" style="color:var(--gold);margin-right:6px;"></i>Asignaciones</span>
+  <a href="transacciones.html" class="btn btn-ghost"><i class="fa-solid fa-arrow-right-arrow-left"></i> Transacciones</a>
+  <a href="radar-interno.html" class="btn btn-ghost"><i class="fa-solid fa-radar"></i> Radar</a>
+</header>
+
+<div class="layout">
+
+  <!-- ── PANEL IZQUIERDO: Leads sin asignar ── -->
+  <div class="leads-panel">
+    <div class="panel-header">
+      <div class="panel-title">
+        <i class="fa-solid fa-circle-exclamation" style="color:#f59e0b;margin-right:6px;"></i>
+        Leads sin Asignar (<span id="totalLeads">—</span>)
+      </div>
+      <input class="search-bar" type="text" placeholder="🔍  Buscar por nombre o criterio..." id="searchLeads" oninput="filterLeads()">
+    </div>
+    <div class="leads-list" id="leadsList">
+      <!-- Se llena dinámicamente -->
+    </div>
+  </div>
+
+  <!-- ── PANEL DERECHO: Asignación ── -->
+  <div class="assign-panel" id="assignPanel">
+    <div class="assign-empty" id="emptyState">
+      <i class="fa-solid fa-user-tag"></i>
+      <p>Selecciona un lead para asignarlo a un asesor</p>
+    </div>
+    <div class="assign-content" id="assignContent" style="display:none;">
+      <!-- Lead Summary -->
+      <div class="lead-summary-card" id="leadSummaryCard">
+        <!-- Dinámico -->
+      </div>
+
+      <!-- Matches -->
+      <div style="margin-bottom:20px;">
+        <div class="section-title"><i class="fa-solid fa-heart" style="margin-right:6px;"></i>Top Matches del Lead</div>
+        <div class="matches-grid" id="matchesGrid"><!-- Dinámico --></div>
+      </div>
+
+      <!-- Asesores -->
+      <div style="margin-bottom:16px;">
+        <div class="section-title"><i class="fa-solid fa-users" style="margin-right:6px;"></i>Asignar a Asesor</div>
+        <div class="asesores-grid" id="asesoresGrid"><!-- Dinámico --></div>
+      </div>
+
+      <!-- Nota -->
+      <div style="margin-bottom:16px;">
+        <div class="section-title"><i class="fa-solid fa-note-sticky" style="margin-right:6px;"></i>Nota para el Asesor</div>
+        <textarea class="nota-input" id="notaInput" placeholder="Ej: Lead muy interesado en SUVs con financiamiento. Tiene fecha límite de compra este mes..."></textarea>
+      </div>
+
+      <button class="assign-btn" id="assignBtn" onclick="confirmarAsignacion()" disabled>
+        <i class="fa-solid fa-user-check"></i>
+        Asignar Lead
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="success-toast" id="toast">
+  <i class="fa-solid fa-check-circle"></i>
+  <span id="toastMsg">Lead asignado exitosamente</span>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ══════════ CONFIG ══════════
+const SU = 'https://rgnunjngtsgqgvplawfr.supabase.co';
+const SK = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBl2mwbV54cORvVGOmJVwdzEidti38AcsqhB8';
+let db;
+
+// ══════════ STATE ══════════
+let leads = [], asesores = [], selectedLead = null, selectedAsesor = null;
+
+// ══════════ MOCK DATA ══════════
+const MOCK_LEADS = [
+  { id:'L1', nombre:'Carlos Reyes', whatsapp:'5512345678', temperatura:'hot', presupuesto_min:600000, presupuesto_max:900000, tipo_vehiculo:'SUV', marca_preferida:'BMW', matches_count: 8, created_at: new Date(Date.now()-2*86400000).toISOString() },
+  { id:'L2', nombre:'Ana López', whatsapp:'5587654321', temperatura:'warm', presupuesto_min:400000, presupuesto_max:700000, tipo_vehiculo:'Sedán', marca_preferida:'Toyota', matches_count: 12, created_at: new Date(Date.now()-5*86400000).toISOString() },
+  { id:'L3', nombre:'Roberto Soto', whatsapp:'5511223344', temperatura:'cold', presupuesto_min:800000, presupuesto_max:1200000, tipo_vehiculo:'Pickup', marca_preferida:'Ford', matches_count: 5, created_at: new Date(Date.now()-8*86400000).toISOString() },
+  { id:'L4', nombre:'María Torres', whatsapp:'5599887766', temperatura:'hot', presupuesto_min:1000000, presupuesto_max:2000000, tipo_vehiculo:'Coupé', marca_preferida:'Porsche', matches_count: 3, created_at: new Date(Date.now()-1*86400000).toISOString() },
+  { id:'L5', nombre:'Pedro Núñez', whatsapp:'5566778899', temperatura:'warm', presupuesto_min:300000, presupuesto_max:500000, tipo_vehiculo:'Hatchback', marca_preferida:'VW', matches_count: 15, created_at: new Date(Date.now()-3*86400000).toISOString() },
+];
+
+const MOCK_ASESORES = [
+  { id:'A1', nombre:'Alejandro González', rol:'Asesor Senior', leads_activos:8, cierres_mes:3, tasa_cierre:37 },
+  { id:'A2', nombre:'Michelle Ramírez', rol:'Asesor VIP', leads_activos:5, cierres_mes:5, tasa_cierre:62 },
+  { id:'A3', nombre:'Diego López', rol:'Asesor', leads_activos:12, cierres_mes:2, tasa_cierre:17 },
+  { id:'A4', nombre:'Sofía Martínez', rol:'Asesor Junior', leads_activos:3, cierres_mes:1, tasa_cierre:33 },
+];
+
+const MOCK_MATCHES = [
+  { score: 94, marca:'BMW', modelo:'X3', año:2022, precio:850000 },
+  { score: 89, marca:'Mercedes', modelo:'GLA', año:2021, precio:780000 },
+  { score: 82, marca:'Audi', modelo:'Q3', año:2023, precio:920000 },
+];
+
+// ══════════ INIT ══════════
+async function init() {
+  try {
+    db = window.supabase?.createClient(SU, SK);
+    const [leadsRes, asesoresRes] = await Promise.all([
+      db.from('leads_matchmaker').select('*').is('vendedor_id', null).order('created_at', { ascending: false }),
+      db.from('vendedores').select('*')
+    ]);
+    leads = (leadsRes.data?.length ? leadsRes.data : MOCK_LEADS);
+    asesores = (asesoresRes.data?.length ? asesoresRes.data : MOCK_ASESORES);
+  } catch {
+    leads = MOCK_LEADS;
+    asesores = MOCK_ASESORES;
+  }
+  renderLeads(leads);
+}
+
+// ══════════ RENDER LEADS ══════════
+function renderLeads(data) {
+  document.getElementById('totalLeads').textContent = data.length;
+  const list = document.getElementById('leadsList');
+  if (!data.length) {
+    list.innerHTML = '<div style="text-align:center;padding:40px;opacity:0.4;font-size:13px;color:var(--green-text);">✅ Sin leads pendientes</div>';
+    return;
+  }
+  list.innerHTML = data.map(l => {
+    const temp = l.temperatura || 'cold';
+    const tempMap = { hot:'🔴 Caliente', warm:'🟡 Tibio', cold:'🔵 Frío' };
+    const tempClass = { hot:'temp-hot', warm:'temp-warm', cold:'temp-cold' };
+    const dias = Math.floor((Date.now() - new Date(l.created_at)) / 86400000);
+    return `
+      <div class="lead-card ${selectedLead?.id === l.id ? 'selected' : ''}" onclick="selectLead('${l.id}')">
+        <div class="lead-top">
+          <div>
+            <div class="lead-name">${l.nombre}</div>
+            <div class="lead-date">Hace ${dias}d · ${l.etapa || 'Nuevo'}</div>
+          </div>
+          <span class="temp-badge ${tempClass[temp]}">${tempMap[temp]}</span>
+        </div>
+        <div class="lead-criteria">
+          ${l.tipo_vehiculo ? `<span class="criteria-tag">${l.tipo_vehiculo}</span>` : ''}
+          ${l.marca_preferida ? `<span class="criteria-tag">${l.marca_preferida}</span>` : ''}
+          ${l.presupuesto_max ? `<span class="criteria-tag">${fmt(l.presupuesto_max)}</span>` : ''}
+        </div>
+        <div class="lead-footer">
+          <div class="lead-wa"><i class="fa-brands fa-whatsapp"></i> ${l.whatsapp || '—'}</div>
+          <span class="matches-count">💘 ${l.matches_count || '?'} matches</span>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ══════════ SELECT LEAD ══════════
+async function selectLead(id) {
+  selectedLead = leads.find(l => l.id === id);
+  selectedAsesor = null;
+  document.getElementById('assignBtn').disabled = true;
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('assignContent').style.display = 'block';
+
+  // Re-render cards to show selected
+  renderLeads(leads);
+
+  // Lead summary
+  const l = selectedLead;
+  document.getElementById('leadSummaryCard').innerHTML = `
+    <div class="summary-header">
+      <div class="lead-avatar">${(l.nombre||'?')[0].toUpperCase()}</div>
+      <div>
+        <div class="summary-name">${l.nombre}</div>
+        <div class="summary-phone"><i class="fa-brands fa-whatsapp" style="color:#25D366;"></i> ${l.whatsapp || '—'}</div>
+      </div>
+      <a href="https://wa.me/${l.whatsapp}?text=Hola%20${encodeURIComponent(l.nombre)}!" target="_blank" class="btn btn-ghost" style="margin-left:auto;">
+        <i class="fa-brands fa-whatsapp"></i> Contactar
+      </a>
+    </div>
+    <div class="criteria-grid">
+      <div class="criteria-item"><div class="label">Tipo</div><div class="value">${l.tipo_vehiculo||'—'}</div></div>
+      <div class="criteria-item"><div class="label">Marca ideal</div><div class="value">${l.marca_preferida||'—'}</div></div>
+      <div class="criteria-item"><div class="label">Temperatura</div><div class="value">${l.temperatura||'—'}</div></div>
+      <div class="criteria-item"><div class="label">Presupuesto mín</div><div class="value">${l.presupuesto_min ? fmt(l.presupuesto_min) : '—'}</div></div>
+      <div class="criteria-item"><div class="label">Presupuesto máx</div><div class="value">${l.presupuesto_max ? fmt(l.presupuesto_max) : '—'}</div></div>
+      <div class="criteria-item"><div class="label">Matches</div><div class="value" style="color:var(--gold);">💘 ${l.matches_count||'?'}</div></div>
+    </div>`;
+
+  // Load top matches
+  let matches = MOCK_MATCHES;
+  try {
+    const { data } = await db.from('matches').select('*, inventario(marca,modelo,año,precio_venta)').eq('lead_id', id).order('score_total', { ascending: false }).limit(3);
+    if (data?.length) matches = data.map(m => ({ score: Math.round(m.score_total), marca: m.inventario?.marca, modelo: m.inventario?.modelo, año: m.inventario?.año, precio: m.inventario?.precio_venta }));
+  } catch {}
+
+  document.getElementById('matchesGrid').innerHTML = matches.map((m, i) => `
+    <div class="match-card ${i === 0 ? 'top-match' : ''}">
+      ${i === 0 ? '<div class="top-badge">⭐ MEJOR MATCH</div>' : ''}
+      <div class="match-score">${m.score}%</div>
+      <div class="match-auto">${m.marca} ${m.modelo} ${m.año}</div>
+      <div class="match-price">${m.precio ? fmt(m.precio) : '—'}</div>
+    </div>`).join('');
+
+  // Render asesores
+  document.getElementById('asesoresGrid').innerHTML = asesores.map(a => `
+    <div class="asesor-card" id="ac-${a.id}" onclick="selectAsesor('${a.id}')">
+      <div class="asesor-top">
+        <div class="asesor-avatar">${(a.nombre||'?').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase()}</div>
+        <div><div class="asesor-name">${a.nombre}</div><div class="asesor-role">${a.rol||'Asesor'}</div></div>
+      </div>
+      <div class="asesor-stats">
+        <div class="asesor-stat"><div class="n">${a.leads_activos||0}</div><div class="l">Activos</div></div>
+        <div class="asesor-stat"><div class="n">${a.cierres_mes||0}</div><div class="l">Cierres</div></div>
+        <div class="asesor-stat"><div class="n">${a.tasa_cierre||0}%</div><div class="l">Tasa</div></div>
+      </div>
+    </div>`).join('');
+}
+
+// ══════════ SELECT ASESOR ══════════
+function selectAsesor(id) {
+  selectedAsesor = asesores.find(a => a.id === id);
+  document.querySelectorAll('.asesor-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById(`ac-${id}`)?.classList.add('selected');
+  document.getElementById('assignBtn').disabled = false;
+  document.getElementById('assignBtn').innerHTML = `<i class="fa-solid fa-user-check"></i> Asignar a ${selectedAsesor.nombre.split(' ')[0]}`;
+}
+
+// ══════════ ASIGNAR ══════════
+async function confirmarAsignacion() {
+  if (!selectedLead || !selectedAsesor) return;
+  const btn = document.getElementById('assignBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Asignando...';
+  const nota = document.getElementById('notaInput').value;
+
+  try {
+    await db.from('asignaciones').insert([{
+      lead_id: selectedLead.id,
+      vendedor_id: selectedAsesor.id,
+      nota_asignacion: nota,
+      fecha_asignacion: new Date().toISOString(),
+      estado: 'activa'
+    }]);
+    await db.from('leads_matchmaker').update({ vendedor_id: selectedAsesor.id, etapa: 'asignado' }).eq('id', selectedLead.id);
+  } catch (e) { console.log('Mock assignment:', e); }
+
+  // Remove from list
+  leads = leads.filter(l => l.id !== selectedLead.id);
+  selectedLead = null; selectedAsesor = null;
+  renderLeads(leads);
+  document.getElementById('assignContent').style.display = 'none';
+  document.getElementById('emptyState').style.display = 'flex';
+  document.getElementById('notaInput').value = '';
+
+  showToast(`Lead asignado a ${selectedAsesor?.nombre?.split(' ')[0] || 'asesor'} ✓`);
+}
+
+// ══════════ FILTERS ══════════
+function filterLeads() {
+  const q = document.getElementById('searchLeads').value.toLowerCase();
+  const filtered = leads.filter(l => (l.nombre||'').toLowerCase().includes(q) || (l.tipo_vehiculo||'').toLowerCase().includes(q) || (l.marca_preferida||'').toLowerCase().includes(q));
+  renderLeads(filtered);
+}
+
+// ══════════ UTILS ══════════
+function fmt(n) { return new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',minimumFractionDigits:0}).format(n); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ══════════ START ══════════
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

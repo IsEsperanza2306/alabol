@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transacciones | Alabol CRM</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg-dark: #0a1f1a;
+      --bg-mid: #0d2921;
+      --bg-light: #0f3329;
+      --gold: #d4af37;
+      --gold-light: #f4e5b0;
+      --gold-dim: rgba(212, 175, 55, 0.25);
+      --green-text: #a8c5b8;
+      --glass-bg: rgba(15, 51, 41, 0.5);
+      --glass-border: rgba(212, 175, 55, 0.2);
+      --danger: #ef4444;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+
+      /* Stage colors */
+      --cita: rgba(59, 130, 246, 0.15);
+      --cita-border: rgba(59, 130, 246, 0.4);
+      --apartado: rgba(245, 158, 11, 0.15);
+      --apartado-border: rgba(245, 158, 11, 0.4);
+      --firma: rgba(139, 92, 246, 0.15);
+      --firma-border: rgba(139, 92, 246, 0.4);
+      --entrega: rgba(16, 185, 129, 0.15);
+      --entrega-border: rgba(16, 185, 129, 0.4);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-dark);
+      color: white;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #0a1f1a 0%, #0d2921 50%, #0a1f1a 100%);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
+      z-index: -1;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10, 31, 26, 0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--glass-border);
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .topbar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .topbar-logo img {
+      width: 34px; height: 34px;
+      filter: drop-shadow(0 0 8px rgba(212,175,55,0.5));
+    }
+
+    .topbar-logo span {
+      font-weight: 800;
+      font-size: 16px;
+      color: var(--gold);
+    }
+
+    .topbar-sep {
+      width: 1px; height: 24px;
+      background: var(--glass-border);
+    }
+
+    .topbar-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--green-text);
+    }
+
+    .topbar-actions {
+      margin-left: auto;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s;
+      text-decoration: none;
+      border: none;
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold) 0%, #c9a961 100%);
+      color: var(--bg-dark);
+      box-shadow: 0 4px 12px rgba(212,175,55,0.35);
+    }
+
+    .btn-gold:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(212,175,55,0.5);
+    }
+
+    .btn-ghost {
+      background: rgba(255,255,255,0.05);
+      color: var(--green-text);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      display: flex;
+      gap: 16px;
+      padding: 16px 24px;
+      overflow-x: auto;
+    }
+
+    .stat-card {
+      flex-shrink: 0;
+      background: var(--glass-bg);
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 14px 20px;
+      min-width: 150px;
+    }
+
+    .stat-card-value {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .stat-card-label {
+      font-size: 11px;
+      color: var(--green-text);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* ── FILTERS ── */
+    .filters {
+      padding: 0 24px 16px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .filter-input {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--glass-border);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+      transition: all 0.25s;
+    }
+
+    .filter-input:focus {
+      border-color: var(--gold);
+      background: rgba(0,0,0,0.5);
+    }
+
+    .filter-input::placeholder { color: rgba(255,255,255,0.3); }
+
+    /* ── KANBAN BOARD ── */
+    .kanban {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      padding: 0 24px 40px;
+      min-height: calc(100vh - 200px);
+      align-items: start;
+    }
+
+    .kanban-col {
+      background: rgba(0,0,0,0.2);
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.05);
+      overflow: hidden;
+    }
+
+    .col-header {
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .col-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .col-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+
+    .col-name {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .col-count {
+      font-size: 11px;
+      background: rgba(255,255,255,0.1);
+      padding: 2px 10px;
+      border-radius: 10px;
+      color: var(--green-text);
+    }
+
+    /* Stage colors */
+    .col-cita .col-header { background: var(--cita); border-bottom-color: var(--cita-border); }
+    .col-cita .col-dot { background: #3b82f6; box-shadow: 0 0 8px #3b82f6; }
+    .col-cita .col-name { color: #93c5fd; }
+
+    .col-apartado .col-header { background: var(--apartado); border-bottom-color: var(--apartado-border); }
+    .col-apartado .col-dot { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
+    .col-apartado .col-name { color: #fcd34d; }
+
+    .col-firma .col-header { background: var(--firma); border-bottom-color: var(--firma-border); }
+    .col-firma .col-dot { background: #8b5cf6; box-shadow: 0 0 8px #8b5cf6; }
+    .col-firma .col-name { color: #c4b5fd; }
+
+    .col-entrega .col-header { background: var(--entrega); border-bottom-color: var(--entrega-border); }
+    .col-entrega .col-dot { background: #10b981; box-shadow: 0 0 8px #10b981; }
+    .col-entrega .col-name { color: #6ee7b7; }
+
+    /* ── CARDS ── */
+    .cards-container {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 200px;
+    }
+
+    .txn-card {
+      background: linear-gradient(135deg, rgba(15,51,41,0.7) 0%, rgba(13,41,33,0.9) 100%);
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .txn-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.4), 0 0 20px rgba(212,175,55,0.1);
+      border-color: rgba(212,175,55,0.4);
+    }
+
+    .txn-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 100%;
+      border-radius: 3px 0 0 3px;
+    }
+
+    .col-cita .txn-card::before { background: #3b82f6; }
+    .col-apartado .txn-card::before { background: #f59e0b; }
+    .col-firma .txn-card::before { background: #8b5cf6; }
+    .col-entrega .txn-card::before { background: #10b981; }
+
+    .card-auto {
+      font-size: 14px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 4px;
+      padding-left: 8px;
+    }
+
+    .card-version {
+      font-size: 11px;
+      color: var(--green-text);
+      padding-left: 8px;
+      margin-bottom: 12px;
+      opacity: 0.7;
+    }
+
+    .card-price {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--gold);
+      padding-left: 8px;
+      margin-bottom: 12px;
+      text-shadow: 0 0 12px rgba(212,175,55,0.3);
+    }
+
+    .card-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 10px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 10px;
+      margin-bottom: 12px;
+    }
+
+    .meta-item { display: flex; flex-direction: column; }
+    .meta-label { font-size: 9px; color: var(--green-text); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
+    .meta-value { font-size: 12px; font-weight: 600; color: white; }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .agent-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--green-text);
+    }
+
+    .agent-avatar {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), #c9a961);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--bg-dark);
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 4px;
+    }
+
+    .card-btn {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--green-text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 11px;
+      transition: all 0.2s;
+    }
+
+    .card-btn:hover { background: rgba(212,175,55,0.2); color: var(--gold); border-color: var(--gold-dim); }
+    .card-btn.advance { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); color: #6ee7b7; }
+    .card-btn.advance:hover { background: rgba(16,185,129,0.2); }
+
+    /* Days badge */
+    .days-badge {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+    .days-ok { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+    .days-warn { background: rgba(245,158,11,0.15); color: #fcd34d; }
+    .days-danger { background: rgba(239,68,68,0.15); color: #fca5a5; }
+
+    /* Empty state */
+    .col-empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--green-text);
+      opacity: 0.4;
+      font-size: 13px;
+    }
+    .col-empty i { font-size: 32px; margin-bottom: 12px; display: block; }
+
+    /* Loading */
+    .loading-pulse {
+      background: rgba(212,175,55,0.05);
+      border-radius: 12px;
+      height: 120px;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.7; } }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.active { display: flex; }
+
+    .modal {
+      background: linear-gradient(135deg, var(--bg-mid), var(--bg-dark));
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 640px;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes modalPop {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-header {
+      padding: 24px 24px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .modal-title { font-size: 20px; font-weight: 800; }
+    .modal-subtitle { font-size: 13px; color: var(--green-text); margin-top: 4px; }
+
+    .modal-close {
+      width: 36px; height: 36px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 50%;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .modal-close:hover { background: rgba(239,68,68,0.2); border-color: rgba(239,68,68,0.4); }
+
+    .modal-body { padding: 20px 24px 24px; }
+
+    .modal-section { margin-bottom: 20px; }
+    .modal-section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--gold);
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .modal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .modal-field { display: flex; flex-direction: column; gap: 6px; }
+    .field-label { font-size: 11px; color: var(--green-text); text-transform: uppercase; letter-spacing: 1px; }
+    .field-input {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--glass-border);
+      color: white;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+      transition: all 0.25s;
+    }
+    .field-input:focus { border-color: var(--gold); background: rgba(0,0,0,0.5); }
+
+    .stage-progress {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 24px;
+    }
+
+    .stage-step {
+      flex: 1;
+      text-align: center;
+      position: relative;
+    }
+
+    .stage-step::after {
+      content: '';
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      width: 100%;
+      height: 2px;
+      background: rgba(255,255,255,0.1);
+      z-index: 0;
+    }
+    .stage-step:last-child::after { display: none; }
+
+    .stage-dot {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      margin: 0 auto 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      position: relative;
+      z-index: 1;
+      border: 2px solid rgba(255,255,255,0.1);
+      background: rgba(0,0,0,0.3);
+      transition: all 0.3s;
+    }
+
+    .stage-step.done .stage-dot { background: var(--success); border-color: var(--success); }
+    .stage-step.active .stage-dot { background: var(--gold); border-color: var(--gold); color: var(--bg-dark); box-shadow: 0 0 12px rgba(212,175,55,0.5); }
+    .stage-step.active::after { background: rgba(212,175,55,0.3); }
+    .stage-step.done::after { background: var(--success); }
+
+    .stage-label { font-size: 10px; color: var(--green-text); font-weight: 600; }
+    .stage-step.active .stage-label { color: var(--gold); }
+    .stage-step.done .stage-label { color: var(--success); }
+
+    .modal-footer {
+      padding: 0 24px 24px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      box-shadow: 0 4px 12px rgba(16,185,129,0.3);
+      flex: 1;
+    }
+    .btn-success:hover { transform: translateY(-1px); filter: brightness(1.1); }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .kanban { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .kanban { grid-template-columns: 1fr; }
+      .modal-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <a href="radar-interno.html" class="topbar-logo">
+    <img src="../logo-circular.png" alt="Alabol">
+    <span>Alabol</span>
+  </a>
+  <div class="topbar-sep"></div>
+  <span class="topbar-title"><i class="fa-solid fa-arrow-right-arrow-left" style="color:var(--gold);margin-right:6px;"></i>Transacciones</span>
+  <div class="topbar-actions">
+    <a href="radar-interno.html" class="btn btn-ghost"><i class="fa-solid fa-radar"></i> Radar</a>
+    <button class="btn btn-gold" onclick="openNewTxnModal()">
+      <i class="fa-solid fa-plus"></i> Nueva Transacción
+    </button>
+  </div>
+</header>
+
+<!-- STATS BAR -->
+<div class="stats-bar" id="statsBar">
+  <div class="stat-card">
+    <div class="stat-card-value" id="statTotal">—</div>
+    <div class="stat-card-label">Total Activas</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-value" id="statValor" style="font-size:18px;">—</div>
+    <div class="stat-card-label">Valor en Pipeline</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-value" id="statMes">—</div>
+    <div class="stat-card-label">Entregados este mes</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-value" id="statDias">—</div>
+    <div class="stat-card-label">Días Promedio Cierre</div>
+  </div>
+</div>
+
+<!-- FILTERS -->
+<div class="filters">
+  <input class="filter-input" type="text" id="filterSearch" placeholder="🔍  Buscar auto o comprador..." oninput="applyFilters()">
+  <select class="filter-input" id="filterAgent" onchange="applyFilters()">
+    <option value="all">Todos los asesores</option>
+  </select>
+  <button class="btn btn-ghost" onclick="clearFilters()"><i class="fa-solid fa-x"></i> Limpiar</button>
+</div>
+
+<!-- KANBAN -->
+<div class="kanban">
+  <!-- CITA -->
+  <div class="kanban-col col-cita">
+    <div class="col-header">
+      <div class="col-header-left">
+        <div class="col-dot"></div>
+        <span class="col-name">Cita</span>
+      </div>
+      <span class="col-count" id="count-cita">0</span>
+    </div>
+    <div class="cards-container" id="col-cita">
+      <div class="loading-pulse"></div>
+      <div class="loading-pulse"></div>
+    </div>
+  </div>
+
+  <!-- APARTADO -->
+  <div class="kanban-col col-apartado">
+    <div class="col-header">
+      <div class="col-header-left">
+        <div class="col-dot"></div>
+        <span class="col-name">Apartado</span>
+      </div>
+      <span class="col-count" id="count-apartado">0</span>
+    </div>
+    <div class="cards-container" id="col-apartado">
+      <div class="loading-pulse"></div>
+    </div>
+  </div>
+
+  <!-- FIRMA -->
+  <div class="kanban-col col-firma">
+    <div class="col-header">
+      <div class="col-header-left">
+        <div class="col-dot"></div>
+        <span class="col-name">Firma</span>
+      </div>
+      <span class="col-count" id="count-firma">0</span>
+    </div>
+    <div class="cards-container" id="col-firma">
+      <div class="loading-pulse"></div>
+    </div>
+  </div>
+
+  <!-- ENTREGA -->
+  <div class="kanban-col col-entrega">
+    <div class="col-header">
+      <div class="col-header-left">
+        <div class="col-dot"></div>
+        <span class="col-name">Entrega</span>
+      </div>
+      <span class="col-count" id="count-entrega">0</span>
+    </div>
+    <div class="cards-container" id="col-entrega">
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETALLE / NUEVA TRANSACCIÓN -->
+<div class="modal-overlay" id="txnModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <h2 class="modal-title" id="modalTitle">Nueva Transacción</h2>
+        <p class="modal-subtitle" id="modalSubtitle">Registra el inicio del proceso</p>
+      </div>
+      <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Progreso de etapas -->
+      <div class="stage-progress" id="stageProgress">
+        <div class="stage-step active" id="stage-cita">
+          <div class="stage-dot">1</div>
+          <div class="stage-label">Cita</div>
+        </div>
+        <div class="stage-step" id="stage-apartado">
+          <div class="stage-dot">2</div>
+          <div class="stage-label">Apartado</div>
+        </div>
+        <div class="stage-step" id="stage-firma">
+          <div class="stage-dot">3</div>
+          <div class="stage-label">Firma</div>
+        </div>
+        <div class="stage-step" id="stage-entrega">
+          <div class="stage-dot">4</div>
+          <div class="stage-label">Entrega</div>
+        </div>
+      </div>
+
+      <!-- Auto -->
+      <div class="modal-section">
+        <div class="modal-section-title">🚗 Vehículo</div>
+        <div class="modal-grid">
+          <div class="modal-field">
+            <label class="field-label">Auto (ID o nombre)</label>
+            <input class="field-input" id="f-auto" type="text" placeholder="Ej: BMW 320i 2023">
+          </div>
+          <div class="modal-field">
+            <label class="field-label">Precio de Venta (MXN)</label>
+            <input class="field-input" id="f-precio" type="number" placeholder="850000">
+          </div>
+        </div>
+      </div>
+
+      <!-- Comprador -->
+      <div class="modal-section">
+        <div class="modal-section-title">👤 Comprador</div>
+        <div class="modal-grid">
+          <div class="modal-field">
+            <label class="field-label">Nombre completo</label>
+            <input class="field-input" id="f-comprador" type="text" placeholder="Juan García">
+          </div>
+          <div class="modal-field">
+            <label class="field-label">WhatsApp</label>
+            <input class="field-input" id="f-wa" type="tel" placeholder="5512345678">
+          </div>
+        </div>
+      </div>
+
+      <!-- Logística -->
+      <div class="modal-section">
+        <div class="modal-section-title">📋 Logística</div>
+        <div class="modal-grid">
+          <div class="modal-field">
+            <label class="field-label">Fecha de Cita</label>
+            <input class="field-input" id="f-fecha" type="datetime-local">
+          </div>
+          <div class="modal-field">
+            <label class="field-label">Asesor asignado</label>
+            <select class="field-input" id="f-asesor">
+              <option value="">Seleccionar...</option>
+            </select>
+          </div>
+          <div class="modal-field" style="grid-column: 1 / -1;">
+            <label class="field-label">Notas</label>
+            <input class="field-input" id="f-notas" type="text" placeholder="Ej: Cliente pide financiamiento, revisar historial">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-success" onclick="saveTxn()">
+        <i class="fa-solid fa-check"></i> Guardar Transacción
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ══════════ SUPABASE INIT ══════════
+(function() {
+  const SU = 'https://rgnunjngtsgqgvplawfr.supabase.co';
+  const SK = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBl2mwbV54cORvVGOmJVwdzEidti38AcsqhB8';
+  if (window.supabase && window.supabase.createClient && !window.supabaseClient) {
+    window.supabaseClient = window.supabase.createClient(SU, SK);
+    console.log('Alabol: Supabase ready');
+  }
+})();
+
+// ══════════ STATE ══════════
+let allTxns = [];
+let currentTxn = null;
+
+const STAGES = ['cita', 'apartado', 'firma', 'entrega'];
+const STAGE_LABELS = { cita: 'Cita', apartado: 'Apartado', firma: 'Firma', entrega: 'Entrega' };
+
+// ══════════ LOAD DATA ══════════
+async function loadTransacciones() {
+  try {
+    const { data, error } = await supabaseClient
+      .from('transacciones')
+      .select('*, inventario(marca, modelo, año, precio_venta), leads_matchmaker(nombre, whatsapp), vendedores(nombre)')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    allTxns = data || [];
+    renderBoard(allTxns);
+    updateStats(allTxns);
+    populateAgents(allTxns);
+
+  } catch (err) {
+    console.error('Error cargando transacciones:', err);
+    // Show mock data for demo
+    renderMockData();
+  }
+}
+
+// ══════════ MOCK DATA (mientras tabla está vacía) ══════════
+function renderMockData() {
+  const mock = [
+    { id: 'T001', etapa: 'cita', auto: 'BMW 320i 2023', version: 'Sport Line', precio: 850000, comprador: 'Carlos Reyes', dias: 2, asesor: 'AG' },
+    { id: 'T002', etapa: 'cita', auto: 'Mercedes C200 2022', version: 'Avantgarde', precio: 720000, comprador: 'Ana López', dias: 5, asesor: 'MR' },
+    { id: 'T003', etapa: 'apartado', auto: 'Audi A4 2023', version: '2.0T', precio: 980000, comprador: 'Roberto Soto', dias: 8, asesor: 'AG' },
+    { id: 'T004', etapa: 'firma', auto: 'Porsche Cayenne 2021', version: 'Base', precio: 1850000, comprador: 'María Torres', dias: 12, asesor: 'DL' },
+    { id: 'T005', etapa: 'entrega', auto: 'Range Rover Evoque 2022', version: 'SE', precio: 1100000, comprador: 'Pedro Jiménez', dias: 18, asesor: 'MR' },
+  ];
+
+  allTxns = mock;
+  renderBoard(mock, true);
+  updateStatsFromMock(mock);
+}
+
+// ══════════ RENDER BOARD ══════════
+function renderBoard(data, isMock = false) {
+  STAGES.forEach(stage => {
+    const col = document.getElementById(`col-${stage}`);
+    const count = document.getElementById(`count-${stage}`);
+    const items = data.filter(t => (isMock ? t.etapa : (t.etapa || t.stage)) === stage);
+
+    count.textContent = items.length;
+
+    if (items.length === 0) {
+      col.innerHTML = `<div class="col-empty"><i class="fa-regular fa-folder-open"></i>Sin transacciones</div>`;
+      return;
+    }
+
+    col.innerHTML = items.map(t => createCard(t, isMock)).join('');
+  });
+}
+
+function createCard(t, isMock = false) {
+  const auto = isMock ? t.auto : `${t.inventario?.marca || ''} ${t.inventario?.modelo || ''} ${t.inventario?.año || ''}`.trim();
+  const version = isMock ? t.version : (t.inventario?.año || '');
+  const precio = isMock ? t.precio : (t.precio_venta || t.inventario?.precio_venta || 0);
+  const comprador = isMock ? t.comprador : (t.leads_matchmaker?.nombre || 'Sin nombre');
+  const dias = isMock ? t.dias : Math.floor((Date.now() - new Date(t.created_at)) / 86400000);
+  const asesor = isMock ? t.asesor : (t.vendedores?.nombre?.substring(0, 2).toUpperCase() || 'NA');
+
+  const diasClass = dias <= 5 ? 'days-ok' : dias <= 10 ? 'days-warn' : 'days-danger';
+  const stageIdx = STAGES.indexOf(t.etapa || t.stage);
+  const nextStage = STAGES[stageIdx + 1];
+
+  return `
+    <div class="txn-card" onclick="openTxnDetail('${t.id}')">
+      <div class="card-auto">${auto}</div>
+      <div class="card-version">${version}</div>
+      <div class="card-price">${formatCurrency(precio)}</div>
+      <div class="card-meta">
+        <div class="meta-item">
+          <span class="meta-label">Comprador</span>
+          <span class="meta-value">${comprador}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">En etapa</span>
+          <span class="days-badge ${diasClass}">${dias}d</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="agent-badge">
+          <div class="agent-avatar">${asesor}</div>
+          <span>${asesor}</span>
+        </div>
+        <div class="card-actions">
+          <button class="card-btn" onclick="event.stopPropagation(); openWA('${t.id}')" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
+          ${nextStage ? `<button class="card-btn advance" onclick="event.stopPropagation(); advanceStage('${t.id}', '${nextStage}')" title="Avanzar a ${STAGE_LABELS[nextStage]}"><i class="fa-solid fa-arrow-right"></i></button>` : '<button class="card-btn" style="background:rgba(16,185,129,0.2);color:#6ee7b7;" title="Completado"><i class="fa-solid fa-check"></i></button>'}
+        </div>
+      </div>
+    </div>`;
+}
+
+// ══════════ ACTIONS ══════════
+async function advanceStage(id, newStage) {
+  try {
+    await supabaseClient.from('transacciones').update({ etapa: newStage }).eq('id', id);
+    loadTransacciones();
+  } catch (err) {
+    // Mock: update locally
+    const txn = allTxns.find(t => t.id === id);
+    if (txn) { txn.etapa = newStage; renderBoard(allTxns, true); }
+  }
+}
+
+function openWA(id) {
+  const t = allTxns.find(x => x.id === id);
+  const wa = t?.leads_matchmaker?.whatsapp || '52556867571';
+  const auto = t?.auto || 'tu auto';
+  const msg = encodeURIComponent(`Hola! Te contacto de Alabol sobre la transacción de ${auto}. ¿Tienes un momento?`);
+  window.open(`https://wa.me/${wa}?text=${msg}`, '_blank');
+}
+
+// ══════════ MODAL ══════════
+function openNewTxnModal() {
+  currentTxn = null;
+  document.getElementById('modalTitle').textContent = 'Nueva Transacción';
+  document.getElementById('modalSubtitle').textContent = 'Registra el inicio del proceso de venta';
+  resetStageProgress('cita');
+  document.getElementById('txnModal').classList.add('active');
+}
+
+function openTxnDetail(id) {
+  const t = allTxns.find(x => x.id === id);
+  if (!t) return;
+  currentTxn = t;
+  document.getElementById('modalTitle').textContent = t.auto || 'Detalle';
+  document.getElementById('modalSubtitle').textContent = `ID: ${t.id}`;
+  resetStageProgress(t.etapa || t.stage || 'cita');
+  document.getElementById('txnModal').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('txnModal').classList.remove('active');
+}
+
+function resetStageProgress(activeStage) {
+  const activeIdx = STAGES.indexOf(activeStage);
+  STAGES.forEach((s, i) => {
+    const el = document.getElementById(`stage-${s}`);
+    el.className = 'stage-step';
+    if (i < activeIdx) el.classList.add('done');
+    else if (i === activeIdx) el.classList.add('active');
+    el.querySelector('.stage-dot').innerHTML = i < activeIdx ? '<i class="fa-solid fa-check"></i>' : i + 1;
+  });
+}
+
+async function saveTxn() {
+  const auto = document.getElementById('f-auto').value;
+  const precio = document.getElementById('f-precio').value;
+  const comprador = document.getElementById('f-comprador').value;
+  const fecha = document.getElementById('f-fecha').value;
+
+  if (!auto || !comprador) {
+    alert('Auto y comprador son requeridos');
+    return;
+  }
+
+  try {
+    await supabaseClient.from('transacciones').insert([{
+      auto, precio_venta: precio, nombre_comprador: comprador,
+      etapa: 'cita', fecha_cita: fecha,
+      notas: document.getElementById('f-notas').value
+    }]);
+    closeModal();
+    loadTransacciones();
+  } catch (err) {
+    console.error(err);
+    closeModal();
+  }
+}
+
+// ══════════ STATS ══════════
+function updateStatsFromMock(data) {
+  document.getElementById('statTotal').textContent = data.filter(t => t.etapa !== 'entrega').length;
+  const valor = data.reduce((s, t) => s + (t.precio || 0), 0);
+  document.getElementById('statValor').textContent = formatCurrency(valor);
+  document.getElementById('statMes').textContent = data.filter(t => t.etapa === 'entrega').length;
+  document.getElementById('statDias').textContent = '11d';
+}
+
+function updateStats(data) {
+  document.getElementById('statTotal').textContent = data.filter(t => t.etapa !== 'entrega').length;
+  const valor = data.reduce((s, t) => s + (t.precio_venta || 0), 0);
+  document.getElementById('statValor').textContent = formatCurrency(valor);
+  const thisMonth = data.filter(t => t.etapa === 'entrega' && new Date(t.updated_at).getMonth() === new Date().getMonth()).length;
+  document.getElementById('statMes').textContent = thisMonth;
+  document.getElementById('statDias').textContent = '—';
+}
+
+// ══════════ FILTERS ══════════
+function applyFilters() {
+  const search = document.getElementById('filterSearch').value.toLowerCase();
+  const agent = document.getElementById('filterAgent').value;
+  const filtered = allTxns.filter(t => {
+    const matchSearch = !search || (t.auto || '').toLowerCase().includes(search) || (t.comprador || '').toLowerCase().includes(search);
+    const matchAgent = agent === 'all' || t.asesor === agent;
+    return matchSearch && matchAgent;
+  });
+  renderBoard(filtered, true);
+}
+
+function clearFilters() {
+  document.getElementById('filterSearch').value = '';
+  document.getElementById('filterAgent').value = 'all';
+  renderBoard(allTxns, allTxns[0]?.auto !== undefined);
+}
+
+function populateAgents(data) {
+  const agents = [...new Set(data.map(t => t.asesor).filter(Boolean))];
+  const sel = document.getElementById('filterAgent');
+  agents.forEach(a => {
+    const opt = document.createElement('option');
+    opt.value = a; opt.textContent = a;
+    sel.appendChild(opt);
+  });
+}
+
+// ══════════ UTILS ══════════
+function formatCurrency(n) {
+  return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0 }).format(n);
+}
+
+// Close modal on backdrop
+document.getElementById('txnModal').addEventListener('click', e => {
+  if (e.target.id === 'txnModal') closeModal();
+});
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// ══════════ INIT ══════════
+document.addEventListener('DOMContentLoaded', loadTransacciones);
+</script>
+</body>
+</html>

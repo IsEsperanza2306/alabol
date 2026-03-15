@@ -2731,7 +2731,7 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
 
             // Ficha completa CTA
             const fichaId = auto.id || auto.id_interno || '';
-            document.getElementById('modalFichaBtn').href = `ficha-confianza.html?id=${fichaId}`;
+            document.getElementById('modalFichaBtn').href = `inventario.html?brand=${encodeURIComponent(marca)}&model=${encodeURIComponent(modelo)}`;
 
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';

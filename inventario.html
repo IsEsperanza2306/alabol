@@ -1418,6 +1418,15 @@
                             carImg = car.url_fotos;
                         }
 
+                        // Calcular nivel de confianza basado en datos reales
+                        const hasRealPhotos = carImg !== defaultImg;
+                        const hasDesc = car.descripcion && car.descripcion.trim().length > 10;
+                        const hasKm = (car.kilometraje || 0) > 0;
+                        const hasVin = car.descripcion && car.descripcion.includes('VIN:');
+                        let trustLevel = 'red'; // sin fotos
+                        if (hasRealPhotos && hasDesc && hasKm) trustLevel = 'green';
+                        else if (hasRealPhotos) trustLevel = 'yellow';
+
                         return {
                             id: car.id_interno || car.id,
                             agencia: car.agencia || 'Alabol',
@@ -1431,8 +1440,9 @@
                             motor: car.motor || 'No especificado',
                             traccion: car.traccion || 'No especificado',
                             combustible: car.combustible || 'Gasolina',
-                            descripcion: car.descripcion || `Este vehículo ha sido inspeccionado y está listo para entrega inmediata. Un auto garantizado The Alabol Way.`,
-                            url_fotos: carImg
+                            descripcion: car.descripcion || '',
+                            url_fotos: carImg,
+                            trustLevel: trustLevel
                         };
                     });
                 }
@@ -1575,6 +1585,15 @@
 
             const likedClass = isLiked(auto.id) ? 'active' : '';
 
+            // Semáforo de confianza
+            const tl = auto.trustLevel || 'red';
+            const trustConfig = {
+                green: { icon: 'fa-shield-halved', text: 'Validado', color: '#10b981', bg: 'rgba(16,185,129,0.15)', border: 'rgba(16,185,129,0.4)' },
+                yellow: { icon: 'fa-clock', text: 'En revisión', color: '#f59e0b', bg: 'rgba(245,158,11,0.15)', border: 'rgba(245,158,11,0.4)' },
+                red: { icon: 'fa-circle-exclamation', text: 'Sin validar', color: '#ef4444', bg: 'rgba(239,68,68,0.15)', border: 'rgba(239,68,68,0.4)' }
+            };
+            const tc = trustConfig[tl];
+
             return `
                 <div class="card" onclick="openCarDetails('${auto.id}')" style="cursor:pointer;">
                     <button class="wishlist-btn ${likedClass}" onclick="event.stopPropagation(); toggleWishlist('${auto.id}', this)">
@@ -1586,6 +1605,9 @@
                             <div class="badge ${badgeClass}">
                                 <i class="fa-solid ${badgeIcon}"></i> ${badgeText}
                             </div>
+                        </div>
+                        <div style="position:absolute;bottom:8px;left:8px;display:inline-flex;align-items:center;gap:5px;background:${tc.bg};border:1px solid ${tc.border};color:${tc.color};padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;backdrop-filter:blur(8px);">
+                            <i class="fa-solid ${tc.icon}"></i> ${tc.text}
                         </div>
                     </div>
                     
@@ -1797,14 +1819,9 @@
                 carPhotos = ["https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&w=1200"];
             }
 
-            // Live Activity Social Proof
+            // Live Activity (disabled — only show real data)
             const liveActivity = document.getElementById('liveActivity');
-            const liveActivityText = document.getElementById('liveActivityText');
-            if (liveActivity && liveActivityText) {
-                const randomWatchers = Math.floor(Math.random() * 5) + 2;
-                liveActivityText.textContent = `${randomWatchers} personas están viendo este auto ahora`;
-                liveActivity.style.display = 'flex';
-            }
+            if (liveActivity) liveActivity.style.display = 'none';
 
             // Fill UI
             document.getElementById('modalTitle').textContent = auto.vehicle;

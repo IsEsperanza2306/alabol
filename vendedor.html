@@ -3,96 +3,230 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Alabol - Portal Vendedor</title>
+<title>Portal Vendedor | Alabol Car Broker</title>
+<meta name="description" content="Publica tu auto y conecta con compradores verificados. El Tinder de los Autos — tu match está esperando.">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{min-height:100%;font-family:-apple-system,'Segoe UI',sans-serif;background:#070f16;color:#c8dae4}
-body{padding-bottom:80px}
-button,input,select,textarea{font-family:inherit;outline:none}
-.dn{display:none!important}
-.hdr{position:sticky;top:0;z-index:9;background:#0a1520;border-bottom:1px solid #1a3040;padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
-.lring{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#1a7a40,#f0c040);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:#0a1520;flex-shrink:0}
-.lname{font-size:15px;font-weight:700;color:#e0ecf4}
-.lsub{font-size:10px;color:#3a5a6a;text-transform:uppercase;letter-spacing:.06em}
-.hright{display:flex;align-items:center;gap:10px}
-.uav{width:30px;height:30px;border-radius:50%;background:#1e3040;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#f0c040;overflow:hidden;flex-shrink:0}
-.uav img{width:100%;height:100%;object-fit:cover}
-.uname{font-size:12px;color:#8aaab8;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.bout{padding:6px 12px;border-radius:8px;border:1px solid #1e3040;background:transparent;color:#4a6a7a;font-size:12px;cursor:pointer}
-.bout:hover{border-color:#f0c040;color:#f0c040}
-#spin{display:flex;align-items:center;justify-content:center;min-height:100vh}
-.sp{width:34px;height:34px;border:3px solid #1e3040;border-top-color:#f0c040;border-radius:50%;animation:rot .7s linear infinite}
-@keyframes rot{to{transform:rotate(360deg)}}
-#login{display:none;align-items:center;justify-content:center;min-height:100vh;padding:20px;flex-direction:column}
-.lbox{max-width:380px;width:100%;text-align:center}
-.lico{font-size:48px;margin-bottom:14px}
-.lbox h1{font-size:22px;font-weight:700;color:#e0ecf4;margin-bottom:6px}
-.lbox p{color:#4a6a7a;font-size:13px;line-height:1.7;margin-bottom:20px}
-.lcard{background:#0f1e28;border:1px solid #1e3040;border-radius:14px;padding:24px}
-.tabs{display:flex;gap:4px;margin-bottom:16px}
-.tab{flex:1;padding:8px;border-radius:7px;border:none;background:#0a1520;color:#4a6a7a;font-size:13px;font-weight:600;cursor:pointer}
-.tab.on{background:rgba(240,192,64,0.1);color:#f0c040;border:1px solid rgba(240,192,64,0.25)}
-.bgoog{width:100%;padding:12px;border-radius:9px;border:1px solid #2a4050;background:#0a1520;color:#d0e4ec;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px}
-.bgoog:hover{border-color:#f0c040}
-.bgoog svg{width:16px;height:16px;flex-shrink:0}
-.dvdr{display:flex;align-items:center;gap:10px;margin-bottom:12px;color:#2a4050;font-size:11px}
-.dvdr::before,.dvdr::after{content:'';flex:1;height:1px;background:#1a3040}
-.inp{width:100%;padding:11px 13px;border-radius:9px;background:#0a1520;border:1px solid #1e3040;color:#d0e4ec;font-size:13px;margin-bottom:8px;display:block}
-.inp:focus{border-color:#f0c040}
-.bgold{width:100%;padding:12px;border-radius:9px;border:none;background:linear-gradient(135deg,#f0c040,#d4a820);color:#0a1520;font-size:14px;font-weight:800;cursor:pointer}
-.aerr{color:#e07070;font-size:12px;min-height:16px;margin:3px 0 6px}
-#dash{display:none;padding-bottom:60px}
-.hero{padding:18px 18px 0;max-width:620px;margin:0 auto}
-.gsub{font-size:12px;color:#3a5a6a;margin-bottom:3px}
-.gname{font-size:20px;font-weight:700;color:#e0ecf4}
-.strow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
-.stbox{background:#0f1e28;border:1px solid #1e3040;border-radius:11px;padding:12px;text-align:center}
-.stnum{font-size:22px;font-weight:800;color:#f0c040}
-.stlbl{font-size:10px;color:#3a5a6a;margin-top:2px}
-.sechdr{display:flex;align-items:center;justify-content:space-between;max-width:620px;margin:16px auto 8px;padding:0 18px}
-.sectit{font-size:14px;font-weight:700;color:#b0c8d4}
-.bnew{padding:8px 14px;border-radius:9px;border:none;background:linear-gradient(135deg,#f0c040,#d4a820);color:#0a1520;font-size:12px;font-weight:800;cursor:pointer}
-.carlist{max-width:620px;margin:0 auto;padding:0 10px}
-.ccard{background:#0f1e28;border:1px solid #1e3040;border-radius:12px;overflow:hidden;margin-bottom:12px;display:flex}
-.cthumb{width:88px;min-width:88px;height:70px;background:#0a1520;display:flex;align-items:center;justify-content:center;color:#1e3040;font-size:22px;overflow:hidden}
-.cthumb img{width:100%;height:100%;object-fit:cover}
-.cinfo{flex:1;padding:9px 11px;min-width:0}
-.cname{font-size:13px;font-weight:700;color:#d8eaf0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cmeta{font-size:11px;color:#3a5a6a;margin-top:2px}
-.cprice{font-size:14px;font-weight:800;color:#f0c040;margin-top:2px}
-.cpill{display:inline-block;padding:1px 7px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;margin-top:2px}
-.pd{background:#1a4a2a;color:#6ae0a0}
-.pv{background:#1a3a6a;color:#60a0f0}
-.pr{background:#4a3a10;color:#f0c040}
-.cacts{display:flex;flex-direction:column;justify-content:center;gap:5px;padding:6px 8px}
-.bedit{padding:5px 9px;border-radius:7px;border:1px solid #1e3040;background:transparent;color:#7aaab8;font-size:11px;cursor:pointer}
-.bedit:hover{border-color:#f0c040;color:#f0c040}
-.bdel{padding:5px 9px;border-radius:7px;border:1px solid #1e3040;background:transparent;color:#7a4a4a;font-size:11px;cursor:pointer}
-.bdel:hover{border-color:#e07070;color:#e07070}
-.empty{text-align:center;padding:40px 20px;color:#2a4050}
-.mbg{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;display:none;align-items:flex-end;justify-content:center}
-.mbg.open{display:flex}
-.mbg.ctr{align-items:center}
-.modal{background:#0f1e28;border:1px solid #1e3040;border-radius:18px 18px 0 0;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;padding:20px 16px 36px}
-.modal.ctr{border-radius:14px}
-.mhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.mtit{font-size:16px;font-weight:700;color:#e0ecf4}
-.bx{background:none;border:none;color:#4a6a7a;font-size:22px;cursor:pointer;line-height:1}
-.ff{margin-bottom:10px}
-.ff label{display:block;font-size:10px;font-weight:600;color:#6a8a9a;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
-.fi{width:100%;padding:10px 12px;border-radius:8px;background:#0a1520;border:1px solid #1e3040;color:#d0e4ec;font-size:13px}
-.fi:focus{border-color:#f0c040}
-textarea.fi{resize:vertical;min-height:60px}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.ferr{color:#e07070;font-size:12px;min-height:14px;margin-bottom:6px}
-.bsub{width:100%;padding:12px;border-radius:9px;border:none;background:linear-gradient(135deg,#f0c040,#d4a820);color:#0a1520;font-size:14px;font-weight:800;cursor:pointer;margin-top:4px}
-.bsub:disabled{background:#1e3040;color:#2a4050;cursor:default}
-.cbox{max-width:300px;width:calc(100% - 32px)}
-.cmsg{font-size:13px;color:#8aaab8;margin-bottom:16px;line-height:1.6}
-.cbts{display:flex;gap:8px}
-.bcan{flex:1;padding:10px;border-radius:9px;border:1px solid #1e3040;background:transparent;color:#4a6a7a;font-size:13px;cursor:pointer}
-.bdanger{flex:1;padding:10px;border-radius:9px;border:none;background:#7a1a1a;color:#f07070;font-size:13px;font-weight:700;cursor:pointer}
-@media(min-width:500px){.mbg{align-items:center}.modal{border-radius:14px}}
+:root {
+  --bg-primary: #0a1f1a;
+  --bg-secondary: #0d2921;
+  --bg-card: rgba(13, 38, 28, 0.6);
+  --gold: #d4af37;
+  --gold-light: #f4e5b0;
+  --gold-dim: rgba(212, 175, 55, 0.25);
+  --gold-glow: rgba(212, 175, 55, 0.15);
+  --emerald: #34d399;
+  --green-text: #a8c5b8;
+  --green-muted: rgba(148, 184, 167, 0.5);
+  --glass-bg: rgba(13, 38, 28, 0.65);
+  --glass-border: rgba(212, 175, 55, 0.18);
+  --danger: #ef4444;
+  --success: #10b981;
+  --warning: #f59e0b;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100%; font-family: 'Poppins', sans-serif; background: var(--bg-primary); color: var(--green-text); }
+body { padding-bottom: 80px; }
+body::before {
+  content: ''; position: fixed; inset: 0; z-index: -1;
+  background: radial-gradient(ellipse at 20% 50%, rgba(212,175,55,0.06) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 20%, rgba(52,211,153,0.04) 0%, transparent 50%),
+              linear-gradient(135deg, #0a1f1a 0%, #0d2921 50%, #0a1f1a 100%);
+}
+button, input, select, textarea { font-family: inherit; outline: none; }
+.dn { display: none !important; }
+
+/* ── HEADER ── */
+.hdr {
+  position: sticky; top: 0; z-index: 9;
+  background: rgba(10, 31, 26, 0.92);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 12px 20px; display: flex; align-items: center; justify-content: space-between;
+}
+.lring {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; font-size: 16px; color: var(--bg-primary); flex-shrink: 0;
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+}
+.lname { font-size: 16px; font-weight: 800; color: var(--gold); text-shadow: 0 0 12px rgba(212,175,55,0.3); }
+.lsub { font-size: 10px; color: var(--green-text); text-transform: uppercase; letter-spacing: .08em; opacity: 0.6; }
+.hright { display: flex; align-items: center; gap: 10px; }
+.uav {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--bg-secondary); border: 1px solid var(--glass-border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: var(--gold); overflow: hidden; flex-shrink: 0;
+}
+.uav img { width: 100%; height: 100%; object-fit: cover; }
+.uname { font-size: 12px; color: var(--green-text); max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bout {
+  padding: 6px 14px; border-radius: 20px;
+  border: 1px solid var(--glass-border); background: transparent;
+  color: var(--green-text); font-size: 12px; font-weight: 500; cursor: pointer;
+  transition: all 0.25s;
+}
+.bout:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ── SPINNER ── */
+#spin { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+.sp { width: 36px; height: 36px; border: 3px solid var(--glass-border); border-top-color: var(--gold); border-radius: 50%; animation: rot .7s linear infinite; }
+@keyframes rot { to { transform: rotate(360deg); } }
+
+/* ── LOGIN ── */
+#login { display: none; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; flex-direction: column; }
+.lbox { max-width: 420px; width: 100%; text-align: center; }
+.lico { font-size: 56px; margin-bottom: 16px; filter: drop-shadow(0 0 20px rgba(212,175,55,0.3)); }
+.lbox h1 { font-size: 26px; font-weight: 800; color: var(--gold); margin-bottom: 6px; text-shadow: 0 0 15px rgba(212,175,55,0.3); }
+.lbox p { color: var(--green-text); font-size: 14px; line-height: 1.7; margin-bottom: 24px; opacity: 0.8; }
+.lcard {
+  background: var(--glass-bg); border: 1px solid var(--glass-border);
+  border-radius: 20px; padding: 28px;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.tabs { display: flex; gap: 4px; margin-bottom: 18px; }
+.tab {
+  flex: 1; padding: 10px; border-radius: 12px; border: 1px solid transparent;
+  background: rgba(10,31,26,0.5); color: var(--green-text); font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: all 0.25s;
+}
+.tab.on { background: var(--gold-glow); color: var(--gold); border-color: var(--gold-dim); }
+.bgoog {
+  width: 100%; padding: 14px; border-radius: 12px;
+  border: 1px solid var(--glass-border); background: rgba(255,255,255,0.03);
+  color: white; font-size: 14px; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  margin-bottom: 16px; transition: all 0.25s;
+}
+.bgoog:hover { border-color: var(--gold); background: rgba(255,255,255,0.06); }
+.bgoog svg { width: 18px; height: 18px; flex-shrink: 0; }
+.dvdr { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; color: var(--green-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+.dvdr::before, .dvdr::after { content: ''; flex: 1; height: 1px; background: var(--glass-border); }
+.inp {
+  width: 100%; padding: 12px 14px; border-radius: 12px;
+  background: rgba(10,31,26,0.5); border: 1px solid var(--glass-border);
+  color: white; font-size: 13px; margin-bottom: 10px; display: block;
+  transition: all 0.25s;
+}
+.inp:focus { border-color: var(--gold); box-shadow: 0 0 12px rgba(212,175,55,0.15); }
+.inp::placeholder { color: var(--green-muted); }
+.bgold {
+  width: 100%; padding: 14px; border-radius: 12px; border: none;
+  background: linear-gradient(135deg, var(--gold), #c9a961);
+  color: var(--bg-primary); font-size: 14px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 4px 15px rgba(212,175,55,0.35);
+  transition: all 0.25s;
+}
+.bgold:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212,175,55,0.5); }
+.aerr { color: #fca5a5; font-size: 12px; min-height: 16px; margin: 4px 0 8px; }
+
+/* ── DASHBOARD ── */
+#dash { display: none; padding-bottom: 60px; }
+.hero { padding: 24px 18px 0; max-width: 620px; margin: 0 auto; }
+.gsub { font-size: 12px; color: var(--green-text); opacity: 0.6; text-transform: uppercase; letter-spacing: 0.08em; }
+.gname { font-size: 22px; font-weight: 800; color: white; }
+.gname span { color: var(--gold); }
+.strow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 16px 0; }
+.stbox {
+  background: var(--glass-bg); border: 1px solid var(--glass-border);
+  border-radius: 14px; padding: 14px; text-align: center;
+  backdrop-filter: blur(8px);
+}
+.stnum { font-size: 24px; font-weight: 800; color: var(--gold); text-shadow: 0 0 10px rgba(212,175,55,0.3); }
+.stlbl { font-size: 10px; color: var(--green-text); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.7; }
+
+.sechdr { display: flex; align-items: center; justify-content: space-between; max-width: 620px; margin: 20px auto 10px; padding: 0 18px; }
+.sectit { font-size: 15px; font-weight: 700; color: white; }
+.bnew {
+  padding: 10px 18px; border-radius: 20px; border: none;
+  background: linear-gradient(135deg, var(--gold), #c9a961);
+  color: var(--bg-primary); font-size: 12px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(212,175,55,0.35);
+  transition: all 0.25s;
+}
+.bnew:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(212,175,55,0.5); }
+
+.carlist { max-width: 620px; margin: 0 auto; padding: 0 12px; }
+.ccard {
+  background: var(--glass-bg); border: 1px solid var(--glass-border);
+  border-radius: 14px; overflow: hidden; margin-bottom: 12px; display: flex;
+  backdrop-filter: blur(8px); transition: all 0.25s;
+}
+.ccard:hover { border-color: var(--gold-dim); }
+.cthumb {
+  width: 90px; min-width: 90px; height: 72px;
+  background: var(--bg-secondary); display: flex; align-items: center; justify-content: center;
+  color: var(--glass-border); font-size: 24px; overflow: hidden;
+}
+.cthumb img { width: 100%; height: 100%; object-fit: cover; }
+.cinfo { flex: 1; padding: 10px 12px; min-width: 0; }
+.cname { font-size: 13px; font-weight: 700; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cmeta { font-size: 11px; color: var(--green-text); margin-top: 2px; opacity: 0.7; }
+.cprice { font-size: 15px; font-weight: 800; color: var(--gold); margin-top: 2px; }
+.cpill { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; margin-top: 3px; }
+.pd { background: rgba(16,185,129,0.15); color: var(--emerald); border: 1px solid rgba(16,185,129,0.3); }
+.pv { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+.pr { background: rgba(212,175,55,0.15); color: var(--gold); border: 1px solid var(--gold-dim); }
+.cacts { display: flex; flex-direction: column; justify-content: center; gap: 5px; padding: 8px 10px; }
+.bedit {
+  padding: 6px 10px; border-radius: 8px; border: 1px solid var(--glass-border);
+  background: transparent; color: var(--green-text); font-size: 11px; cursor: pointer; transition: all 0.2s;
+}
+.bedit:hover { border-color: var(--gold); color: var(--gold); }
+.bdel {
+  padding: 6px 10px; border-radius: 8px; border: 1px solid rgba(239,68,68,0.2);
+  background: transparent; color: rgba(239,68,68,0.6); font-size: 11px; cursor: pointer; transition: all 0.2s;
+}
+.bdel:hover { border-color: var(--danger); color: var(--danger); }
+.empty { text-align: center; padding: 50px 20px; color: var(--green-text); opacity: 0.5; }
+
+/* ── MODALES ── */
+.mbg { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(4px); }
+.mbg.open { display: flex; }
+.mbg.ctr { align-items: center; }
+.modal {
+  background: var(--bg-secondary); border: 1px solid var(--glass-border);
+  border-radius: 20px 20px 0 0; width: 100%; max-width: 480px; max-height: 90vh;
+  overflow-y: auto; padding: 24px 20px 36px;
+}
+.modal.ctr { border-radius: 16px; }
+.mhdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.mtit { font-size: 17px; font-weight: 700; color: var(--gold); }
+.bx { background: none; border: none; color: var(--green-text); font-size: 24px; cursor: pointer; line-height: 1; transition: color 0.2s; }
+.bx:hover { color: var(--gold); }
+.ff { margin-bottom: 12px; }
+.ff label { display: block; font-size: 10px; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 5px; opacity: 0.8; }
+.fi {
+  width: 100%; padding: 11px 13px; border-radius: 10px;
+  background: rgba(10,31,26,0.5); border: 1px solid var(--glass-border);
+  color: white; font-size: 13px; transition: all 0.25s;
+}
+.fi:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(212,175,55,0.12); }
+textarea.fi { resize: vertical; min-height: 60px; }
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ferr { color: #fca5a5; font-size: 12px; min-height: 14px; margin-bottom: 8px; }
+.bsub {
+  width: 100%; padding: 14px; border-radius: 12px; border: none;
+  background: linear-gradient(135deg, var(--gold), #c9a961);
+  color: var(--bg-primary); font-size: 14px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 4px 15px rgba(212,175,55,0.35);
+  transition: all 0.25s; margin-top: 4px;
+}
+.bsub:hover { transform: translateY(-1px); }
+.bsub:disabled { background: var(--bg-secondary); color: var(--green-muted); cursor: default; box-shadow: none; transform: none; }
+.cbox { max-width: 320px; width: calc(100% - 32px); }
+.cmsg { font-size: 13px; color: var(--green-text); margin-bottom: 18px; line-height: 1.6; }
+.cbts { display: flex; gap: 8px; }
+.bcan { flex: 1; padding: 11px; border-radius: 10px; border: 1px solid var(--glass-border); background: transparent; color: var(--green-text); font-size: 13px; cursor: pointer; transition: all 0.2s; }
+.bcan:hover { border-color: var(--gold); color: var(--gold); }
+.bdanger { flex: 1; padding: 11px; border-radius: 10px; border: none; background: rgba(239,68,68,0.15); color: var(--danger); font-size: 13px; font-weight: 700; cursor: pointer; border: 1px solid rgba(239,68,68,0.3); transition: all 0.2s; }
+.bdanger:hover { background: rgba(239,68,68,0.25); }
+
+@media (min-width: 500px) { .mbg { align-items: center; } .modal { border-radius: 16px; } }
 </style>
 </head>
 <body>
@@ -100,13 +234,13 @@ textarea.fi{resize:vertical;min-height:60px}
 <!-- ── HEADER ── -->
 <div class="hdr dn" id="hdr">
   <div style="display:flex;align-items:center;gap:10px">
-    <div class="lring">A</div>
-    <div><div class="lname">Alabol</div><div class="lsub">Portal vendedor</div></div>
+    <a href="index.html"><img src="logo-circular.png" alt="Alabol" style="width:38px;height:38px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(212,175,55,0.5));"></a>
+    <div><div class="lname">Alabol</div><div class="lsub">Portal Vendedor</div></div>
   </div>
   <div class="hright">
     <div class="uav" id="uav"></div>
     <span class="uname" id="uname"></span>
-    <button class="bout" onclick="signOut()">Salir</button>
+    <button class="bout" onclick="signOut()"><i class="fa-solid fa-right-from-bracket" style="margin-right:4px;"></i>Salir</button>
   </div>
 </div>
 
@@ -116,13 +250,13 @@ textarea.fi{resize:vertical;min-height:60px}
 <!-- ── LOGIN ── -->
 <div id="login">
   <div class="lbox">
-    <div class="lico">&#128663;</div>
-    <h1>Vende tu auto</h1>
-    <p>Publica y gestiona tus veh&iacute;culos en Alabol.</p>
+    <div style="margin-bottom:20px;"><img src="logo-circular.png" alt="Alabol" style="width:72px;height:72px;object-fit:contain;filter:drop-shadow(0 0 15px rgba(212,175,55,0.4));"></div>
+    <h1>Tu Garage VIP</h1>
+    <p>Publica tus autos y haz match con compradores verificados.<br>El Tinder de los Autos — donde tu auto encuentra su media naranja.</p>
     <div class="lcard">
       <div class="tabs">
         <button class="tab on" id="tl" onclick="setTab(0)">Entrar</button>
-        <button class="tab" id="tr" onclick="setTab(1)">Registrarme</button>
+        <button class="tab" id="tr" onclick="setTab(1)">Crear Perfil</button>
       </div>
       <button class="bgoog" onclick="goGoogle()">
         <svg viewBox="0 0 24 24"><path fill="#EA4335" d="M5.27 9.77A7.2 7.2 0 0 1 12 4.8c1.73 0 3.29.63 4.51 1.65l3.37-3.37A12 12 0 0 0 0 12c0 1.99.49 3.86 1.35 5.52l3.92-3.04a7.2 7.2 0 0 1 0-4.71z"/><path fill="#FBBC05" d="M12 24c3.24 0 5.95-1.08 7.94-2.91l-3.66-2.84A7.17 7.17 0 0 1 12 19.2a7.2 7.2 0 0 1-6.82-4.91L1.35 17.51A12 12 0 0 0 12 24z"/><path fill="#4285F4" d="M23.76 12.27c0-.85-.07-1.67-.2-2.47H12v4.67h6.6a5.64 5.64 0 0 1-2.45 3.71l3.66 2.84c2.14-1.97 3.95-5.15 3.95-8.75z"/><path fill="#34A853" d="M5.18 14.3A7.2 7.2 0 0 1 4.8 12c0-.81.14-1.59.38-2.33L1.26 6.63A12 12 0 0 0 0 12c0 1.93.46 3.75 1.27 5.37l3.91-3.07z"/></svg>
@@ -131,16 +265,16 @@ textarea.fi{resize:vertical;min-height:60px}
       <div class="dvdr">o con email</div>
       <div id="fl">
         <input class="inp" id="le" type="email" placeholder="tu@email.com">
-        <input class="inp" id="lp" type="password" placeholder="Contrase&ntilde;a">
+        <input class="inp" id="lp" type="password" placeholder="Contraseña">
         <div class="aerr" id="lerr"></div>
-        <button class="bgold" onclick="doLogin()">Entrar</button>
+        <button class="bgold" onclick="doLogin()">Entrar al Garage</button>
       </div>
       <div id="fr" class="dn">
         <input class="inp" id="rn" placeholder="Tu nombre">
         <input class="inp" id="re" type="email" placeholder="tu@email.com">
-        <input class="inp" id="rp" type="password" placeholder="Contrase&ntilde;a (m&iacute;n 6)">
+        <input class="inp" id="rp" type="password" placeholder="Contraseña (mín 6)">
         <div class="aerr" id="rerr"></div>
-        <button class="bgold" onclick="doReg()">Crear cuenta</button>
+        <button class="bgold" onclick="doReg()">Crear mi Perfil</button>
       </div>
     </div>
   </div>
@@ -149,7 +283,7 @@ textarea.fi{resize:vertical;min-height:60px}
 <!-- ── DASHBOARD ── -->
 <div id="dash">
   <div class="hero">
-    <div class="gsub">Bienvenido,</div>
+    <div class="gsub">Bienvenido a tu Garage,</div>
     <div class="gname" id="gn">...</div>
     <div class="strow">
       <div class="stbox"><div class="stnum" id="s0">-</div><div class="stlbl">Publicados</div></div>
@@ -158,8 +292,8 @@ textarea.fi{resize:vertical;min-height:60px}
     </div>
   </div>
   <div class="sechdr">
-    <div class="sectit">Mis veh&iacute;culos</div>
-    <button class="bnew" onclick="openForm(null)">+ Publicar</button>
+    <div class="sectit">🚗 Mis Vehículos</div>
+    <button class="bnew" onclick="openForm(null)"><i class="fa-solid fa-plus" style="margin-right:4px;"></i>Publicar Auto</button>
   </div>
   <div class="carlist" id="cl"></div>
 </div>
@@ -167,56 +301,56 @@ textarea.fi{resize:vertical;min-height:60px}
 <!-- ── MODAL FORMULARIO ── -->
 <div class="mbg" id="mF">
   <div class="modal">
-    <div class="mhdr"><div class="mtit" id="ftit">Publicar auto</div><button class="bx" onclick="closeForm()">&times;</button></div>
+    <div class="mhdr"><div class="mtit" id="ftit">💘 Publicar Auto</div><button class="bx" onclick="closeForm()">&times;</button></div>
     <div class="g2">
       <div class="ff"><label>Marca *</label><input class="fi" id="fm" placeholder="Toyota"></div>
       <div class="ff"><label>Modelo *</label><input class="fi" id="fmo" placeholder="Corolla"></div>
     </div>
     <div class="g2">
-      <div class="ff"><label>A&ntilde;o *</label><input class="fi" id="fa" type="number" placeholder="2020"></div>
+      <div class="ff"><label>Año *</label><input class="fi" id="fa" type="number" placeholder="2020"></div>
       <div class="ff"><label>Precio MXN *</label><input class="fi" id="fp" type="number" placeholder="180000"></div>
     </div>
     <div class="g2">
-      <div class="ff"><label>Kil&oacute;metros</label><input class="fi" id="fk" type="number" placeholder="60000"></div>
-      <div class="ff"><label>Ciudad</label><input class="fi" id="fci" placeholder="Canc&uacute;n"></div>
+      <div class="ff"><label>Kilómetros</label><input class="fi" id="fk" type="number" placeholder="60000"></div>
+      <div class="ff"><label>Ciudad</label><input class="fi" id="fci" placeholder="CDMX"></div>
     </div>
     <div class="g2">
-      <div class="ff"><label>Tipo</label><select class="fi" id="fti"><option value="sedan">Sedan</option><option value="suv">SUV</option><option value="pickup">Pickup</option><option value="hatchback">Hatchback</option><option value="coupe">Coup&eacute;</option><option value="van">Van</option><option value="otro">Otro</option></select></div>
-      <div class="ff"><label>Transmisi&oacute;n</label><select class="fi" id="ftr"><option value="Automatico">Autom&aacute;tico</option><option value="Manual">Manual</option></select></div>
+      <div class="ff"><label>Tipo</label><select class="fi" id="fti"><option value="sedan">Sedán</option><option value="suv">SUV</option><option value="pickup">Pickup</option><option value="hatchback">Hatchback</option><option value="coupe">Coupé</option><option value="van">Van</option><option value="otro">Otro</option></select></div>
+      <div class="ff"><label>Transmisión</label><select class="fi" id="ftr"><option value="Automatico">Automático</option><option value="Manual">Manual</option></select></div>
     </div>
     <div class="g2">
       <div class="ff"><label>Color</label><input class="fi" id="fcol" placeholder="Blanco"></div>
-      <div class="ff"><label>Combustible</label><select class="fi" id="fco"><option value="gasolina">Gasolina</option><option value="diesel">Di&eacute;sel</option><option value="hibrido">H&iacute;brido</option><option value="electrico">El&eacute;ctrico</option></select></div>
+      <div class="ff"><label>Combustible</label><select class="fi" id="fco"><option value="gasolina">Gasolina</option><option value="diesel">Diésel</option><option value="hibrido">Híbrido</option><option value="electrico">Eléctrico</option></select></div>
     </div>
-    <div class="ff"><label>Descripci&oacute;n</label><textarea class="fi" id="fd" placeholder="Estado del auto, extras..."></textarea></div>
-    <div class="ff"><label>Estado del anuncio</label><select class="fi" id="fst"><option value="disponible">Disponible</option><option value="reservado">Reservado</option><option value="vendido">Vendido</option></select></div>
+    <div class="ff"><label>Descripción</label><textarea class="fi" id="fd" placeholder="Cuéntanos sobre tu auto... estado, extras, historial de servicio"></textarea></div>
+    <div class="ff"><label>Estado del anuncio</label><select class="fi" id="fst"><option value="disponible">💚 Disponible</option><option value="reservado">💛 Reservado</option><option value="vendido">💙 Vendido</option></select></div>
     <div class="ferr" id="ferr"></div>
-    <button class="bsub" id="bsub" onclick="submitForm()">Publicar</button>
+    <button class="bsub" id="bsub" onclick="submitForm()">Publicar Auto</button>
   </div>
 </div>
 
 <!-- ── MODAL CONFIRMAR ELIMINAR ── -->
 <div class="mbg ctr" id="mC">
   <div class="modal ctr cbox">
-    <div class="mhdr"><div class="mtit">Eliminar auto</div><button class="bx" onclick="closeConfirm()">&times;</button></div>
-    <div class="cmsg">&iquest;Eliminar este veh&iacute;culo? Esta acci&oacute;n no se puede deshacer.</div>
+    <div class="mhdr"><div class="mtit">Eliminar Auto</div><button class="bx" onclick="closeConfirm()">&times;</button></div>
+    <div class="cmsg">¿Eliminar este vehículo de tu garage? Esta acción no se puede deshacer.</div>
     <div class="cbts">
       <button class="bcan" onclick="closeConfirm()">Cancelar</button>
-      <button class="bdanger" id="bdd" onclick="doDelete()">S&iacute;, eliminar</button>
+      <button class="bdanger" id="bdd" onclick="doDelete()">Sí, eliminar</button>
     </div>
   </div>
 </div>
 
 <script>
-// ── CONFIGURACIÓN ──────────────────────────────────────────────────
+// ── CONFIGURACIÓN ──
 var S = 'https://rgnunjngtsgqgvplawfr.supabase.co';
-var K = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA5OTg3MzgsImV4cCI6MjA1NjU3NDczOH0.KNoxBmsFX-_5y-XPIy9dC5Rn5yMoFqAIDPDuvn8CYt0';
+var K = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8';
 
 var tok = null, uid = null, cars = [], eid = null, did = null;
 
 function g(id) { return document.getElementById(id); }
 
-// ── PANTALLAS ──────────────────────────────────────────────────────
+// ── PANTALLAS ──
 function show(s) {
   g('spin').style.display = 'none';
   g('login').style.display = 'none';
@@ -231,10 +365,9 @@ function ah(t) {
   return { 'Content-Type': 'application/json', 'apikey': K, 'Authorization': 'Bearer ' + (t || K) };
 }
 
-// ── ARRANQUE ───────────────────────────────────────────────────────
+// ── ARRANQUE ──
 function boot() {
   show('spin');
-  // OAuth callback — el hash contiene el token de Google
   var h = location.hash;
   if (h && h.indexOf('access_token') >= 0) {
     var p = new URLSearchParams(h.replace(/^#/, ''));
@@ -261,7 +394,7 @@ function boot() {
     .catch(function() { tok = null; show('login'); });
 }
 
-// ── AUTH ───────────────────────────────────────────────────────────
+// ── AUTH ──
 function goGoogle() {
   var me = location.href.split('#')[0].split('?')[0];
   location.href = S + '/auth/v1/authorize?provider=google&redirect_to=' + encodeURIComponent(me);
@@ -277,26 +410,26 @@ function doLogin() {
     .then(function(r) { return r.json(); })
     .then(function(d) {
       if (d.access_token) { tok = d.access_token; boot(); }
-      else g('lerr').textContent = 'Email o contrase\u00f1a incorrectos.';
+      else g('lerr').textContent = 'Email o contraseña incorrectos.';
     })
-    .catch(function() { g('lerr').textContent = 'Error de conexi\u00f3n.'; });
+    .catch(function() { g('lerr').textContent = 'Error de conexión.'; });
 }
 
 function doReg() {
   var n = g('rn').value.trim(), e = g('re').value.trim(), p = g('rp').value;
   g('rerr').textContent = '';
   if (!n || !e || !p) { g('rerr').textContent = 'Completa todos los campos.'; return; }
-  if (p.length < 6) { g('rerr').textContent = 'M\u00ednimo 6 caracteres.'; return; }
+  if (p.length < 6) { g('rerr').textContent = 'Mínimo 6 caracteres.'; return; }
   fetch(S + '/auth/v1/signup', {
     method: 'POST', headers: ah(),
     body: JSON.stringify({ email: e, password: p, data: { full_name: n } })
   })
     .then(function(r) { return r.json(); })
     .then(function(d) {
-      if (d.id || d.access_token) { g('rerr').style.color = '#6ae0a0'; g('rerr').textContent = '\u00a1Revisa tu email para confirmar!'; }
+      if (d.id || d.access_token) { g('rerr').style.color = '#34d399'; g('rerr').textContent = '¡Revisa tu email para confirmar tu cuenta!'; }
       else g('rerr').textContent = d.msg || d.error_description || 'Error al registrar.';
     })
-    .catch(function() { g('rerr').textContent = 'Error de conexi\u00f3n.'; });
+    .catch(function() { g('rerr').textContent = 'Error de conexión.'; });
 }
 
 function signOut() {
@@ -312,7 +445,7 @@ function setTab(n) {
   g('tr').classList.toggle('on', n === 1);
 }
 
-// ── AUTOS ──────────────────────────────────────────────────────────
+// ── AUTOS ──
 function fmt(n) {
   try { return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 }).format(n || 0); }
   catch(e) { return '$' + (n || 0); }
@@ -332,30 +465,30 @@ function render() {
   var m = cars.reduce(function(s, a) { return s + (a.total_matches || 0); }, 0);
   g('s0').textContent = t; g('s1').textContent = d; g('s2').textContent = m;
   if (!t) {
-    g('cl').innerHTML = '<div class="empty"><div style="font-size:32px;margin-bottom:8px">&#128663;</div><div>A\u00fan no tienes autos publicados.</div></div>';
+    g('cl').innerHTML = '<div class="empty"><div style="font-size:40px;margin-bottom:12px;">💘</div><div style="font-size:14px;">Tu garage está vacío.<br>Publica tu primer auto y encuentra su match.</div></div>';
     return;
   }
   g('cl').innerHTML = cars.map(function(a) {
-    var f = (a.fotos && a.fotos.length) ? '<img src="' + a.fotos[0] + '" alt="">' : '&#128663;';
+    var f = (a.fotos && a.fotos.length) ? '<img src="' + a.fotos[0] + '" alt="">' : '🚗';
     var pc = a.estatus === 'disponible' ? 'pd' : a.estatus === 'vendido' ? 'pv' : 'pr';
     var pl = a.estatus === 'disponible' ? 'Disponible' : a.estatus === 'vendido' ? 'Vendido' : 'Reservado';
     return '<div class="ccard">'
       + '<div class="cthumb">' + f + '</div>'
       + '<div class="cinfo">'
         + '<div class="cname">' + a.marca + ' ' + a.modelo + ' ' + a.anio + '</div>'
-        + '<div class="cmeta">' + new Intl.NumberFormat('es-MX').format(a.kilometraje || 0) + ' km &middot; ' + (a.ciudad || '') + '</div>'
+        + '<div class="cmeta">' + new Intl.NumberFormat('es-MX').format(a.kilometraje || 0) + ' km · ' + (a.ciudad || '') + '</div>'
         + '<div class="cprice">' + fmt(a.precio_venta) + '</div>'
         + '<span class="cpill ' + pc + '">' + pl + '</span>'
       + '</div>'
       + '<div class="cacts">'
-        + '<button class="bedit" onclick="openForm(\'' + a.id + '\')">&#9998;</button>'
-        + '<button class="bdel" onclick="openDel(\'' + a.id + '\')">&times;</button>'
+        + '<button class="bedit" onclick="openForm(\'' + a.id + '\')"><i class="fa-solid fa-pen" style="margin-right:3px;"></i>Editar</button>'
+        + '<button class="bdel" onclick="openDel(\'' + a.id + '\')"><i class="fa-solid fa-trash" style="margin-right:3px;"></i></button>'
       + '</div>'
     + '</div>';
   }).join('');
 }
 
-// ── FORMULARIO ─────────────────────────────────────────────────────
+// ── FORMULARIO ──
 function openForm(id) {
   eid = id;
   g('ferr').textContent = '';
@@ -363,8 +496,8 @@ function openForm(id) {
   if (id) {
     var a = cars.find(function(x) { return x.id === id; });
     if (!a) return;
-    g('ftit').textContent = 'Editar auto';
-    g('bsub').textContent = 'Guardar cambios';
+    g('ftit').textContent = '✏️ Editar Auto';
+    g('bsub').textContent = 'Guardar Cambios';
     g('fm').value = a.marca || ''; g('fmo').value = a.modelo || '';
     g('fa').value = a.anio || ''; g('fp').value = a.precio_venta || '';
     g('fk').value = a.kilometraje || ''; g('fci').value = a.ciudad || '';
@@ -373,8 +506,8 @@ function openForm(id) {
     g('fcol').value = a.color || ''; g('fco').value = a.combustible || 'gasolina';
     g('fd').value = a.descripcion || ''; g('fst').value = a.estatus || 'disponible';
   } else {
-    g('ftit').textContent = 'Publicar auto';
-    g('bsub').textContent = 'Publicar';
+    g('ftit').textContent = '💘 Publicar Auto';
+    g('bsub').textContent = 'Publicar Auto';
     ['fm','fmo','fa','fp','fk','fci','fcol','fd'].forEach(function(i) { g(i).value = ''; });
     g('fti').value = 'sedan'; g('ftr').value = 'Automatico';
     g('fco').value = 'gasolina'; g('fst').value = 'disponible';
@@ -390,7 +523,7 @@ function submitForm() {
   var anio = parseInt(g('fa').value) || 0, precio = parseFloat(g('fp').value) || 0;
   g('ferr').textContent = '';
   if (!marca || !modelo || !anio || !precio) {
-    g('ferr').textContent = 'Marca, modelo, a\u00f1o y precio son obligatorios.';
+    g('ferr').textContent = 'Marca, modelo, año y precio son obligatorios.';
     return;
   }
   g('bsub').disabled = true; g('bsub').textContent = 'Guardando...';
@@ -413,16 +546,16 @@ function submitForm() {
       if (r.ok || r.status === 201 || r.status === 204) { closeForm(); loadCars(); }
       else r.json().then(function(e) {
         g('ferr').textContent = 'Error: ' + (e.message || e.error || r.status);
-        g('bsub').disabled = false; g('bsub').textContent = eid ? 'Guardar cambios' : 'Publicar';
+        g('bsub').disabled = false; g('bsub').textContent = eid ? 'Guardar Cambios' : 'Publicar Auto';
       });
     })
     .catch(function() {
       g('ferr').textContent = 'Error de red.';
-      g('bsub').disabled = false; g('bsub').textContent = eid ? 'Guardar cambios' : 'Publicar';
+      g('bsub').disabled = false; g('bsub').textContent = eid ? 'Guardar Cambios' : 'Publicar Auto';
     });
 }
 
-// ── ELIMINAR ───────────────────────────────────────────────────────
+// ── ELIMINAR ──
 function openDel(id) { did = id; g('mC').classList.add('open'); document.body.style.overflow = 'hidden'; }
 function closeConfirm() { g('mC').classList.remove('open'); document.body.style.overflow = ''; did = null; }
 function doDelete() {
@@ -435,11 +568,11 @@ function doDelete() {
     .catch(function() { closeConfirm(); loadCars(); });
 }
 
-// ── CERRAR MODALES CON CLICK FUERA ────────────────────────────────
+// ── CERRAR MODALES CON CLICK FUERA ──
 g('mF').addEventListener('click', function(e) { if (e.target === e.currentTarget) closeForm(); });
 g('mC').addEventListener('click', function(e) { if (e.target === e.currentTarget) closeConfirm(); });
 
-// ── ARRANCAR ──────────────────────────────────────────────────────
+// ── ARRANCAR ──
 boot();
 </script>
 </body>

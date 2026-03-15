@@ -212,10 +212,16 @@
             <div class="error-msg" id="errorBox">Credenciales incorrectas. Intenta de nuevo.</div>
 
             <button type="button" id="btnGoogle"
-                style="width:100%; padding:14px; background:white; color:#333; border:none; border-radius:12px; font-weight:700; font-size:1rem; cursor:pointer; margin-bottom:15px; display:flex; align-items:center; justify-content:center; gap:10px; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                style="width:100%; padding:14px; background:white; color:#333; border:none; border-radius:12px; font-weight:700; font-size:1rem; cursor:pointer; margin-bottom:10px; display:flex; align-items:center; justify-content:center; gap:10px; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google"
                     style="width:20px;">
                 Continuar con Google
+            </button>
+
+            <button type="button" id="btnFacebook"
+                style="width:100%; padding:14px; background:#1877F2; color:white; border:none; border-radius:12px; font-weight:700; font-size:1rem; cursor:pointer; margin-bottom:15px; display:flex; align-items:center; justify-content:center; gap:10px; transition: 0.3s; box-shadow: 0 4px 15px rgba(24,119,242,0.3);">
+                <i class="fa-brands fa-facebook-f" style="font-size:18px;"></i>
+                Continuar con Facebook
             </button>
 
             <div style="display:flex; align-items:center; margin-bottom:15px; opacity:0.6;">
@@ -318,32 +324,34 @@
         };
 
         // --- 2. SUPABASE INITIALIZATION ---
-        const supabaseUrl = 'https://rgnunjngtsgqgvplawfr.supabase.co';
-        const supabaseKey = 'sb_publishable_G6asVlNL8PHZamCS6r1_lQ_VeV-wsL3';
-        let supabase;
-
-        try {
-            if (window.supabase) {
-                supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-            } else {
-                console.error('Supabase SDK no cargó correctamente.');
-            }
-        } catch (e) {
-            console.error('Error al inicializar Supabase:', e);
-        }
+        const supabase = window.supabaseClient;
+        if (!supabase) console.error('Supabase client no disponible.');
 
         // --- 3. AUTH SUBMISSION ---
         const authForm = document.getElementById('authForm');
         const errorBox = document.getElementById('errorBox');
+        const oauthRedirect = window.location.origin + window.location.pathname.replace('login.html', 'index.html');
 
         document.getElementById('btnGoogle').addEventListener('click', async () => {
             if (!supabase) return;
             try {
                 const { data, error } = await supabase.auth.signInWithOAuth({
                     provider: 'google',
-                    options: {
-                        redirectTo: window.location.origin + window.location.pathname.replace('login.html', 'index.html')
-                    }
+                    options: { redirectTo: oauthRedirect }
+                });
+                if (error) throw error;
+            } catch (err) {
+                errorBox.textContent = err.message;
+                errorBox.style.display = 'block';
+            }
+        });
+
+        document.getElementById('btnFacebook').addEventListener('click', async () => {
+            if (!supabase) return;
+            try {
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'facebook',
+                    options: { redirectTo: oauthRedirect }
                 });
                 if (error) throw error;
             } catch (err) {

@@ -4,6 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="logo-circular.png" type="image/png">
+    <meta property="og:title" content="Alabol Car Broker | El Tinder de los Autos">
+    <meta property="og:description" content="Encuentra tu media naranja con llantas. Compra, vende o invierte en autos verificados.">
+    <meta property="og:image" content="https://alabol.netlify.app/logo-circular.png">
+    <meta property="og:url" content="https://alabol.netlify.app">
+    <meta property="og:type" content="website">
     <title>Matchmaker | Encuentra tu Auto Ideal | Alabol</title>
     <meta name="description"
         content="Encuentra tu match ideal en subastas de USA. Configura tus preferencias y te buscaremos la mejor oportunidad con ahorro del 30-40%.">
@@ -21,14 +27,15 @@
             (bm.facebook.com > Events Manager > Pixels > Create Pixel)
          ========================================================= -->
 
-    <!-- Google Analytics 4 (GA4) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <!-- Google Analytics 4 (GA4) — DESCOMENTAR cuando tengas el Measurement ID
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TU-ID-AQUI"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
-        gtag('config', 'G-XXXXXXXXXX');
+        gtag('config', 'G-TU-ID-AQUI');
     </script>
+    -->
 
     <!-- Meta Pixel (Facebook/Instagram Ads) -->
     <!-- 
@@ -2689,7 +2696,7 @@
 
                 const cardHtml = `
                     <div class="tinder-card ${isTop ? 'active' : ''} ${isNext ? 'next' : ''}" id="tCard-${index}">
-                        <img src="${coverPhoto}" alt="${car.marca} ${car.modelo}" class="t-card-img" onerror="this.src='https://via.placeholder.com/400x250?text=Sin+Foto'">
+                        <img src="${coverPhoto}" alt="${car.marca} ${car.modelo}" class="t-card-img" onerror="this.src='https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&w=400&q=60'">
                         <div class="t-card-info">
                             <div>
                                 <div class="t-card-title">${car.marca} ${car.modelo} <span class="t-card-year">${car.anio}</span></div>

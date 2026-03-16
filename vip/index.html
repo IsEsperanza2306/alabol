@@ -4,6 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../logo-circular.png" type="image/png">
+    <meta property="og:title" content="Alabol Car Broker | El Tinder de los Autos">
+    <meta property="og:description" content="Encuentra tu media naranja con llantas. Compra, vende o invierte en autos verificados.">
+    <meta property="og:image" content="https://alabol.netlify.app/logo-circular.png">
+    <meta property="og:url" content="https://alabol.netlify.app">
+    <meta property="og:type" content="website">
     <title>Lista de Espera VIP | Alabol Car Broker</title>
     <meta name="description"
         content="Encuentra tu match ideal en subastas de USA. Configura tus preferencias y te buscaremos la mejor oportunidad con ahorro del 30-40%.">
@@ -2297,7 +2303,7 @@
         // SUPABASE BACKEND
         // =====================
         const SUPABASE_URL = 'https://rgnunjngtsgqgvplawfr.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_G6asVlNL8PHZamCS6r1_lQ_VeV-wsL3';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // =====================
@@ -2781,7 +2787,7 @@
 
                 const cardHtml = `
                     <div class="tinder-card ${isTop ? 'active' : ''} ${isNext ? 'next' : ''}" id="tCard-${index}">
-                        <img src="${coverPhoto}" alt="${car.marca} ${car.modelo}" class="t-card-img" onerror="this.src='https://via.placeholder.com/400x250?text=Sin+Foto'">
+                        <img src="${coverPhoto}" alt="${car.marca} ${car.modelo}" class="t-card-img" onerror="this.src='https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&w=400&q=60'">
                         <div class="t-card-info">
                             <div>
                                 <div class="t-card-title">${car.marca} ${car.modelo} <span class="t-card-year">${car.anio}</span></div>

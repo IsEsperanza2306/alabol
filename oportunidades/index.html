@@ -673,6 +673,54 @@
                 padding: 5px 10px;
             }
         }
+
+        /* === PSYCHOLOGY-BASED BADGES === */
+        .badge-scarcity {
+            position: absolute; bottom: 10px; left: 10px;
+            padding: 4px 10px; border-radius: 8px;
+            font-size: 10px; font-weight: 700;
+            background: rgba(255, 71, 87, 0.85); color: white;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 71, 87, 0.4);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .car-time-on-market {
+            font-size: 11px; color: rgba(168,197,184,0.5);
+            margin-bottom: 10px;
+        }
+
+        .savings-bar-container { margin-bottom: 14px; }
+        .savings-bar-label { font-size: 12px; color: #ff6b6b; margin-bottom: 6px; font-weight: 500; }
+        .savings-bar-label strong { color: #ff4757; }
+        .savings-bar-track {
+            height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden;
+        }
+        .savings-bar-fill {
+            height: 100%; border-radius: 4px;
+            background: linear-gradient(90deg, #d4af37, #34d399);
+            display: flex; align-items: center; justify-content: flex-end;
+            padding-right: 4px; min-width: 30px;
+            transition: width 0.8s ease;
+        }
+        .savings-bar-pct { font-size: 8px; font-weight: 800; color: var(--bg-dark); }
+
+        .car-verified {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: 10px; font-weight: 700; color: #34d399;
+            background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.2);
+            padding: 3px 10px; border-radius: 6px; margin-bottom: 10px;
+            letter-spacing: 0.5px; text-transform: uppercase;
+        }
+
+        .badge-new {
+            position: absolute; top: 40px; left: 10px;
+            padding: 3px 8px; border-radius: 6px;
+            font-size: 10px; font-weight: 700;
+            background: linear-gradient(135deg, #d4af37, #f4e5b0);
+            color: var(--bg-dark);
+            box-shadow: 0 2px 8px rgba(212,175,55,0.4);
+        }
     </style>
 <style id="alabol-nav-styles">
   :root {
@@ -1092,12 +1140,29 @@
 
             noResults.style.display = 'none';
 
+            // Count models for scarcity badge
+            const modelCount = {};
+            const disponibles_all = OPORTUNIDADES.filter(c => c.disponible);
+            disponibles_all.forEach(c => {
+                modelCount[c.modelo] = (modelCount[c.modelo] || 0) + 1;
+            });
+
             grid.innerHTML = filtered.map((car, i) => {
                 const savings = calcSavings(car.precioMercado, car.precioTotal);
                 const ahorroMXN = car.precioMercado - car.precioTotal;
                 const deadline = formatDeadline(car.fechaLimite);
                 const originLabel = car.origen === 'mexico' ? '🇲🇽 Subasta México' : '🇺🇸 Subasta USA';
                 const originClass = car.origen === 'mexico' ? 'mexico' : 'usa';
+
+                // 1. SCARCITY — unique model badge
+                const isUniqueModel = modelCount[car.modelo] === 1;
+
+                // 2. RECENCY — days on market & "NUEVO" badge
+                const daysOnMarket = 30 - getDaysLeft(car.fechaLimite);
+                const isNew = daysOnMarket <= 5;
+
+                // 6. CTA — urgency-based text
+                const ctaText = deadline.urgent ? '🔥 Preguntar antes de que se vaya' : '💬 Me interesa este auto';
 
                 const msg = encodeURIComponent(
                     `Hola Alabol 👋\n\n` +
@@ -1118,12 +1183,16 @@
                             <div class="badge-origin ${originClass}">${originLabel}</div>
                             <div class="badge-savings">-${savings}%</div>
                             <div class="badge-deadline ${deadline.urgent ? 'urgent' : ''}">${deadline.text}</div>
+                            ${isUniqueModel ? '<div class="badge-scarcity">1 de 1 disponible</div>' : ''}
+                            ${isNew ? '<div class="badge-new">🆕 NUEVO</div>' : ''}
                         </div>
                         <div class="car-info">
                             <div class="car-title">${car.marca} ${car.modelo}</div>
                             <div class="car-year">${car.anio} · ${car.tipo === 'sedan' ? 'Sedán' : car.tipo === 'suv' ? 'SUV' : car.tipo === 'pickup' ? 'Pick-up' : 'Deportivo'}</div>
+                            <div class="car-verified">✓ Verificado por Alabol</div>
                             <div class="car-damage">🔧 ${car.danio}</div>
                             ${car.notas ? `<div class="car-notes">💡 ${car.notas}</div>` : ''}
+                            <div class="car-time-on-market">📅 Publicado hace ${daysOnMarket} días</div>
                             <div class="price-section">
                                 <div class="price-main">
                                     <span class="price-label">Precio Alabol</span>
@@ -1134,9 +1203,18 @@
                                     <span class="price-original">${formatMoney(car.precioMercado)}</span>
                                 </div>
                             </div>
-                            <div class="savings-text">💚 Ahorras ${formatMoney(ahorroMXN)} MXN</div>
+                            <div class="savings-bar-container">
+                                <div class="savings-bar-label">
+                                    <span>⚠️ Pagas de más <strong>${formatMoney(ahorroMXN)}</strong> si compras en agencia</span>
+                                </div>
+                                <div class="savings-bar-track">
+                                    <div class="savings-bar-fill" style="width: ${savings}%">
+                                        <span class="savings-bar-pct">-${savings}%</span>
+                                    </div>
+                                </div>
+                            </div>
                             <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${msg}" class="cta-interest" target="_blank" rel="noopener">
-                                💬 Me interesa este auto
+                                ${ctaText}
                             </a>
                         </div>
                     </div>

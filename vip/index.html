@@ -1758,7 +1758,16 @@
             } catch (e) { console.warn('Lead update failed:', e); }
         }
 
-        // Webhook
+        // Notify owner via Edge Function (sends email with lead details + liked cars)
+        if (savedLeadId) {
+            fetch(`${SUPABASE_URL}/functions/v1/notify-new-lead`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ lead_id: savedLeadId })
+            }).then(r => r.json()).then(r => console.log('Notification:', r)).catch(err => console.warn('Notify failed:', err));
+        }
+
+        // Webhook (Make.com)
         const N8N_WEBHOOK_URL = 'https://hook.us2.make.com/z9xj6uu5nfuj54ko2eepzox336fly4ib';
         fetch(N8N_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(finalPayload) })
             .catch(err => console.warn('Webhook failed:', err));

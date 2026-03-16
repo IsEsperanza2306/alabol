@@ -1238,9 +1238,11 @@ function submitForm() {
     ciudad: g('fci').value.trim() || 'CDMX',
     tipo_vehiculo: g('fti').value, transmision: g('ftr').value,
     color: g('fcol').value.trim(), combustible: g('fco').value,
-    descripcion: (g('fd').value.trim() + (g('fvin').value.trim() ? ' | VIN: ' + g('fvin').value.trim() : '') + (docCount > 0 ? ' | Docs: ' + docCount : '')).trim(),
+    descripcion: g('fd').value.trim(),
     estatus: g('fst').value,
     fotos: uploadedPhotos,
+    vin: g('fvin').value.trim() || null,
+    documentos_count: docCount,
     user_id: uid, agencia_id: 'particular', origen: 'particular',
     updated_at: new Date().toISOString()
   };

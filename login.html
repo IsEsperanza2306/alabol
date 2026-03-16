@@ -373,7 +373,7 @@
             if (!sb) return;
             const { data: { session } } = await sb.auth.getSession();
             if (session) {
-                window.location.href = 'index.html';
+                window.location.href = 'vendedor.html';
                 return;
             }
         })();
@@ -424,7 +424,7 @@
         // --- 3. AUTH SUBMISSION ---
         const authForm = document.getElementById('authForm');
         const errorBox = document.getElementById('errorBox');
-        const oauthRedirect = window.location.origin + '/login.html';
+        const oauthRedirect = window.location.origin + '/vendedor.html';
 
         async function oauthLogin(provider) {
             const sb = getSB();
@@ -495,7 +495,7 @@
                     successContent.querySelector('.subtitle').textContent = 'Revisa tu email para confirmar tu cuenta y activar tu Búnker.';
                 } else {
                     setTimeout(() => {
-                        window.location.href = 'index.html';
+                        window.location.href = 'vendedor.html';
                     }, 2000);
                 }
 

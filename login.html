@@ -368,12 +368,18 @@
 })();
 
         // --- 0. CHECK EXISTING SESSION (OAuth callback) ---
+        // Support ?redirect= param to return users to where they came from
+        function getRedirectTarget() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('redirect') || 'vendedor.html';
+        }
+
         (async function() {
             const sb = getSB();
             if (!sb) return;
             const { data: { session } } = await sb.auth.getSession();
             if (session) {
-                window.location.href = 'vendedor.html';
+                window.location.href = getRedirectTarget();
                 return;
             }
         })();
@@ -424,7 +430,7 @@
         // --- 3. AUTH SUBMISSION ---
         const authForm = document.getElementById('authForm');
         const errorBox = document.getElementById('errorBox');
-        const oauthRedirect = window.location.origin + '/vendedor.html';
+        const oauthRedirect = window.location.origin + '/' + getRedirectTarget();
 
         async function oauthLogin(provider) {
             const sb = getSB();
@@ -495,7 +501,7 @@
                     successContent.querySelector('.subtitle').textContent = 'Revisa tu email para confirmar tu cuenta y activar tu Búnker.';
                 } else {
                     setTimeout(() => {
-                        window.location.href = 'vendedor.html';
+                        window.location.href = getRedirectTarget();
                     }, 2000);
                 }
 

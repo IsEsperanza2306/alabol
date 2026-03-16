@@ -13,15 +13,29 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Auth guard — requiere sesión de Supabase activa
+        // Auth guard — requiere sesión de Supabase + rol admin en perfiles
         (async function() {
             var SU = 'https://rgnunjngtsgqgvplawfr.supabase.co';
             var SK = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8';
             var sb = window.supabase.createClient(SU, SK);
+            window.supabaseClient = sb;
+
             var { data: { session } } = await sb.auth.getSession();
             if (!session) {
-                alert('Acceso restringido — inicia sesión primero.');
-                window.location.href = './login.html';
+                window.location.href = './login.html?redirect=radar-interno.html';
+                return;
+            }
+
+            // Verify admin role
+            var { data: perfil, error } = await sb.from('perfiles')
+                .select('rol')
+                .eq('id', session.user.id)
+                .eq('activo', true)
+                .single();
+
+            if (error || !perfil || perfil.rol !== 'admin') {
+                document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:Poppins,sans-serif;background:#0a1f1a;color:white;text-align:center;padding:40px;"><div><div style="font-size:64px;margin-bottom:20px;">🔒</div><h1 style="color:#d4af37;margin-bottom:10px;">Acceso Restringido</h1><p style="color:#a8c5b8;margin-bottom:20px;">Este portal es exclusivo para administradores de Alabol.</p><a href="./index.html" style="color:#d4af37;text-decoration:underline;">Volver al inicio</a></div></div>';
+                return;
             }
         })();
     </script>

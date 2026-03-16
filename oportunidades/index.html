@@ -423,18 +423,7 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .badge-savings {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 700;
-            background: rgba(212, 175, 55, 0.9);
-            color: var(--bg-dark);
-            box-shadow: 0 2px 12px rgba(212, 175, 55, 0.4);
-        }
+        /* badge-savings removed — no prices shown on auction portal */
 
         .badge-deadline {
             position: absolute;
@@ -488,79 +477,32 @@
             margin-bottom: 10px;
         }
 
-        .car-damage {
-            font-size: 12px;
-            color: var(--green-text);
-            background: rgba(212, 175, 55, 0.06);
-            padding: 6px 10px;
-            border-radius: 8px;
-            border-left: 3px solid var(--gold-dim);
-            margin-bottom: 14px;
-            line-height: 1.4;
+        /* car-damage and car-notes replaced by car-condition and car-location */
+
+        /* Condition & Location */
+        .car-condition {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 12px; color: var(--green-text);
+            background: rgba(212,175,55,0.06); padding: 8px 12px;
+            border-radius: 10px; border-left: 3px solid var(--gold-dim);
+            margin-bottom: 10px; line-height: 1.4;
+        }
+        .condition-icon { font-size: 14px; flex-shrink: 0; }
+        .condition-text { font-weight: 500; }
+
+        .car-location {
+            font-size: 12px; color: rgba(168,197,184,0.6);
+            margin-bottom: 10px; font-weight: 500;
         }
 
-        .car-notes {
-            font-size: 11px;
-            color: rgba(168, 197, 184, 0.6);
-            font-style: italic;
-            margin-bottom: 14px;
+        /* Auction notice — replaces price section */
+        .auction-notice {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.2);
+            border-radius: 10px; padding: 10px 14px; margin-bottom: 14px;
+            font-size: 11px; color: var(--gold-light); font-weight: 500;
         }
-
-        /* Price section */
-        .price-section {
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            margin-bottom: 14px;
-            padding-bottom: 14px;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
-        }
-
-        .price-main {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .price-label {
-            font-size: 10px;
-            color: var(--green-text);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-        }
-
-        .price-value {
-            font-size: 24px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #d4af37, #f4e5b0, #d4af37);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: shimmerText 3s linear infinite;
-        }
-
-        .price-market {
-            text-align: right;
-        }
-
-        .price-market .price-label {
-            color: rgba(168, 197, 184, 0.4);
-        }
-
-        .price-market .price-original {
-            font-size: 16px;
-            color: rgba(168, 197, 184, 0.35);
-            text-decoration: line-through;
-            font-weight: 500;
-        }
-
-        .savings-text {
-            font-size: 13px;
-            color: var(--green-badge);
-            font-weight: 700;
-            margin-bottom: 14px;
-        }
+        .auction-icon { font-size: 16px; flex-shrink: 0; }
 
         /* CTA */
         .cta-interest {
@@ -685,42 +627,7 @@
             animation: pulse 2s ease-in-out infinite;
         }
 
-        .car-time-on-market {
-            font-size: 11px; color: rgba(168,197,184,0.5);
-            margin-bottom: 10px;
-        }
-
-        .savings-bar-container { margin-bottom: 14px; }
-        .savings-bar-label { font-size: 12px; color: #ff6b6b; margin-bottom: 6px; font-weight: 500; }
-        .savings-bar-label strong { color: #ff4757; }
-        .savings-bar-track {
-            height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden;
-        }
-        .savings-bar-fill {
-            height: 100%; border-radius: 4px;
-            background: linear-gradient(90deg, #d4af37, #34d399);
-            display: flex; align-items: center; justify-content: flex-end;
-            padding-right: 4px; min-width: 30px;
-            transition: width 0.8s ease;
-        }
-        .savings-bar-pct { font-size: 8px; font-weight: 800; color: var(--bg-dark); }
-
-        .car-verified {
-            display: inline-flex; align-items: center; gap: 4px;
-            font-size: 10px; font-weight: 700; color: #34d399;
-            background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.2);
-            padding: 3px 10px; border-radius: 6px; margin-bottom: 10px;
-            letter-spacing: 0.5px; text-transform: uppercase;
-        }
-
-        .badge-new {
-            position: absolute; top: 40px; left: 10px;
-            padding: 3px 8px; border-radius: 6px;
-            font-size: 10px; font-weight: 700;
-            background: linear-gradient(135deg, #d4af37, #f4e5b0);
-            color: var(--bg-dark);
-            box-shadow: 0 2px 8px rgba(212,175,55,0.4);
-        }
+        /* Removed: savings-bar, car-verified, car-time-on-market, badge-new — not applicable for auction portal */
     </style>
 <style id="alabol-nav-styles">
   :root {
@@ -1030,11 +937,9 @@
                 </div>
                 <div class="filter-separator"></div>
                 <div class="filter-group" id="filterPrecio">
-                    <button class="filter-btn active" data-filter="todos">💰 Todos</button>
-                    <button class="filter-btn" data-filter="150">Hasta $150k</button>
-                    <button class="filter-btn" data-filter="250">$150k - $250k</button>
-                    <button class="filter-btn" data-filter="400">$250k - $400k</button>
-                    <button class="filter-btn" data-filter="400plus">$400k+</button>
+                    <button class="filter-btn active" data-filter="todos">📅 Todas</button>
+                    <button class="filter-btn" data-filter="activas">🟢 Activas</button>
+                    <button class="filter-btn" data-filter="urgentes">🔥 Por cerrar</button>
                 </div>
             </div>
         </div>
@@ -1081,9 +986,7 @@
             return '$' + n.toLocaleString('es-MX');
         }
 
-        function calcSavings(market, total) {
-            return Math.round(((market - total) / market) * 100);
-        }
+        // calcSavings removed — auction portal doesn't show prices
 
         function getDaysLeft(fecha) {
             const diff = new Date(fecha) - new Date();
@@ -1115,12 +1018,13 @@
                 // Origen filter
                 if (activeFilters.origen !== 'todos' && car.origen !== activeFilters.origen) return false;
 
-                // Precio filter
-                if (activeFilters.precio !== 'todos') {
-                    if (activeFilters.precio === '150' && car.precioTotal > 150000) return false;
-                    if (activeFilters.precio === '250' && (car.precioTotal <= 150000 || car.precioTotal > 250000)) return false;
-                    if (activeFilters.precio === '400' && (car.precioTotal <= 250000 || car.precioTotal > 400000)) return false;
-                    if (activeFilters.precio === '400plus' && car.precioTotal <= 400000) return false;
+                // Status filter (replaces price filter)
+                if (activeFilters.precio === 'activas') {
+                    if (getDaysLeft(car.fechaLimite) <= 0) return false;
+                }
+                if (activeFilters.precio === 'urgentes') {
+                    const d = getDaysLeft(car.fechaLimite);
+                    if (d <= 0 || d > 3) return false;
                 }
 
                 return true;
@@ -1148,28 +1052,26 @@
             });
 
             grid.innerHTML = filtered.map((car, i) => {
-                const savings = calcSavings(car.precioMercado, car.precioTotal);
-                const ahorroMXN = car.precioMercado - car.precioTotal;
                 const deadline = formatDeadline(car.fechaLimite);
                 const originLabel = car.origen === 'mexico' ? '🇲🇽 Subasta México' : '🇺🇸 Subasta USA';
                 const originClass = car.origen === 'mexico' ? 'mexico' : 'usa';
+                const tipoLabel = car.tipo === 'sedan' ? 'Sedán' : car.tipo === 'suv' ? 'SUV' : car.tipo === 'pickup' ? 'Pick-up' : 'Deportivo';
 
-                // 1. SCARCITY — unique model badge
+                // Scarcity — unique model
                 const isUniqueModel = modelCount[car.modelo] === 1;
 
-                // 2. RECENCY — days on market & "NUEVO" badge
-                const daysOnMarket = 30 - getDaysLeft(car.fechaLimite);
-                const isNew = daysOnMarket <= 5;
-
-                // 6. CTA — urgency-based text
-                const ctaText = deadline.urgent ? '🔥 Preguntar antes de que se vaya' : '💬 Me interesa este auto';
+                // CTA text based on deadline urgency
+                const ctaText = deadline.urgent
+                    ? '🔥 Preguntar antes de que cierre'
+                    : '💬 Quiero saber más de esta subasta';
 
                 const msg = encodeURIComponent(
                     `Hola Alabol 👋\n\n` +
-                    `Me interesa esta oportunidad:\n` +
+                    `Me interesa esta oportunidad de subasta:\n` +
                     `🚗 ${car.marca} ${car.modelo} ${car.anio}\n` +
-                    `💰 Precio: ${formatMoney(car.precioTotal)} MXN\n\n` +
-                    `¿Sigue disponible? ¿Qué pasos sigo?`
+                    `📍 ${car.notas || 'México'}\n` +
+                    `🔧 Estado: ${car.danio}\n\n` +
+                    `¿Me pueden dar más detalles y costos?`
                 );
 
                 const photoHTML = car.foto
@@ -1181,37 +1083,20 @@
                         <div class="car-photo">
                             ${photoHTML}
                             <div class="badge-origin ${originClass}">${originLabel}</div>
-                            <div class="badge-savings">-${savings}%</div>
                             <div class="badge-deadline ${deadline.urgent ? 'urgent' : ''}">${deadline.text}</div>
-                            ${isUniqueModel ? '<div class="badge-scarcity">1 de 1 disponible</div>' : ''}
-                            ${isNew ? '<div class="badge-new">🆕 NUEVO</div>' : ''}
+                            ${isUniqueModel ? '<div class="badge-scarcity">Única unidad</div>' : ''}
                         </div>
                         <div class="car-info">
                             <div class="car-title">${car.marca} ${car.modelo}</div>
-                            <div class="car-year">${car.anio} · ${car.tipo === 'sedan' ? 'Sedán' : car.tipo === 'suv' ? 'SUV' : car.tipo === 'pickup' ? 'Pick-up' : 'Deportivo'}</div>
-                            <div class="car-verified">✓ Verificado por Alabol</div>
-                            <div class="car-damage">🔧 ${car.danio}</div>
-                            ${car.notas ? `<div class="car-notes">💡 ${car.notas}</div>` : ''}
-                            <div class="car-time-on-market">📅 Publicado hace ${daysOnMarket} días</div>
-                            <div class="price-section">
-                                <div class="price-main">
-                                    <span class="price-label">Precio Alabol</span>
-                                    <span class="price-value">${formatMoney(car.precioTotal)}</span>
-                                </div>
-                                <div class="price-market">
-                                    <span class="price-label">Mercado</span>
-                                    <span class="price-original">${formatMoney(car.precioMercado)}</span>
-                                </div>
+                            <div class="car-year">${car.anio} · ${tipoLabel}</div>
+                            <div class="car-condition">
+                                <span class="condition-icon">🔧</span>
+                                <span class="condition-text">${car.danio}</span>
                             </div>
-                            <div class="savings-bar-container">
-                                <div class="savings-bar-label">
-                                    <span>⚠️ Pagas de más <strong>${formatMoney(ahorroMXN)}</strong> si compras en agencia</span>
-                                </div>
-                                <div class="savings-bar-track">
-                                    <div class="savings-bar-fill" style="width: ${savings}%">
-                                        <span class="savings-bar-pct">-${savings}%</span>
-                                    </div>
-                                </div>
+                            ${car.notas ? `<div class="car-location">📍 ${car.notas}</div>` : ''}
+                            <div class="auction-notice">
+                                <span class="auction-icon">🏛️</span>
+                                <span>Subasta ${car.origen === 'mexico' ? 'nacional' : 'internacional'} · Precio bajo consulta</span>
                             </div>
                             <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${msg}" class="cta-interest" target="_blank" rel="noopener">
                                 ${ctaText}

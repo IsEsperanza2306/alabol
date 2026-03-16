@@ -2275,15 +2275,23 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
             const { data: { session } } = await sb.auth.getSession();
 
             if (session) {
-                const userName = session.user.user_metadata.full_name || 'Mi Perfil';
+                const userName = (session.user.user_metadata.full_name || session.user.user_metadata.name || 'Mi Perfil').split(' ')[0];
                 authBtn.innerHTML = `<i class="fa-solid fa-user-check" style="color:var(--gold);"></i> ${userName}`;
-                authBtn.href = '#'; // In the future, this points to profile.html or dashboard.html
-                authBtn.onclick = (e) => {
-                    e.preventDefault(); // Prevent default link behavior
-                    if (confirm('¿Deseas cerrar sesión?')) {
-                        sb.auth.signOut().then(() => location.reload());
-                    }
+                authBtn.href = './vendedor.html';
+                authBtn.style.position = 'relative';
+                authBtn.onclick = null;
+
+                // Agregar botón de cerrar sesión separado
+                const logoutBtn = document.createElement('a');
+                logoutBtn.href = '#';
+                logoutBtn.className = 'nav-item';
+                logoutBtn.innerHTML = '<i class="fa-solid fa-right-from-bracket" style="color:var(--danger);"></i> Salir';
+                logoutBtn.style.fontSize = '0.75rem';
+                logoutBtn.onclick = (e) => {
+                    e.preventDefault();
+                    sb.auth.signOut().then(() => location.reload());
                 };
+                authBtn.parentNode.insertBefore(logoutBtn, authBtn.nextSibling);
             }
         }
         checkSession();

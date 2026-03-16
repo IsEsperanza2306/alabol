@@ -1,1647 +1,1870 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alabol BackOffice | Portal de Agencias</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
-    <style>
-        :root {
-            --bg-dark: #0a1f1a;
-            --bg-mid: #0d2921;
-            --bg-light: #0f3329;
-            --gold: #d4af37;
-            --gold-light: #f4e5b0;
-            --gold-dim: rgba(212, 175, 55, 0.2);
-            --green-text: #a8c5b8;
-            --red-urgent: #ff4757;
-            --emerald: #34d399;
-            --glass-bg: rgba(15, 51, 41, 0.7);
-            --glass-border: rgba(212, 175, 55, 0.25);
-            --sidebar-width: 250px;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--bg-dark);
-            color: white;
-            min-height: 100vh;
-            display: flex;
-            overflow-x: hidden;
-        }
-
-        /* Animated Grid Background */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image:
-                linear-gradient(rgba(212, 175, 55, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(212, 175, 55, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-            z-index: -2;
-            pointer-events: none;
-        }
-
-        /* Ambient Glow */
-        .ambient-glow {
-            position: fixed;
-            top: -20vh;
-            right: -10vw;
-            width: 60vw;
-            height: 60vh;
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, transparent 70%);
-            border-radius: 50%;
-            z-index: -1;
-            filter: blur(50px);
-            pointer-events: none;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: var(--sidebar-width);
-            background: rgba(10, 31, 26, 0.95);
-            backdrop-filter: blur(20px);
-            border-right: 1px solid var(--glass-border);
-            padding: 30px 20px;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            height: 100vh;
-            z-index: 100;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 40px;
-        }
-
-        .brand-logo {
-            width: 45px;
-            height: 45px;
-            background: linear-gradient(135deg, var(--gold) 0%, #a3821a 100%);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            font-weight: bold;
-            color: var(--bg-dark);
-            box-shadow: 0 0 20px var(--gold-dim);
-        }
-
-        .brand-name {
-            font-size: 18px;
-            font-weight: 700;
-            color: white;
-            letter-spacing: 1px;
-        }
-
-        .brand-sub {
-            font-size: 11px;
-            color: var(--gold);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        .nav-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            flex: 1;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 16px;
-            border-radius: 12px;
-            color: var(--green-text);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 14px;
-            transition: all 0.3s;
-            cursor: pointer;
-            border: 1px solid transparent;
-        }
-
-        .nav-item:hover {
-            color: white;
-            background: rgba(212, 175, 55, 0.05);
-            transform: translateX(5px);
-        }
-
-        .nav-item.active {
-            color: var(--gold);
-            background: var(--gold-dim);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
-        }
-
-        .nav-icon {
-            font-size: 18px;
-        }
-
-        .agency-profile {
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .agency-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--bg-mid);
-            border: 2px solid var(--gold);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            margin-left: var(--sidebar-width);
-            padding: 40px 50px;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 40px;
-        }
-
-        .page-title h1 {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .page-title p {
-            color: var(--green-text);
-            font-size: 14px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--gold) 0%, #f4e5b0 50%, var(--gold) 100%);
-            background-size: 200% auto;
-            color: var(--bg-dark);
-            border: none;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 14px;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
-        }
-
-        /* Metrics Row */
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            margin-bottom: 40px;
-        }
-
-        .metric-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            padding: 24px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s;
-        }
-
-        .metric-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .metric-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-        }
-
-        .icon-gold {
-            background: rgba(212, 175, 55, 0.15);
-            color: var(--gold);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-        }
-
-        .icon-emerald {
-            background: rgba(52, 211, 153, 0.15);
-            color: var(--emerald);
-            border: 1px solid rgba(52, 211, 153, 0.3);
-        }
-
-        .icon-blue {
-            background: rgba(59, 130, 246, 0.15);
-            color: #3b82f6;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-        }
-
-        .metric-info h3 {
-            font-size: 32px;
-            font-weight: 800;
-            line-height: 1;
-            margin-bottom: 5px;
-        }
-
-        .metric-info p {
-            color: var(--green-text);
-            font-size: 13px;
-            font-weight: 500;
-        }
-
-        /* Sections (Views) */
-        .view-section {
-            display: none;
-            animation: fadeIn 0.4s ease-out;
-        }
-
-        .view-section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* --- MODULE: UPLOAD INVENTORY --- */
-        .upload-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
-
-        .panel {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            padding: 30px;
-            border-radius: 24px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .panel-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: var(--gold-light);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* Drag & Drop Zone */
-        .dropzone {
-            border: 2px dashed rgba(212, 175, 55, 0.4);
-            border-radius: 16px;
-            padding: 40px 20px;
-            text-align: center;
-            background: rgba(10, 31, 26, 0.5);
-            transition: all 0.3s;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            height: 250px;
-        }
-
-        .dropzone:hover,
-        .dropzone.dragover {
-            border-color: var(--gold);
-            background: rgba(212, 175, 55, 0.05);
-            transform: scale(1.02);
-        }
-
-        .drop-icon {
-            font-size: 48px;
-            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.4));
-        }
-
-        .drop-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: white;
-        }
-
-        .drop-sub {
-            font-size: 13px;
-            color: var(--green-text);
-        }
-
-        /* Gamified Manual Form */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 10px;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--green-text);
-        }
-
-        .chips-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .chip {
-            padding: 10px 16px;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--green-text);
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            user-select: none;
-        }
-
-        .chip:hover {
-            background: rgba(212, 175, 55, 0.1);
-            border-color: rgba(212, 175, 55, 0.3);
-            color: white;
-        }
-
-        .chip.active {
-            background: var(--gold-dim);
-            border-color: var(--gold);
-            color: var(--gold-light);
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
-        }
-
-        .styled-input {
-            width: 100%;
-            padding: 14px 16px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            color: white;
-            font-family: inherit;
-            font-size: 15px;
-            transition: border 0.3s;
-        }
-
-        .styled-input:focus {
-            outline: none;
-            border-color: var(--gold);
-            background: rgba(0, 0, 0, 0.5);
-        }
-
-        .price-input-wrapper {
-            position: relative;
-        }
-
-        .price-prefix {
-            position: absolute;
-            left: 16px;
-            top: 14px;
-            color: var(--gold);
-            font-weight: bold;
-            font-size: 16px;
-        }
-
-        .price-input-wrapper .styled-input {
-            padding-left: 35px;
-            font-size: 18px;
-            font-weight: bold;
-            color: var(--emerald);
-        }
-
-        /* Mock Image Uploader */
-        .img-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .img-slot {
-            aspect-ratio: 1;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px dashed rgba(255, 255, 255, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: rgba(255, 255, 255, 0.3);
-            cursor: pointer;
-            transition: all 0.3s;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .img-slot:hover {
-            border-color: var(--gold);
-            background: rgba(212, 175, 55, 0.05);
-            color: var(--gold);
-        }
-
-        .img-slot img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* --- MODULE: ACTIVE INVENTORY --- */
-        .inventory-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 24px;
-        }
-
-        .car-card {
-            background: rgba(10, 31, 26, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            overflow: hidden;
-            transition: all 0.3s;
-        }
-
-        .car-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(212, 175, 55, 0.3);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-        }
-
-        .car-img {
-            width: 100%;
-            height: 160px;
-            object-fit: cover;
-            border-bottom: 2px solid var(--gold-dim);
-        }
-
-        .car-info {
-            padding: 16px;
-        }
-
-        .car-title {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .car-price {
-            font-size: 18px;
-            color: var(--emerald);
-            font-weight: 800;
-            margin-bottom: 12px;
-        }
-
-        .car-meta {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-
-        .meta-badge {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            color: var(--green-text);
-        }
-
-        .btn-danger {
-            width: 100%;
-            padding: 10px;
-            border-radius: 10px;
-            background: rgba(255, 71, 87, 0.1);
-            border: 1px solid rgba(255, 71, 87, 0.3);
-            color: var(--red-urgent);
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .btn-danger:hover {
-            background: var(--red-urgent);
-            color: white;
-        }
-
-        /* Simple notification toast */
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: var(--emerald);
-            color: var(--bg-dark);
-            padding: 16px 24px;
-            border-radius: 12px;
-            font-weight: 600;
-            box-shadow: 0 10px 30px rgba(52, 211, 153, 0.4);
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .toast.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        /* Sortable Grid Styling */
-        .img-grid.sortable .img-slot {
-            cursor: grab;
-        }
-
-        .img-grid.sortable .img-slot:active {
-            cursor: grabbing;
-        }
-
-        .img-slot.dragging {
-            opacity: 0.5;
-            transform: scale(0.95);
-        }
-
-        .portada-badge {
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            background: var(--gold);
-            color: var(--bg-dark);
-            font-size: 10px;
-            font-weight: bold;
-            padding: 2px 6px;
-            border-radius: 4px;
-            z-index: 10;
-        }
-
-        /* Preview Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(10, 10, 12, 0.9);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* Auth Overlay Styles */
-        .auth-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(7, 18, 15, 0.97);
-            backdrop-filter: blur(20px);
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .auth-box {
-            background: rgba(15, 51, 41, 0.9);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 48px;
-            width: 100%;
-            max-width: 460px;
-            box-shadow: 0 0 60px rgba(212, 175, 55, 0.1);
-        }
-
-        .auth-logo {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
-        .auth-logo .logo-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--gold) 0%, #a3821a 100%);
-            border-radius: 16px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            margin-bottom: 16px;
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
-        }
-
-        .auth-logo h2 {
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-
-        .auth-logo p {
-            font-size: 13px;
-            color: var(--green-text);
-        }
-
-        .auth-tab-bar {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            padding: 4px;
-            margin-bottom: 28px;
-            gap: 4px;
-        }
-
-        .auth-tab {
-            padding: 10px;
-            text-align: center;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--green-text);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .auth-tab.active {
-            background: var(--gold);
-            color: var(--bg-dark);
-        }
-
-        .auth-input {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--glass-border);
-            border-radius: 10px;
-            padding: 14px 16px;
-            color: white;
-            font-size: 14px;
-            outline: none;
-            margin-bottom: 14px;
-            font-family: 'Poppins', sans-serif;
-            transition: border-color 0.2s;
-        }
-
-        .auth-input:focus {
-            border-color: var(--gold);
-        }
-
-        .auth-input::placeholder {
-            color: var(--green-text);
-        }
-
-        .auth-btn {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, var(--gold) 0%, #c9a227 100%);
-            color: var(--bg-dark);
-            border: none;
-            border-radius: 12px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            letter-spacing: 0.5px;
-            transition: all 0.2s;
-            margin-top: 6px;
-        }
-
-        .auth-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
-        }
-
-        .auth-error {
-            background: rgba(255, 71, 87, 0.1);
-            border: 1px solid rgba(255, 71, 87, 0.3);
-            color: #ff4757;
-            border-radius: 8px;
-            padding: 10px 14px;
-            font-size: 13px;
-            margin-bottom: 12px;
-            display: none;
-        }
-
-        .user-badge {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 12px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            margin-top: auto;
-            font-size: 13px;
-        }
-
-        .user-badge .user-avatar {
-            width: 32px;
-            height: 32px;
-            background: var(--gold);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 14px;
-            color: var(--bg-dark);
-        }
-
-        .btn-logout {
-            background: none;
-            border: none;
-            color: var(--red-urgent);
-            cursor: pointer;
-            font-size: 12px;
-            margin-left: auto;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        @keyframes logoGlowPulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 0.5;
-            }
-
-            50% {
-                transform: scale(1.15);
-                opacity: 0.9;
-            }
-        }
-
-        .logo-container {
-            position: relative;
-            width: 45px;
-            height: 45px;
-            margin-right: 12px;
-        }
-
-        .logo-glow {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 65px;
-            height: 65px;
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.4) 0%, transparent 70%);
-            border-radius: 50%;
-            animation: logoGlowPulse 3s ease-in-out infinite;
-        }
-
-        .logo-img {
-            position: relative;
-            z-index: 2;
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-    </style>
-    <!-- Supabase CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-// === ALABOL GLOBAL SUPABASE INIT (single source of truth) ===
-(function() {
-  var SU = 'https://rgnunjngtsgqgvplawfr.supabase.co';
-  var SK = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8';
-  if (window.supabase && window.supabase.createClient && !window.supabaseClient) {
-    window.supabaseClient = window.supabase.createClient(SU, SK);
-    window.SUPABASE_URL = SU;
-    console.log('Alabol: Supabase client ready');
-  }
-})();
-</script>
-    <!-- Alabol Global Config -->
-    <script src="config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portal Agencias | Alabol Car Broker</title>
+<meta name="description" content="Programa de Agencias Aliadas — conecta tu inventario con compradores verificados. Tu showroom digital en el Tinder de los Autos.">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --bg-primary: #0a1f1a;
+  --bg-secondary: #0d2921;
+  --bg-card: rgba(13, 38, 28, 0.6);
+  --gold: #d4af37;
+  --gold-light: #f4e5b0;
+  --gold-dim: rgba(212, 175, 55, 0.25);
+  --gold-glow: rgba(212, 175, 55, 0.15);
+  --emerald: #34d399;
+  --green-text: #a8c5b8;
+  --green-muted: rgba(148, 184, 167, 0.5);
+  --glass-bg: rgba(13, 38, 28, 0.65);
+  --glass-border: rgba(212, 175, 55, 0.18);
+  --danger: #ef4444;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --teal: #0D9488;
+  --sidebar-w: 260px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100vh; font-family: 'Poppins', sans-serif; background: var(--bg-primary); color: var(--green-text); }
+body {
+  background-image:
+    linear-gradient(rgba(13, 148, 136, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(13, 148, 136, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: center center;
+}
+button, input, select, textarea { font-family: inherit; outline: none; }
+a { color: var(--gold); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.dn { display: none !important; }
+
+/* Ambient Glows */
+.ambient-glow-1 {
+  position: fixed; top: -10%; left: -10%; width: 50vw; height: 50vw;
+  background: radial-gradient(circle, rgba(13, 148, 136, 0.2) 0%, transparent 60%);
+  border-radius: 50%; z-index: 0; filter: blur(90px); pointer-events: none;
+  animation: ambFloat 12s ease-in-out infinite alternate;
+}
+.ambient-glow-2 {
+  position: fixed; bottom: -10%; right: -10%; width: 50vw; height: 50vw;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.12) 0%, transparent 60%);
+  border-radius: 50%; z-index: 0; filter: blur(90px); pointer-events: none;
+  animation: ambFloat 10s ease-in-out infinite alternate-reverse;
+}
+@keyframes ambFloat {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(40px, 40px) scale(1.1); }
+}
+
+/* Spinner */
+#spin { display: flex; align-items: center; justify-content: center; min-height: 100vh; position: relative; z-index: 1; }
+.sp { width: 40px; height: 40px; border: 3px solid var(--glass-border); border-top-color: var(--gold); border-radius: 50%; animation: rot .7s linear infinite; }
+@keyframes rot { to { transform: rotate(360deg); } }
+
+/* ── LANDING PAGE ── */
+#landing { display: none; position: relative; z-index: 1; }
+
+.landing-nav {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(10, 31, 26, 0.92);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 14px 24px; display: flex; align-items: center; justify-content: space-between;
+}
+.landing-nav-left { display: flex; align-items: center; gap: 12px; }
+.landing-nav-left a { display: flex; align-items: center; text-decoration: none; }
+.landing-nav-logo { width: 40px; height: 40px; object-fit: contain; filter: drop-shadow(0 0 10px rgba(212,175,55,0.5)); }
+.landing-nav-title { font-size: 18px; font-weight: 800; color: var(--gold); text-shadow: 0 0 14px rgba(212,175,55,0.3); }
+.landing-nav-sub { font-size: 10px; color: var(--green-text); text-transform: uppercase; letter-spacing: .1em; opacity: 0.6; }
+.landing-nav-right { display: flex; align-items: center; gap: 12px; }
+.btn-login-nav {
+  padding: 9px 22px; border-radius: 20px; border: 1px solid var(--gold);
+  background: transparent; color: var(--gold); font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.3s;
+}
+.btn-login-nav:hover { background: rgba(212,175,55,0.1); }
+.btn-home-nav {
+  padding: 9px 16px; border-radius: 20px; border: 1px solid var(--glass-border);
+  background: transparent; color: var(--green-text); font-size: 12px; font-weight: 500;
+  cursor: pointer; transition: all 0.3s; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-home-nav:hover { border-color: var(--gold); color: var(--gold); text-decoration: none; }
+
+/* Hero */
+.landing-hero {
+  text-align: center; padding: 80px 24px 60px; max-width: 800px; margin: 0 auto;
+}
+.landing-hero-badge {
+  display: inline-block; padding: 6px 18px; border-radius: 20px;
+  background: rgba(212,175,55,0.1); border: 1px solid var(--gold-dim);
+  color: var(--gold); font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; margin-bottom: 24px;
+}
+.landing-hero h1 {
+  font-size: 42px; font-weight: 800; color: white; line-height: 1.2; margin-bottom: 16px;
+}
+.landing-hero h1 span { color: var(--gold); text-shadow: 0 0 20px rgba(212,175,55,0.4); }
+.landing-hero p {
+  font-size: 16px; color: var(--green-text); line-height: 1.7; max-width: 600px; margin: 0 auto 32px; opacity: 0.85;
+}
+.hero-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 16px 36px; border-radius: 28px; border: none;
+  background: linear-gradient(135deg, var(--gold), #c9a961, var(--gold-light));
+  background-size: 200% 200%; animation: goldShimmer 3s ease infinite;
+  color: var(--bg-primary); font-size: 15px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 4px 24px rgba(212,175,55,0.4); transition: all 0.3s;
+}
+.hero-cta:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(212,175,55,0.55); }
+@keyframes goldShimmer { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+
+/* Benefits */
+.benefits-section { padding: 40px 24px 60px; max-width: 900px; margin: 0 auto; }
+.benefits-title {
+  text-align: center; font-size: 24px; font-weight: 800; color: white; margin-bottom: 8px;
+}
+.benefits-sub {
+  text-align: center; font-size: 14px; color: var(--green-text); opacity: 0.7; margin-bottom: 40px;
+}
+.benefits-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.benefit-card {
+  background: var(--glass-bg); border: 1px solid var(--glass-border);
+  border-radius: 20px; padding: 32px 24px; text-align: center;
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  transition: all 0.3s; position: relative; overflow: hidden;
+}
+.benefit-card::before {
+  content: ''; position: absolute; inset: 0; opacity: 0;
+  background: radial-gradient(circle at center, rgba(212,175,55,0.08) 0%, transparent 70%);
+  transition: opacity 0.3s;
+}
+.benefit-card:hover::before { opacity: 1; }
+.benefit-card:hover { border-color: var(--gold-dim); transform: translateY(-4px); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+.benefit-icon {
+  width: 60px; height: 60px; border-radius: 16px; margin: 0 auto 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; position: relative;
+  background: rgba(212,175,55,0.1); border: 1px solid var(--gold-dim);
+}
+.benefit-card h3 { font-size: 16px; font-weight: 700; color: white; margin-bottom: 8px; position: relative; }
+.benefit-card p { font-size: 13px; color: var(--green-text); line-height: 1.6; opacity: 0.8; position: relative; }
+
+/* Application Form */
+.apply-section { padding: 40px 24px 80px; max-width: 640px; margin: 0 auto; }
+.apply-card {
+  background: var(--glass-bg); border: 1px solid var(--glass-border);
+  border-radius: 24px; padding: 40px 32px;
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.3), inset 0 1px 0 rgba(212,175,55,0.08);
+}
+.apply-card h2 { font-size: 22px; font-weight: 800; color: var(--gold); margin-bottom: 6px; text-align: center; }
+.apply-card .apply-sub { font-size: 13px; color: var(--green-text); text-align: center; opacity: 0.7; margin-bottom: 28px; line-height: 1.6; }
+.ff { margin-bottom: 16px; }
+.ff label { display: block; font-size: 10px; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 6px; opacity: 0.85; }
+.fi {
+  width: 100%; padding: 12px 14px; border-radius: 12px;
+  background: rgba(10,31,26,0.5); border: 1px solid var(--glass-border);
+  color: white; font-size: 13px; transition: all 0.3s;
+  -webkit-appearance: none; appearance: none;
+}
+select.fi { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23a8c5b8' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor: pointer; }
+select.fi option { background: var(--bg-secondary); color: white; }
+.fi:focus { border-color: var(--gold); box-shadow: 0 0 14px rgba(212,175,55,0.15); }
+.fi::placeholder { color: var(--green-muted); }
+textarea.fi { resize: vertical; min-height: 80px; }
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+.inp {
+  width: 100%; padding: 13px 16px; border-radius: 12px;
+  background: rgba(10,31,26,0.6); border: 1px solid var(--glass-border);
+  color: white; font-size: 13px; margin-bottom: 10px; display: block;
+  transition: all 0.3s;
+}
+.inp:focus { border-color: var(--gold); box-shadow: 0 0 16px rgba(212,175,55,0.15); }
+.inp::placeholder { color: var(--green-muted); }
+
+.bgold {
+  width: 100%; padding: 14px; border-radius: 12px; border: none;
+  background: linear-gradient(135deg, var(--gold), #c9a961, var(--gold-light));
+  background-size: 200% 200%; animation: goldShimmer 3s ease infinite;
+  color: var(--bg-primary); font-size: 14px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 4px 20px rgba(212,175,55,0.35); transition: all 0.3s;
+}
+.bgold:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(212,175,55,0.5); }
+
+.apply-msg { text-align: center; font-size: 13px; min-height: 18px; margin-top: 10px; }
+.apply-msg.err { color: #fca5a5; }
+.apply-msg.ok { color: var(--emerald); }
+
+.login-link { text-align: center; margin-top: 24px; font-size: 13px; color: var(--green-text); }
+
+/* ── LOGIN OVERLAY ── */
+#loginOverlay {
+  display: none; position: fixed; inset: 0; z-index: 100;
+  background: rgba(0,0,0,0.75); backdrop-filter: blur(8px);
+  align-items: center; justify-content: center; padding: 20px;
+}
+#loginOverlay.open { display: flex; }
+.lbox { max-width: 440px; width: 100%; text-align: center; }
+.login-logo-wrap { position: relative; display: inline-block; margin-bottom: 20px; }
+.login-logo-wrap img { width: 80px; height: 80px; object-fit: contain; position: relative; z-index: 2; }
+.login-logo-glow {
+  position: absolute; inset: -20px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(212,175,55,0.35) 0%, transparent 70%);
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+.lbox h1 { font-size: 28px; font-weight: 800; color: var(--gold); margin-bottom: 6px; text-shadow: 0 0 20px rgba(212,175,55,0.4); }
+.lbox .ltagline { color: var(--green-text); font-size: 14px; line-height: 1.7; margin-bottom: 28px; opacity: 0.8; }
+.lcard {
+  background: var(--glass-bg); border: 1px solid var(--glass-border);
+  border-radius: 24px; padding: 32px;
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(212,175,55,0.08);
+}
+.tabs { display: flex; gap: 4px; margin-bottom: 20px; background: rgba(10,31,26,0.6); border-radius: 14px; padding: 4px; }
+.tab {
+  flex: 1; padding: 10px; border-radius: 10px; border: none;
+  background: transparent; color: var(--green-text); font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: all 0.3s;
+}
+.tab.on { background: linear-gradient(135deg, var(--gold-glow), rgba(212,175,55,0.08)); color: var(--gold); box-shadow: 0 2px 8px rgba(212,175,55,0.15); }
+.bgoog {
+  width: 100%; padding: 14px; border-radius: 12px;
+  border: 1px solid var(--glass-border); background: rgba(255,255,255,0.03);
+  color: white; font-size: 14px; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  margin-bottom: 18px; transition: all 0.3s;
+}
+.bgoog:hover { border-color: var(--gold); background: rgba(255,255,255,0.06); transform: translateY(-1px); }
+.bgoog svg { width: 18px; height: 18px; flex-shrink: 0; }
+.dvdr { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; color: var(--green-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+.dvdr::before, .dvdr::after { content: ''; flex: 1; height: 1px; background: var(--glass-border); }
+.aerr { color: #fca5a5; font-size: 12px; min-height: 16px; margin: 4px 0 8px; }
+.login-close {
+  position: absolute; top: 20px; right: 24px; background: none; border: 1px solid var(--glass-border);
+  color: var(--green-text); width: 40px; height: 40px; border-radius: 50%; font-size: 22px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s;
+}
+.login-close:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ── DASHBOARD LAYOUT ── */
+#dashboard { display: none; position: relative; z-index: 1; }
+#dashboard.active { display: flex; min-height: 100vh; }
+
+/* Sidebar */
+.sidebar {
+  width: var(--sidebar-w); min-height: 100vh; position: fixed; top: 0; left: 0; z-index: 60;
+  background: rgba(10, 31, 26, 0.95);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border-right: 1px solid var(--glass-border);
+  display: flex; flex-direction: column;
+  transition: transform 0.3s ease;
+}
+.sidebar-header {
+  padding: 20px 20px 16px; border-bottom: 1px solid var(--glass-border);
+  display: flex; align-items: center; gap: 12px;
+}
+.sidebar-logo { width: 36px; height: 36px; object-fit: contain; filter: drop-shadow(0 0 10px rgba(212,175,55,0.5)); }
+.sidebar-brand-name { font-size: 16px; font-weight: 800; color: var(--gold); text-shadow: 0 0 14px rgba(212,175,55,0.3); }
+.sidebar-brand-sub { font-size: 9px; color: var(--green-text); text-transform: uppercase; letter-spacing: .12em; opacity: 0.6; }
+.sidebar-nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+.sidebar-nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; border-radius: 12px; border: none;
+  background: transparent; color: var(--green-text); font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all 0.3s; text-align: left; width: 100%;
+}
+.sidebar-nav-item:hover { background: rgba(212,175,55,0.06); color: white; }
+.sidebar-nav-item.active { background: rgba(212,175,55,0.1); color: var(--gold); border: 1px solid var(--gold-dim); }
+.sidebar-nav-item i { width: 18px; text-align: center; font-size: 14px; }
+.sidebar-footer {
+  padding: 16px 20px; border-top: 1px solid var(--glass-border);
+}
+.sidebar-user { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.sidebar-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--bg-secondary); border: 2px solid var(--glass-border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: var(--gold); overflow: hidden; flex-shrink: 0;
+}
+.sidebar-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.sidebar-user-info { flex: 1; min-width: 0; }
+.sidebar-user-name { font-size: 12px; font-weight: 600; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sidebar-user-email { font-size: 10px; color: var(--green-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.btn-logout {
+  width: 100%; padding: 9px; border-radius: 10px;
+  border: 1px solid var(--glass-border); background: transparent;
+  color: var(--green-text); font-size: 12px; font-weight: 500; cursor: pointer;
+  transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.btn-logout:hover { border-color: var(--danger); color: var(--danger); background: rgba(239,68,68,0.04); }
+
+/* Main content */
+.main-content {
+  flex: 1; margin-left: var(--sidebar-w); min-height: 100vh; position: relative;
+}
+.mobile-header {
+  display: none; position: sticky; top: 0; z-index: 55;
+  background: rgba(10, 31, 26, 0.92);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 14px 20px; align-items: center; justify-content: space-between;
+}
+.hamburger {
+  background: none; border: 1px solid var(--glass-border); color: var(--green-text);
+  width: 38px; height: 38px; border-radius: 10px; font-size: 18px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: all 0.3s;
+}
+.hamburger:hover { border-color: var(--gold); color: var(--gold); }
+.mobile-title { font-size: 16px; font-weight: 800; color: var(--gold); }
+.sidebar-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 59;
+}
+
+/* View containers */
+.view { display: none; padding: 32px 28px 80px; }
+.view.active { display: block; animation: fadeSlide 0.4s ease; }
+@keyframes fadeSlide { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── DASHBOARD VIEW ── */
+.dash-welcome { margin-bottom: 28px; }
+.dash-welcome .sub { font-size: 12px; color: var(--green-text); opacity: 0.6; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+.dash-welcome .name { font-size: 28px; font-weight: 800; color: white; }
+.dash-welcome .name span { color: var(--gold); text-shadow: 0 0 12px rgba(212,175,55,0.3); }
+
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 32px; }
+.kpi-card {
+  background: var(--glass-bg); border: 1px solid var(--glass-border);
+  border-radius: 16px; padding: 20px; text-align: center;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  transition: all 0.3s; position: relative; overflow: hidden;
+}
+.kpi-card::before {
+  content: ''; position: absolute; inset: 0; opacity: 0;
+  background: radial-gradient(circle at center, rgba(212,175,55,0.08) 0%, transparent 70%);
+  transition: opacity 0.3s;
+}
+.kpi-card:hover::before { opacity: 1; }
+.kpi-card:hover { border-color: var(--gold-dim); transform: translateY(-2px); }
+.kpi-icon { font-size: 18px; margin-bottom: 6px; position: relative; }
+.kpi-num { font-size: 30px; font-weight: 800; color: var(--gold); text-shadow: 0 0 14px rgba(212,175,55,0.3); position: relative; }
+.kpi-label { font-size: 10px; color: var(--green-text); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.7; position: relative; }
+
+.recent-title { font-size: 16px; font-weight: 700; color: white; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.recent-list { display: flex; flex-direction: column; gap: 10px; }
+.recent-item {
+  display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+  background: var(--glass-bg); border: 1px solid var(--glass-border);
+  border-radius: 14px; transition: all 0.3s;
+}
+.recent-item:hover { border-color: var(--gold-dim); }
+.recent-thumb {
+  width: 56px; height: 42px; border-radius: 8px; overflow: hidden;
+  background: var(--bg-secondary); display: flex; align-items: center; justify-content: center;
+  color: var(--glass-border); font-size: 18px; flex-shrink: 0;
+}
+.recent-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.recent-info { flex: 1; min-width: 0; }
+.recent-name { font-size: 13px; font-weight: 600; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.recent-meta { font-size: 11px; color: var(--green-muted); margin-top: 2px; }
+.recent-price { font-size: 14px; font-weight: 700; color: var(--gold); flex-shrink: 0; }
+
+.empty-recent {
+  text-align: center; padding: 40px 20px; color: var(--green-text);
+  background: var(--glass-bg); border: 1px dashed var(--glass-border);
+  border-radius: 16px; font-size: 13px; opacity: 0.7;
+}
+
+/* ── INVENTORY VIEW ── */
+.inv-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+.inv-title { font-size: 20px; font-weight: 800; color: white; }
+.inv-search {
+  padding: 10px 16px 10px 38px; border-radius: 12px;
+  background: rgba(10,31,26,0.5); border: 1px solid var(--glass-border);
+  color: white; font-size: 13px; width: 260px; max-width: 100%;
+  transition: all 0.3s;
+}
+.inv-search:focus { border-color: var(--gold); box-shadow: 0 0 14px rgba(212,175,55,0.15); }
+.inv-search::placeholder { color: var(--green-muted); }
+.search-wrap { position: relative; }
+.search-wrap i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--green-muted); font-size: 13px; }
+.bnew {
+  padding: 11px 22px; border-radius: 24px; border: none;
+  background: linear-gradient(135deg, var(--gold), #c9a961);
+  color: var(--bg-primary); font-size: 13px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 4px 16px rgba(212,175,55,0.35);
+  transition: all 0.3s; display: flex; align-items: center; gap: 6px;
+}
+.bnew:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(212,175,55,0.5); }
+
+.car-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.car-card {
+  background: var(--glass-bg); border: 1px solid var(--glass-border);
+  border-radius: 16px; overflow: hidden;
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  transition: all 0.3s; position: relative;
+}
+.car-card:hover { border-color: var(--gold-dim); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+.car-card-img {
+  width: 100%; height: 160px; background: var(--bg-secondary);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--glass-border); font-size: 40px; overflow: hidden;
+}
+.car-card-img img { width: 100%; height: 100%; object-fit: cover; }
+.car-card-body { padding: 16px; }
+.car-card-name { font-size: 15px; font-weight: 700; color: white; margin-bottom: 4px; }
+.car-card-meta { font-size: 11px; color: var(--green-text); opacity: 0.7; margin-bottom: 6px; }
+.car-card-price { font-size: 18px; font-weight: 800; color: var(--gold); margin-bottom: 8px; }
+.car-card-status {
+  display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 10px;
+  font-weight: 700; text-transform: uppercase; margin-bottom: 12px;
+}
+.status-disponible { background: rgba(16,185,129,0.15); color: var(--emerald); border: 1px solid rgba(16,185,129,0.3); }
+.status-reservado { background: rgba(212,175,55,0.15); color: var(--gold); border: 1px solid var(--gold-dim); }
+.status-vendido { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+.status-pausado { background: rgba(148,184,167,0.1); color: var(--green-muted); border: 1px solid rgba(148,184,167,0.15); }
+.car-card-actions { display: flex; gap: 8px; }
+.btn-toggle {
+  flex: 1; padding: 8px; border-radius: 10px; border: 1px solid var(--glass-border);
+  background: transparent; color: var(--green-text); font-size: 11px; font-weight: 600;
+  cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 4px;
+}
+.btn-toggle:hover { border-color: var(--gold); color: var(--gold); background: rgba(212,175,55,0.06); }
+.btn-edit {
+  padding: 8px 14px; border-radius: 10px; border: 1px solid var(--glass-border);
+  background: transparent; color: var(--green-text); font-size: 11px; cursor: pointer; transition: all 0.3s;
+}
+.btn-edit:hover { border-color: var(--gold); color: var(--gold); background: rgba(212,175,55,0.06); }
+.btn-delete {
+  padding: 8px 14px; border-radius: 10px; border: 1px solid rgba(239,68,68,0.2);
+  background: transparent; color: rgba(239,68,68,0.6); font-size: 11px; cursor: pointer; transition: all 0.3s;
+}
+.btn-delete:hover { border-color: var(--danger); color: var(--danger); background: rgba(239,68,68,0.06); }
+
+.empty {
+  text-align: center; padding: 60px 24px; color: var(--green-text);
+  background: var(--glass-bg); border: 1px dashed var(--glass-border);
+  border-radius: 20px;
+}
+.empty-icon { font-size: 56px; margin-bottom: 16px; opacity: 0.8; }
+.empty-title { font-size: 18px; font-weight: 700; color: white; margin-bottom: 8px; }
+.empty-sub { font-size: 13px; opacity: 0.7; line-height: 1.6; margin-bottom: 20px; }
+.empty-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 28px; border-radius: 24px; border: none;
+  background: linear-gradient(135deg, var(--gold), #c9a961);
+  color: var(--bg-primary); font-size: 14px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 4px 16px rgba(212,175,55,0.35); transition: all 0.3s;
+}
+.empty-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(212,175,55,0.5); }
+
+/* ── WIZARD OVERLAY ── */
+#wizard {
+  position: fixed; inset: 0; z-index: 200;
+  background: var(--bg-primary);
+  display: none; flex-direction: column; overflow: hidden;
+}
+#wizard.open { display: flex; }
+#wizard::before {
+  content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(13, 148, 136, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(13, 148, 136, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.wiz-header {
+  position: relative; z-index: 2;
+  background: rgba(10, 31, 26, 0.92);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 16px 24px;
+}
+.wiz-header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.wiz-title { font-size: 18px; font-weight: 800; color: var(--gold); display: flex; align-items: center; gap: 8px; }
+.wiz-close {
+  background: none; border: 1px solid var(--glass-border); color: var(--green-text);
+  width: 36px; height: 36px; border-radius: 50%; font-size: 20px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: all 0.3s;
+}
+.wiz-close:hover { border-color: var(--gold); color: var(--gold); }
+.progress-bar { display: flex; align-items: center; gap: 0; position: relative; }
+.progress-step { display: flex; align-items: center; gap: 8px; flex: 1; position: relative; z-index: 1; }
+.progress-dot {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700;
+  background: var(--bg-secondary); border: 2px solid var(--glass-border);
+  color: var(--green-muted); transition: all 0.4s;
+}
+.progress-dot.active { border-color: var(--gold); color: var(--gold); background: rgba(212,175,55,0.12); box-shadow: 0 0 16px rgba(212,175,55,0.25); }
+.progress-dot.done { border-color: var(--emerald); color: white; background: var(--emerald); }
+.progress-label { font-size: 11px; color: var(--green-muted); transition: color 0.3s; white-space: nowrap; }
+.progress-label.active { color: var(--gold); }
+.progress-label.done { color: var(--emerald); }
+.progress-line { flex: 1; height: 2px; background: var(--glass-border); margin: 0 8px; position: relative; overflow: hidden; }
+.progress-line-fill { position: absolute; top: 0; left: 0; height: 100%; width: 0; background: var(--gold); transition: width 0.5s; }
+.progress-line-fill.full { width: 100%; background: var(--emerald); }
+
+.wiz-body {
+  flex: 1; overflow-y: auto; position: relative; z-index: 1;
+  padding: 28px 20px 120px;
+}
+.wiz-body::-webkit-scrollbar { width: 6px; }
+.wiz-body::-webkit-scrollbar-track { background: transparent; }
+.wiz-body::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 3px; }
+.wiz-content { max-width: 600px; margin: 0 auto; }
+.wiz-step { display: none; }
+.wiz-step.active { display: block; animation: fadeSlide 0.4s ease; }
+.wiz-step-title { font-size: 22px; font-weight: 800; color: white; margin-bottom: 4px; }
+.wiz-step-sub { font-size: 13px; color: var(--green-text); opacity: 0.7; margin-bottom: 24px; line-height: 1.6; }
+
+/* Photo Upload */
+.photo-drop {
+  border: 2px dashed var(--glass-border); border-radius: 16px;
+  padding: 40px 20px; text-align: center; cursor: pointer;
+  transition: all 0.3s; position: relative; overflow: hidden;
+  background: rgba(10,31,26,0.3);
+}
+.photo-drop:hover, .photo-drop.dragover { border-color: var(--gold); background: rgba(212,175,55,0.04); }
+.photo-drop-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.6; }
+.photo-drop-text { font-size: 14px; font-weight: 600; color: white; margin-bottom: 4px; }
+.photo-drop-sub { font-size: 12px; color: var(--green-muted); }
+.photo-drop input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.photo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 16px; }
+.photo-thumb {
+  aspect-ratio: 4/3; border-radius: 12px; overflow: hidden; position: relative;
+  border: 1px solid var(--glass-border); background: var(--bg-secondary);
+}
+.photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.photo-remove {
+  position: absolute; top: 4px; right: 4px; width: 24px; height: 24px;
+  border-radius: 50%; border: none; background: rgba(239,68,68,0.85);
+  color: white; font-size: 14px; cursor: pointer; display: flex;
+  align-items: center; justify-content: center; transition: all 0.2s; line-height: 1;
+}
+.photo-remove:hover { background: var(--danger); transform: scale(1.1); }
+
+/* VIN Trust Indicator */
+.vin-trust {
+  display: flex; align-items: center; gap: 8px; padding: 10px 14px;
+  border-radius: 12px; margin-top: 8px; font-size: 12px; font-weight: 600; transition: all 0.5s;
+}
+.vin-trust.base { background: rgba(148,184,167,0.08); border: 1px solid rgba(148,184,167,0.15); color: var(--green-text); }
+.vin-trust.premium { background: rgba(212,175,55,0.1); border: 1px solid var(--gold-dim); color: var(--gold); animation: trustGlow 2s ease-in-out infinite; }
+@keyframes trustGlow {
+  0%, 100% { box-shadow: 0 0 8px rgba(212,175,55,0.1); }
+  50% { box-shadow: 0 0 20px rgba(212,175,55,0.25); }
+}
+
+/* Trust Summary */
+.trust-summary {
+  background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 16px;
+  padding: 20px; margin-top: 20px; text-align: center; backdrop-filter: blur(8px);
+}
+.trust-score-num { font-size: 36px; font-weight: 800; color: var(--gold); text-shadow: 0 0 14px rgba(212,175,55,0.3); }
+.trust-score-label { font-size: 11px; color: var(--green-text); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 2px; }
+.trust-bar-wrap { height: 6px; background: var(--bg-secondary); border-radius: 3px; margin-top: 12px; overflow: hidden; }
+.trust-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--emerald), var(--gold)); transition: width 0.6s ease; }
+
+/* Wizard Footer */
+.wiz-footer {
+  position: absolute; bottom: 0; left: 0; right: 0; z-index: 3;
+  background: rgba(10, 31, 26, 0.95);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--glass-border);
+  padding: 16px 24px;
+}
+.wiz-footer-inner { max-width: 600px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+.ferr { color: #fca5a5; font-size: 12px; min-height: 14px; flex: 1; text-align: center; }
+.btn-prev {
+  padding: 12px 24px; border-radius: 12px;
+  border: 1px solid var(--glass-border); background: transparent;
+  color: var(--green-text); font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: all 0.3s; display: flex; align-items: center; gap: 6px;
+}
+.btn-prev:hover { border-color: var(--gold); color: var(--gold); }
+.btn-next {
+  padding: 12px 28px; border-radius: 12px; border: none;
+  background: linear-gradient(135deg, var(--gold), #c9a961);
+  color: var(--bg-primary); font-size: 13px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 4px 16px rgba(212,175,55,0.35);
+  transition: all 0.3s; display: flex; align-items: center; gap: 6px;
+}
+.btn-next:hover { transform: translateY(-1px); box-shadow: 0 6px 22px rgba(212,175,55,0.5); }
+.btn-next:disabled { background: var(--bg-secondary); color: var(--green-muted); cursor: default; box-shadow: none; transform: none; }
+.btn-next.publish {
+  background: linear-gradient(135deg, var(--gold), var(--gold-light), var(--gold));
+  background-size: 200% 200%; animation: goldShimmer 3s ease infinite;
+  font-size: 14px; padding: 14px 32px;
+}
+
+/* ── CONFIRM DELETE MODAL ── */
+.mbg { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 300; display: none; align-items: center; justify-content: center; backdrop-filter: blur(6px); }
+.mbg.open { display: flex; }
+.modal-confirm {
+  background: var(--bg-secondary); border: 1px solid var(--glass-border);
+  border-radius: 20px; max-width: 360px; width: calc(100% - 32px);
+  padding: 28px 24px; text-align: center;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+}
+.modal-confirm .mtit { font-size: 18px; font-weight: 700; color: var(--gold); margin-bottom: 12px; }
+.cmsg { font-size: 13px; color: var(--green-text); margin-bottom: 20px; line-height: 1.7; }
+.cbts { display: flex; gap: 10px; }
+.bcan { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border); background: transparent; color: var(--green-text); font-size: 13px; cursor: pointer; transition: all 0.3s; }
+.bcan:hover { border-color: var(--gold); color: var(--gold); }
+.bdanger { flex: 1; padding: 12px; border-radius: 12px; border: none; background: rgba(239,68,68,0.15); color: var(--danger); font-size: 13px; font-weight: 700; cursor: pointer; border: 1px solid rgba(239,68,68,0.3); transition: all 0.3s; }
+.bdanger:hover { background: rgba(239,68,68,0.25); }
+
+/* ── PROFILE VIEW ── */
+.profile-card {
+  background: var(--glass-bg); border: 1px solid var(--glass-border);
+  border-radius: 20px; padding: 32px;
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  max-width: 500px;
+}
+.profile-card h2 { font-size: 20px; font-weight: 800; color: var(--gold); margin-bottom: 20px; }
+.profile-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(212,175,55,0.08); }
+.profile-row:last-child { border-bottom: none; }
+.profile-row i { width: 20px; text-align: center; color: var(--gold); opacity: 0.7; }
+.profile-label { font-size: 11px; color: var(--green-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.profile-value { font-size: 14px; color: white; font-weight: 500; }
+.profile-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 24px; }
+.profile-stat {
+  text-align: center; padding: 16px;
+  background: rgba(10,31,26,0.4); border: 1px solid var(--glass-border); border-radius: 12px;
+}
+.profile-stat-num { font-size: 24px; font-weight: 800; color: var(--gold); }
+.profile-stat-label { font-size: 10px; color: var(--green-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar-overlay.open { display: block; }
+  .main-content { margin-left: 0; }
+  .mobile-header { display: flex; }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .car-grid { grid-template-columns: 1fr; }
+  .benefits-grid { grid-template-columns: 1fr; }
+  .landing-hero h1 { font-size: 28px; }
+  .g2 { grid-template-columns: 1fr; }
+  .g3 { grid-template-columns: 1fr 1fr; }
+  .photo-grid { grid-template-columns: repeat(2, 1fr); }
+  .inv-header { flex-direction: column; align-items: stretch; }
+  .inv-search { width: 100%; }
+  .apply-card { padding: 28px 20px; }
+  .profile-stats { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 480px) {
+  .kpi-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .kpi-num { font-size: 24px; }
+  .landing-hero { padding: 50px 20px 40px; }
+  .landing-hero h1 { font-size: 24px; }
+  .progress-label { font-size: 9px; }
+  .wiz-step-title { font-size: 18px; }
+}
+</style>
 </head>
-
 <body>
-    <div class="ambient-glow"></div>
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <div class="brand">
-            <div class="brand-logo">A</div>
-            <div>
-                <div class="brand-name">Alabol UI</div>
-                <div class="brand-sub">Agency Portal</div>
-            </div>
+<!-- Ambient Glows -->
+<div class="ambient-glow-1"></div>
+<div class="ambient-glow-2"></div>
+
+<!-- ── SPINNER ── -->
+<div id="spin"><div class="sp"></div></div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- ── LANDING PAGE (PUBLIC) ── -->
+<!-- ══════════════════════════════════════════ -->
+<div id="landing">
+
+  <!-- Nav -->
+  <div class="landing-nav">
+    <div class="landing-nav-left">
+      <a href="index.html"><img src="logo-circular.png" alt="Alabol" class="landing-nav-logo"></a>
+      <div>
+        <div class="landing-nav-title">Alabol</div>
+        <div class="landing-nav-sub">Agencias Aliadas</div>
+      </div>
+    </div>
+    <div class="landing-nav-right">
+      <a href="index.html" class="btn-home-nav"><i class="fa-solid fa-house"></i> Inicio</a>
+      <button class="btn-login-nav" onclick="openLogin()"><i class="fa-solid fa-right-to-bracket" style="margin-right:4px;"></i>Entrar</button>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <div class="landing-hero">
+    <div class="landing-hero-badge"><i class="fa-solid fa-handshake"></i> Programa Exclusivo</div>
+    <h1>Programa de <span>Agencias Aliadas</span></h1>
+    <p>Conecta tu inventario con compradores verificados. Cada auto publicado entra al radar de nuestro algoritmo de matchmaking. Tu showroom digital en el Tinder de los Autos.</p>
+    <button class="hero-cta" onclick="document.getElementById('applySection').scrollIntoView({behavior:'smooth'})">
+      <i class="fa-solid fa-rocket"></i> Solicitar Acceso
+    </button>
+  </div>
+
+  <!-- Benefits -->
+  <div class="benefits-section">
+    <div class="benefits-title">Por que ser Agencia Aliada</div>
+    <div class="benefits-sub">Tres razones para unirte al ecosistema de matches automotrices</div>
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <div class="benefit-icon"><i class="fa-solid fa-user-check" style="color:var(--gold);"></i></div>
+        <h3>Compradores Verificados</h3>
+        <p>Acceso directo a una base de compradores precalificados listos para hacer match con tu inventario.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon"><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--emerald);"></i></div>
+        <h3>Tecnologia de Matchmaking</h3>
+        <p>Nuestro algoritmo conecta cada auto con el comprador ideal. Mas matches, menos tiempo en el lote.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon"><i class="fa-solid fa-chart-line" style="color:var(--gold);"></i></div>
+        <h3>Dashboard de Analiticas</h3>
+        <p>Monitorea tu inventario, status de matches y rendimiento desde un panel profesional.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Form -->
+  <div class="apply-section" id="applySection">
+    <div class="apply-card">
+      <h2><i class="fa-solid fa-paper-plane" style="margin-right:8px;"></i>Solicita tu Acceso</h2>
+      <p class="apply-sub">Cuentanos sobre tu agencia y te contactaremos para activar tu showroom digital.</p>
+
+      <div class="g2">
+        <div class="ff">
+          <label>Nombre de la Agencia *</label>
+          <input class="fi" id="appAgency" placeholder="Autos Premium GDL">
         </div>
-
-        <nav class="nav-menu">
-            <a class="nav-item active" onclick="switchView(event, 'overview')">
-                <span class="nav-icon">📊</span> Overview
-            </a>
-            <a class="nav-item" onclick="switchView(event, 'upload')">
-                <span class="nav-icon">⚡</span> Cargar Autos
-            </a>
-            <a class="nav-item" onclick="switchView(event, 'inventory')">
-                <span class="nav-icon">🚘</span> Mi Inventario
-            </a>
-        </nav>
-
-        <div class="agency-profile" style="margin-top: auto;">
-            <div class="agency-avatar">🏢</div>
-            <div>
-                <div style="font-size: 13px; font-weight: 600;">Kavak Sur</div>
-                <div style="font-size: 11px; color: var(--green-text);">ID: KVK-001</div>
-            </div>
+        <div class="ff">
+          <label>Nombre de Contacto *</label>
+          <input class="fi" id="appName" placeholder="Juan Perez">
         </div>
-    </aside>
+      </div>
 
-    <!-- CONTENT -->
-    <main class="main-content">
-
-        <!-- HEADER -->
-        <header class="header">
-            <div class="page-title">
-                <h1 id="pageTitle">Panel de Control</h1>
-                <p id="pageDesc">Monitorea tus KPIs y la rotación de tu inventario en tiempo real.</p>
-            </div>
-            <button class="btn-primary" onclick="switchView(event, 'upload')">
-                <span>➕</span> Nuevo Auto
-            </button>
-        </header>
-
-        <!-- VIEW: OVERVIEW -->
-        <section id="view-overview" class="view-section active">
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <div class="metric-icon icon-gold">🚘</div>
-                    <div class="metric-info">
-                        <h3>42</h3>
-                        <p>Autos Activos en Alabol</p>
-                    </div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-icon icon-emerald">💖</div>
-                    <div class="metric-info">
-                        <h3>18</h3>
-                        <p>Matches esta semana</p>
-                    </div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-icon icon-blue">👀</div>
-                    <div class="metric-info">
-                        <h3>850</h3>
-                        <p>Impresiones a clientes</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="panel">
-                <div class="panel-title"><span>🚀</span> Quick Actions</div>
-                <p style="color: var(--green-text); font-size: 14px; margin-bottom: 20px;">Mantén tu inventario fresco
-                    para el motor inteligente. Lo que no está aquí, no se cruza con los clientes.</p>
-                <button class="btn-primary" onclick="switchView(event, 'upload')" style="display: inline-flex;">Cargar
-                    Lote de
-                    Autos (CSV)</button>
-            </div>
-        </section>
-
-        <!-- VIEW: UPLOAD -->
-        <section id="view-upload" class="view-section">
-            <div class="upload-container">
-                <!-- CSV Dropzone -->
-                <div class="panel">
-                    <div class="panel-title"><span>📂</span> Carga Masiva (CSV / Excel)</div>
-                    <p style="font-size: 13px; color: var(--green-text); margin-bottom: 20px;">Rápido y cero fricción.
-                        Arrastra tu listado mensual de autos. Nosotros normalizamos los datos por ti.</p>
-
-                    <div class="dropzone" id="csvDropzone" onclick="document.getElementById('fileInput').click()">
-                        <div class="drop-icon">📑</div>
-                        <div class="drop-title">Arrastra tu archivo aquí</div>
-                        <div class="drop-sub">Soporta .CSV, .XLSX (Max 10MB)</div>
-                        <input type="file" id="fileInput" hidden accept=".csv, .xlsx">
-                    </div>
-                </div>
-
-                <!-- Gamified Manual Upload -->
-                <div class="panel">
-                    <div class="panel-title"><span>⚡</span> Alta Rápida Inteligente</div>
-
-                    <div class="form-group">
-                        <label class="form-label">Marca</label>
-                        <select id="selMarca" class="styled-input" style="margin-bottom: 10px;"
-                            onchange="updateModels()">
-                            <option value="">Selecciona la Marca</option>
-                        </select>
-
-                        <label class="form-label">Modelo</label>
-                        <select id="selModelo" class="styled-input" disabled>
-                            <option value="">Primero selecciona una Marca</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Año</label>
-                        <select id="selAnio" class="styled-input">
-                            <option value="">Selecciona el Año</option>
-                            <!-- Script will populate this -->
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Transmisión</label>
-                        <div class="chips-container" id="chipTrans">
-                            <div class="chip active" onclick="toggleChip(this, true)">⚙️ Automática</div>
-                            <div class="chip" onclick="toggleChip(this, true)">🕹️ Manual</div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Precio de Venta</label>
-                        <div class="price-input-wrapper">
-                            <span class="price-prefix">$</span>
-                            <input type="number" id="inpPrecio" class="styled-input" placeholder="350000">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Kilometraje</label>
-                        <input type="number" id="inpKms" class="styled-input" placeholder="Ej. 45000">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Descripción del Vehículo</label>
-                        <textarea id="inpDesc" class="styled-input"
-                            placeholder="Detalla las condiciones generales, historial de servicios, equipamento especial..."
-                            rows="3" style="resize: vertical;"></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Fotografías (Ordena arrastrando. La primera será la Portada)</label>
-                        <div class="img-grid sortable" id="photoGrid">
-                            <div class="img-slot" id="btnAddPhoto"
-                                onclick="document.getElementById('filePhoto').click()" style="order: 999;">+</div>
-                        </div>
-                        <input type="file" id="filePhoto" hidden accept="image/*" multiple
-                            onchange="handlePhotoSelection(event)">
-                        <p style="font-size: 11px; margin-top: 5px; color: var(--gold-dim);">Arrastra las fotos para
-                            cambiar el orden.</p>
-                    </div>
-
-                    <div style="display: flex; gap: 10px; margin-top: 25px;">
-                        <button class="btn-primary"
-                            style="flex: 1; background: transparent; border: 1px solid var(--gold); color: var(--gold); justify-content: center;"
-                            onclick="previewAd()">
-                            👁️ Vista Previa
-                        </button>
-                        <button class="btn-primary" id="btnPublish" style="flex: 2; justify-content: center;"
-                            onclick="uploadCarToSupabase()">
-                            Publicar en el Matchmaker
-                        </button>
-                    </div>
-                    <div id="uploadStatus"
-                        style="text-align: center; margin-top: 10px; font-size: 12px; color: var(--emerald);"></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- VIEW: INVENTORY -->
-        <section id="view-inventory" class="view-section">
-            <div class="panel" style="margin-bottom: 25px;">
-                <input type="text" class="styled-input" placeholder="🔍 Buscar por marca, modelo o ID de placa...">
-            </div>
-
-            <div class="inventory-grid" id="inventoryGrid">
-                <!-- Cars will be injected here via JS -->
-            </div>
-        </section>
-
-        <!-- VIEW: MATCHES (Removed) -->
-    </main>
-
-    <!-- Preview Modal -->
-    <div id="previewModal" class="modal">
-        <div style="max-width: 400px; width: 100%; position: relative;">
-            <button onclick="document.getElementById('previewModal').style.display='none'"
-                style="position:absolute; top:-40px; right:0; background:none; border:none; color:white; font-size:24px; cursor:pointer;">&times;</button>
-            <h3 style="color: white; margin-bottom: 15px; text-align: center;">Así lo verán los clientes</h3>
-            <div id="previewContent" class="car-card" style="margin: 0 auto;">
-                <!-- Content injected via JS -->
-            </div>
+      <div class="g2">
+        <div class="ff">
+          <label>Email *</label>
+          <input class="fi" id="appEmail" type="email" placeholder="contacto@miagencia.com">
         </div>
+        <div class="ff">
+          <label>Telefono / WhatsApp *</label>
+          <input class="fi" id="appPhone" type="tel" placeholder="+52 33 1234 5678">
+        </div>
+      </div>
+
+      <div class="g2">
+        <div class="ff">
+          <label>Ciudad</label>
+          <select class="fi" id="appCity">
+            <option value="CDMX">CDMX</option>
+            <option value="Guadalajara">Guadalajara</option>
+            <option value="Monterrey">Monterrey</option>
+            <option value="Puebla">Puebla</option>
+            <option value="Queretaro">Queretaro</option>
+            <option value="Cancun">Cancun</option>
+            <option value="Merida">Merida</option>
+            <option value="Leon">Leon</option>
+            <option value="Tijuana">Tijuana</option>
+            <option value="Otra">Otra</option>
+          </select>
+        </div>
+        <div class="ff">
+          <label>Numero de Vehiculos</label>
+          <select class="fi" id="appVehicles">
+            <option value="1-10">1 - 10</option>
+            <option value="11-50">11 - 50</option>
+            <option value="51-200">51 - 200</option>
+            <option value="200+">200+</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="ff">
+        <label>Mensaje (opcional)</label>
+        <textarea class="fi" id="appMessage" placeholder="Cuentanos mas sobre tu agencia, que tipo de autos manejas, etc."></textarea>
+      </div>
+
+      <button class="bgold" onclick="submitApplication()"><i class="fa-solid fa-paper-plane" style="margin-right:6px;"></i>Enviar Solicitud</button>
+      <div class="apply-msg" id="applyMsg"></div>
+
+      <div class="login-link">
+        Ya tengo cuenta — <a href="#" onclick="openLogin();return false;">Iniciar Sesion</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- ── LOGIN OVERLAY ── -->
+<!-- ══════════════════════════════════════════ -->
+<div id="loginOverlay">
+  <button class="login-close" onclick="closeLogin()">&times;</button>
+  <div class="lbox">
+    <div class="login-logo-wrap">
+      <div class="login-logo-glow"></div>
+      <img src="logo-circular.png" alt="Alabol">
+    </div>
+    <h1>Portal Agencias</h1>
+    <p class="ltagline">Tu showroom digital en el Tinder de los Autos.<br>Conecta tu inventario y encuentra el match perfecto para cada auto.</p>
+    <div class="lcard">
+      <div class="tabs">
+        <button class="tab on" id="tl" onclick="setTab(0)">Entrar</button>
+        <button class="tab" id="tr" onclick="setTab(1)">Crear Cuenta</button>
+      </div>
+      <button class="bgoog" onclick="goGoogle()">
+        <svg viewBox="0 0 24 24"><path fill="#EA4335" d="M5.27 9.77A7.2 7.2 0 0 1 12 4.8c1.73 0 3.29.63 4.51 1.65l3.37-3.37A12 12 0 0 0 0 12c0 1.99.49 3.86 1.35 5.52l3.92-3.04a7.2 7.2 0 0 1 0-4.71z"/><path fill="#FBBC05" d="M12 24c3.24 0 5.95-1.08 7.94-2.91l-3.66-2.84A7.17 7.17 0 0 1 12 19.2a7.2 7.2 0 0 1-6.82-4.91L1.35 17.51A12 12 0 0 0 12 24z"/><path fill="#4285F4" d="M23.76 12.27c0-.85-.07-1.67-.2-2.47H12v4.67h6.6a5.64 5.64 0 0 1-2.45 3.71l3.66 2.84c2.14-1.97 3.95-5.15 3.95-8.75z"/><path fill="#34A853" d="M5.18 14.3A7.2 7.2 0 0 1 4.8 12c0-.81.14-1.59.38-2.33L1.26 6.63A12 12 0 0 0 0 12c0 1.93.46 3.75 1.27 5.37l3.91-3.07z"/></svg>
+        Continuar con Google
+      </button>
+      <div class="dvdr">o con email</div>
+      <div id="fl">
+        <input class="inp" id="le" type="email" placeholder="tu@email.com">
+        <input class="inp" id="lp" type="password" placeholder="Contrasena">
+        <div class="aerr" id="lerr"></div>
+        <button class="bgold" onclick="doLogin()">Entrar al Portal</button>
+      </div>
+      <div id="fr" class="dn">
+        <input class="inp" id="rn" placeholder="Nombre de la agencia">
+        <input class="inp" id="re" type="email" placeholder="tu@email.com">
+        <input class="inp" id="rp" type="password" placeholder="Contrasena (min 6)">
+        <div class="aerr" id="rerr"></div>
+        <button class="bgold" onclick="doReg()">Crear Cuenta de Agencia</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- ── DASHBOARD (AUTHENTICATED) ── -->
+<!-- ══════════════════════════════════════════ -->
+<div id="dashboard">
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="index.html"><img src="logo-circular.png" alt="Alabol" class="sidebar-logo"></a>
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-name">Alabol</div>
+        <div class="sidebar-brand-sub">Portal Agencias</div>
+      </div>
+    </div>
+    <div class="sidebar-nav">
+      <button class="sidebar-nav-item active" onclick="switchView('dashView')" data-view="dashView">
+        <i class="fa-solid fa-gauge-high"></i> Dashboard
+      </button>
+      <button class="sidebar-nav-item" onclick="switchView('invView')" data-view="invView">
+        <i class="fa-solid fa-warehouse"></i> Mi Inventario
+      </button>
+      <button class="sidebar-nav-item" onclick="switchView('pubView')" data-view="pubView">
+        <i class="fa-solid fa-circle-plus"></i> Publicar Auto
+      </button>
+      <button class="sidebar-nav-item" onclick="switchView('profileView')" data-view="profileView">
+        <i class="fa-solid fa-user-tie"></i> Mi Perfil
+      </button>
+    </div>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="sidebarAvatar"></div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="sidebarName">...</div>
+          <div class="sidebar-user-email" id="sidebarEmail">...</div>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="signOut()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesion</button>
+    </div>
+  </div>
+
+  <!-- Sidebar overlay for mobile -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <!-- Main content -->
+  <div class="main-content">
+    <!-- Mobile header -->
+    <div class="mobile-header">
+      <button class="hamburger" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+      <div class="mobile-title">Portal Agencias</div>
+      <div style="width:38px;"></div>
     </div>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="toast">
-        <span id="toastMsg">Notificación</span>
-    </div>
+    <!-- DASHBOARD VIEW -->
+    <div class="view active" id="dashView">
+      <div class="dash-welcome">
+        <div class="sub">Bienvenido a tu showroom digital,</div>
+        <div class="name" id="dashName">...</div>
+      </div>
 
-    <!-- Error Banner for debugging -->
-    <div id="debugBanner"
-        style="display:none; position:fixed; top:0; left:0; width:100%; background:red; color:white; padding:10px; z-index:9999; font-family:monospace; font-size:12px;">
-    </div>
-
-    <!-- ============================================ -->
-    <!-- AUTH OVERLAY (Login / Register)              -->
-    <!-- ============================================ -->
-    <div id="authOverlay" class="auth-overlay">
-        <div class="auth-box">
-            <div class="auth-logo">
-                <div class="logo-icon">🏹</div>
-                <h2>Alabol BackOffice</h2>
-                <p>Acceso exclusivo para agencias afiliadas</p>
-            </div>
-
-            <div class="auth-tab-bar">
-                <div class="auth-tab active" onclick="switchAuthTab('login')">Iniciar Sesión</div>
-                <div class="auth-tab" onclick="switchAuthTab('register')">Crear Cuenta</div>
-            </div>
-
-            <div id="authError" class="auth-error"></div>
-
-            <!-- Login Form -->
-            <div id="formLogin">
-                <input id="loginEmail" class="auth-input" type="email" placeholder="📧 Correo de la Agencia"
-                    autocomplete="email">
-                <input id="loginPass" class="auth-input" type="password" placeholder="🔑 Contraseña">
-                <button class="auth-btn" onclick="handleLogin()">Entrar al Panel →</button>
-            </div>
-
-            <!-- Register Form -->
-            <div id="formRegister" style="display:none;">
-                <input id="regName" class="auth-input" type="text" placeholder="🏢 Nombre de la Agencia">
-                <input id="regEmail" class="auth-input" type="email" placeholder="📧 Correo Corporativo"
-                    autocomplete="email">
-                <input id="regPass" class="auth-input" type="password" placeholder="🔑 Contraseña (mín. 6 caracteres)">
-                <button class="auth-btn" onclick="handleRegister()">Crear Mi Cuenta →</button>
-            </div>
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon"><i class="fa-solid fa-car-side" style="color:var(--gold);"></i></div>
+          <div class="kpi-num" id="kpi0">-</div>
+          <div class="kpi-label">Total Publicados</div>
         </div>
+        <div class="kpi-card">
+          <div class="kpi-icon"><i class="fa-solid fa-heart" style="color:var(--emerald);"></i></div>
+          <div class="kpi-num" id="kpi1">-</div>
+          <div class="kpi-label">Disponibles</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon"><i class="fa-solid fa-fire" style="color:var(--warning);"></i></div>
+          <div class="kpi-num" id="kpi2">-</div>
+          <div class="kpi-label">Reservados</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon"><i class="fa-solid fa-circle-check" style="color:#60a5fa;"></i></div>
+          <div class="kpi-num" id="kpi3">-</div>
+          <div class="kpi-label">Vendidos</div>
+        </div>
+      </div>
+
+      <div class="recent-section">
+        <div class="recent-title"><i class="fa-solid fa-clock-rotate-left" style="color:var(--gold);"></i> Actividad Reciente</div>
+        <div class="recent-list" id="recentList">
+          <div class="empty-recent"><div class="sp" style="margin:0 auto;width:28px;height:28px;"></div></div>
+        </div>
+      </div>
     </div>
 
-    <script>
-        // Catch any global errors and display them on screen
-        window.onerror = function (msg, url, lineNo, columnNo, error) {
-            const banner = document.getElementById('debugBanner');
-            banner.style.display = 'block';
-            banner.innerHTML += `ERROR: ${msg} en linea ${lineNo}<br>`;
-            return false;
-        };
-
-        // Supabase Initialization
-        // using window.supabaseClient from config.js
-        console.log("Supabase Client Init:", !!window.supabaseClient);
-
-        // Multi-Tenant: Current authenticated user context
-        let currentUser = null;
-        let AGENCY_ID = null; // Will be set after auth
-        let stagedFiles = []; // Array of { id, file, url } for Drag & Drop sorting
-
-        // ============================================
-        // AUTH SYSTEM (Login / Register / Logout)
-        // ============================================
-        function switchAuthTab(tab) {
-            document.querySelectorAll('.auth-tab').forEach(el => el.classList.remove('active'));
-            event.target.classList.add('active');
-            document.getElementById('formLogin').style.display = tab === 'login' ? 'block' : 'none';
-            document.getElementById('formRegister').style.display = tab === 'register' ? 'block' : 'none';
-            document.getElementById('authError').style.display = 'none';
-        }
-
-        function showAuthError(msg) {
-            const el = document.getElementById('authError');
-            el.textContent = msg;
-            el.style.display = 'block';
-        }
-
-        async function handleLogin() {
-            const email = document.getElementById('loginEmail').value;
-            const pass = document.getElementById('loginPass').value;
-            if (!email || !pass) { showAuthError('Ingresa tu correo y contraseña.'); return; }
-
-            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pass });
-            if (error) { showAuthError('Credenciales inválidas. Verifica tu correo y contraseña.'); return; }
-            onAuthSuccess(data.user);
-        }
-
-        async function handleRegister() {
-            const name = document.getElementById('regName').value;
-            const email = document.getElementById('regEmail').value;
-            const pass = document.getElementById('regPass').value;
-            if (!name || !email || !pass) { showAuthError('Por favor llena todos los campos.'); return; }
-            if (pass.length < 6) { showAuthError('La contraseña debe tener al menos 6 caracteres.'); return; }
-
-            const { data, error } = await supabaseClient.auth.signUp({
-                email,
-                password: pass,
-                options: { data: { agency_name: name } } // Metadata guardado en auth.users
-            });
-            if (error) { showAuthError('Error al crear cuenta: ' + error.message); return; }
-            // Auto-login after register
-            if (data.session) {
-                onAuthSuccess(data.user);
-            } else {
-                showAuthError('¡Registro exitoso! Revisa tu correo para confirmarlo.');
-            }
-        }
-
-        function onAuthSuccess(user) {
-            currentUser = user;
-            AGENCY_ID = user.id; // Unique agency ID = their Supabase user ID
-
-            // Hide Auth Overlay, Show App
-            document.getElementById('authOverlay').style.display = 'none';
-
-            // Inject User Badge in sidebar
-            const agencyName = user.user_metadata?.agency_name || user.email.split('@')[0];
-            const sidebar = document.querySelector('.nav-menu');
-            sidebar.insertAdjacentHTML('afterend', `
-                <div class="user-badge">
-                    <div class="user-avatar">${agencyName.charAt(0).toUpperCase()}</div>
-                    <div>
-                        <div style="font-weight:600; font-size:12px; color:white">${agencyName}</div>
-                        <div style="font-size:10px; color:var(--green-text)">${user.email}</div>
-                    </div>
-                    <button class="btn-logout" onclick="handleLogout()">Salir</button>
-                </div>
-            `);
-
-            // Pull real inventory filtered to this agency only
-            fetchInventory();
-        }
-
-        async function handleLogout() {
-            await supabaseClient.auth.signOut();
-            window.location.reload();
-        }
-
-        // ============================================
-        // SESSION CHECK ON LOAD
-        // ============================================
-        async function checkSession() {
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (session?.user) {
-                onAuthSuccess(session.user);
-            }
-            // else: AuthOverlay stays visible (user must log in)
-        }
-        checkSession();
-
-        supabaseClient.auth.onAuthStateChange((_event, session) => {
-            if (session?.user && !currentUser) {
-                onAuthSuccess(session.user);
-            }
-        });
-
-        // Tab Navigation Logic
-        const titles = {
-            'overview': { title: 'Panel de Control', desc: 'Monitorea tus KPIs y rotación de inventario.' },
-            'upload': { title: 'Cargar Inventario', desc: 'Alta masiva o manual de vehículos en la red Alabol.' },
-            'inventory': { title: 'Mi Inventario Activo', desc: 'Gestiona existencias y da de baja autos vendidos.' }
-        };
-
-        function switchView(event, viewId) {
-            // Update Sidebar Highlights
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-
-            // If the element clicked is a nav-item, highlight it. Otherwise find the matching nav-item
-            if (event.currentTarget.classList.contains('nav-item')) {
-                event.currentTarget.classList.add('active');
-            } else {
-                const targetNav = Array.from(document.querySelectorAll('.nav-item')).find(el => el.getAttribute('onclick').includes(viewId));
-                if (targetNav) targetNav.classList.add('active');
-            }
-
-            // Show selected view
-            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-            document.getElementById(`view-${viewId}`).classList.add('active');
-
-            // Update Header Titles
-            document.getElementById('pageTitle').textContent = titles[viewId].title;
-            document.getElementById('pageDesc').textContent = titles[viewId].desc;
-        }
-
-        // Dynamic Mexico Catalog
-        const mexicoCatalog = {
-            "Volkswagen": ["Jetta", "Golf", "Polo", "Vento", "Virtus", "Tiguan", "Taos", "Caddy", "Amarok", "Saveiro", "T-Cross"],
-            "Nissan": ["Versa", "Sentra", "March", "Altima", "Kicks", "X-Trail", "Frontier", "NP300", "Maxima"],
-            "Honda": ["Civic", "Accord", "City", "CR-V", "HR-V", "BR-V", "Odyssey", "Pilot"],
-            "Toyota": ["Corolla", "Camry", "Yaris", "Prius", "RAV4", "Highlander", "Sienna", "Tacoma", "Hilux", "Avanza"],
-            "Chevrolet": ["Onix", "Aveo", "Cavalier", "Tracker", "Captiva", "Silverado", "Colorado", "Tahoe", "Suburban", "Tornado"],
-            "Ford": ["Mustang", "Escape", "Edge", "Explorer", "Expedition", "F-150", "Lobo", "Ranger", "Maverick"],
-            "Kia": ["Rio", "Forte", "Soul", "Seltos", "Sportage", "Sorento", "Sedona"],
-            "Hyundai": ["Grand i10", "Elantra", "Accent", "Creta", "Tucson", "Santa Fe"],
-            "Mazda": ["Mazda2", "Mazda3", "Mazda6", "CX-3", "CX-30", "CX-5", "CX-9"],
-            "BMW": ["Serie 1", "Serie 3", "Serie 5", "X1", "X3", "X5", "X6", "X7"],
-            "Mercedes-Benz": ["Clase A", "Clase C", "Clase E", "GLA", "GLC", "GLE", "GLS"],
-            "Audi": ["A1", "A3", "A4", "A6", "Q2", "Q3", "Q5", "Q7", "Q8"]
-        };
-
-        function initCatalog() {
-            // Populate Makes
-            const selMarca = document.getElementById('selMarca');
-            Object.keys(mexicoCatalog).sort().forEach(marca => {
-                selMarca.innerHTML += `<option value="${marca}">${marca}</option>`;
-            });
-
-            // Populate Years (Current Year down to 2005)
-            const selAnio = document.getElementById('selAnio');
-            const currentYear = new Date().getFullYear();
-            for (let i = currentYear + 1; i >= 2005; i--) {
-                selAnio.innerHTML += `<option value="${i}">${i}</option>`;
-            }
-        }
-
-        function updateModels() {
-            const selMarca = document.getElementById('selMarca');
-            const selModelo = document.getElementById('selModelo');
-            const selectedMarca = selMarca.value;
-
-            selModelo.innerHTML = '<option value="">Selecciona el Modelo</option>';
-
-            if (selectedMarca && mexicoCatalog[selectedMarca]) {
-                selModelo.disabled = false;
-                mexicoCatalog[selectedMarca].sort().forEach(modelo => {
-                    selModelo.innerHTML += `<option value="${modelo}">${modelo}</option>`;
-                });
-            } else {
-                selModelo.disabled = true;
-                selModelo.innerHTML = '<option value="">Primero selecciona una Marca</option>';
-            }
-        }
-
-        // Gamified Chips Logic
-        function toggleChip(element, singleSelectGroup = false) {
-            if (singleSelectGroup) {
-                Array.from(element.parentElement.children).forEach(sibling => sibling.classList.remove('active'));
-            }
-            element.classList.toggle('active');
-        }
-
-        // Photo Selection and Sorting Logic
-        function handlePhotoSelection(event) {
-            const files = event.target.files;
-            if (!files.length) return;
-
-            const grid = document.getElementById('photoGrid');
-
-            for (let file of files) {
-                const fileId = 'staged-' + Date.now() + Math.floor(Math.random() * 1000);
-                const objectUrl = URL.createObjectURL(file);
-
-                stagedFiles.push({ id: fileId, file: file, url: objectUrl });
-
-                const slotHTML = `
-                    <div class="img-slot staged-img" id="${fileId}" draggable="true" style="position:relative;">
-                        <img src="${objectUrl}" alt="Auto Preview" style="width:100%;height:100%;object-fit:cover;">
-                        <div class="remove-btn" onclick="removePhoto('${fileId}')" style="position:absolute; top:5px; right:5px; background:rgba(255,0,0,0.7); color:white; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;">✕</div>
-                    </div>
-                `;
-
-                // Insert before the Add button
-                const btnAdd = document.getElementById('btnAddPhoto');
-                btnAdd.insertAdjacentHTML('beforebegin', slotHTML);
-            }
-
-            updatePortadaBadge();
-            initDragAndDrop();
-        }
-
-        function removePhoto(id) {
-            stagedFiles = stagedFiles.filter(f => f.id !== id);
-            document.getElementById(id).remove();
-            updatePortadaBadge();
-        }
-
-        function updatePortadaBadge() {
-            // Remove all existing badges
-            document.querySelectorAll('.portada-badge').forEach(el => el.remove());
-            // Add badge to the first staged image visually
-            const firstImg = document.querySelector('.staged-img');
-            if (firstImg) {
-                firstImg.insertAdjacentHTML('afterbegin', '<div class="portada-badge">PORTADA</div>');
-            }
-        }
-
-        function initDragAndDrop() {
-            const draggables = document.querySelectorAll('.staged-img');
-            const container = document.getElementById('photoGrid');
-
-            draggables.forEach(draggable => {
-                draggable.addEventListener('dragstart', () => {
-                    draggable.classList.add('dragging');
-                });
-
-                draggable.addEventListener('dragend', () => {
-                    draggable.classList.remove('dragging');
-                    updatePortadaBadge();
-
-                    // Re-sync array based on DOM order
-                    const newOrder = [];
-                    document.querySelectorAll('.staged-img').forEach(el => {
-                        const match = stagedFiles.find(f => f.id === el.id);
-                        if (match) newOrder.push(match);
-                    });
-                    stagedFiles = newOrder;
-                });
-            });
-
-            container.addEventListener('dragover', e => {
-                e.preventDefault();
-                const afterElement = getDragAfterElement(container, e.clientX, e.clientY);
-                const draggable = document.querySelector('.dragging');
-                if (afterElement == null) {
-                    container.insertBefore(draggable, document.getElementById('btnAddPhoto'));
-                } else {
-                    container.insertBefore(draggable, afterElement);
-                }
-            });
-        }
-
-        function getDragAfterElement(container, x, y) {
-            const draggableElements = [...container.querySelectorAll('.staged-img:not(.dragging)')];
-
-            return draggableElements.reduce((closest, child) => {
-                const box = child.getBoundingClientRect();
-                // Find horizontal center
-                const offset = x - box.left - box.width / 2;
-                if (offset < 0 && offset > closest.offset) {
-                    return { offset: offset, element: child };
-                } else {
-                    return closest;
-                }
-            }, { offset: Number.NEGATIVE_INFINITY }).element;
-        }
-
-        function previewAd() {
-            const marca = document.getElementById('selMarca').value || 'Marca';
-            const modelo = document.getElementById('selModelo').value || 'Modelo';
-            const anio = document.getElementById('selAnio').value || '2024';
-            const precioRaw = document.getElementById('inpPrecio').value || 0;
-            const kmsRaw = document.getElementById('inpKms').value || 0;
-            const transmision = document.querySelector('#chipTrans .chip.active')?.textContent.replace(/[^a-zA-Záéíóú]/g, '').trim() || 'Auto';
-
-            const formatPrice = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(precioRaw);
-            const formatKms = new Intl.NumberFormat('es-MX').format(kmsRaw) + ' km';
-            const coverPhoto = stagedFiles.length > 0 ? stagedFiles[0].url : 'https://via.placeholder.com/400x250?text=Sin+Foto';
-
-            const previewHTML = `
-                <img src="${coverPhoto}" alt="Cover" class="car-img" style="height:250px;">
-                <div class="car-info">
-                    <div class="car-title">${marca} ${modelo} ${anio}</div>
-                    <div class="car-price">${formatPrice}</div>
-                    <div class="car-meta">
-                        <span class="meta-badge">${formatKms}</span>
-                        <span class="meta-badge">${transmision}</span>
-                    </div>
-                    <button class="btn-primary" style="width:100%; margin-top:15px; background:var(--gold); color:var(--bg-dark);">💖 Me Interesa</button>
-                </div>
-            `;
-
-            document.getElementById('previewContent').innerHTML = previewHTML;
-            document.getElementById('previewModal').style.display = 'flex';
-        }
-
-        // Upload single car to Database
-        async function uploadCarToSupabase() {
-            const btn = document.getElementById('btnPublish');
-            const status = document.getElementById('uploadStatus');
-            btn.innerHTML = 'Subiendo... ⏳';
-            btn.disabled = true;
-
-            try {
-                // Gather data
-                const marca = document.getElementById('selMarca').value;
-                const modelo = document.getElementById('selModelo').value;
-                const anio = document.getElementById('selAnio').value;
-                const descripcion = document.getElementById('inpDesc').value;
-                const transmision = document.querySelector('#chipTrans .chip.active')?.textContent.replace(/[^a-zA-Záéíóú]/g, '').trim() || 'Automatica';
-                const precio = document.getElementById('inpPrecio').value;
-                const kms = document.getElementById('inpKms').value || 0;
-
-                if (!marca || !modelo || !anio || !precio) {
-                    throw new Error("Por favor completa Marca, Modelo, Año y Precio.");
-                }
-
-                // First upload the sorted images
-                let finalPhotoUrls = [];
-                for (let i = 0; i < stagedFiles.length; i++) {
-                    const staged = stagedFiles[i];
-                    document.getElementById(staged.id).innerHTML = '⏳';
-
-                    const fileExt = staged.file.name.split('.').pop();
-                    const fileName = `${AGENCY_ID}/${Date.now()}-${i}.${fileExt}`;
-
-                    const { data: uploadData, error: uploadError } = await supabaseClient.storage.from('vehicle_photos').upload(fileName, staged.file);
-                    if (uploadError) throw new Error("Fallo subiendo imagen " + i);
-
-                    const { data: { publicUrl } } = supabaseClient.storage.from('vehicle_photos').getPublicUrl(fileName);
-                    finalPhotoUrls.push(publicUrl);
-                }
-
-                // Insert into Database with the sorted URLs (user_id auto-linked via RLS)
-                const { data, error } = await supabaseClient
-                    .from('inventario')
-                    .insert([
-                        {
-                            agencia_id: AGENCY_ID,
-                            user_id: currentUser.id, // Links to auth.users
-                            marca: marca,
-                            modelo: modelo,
-                            anio: parseInt(anio),
-                            descripcion: descripcion,
-                            transmision: transmision,
-                            precio_venta: parseFloat(precio),
-                            kilometraje: parseInt(kms),
-                            estatus: 'disponible',
-                            fotos: finalPhotoUrls // Array of Ordered URLs
-                        }
-                    ]);
-
-                if (error) throw error;
-
-                // Success
-                status.textContent = '✅ Vehículo publicado en Matchmaker';
-                showToast('Auto publicado correctamente');
-
-                // Refresh Inventory view
-                fetchInventory();
-
-                // Clear Form
-                document.getElementById('selMarca').value = '';
-                document.getElementById('selModelo').value = '';
-                document.getElementById('selModelo').disabled = true;
-                document.getElementById('selAnio').value = '';
-                document.getElementById('inpDesc').value = '';
-                document.getElementById('inpPrecio').value = '';
-                document.getElementById('inpKms').value = '';
-
-                // Reset Staged Files
-                stagedFiles = [];
-                document.querySelectorAll('.staged-img').forEach(el => el.remove());
-
-            } catch (err) {
-                console.error(err);
-                status.textContent = '❌ Error: ' + err.message;
-                status.style.color = '#ff4757';
-            } finally {
-                btn.innerHTML = 'Publicar en el Matchmaker';
-                btn.disabled = false;
-                setTimeout(() => status.textContent = '', 4000);
-            }
-        }
-
-        // CSV Dropzone Interaction
-        const dropzone = document.getElementById('csvDropzone');
-        dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
-        dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
-        dropzone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropzone.classList.remove('dragover');
-            dropzone.innerHTML = `<div class="drop-icon">✅</div><div class="drop-title">Archivo Cargado Exitosamente</div><div class="drop-sub">Analizando datos en segundo plano...</div>`;
-            setTimeout(() => showToast("Módulo CSV en desarrollo"), 1500);
-        });
-
-        // Fetch Inventory from Database
-        async function fetchInventory() {
-            const grid = document.getElementById('inventoryGrid');
-            grid.innerHTML = '<div style="color:white; text-align:center; padding: 20px;">Cargando inventario...</div>';
-
-            try {
-                const { data, error } = await supabaseClient
-                    .from('inventario')
-                    .select('*')
-                    .eq('user_id', currentUser.id) // Filter by this agency's user_id (Multi-tenant)
-                    .eq('estatus', 'disponible')
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-
-                if (!data || data.length === 0) {
-                    grid.innerHTML = '<div style="color:var(--green-text); text-align:center; padding: 20px;">No hay autos activos.</div>';
-                    return;
-                }
-
-                grid.innerHTML = ''; // Clear loading
-                data.forEach(car => {
-                    const formatPrice = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(car.precio_venta);
-                    const formatKms = new Intl.NumberFormat('es-MX').format(car.kilometraje) + ' km';
-                    const coverPhoto = (car.fotos && car.fotos.length > 0) ? car.fotos[0] : 'https://via.placeholder.com/400x250?text=Sin+Foto';
-
-                    const card = `
-                        <div class="car-card" id="car-${car.id}">
-                            <img src="${coverPhoto}" alt="${car.marca} ${car.modelo}" class="car-img">
-                            <div class="car-info">
-                                <div class="car-title">${car.marca} ${car.modelo} ${car.anio}</div>
-                                <div class="car-price">${formatPrice}</div>
-                                <div class="car-meta">
-                                    <span class="meta-badge">${formatKms}</span>
-                                    <span class="meta-badge">${car.transmision}</span>
-                                </div>
-                                <button class="btn-danger" onclick="markAsSold(${car.id})">
-                                    <span>💰</span> Marcar como Vendido (Baja)
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                    grid.insertAdjacentHTML('beforeend', card);
-                });
-
-            } catch (err) {
-                console.error("Error fetching inventory:", err);
-                grid.innerHTML = '<div style="color:red; text-align:center; padding: 20px;">Error al cargar inventario.</div>';
-            }
-        }
-
-        // Real Delete/Sold Logic
-        async function markAsSold(carId) {
-            const cardElement = document.getElementById(`car-${carId}`);
-            if (cardElement) {
-                cardElement.style.opacity = '0.5';
-                cardElement.style.pointerEvents = 'none';
-            }
-
-            try {
-                const { error } = await supabaseClient
-                    .from('inventario')
-                    .update({ estatus: 'vendido' })
-                    .eq('id', carId);
-
-                if (error) throw error;
-
-                showToast("🚗 Vehículo dado de baja en todos los matches activos.");
-                if (cardElement) cardElement.remove();
-
-            } catch (err) {
-                console.error("Error updating status:", err);
-                showToast("❌ Hubo un error al dar de baja el vehículo.");
-                if (cardElement) {
-                    cardElement.style.opacity = '1';
-                    cardElement.style.pointerEvents = 'all';
-                }
-            }
-        }
-
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toastMsg').textContent = msg;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3500);
-        }
-
-        // Initialize Data on Load
-        initCatalog();
-        // NOTE: fetchInventory() is now called from onAuthSuccess() after the user logs in
-    </script>
+    <!-- INVENTORY VIEW -->
+    <div class="view" id="invView">
+      <div class="inv-header">
+        <div class="inv-title"><i class="fa-solid fa-warehouse" style="color:var(--gold);margin-right:8px;"></i>Mi Inventario</div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <div class="search-wrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input class="inv-search" id="searchInput" type="text" placeholder="Buscar marca, modelo..." oninput="filterCars()">
+          </div>
+          <button class="bnew" onclick="openForm(null)"><i class="fa-solid fa-plus"></i> Publicar</button>
+        </div>
+      </div>
+      <div id="carGrid"></div>
+    </div>
+
+    <!-- PUBLISH VIEW (redirects to wizard) -->
+    <div class="view" id="pubView">
+      <div style="text-align:center;padding:60px 20px;">
+        <div style="font-size:56px;margin-bottom:16px;"><i class="fa-solid fa-heart-circle-plus" style="color:var(--gold);"></i></div>
+        <div style="font-size:20px;font-weight:700;color:white;margin-bottom:8px;">Publica un nuevo auto</div>
+        <p style="font-size:13px;opacity:0.7;margin-bottom:24px;line-height:1.6;">Cada auto publicado entra al radar de nuestro algoritmo.<br>Conecta tu inventario con compradores verificados.</p>
+        <button class="bnew" style="margin:0 auto;" onclick="openForm(null)"><i class="fa-solid fa-plus"></i> Iniciar Publicacion</button>
+      </div>
+    </div>
+
+    <!-- PROFILE VIEW -->
+    <div class="view" id="profileView">
+      <div style="margin-bottom:24px;">
+        <div style="font-size:20px;font-weight:800;color:white;"><i class="fa-solid fa-user-tie" style="color:var(--gold);margin-right:8px;"></i>Mi Perfil</div>
+      </div>
+      <div class="profile-card">
+        <h2>Informacion de Cuenta</h2>
+        <div class="profile-row">
+          <i class="fa-solid fa-envelope"></i>
+          <div>
+            <div class="profile-label">Email</div>
+            <div class="profile-value" id="profEmail">-</div>
+          </div>
+        </div>
+        <div class="profile-row">
+          <i class="fa-solid fa-building"></i>
+          <div>
+            <div class="profile-label">Agencia</div>
+            <div class="profile-value" id="profName">-</div>
+          </div>
+        </div>
+        <div class="profile-row">
+          <i class="fa-solid fa-id-badge"></i>
+          <div>
+            <div class="profile-label">ID de Usuario</div>
+            <div class="profile-value" id="profUid" style="font-size:11px;font-family:monospace;color:var(--green-muted);">-</div>
+          </div>
+        </div>
+        <div class="profile-stats">
+          <div class="profile-stat">
+            <div class="profile-stat-num" id="profTotal">0</div>
+            <div class="profile-stat-label">Publicados</div>
+          </div>
+          <div class="profile-stat">
+            <div class="profile-stat-num" id="profDisp">0</div>
+            <div class="profile-stat-label">Disponibles</div>
+          </div>
+          <div class="profile-stat">
+            <div class="profile-stat-num" id="profVendidos">0</div>
+            <div class="profile-stat-label">Vendidos</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- ── WIZARD (Full Page Form) ── -->
+<!-- ══════════════════════════════════════════ -->
+<div id="wizard">
+  <div class="wiz-header">
+    <div class="wiz-header-top">
+      <div class="wiz-title" id="ftit"><i class="fa-solid fa-heart-circle-plus"></i> Publicar Auto al Showroom</div>
+      <button class="wiz-close" onclick="closeForm()">&times;</button>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-step">
+        <div class="progress-dot active" id="pd0">1</div>
+        <span class="progress-label active" id="pl0">Perfil del Auto</span>
+      </div>
+      <div class="progress-line"><div class="progress-line-fill" id="pf0"></div></div>
+      <div class="progress-step">
+        <div class="progress-dot" id="pd1">2</div>
+        <span class="progress-label" id="pl1">Sesion de Fotos</span>
+      </div>
+      <div class="progress-line"><div class="progress-line-fill" id="pf1"></div></div>
+      <div class="progress-step">
+        <div class="progress-dot" id="pd2">3</div>
+        <span class="progress-label" id="pl2">Precio y Detalles</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="wiz-body">
+    <div class="wiz-content">
+
+      <!-- STEP 1: Vehicle Info -->
+      <div class="wiz-step active" id="ws0">
+        <div class="wiz-step-title">Perfil del Auto</div>
+        <div class="wiz-step-sub">Define la identidad de tu auto. Cada detalle cuenta para hacer match con el comprador ideal en nuestro algoritmo.</div>
+
+        <div class="g2">
+          <div class="ff">
+            <label>Marca *</label>
+            <select class="fi" id="fm">
+              <option value="">Seleccionar...</option>
+              <option value="Toyota">Toyota</option><option value="Honda">Honda</option>
+              <option value="Nissan">Nissan</option><option value="Volkswagen">Volkswagen</option>
+              <option value="Chevrolet">Chevrolet</option><option value="Ford">Ford</option>
+              <option value="BMW">BMW</option><option value="Mercedes-Benz">Mercedes-Benz</option>
+              <option value="Audi">Audi</option><option value="Mazda">Mazda</option>
+              <option value="Hyundai">Hyundai</option><option value="Kia">Kia</option>
+              <option value="Jeep">Jeep</option><option value="Dodge">Dodge</option>
+              <option value="Chrysler">Chrysler</option><option value="Subaru">Subaru</option>
+              <option value="Mini">Mini</option><option value="Mitsubishi">Mitsubishi</option>
+              <option value="Peugeot">Peugeot</option><option value="Renault">Renault</option>
+              <option value="Seat">Seat</option><option value="Suzuki">Suzuki</option>
+              <option value="Volvo">Volvo</option><option value="RAM">RAM</option>
+              <option value="GMC">GMC</option><option value="Fiat">Fiat</option>
+              <option value="MG">MG</option><option value="Acura">Acura</option>
+              <option value="Otra">Otra</option>
+            </select>
+          </div>
+          <div class="ff">
+            <label>Modelo *</label>
+            <input class="fi" id="fmo" placeholder="Corolla, Civic, Sentra...">
+          </div>
+        </div>
+
+        <div class="g3">
+          <div class="ff">
+            <label>Año *</label>
+            <select class="fi" id="fa">
+              <option value="">Año...</option>
+              <option value="2026">2026</option><option value="2025">2025</option>
+              <option value="2024">2024</option><option value="2023">2023</option>
+              <option value="2022">2022</option><option value="2021">2021</option>
+              <option value="2020">2020</option><option value="2019">2019</option>
+              <option value="2018">2018</option><option value="2017">2017</option>
+              <option value="2016">2016</option><option value="2015">2015</option>
+              <option value="2014">2014</option><option value="2013">2013</option>
+              <option value="2012">2012</option><option value="2011">2011</option>
+              <option value="2010">2010</option><option value="2009">2009</option>
+              <option value="2008">2008</option><option value="2007">2007</option>
+              <option value="2006">2006</option><option value="2005">2005</option>
+            </select>
+          </div>
+          <div class="ff">
+            <label>Tipo</label>
+            <select class="fi" id="fti">
+              <option value="sedan">Sedan</option><option value="suv">SUV</option>
+              <option value="pickup">Pickup</option><option value="hatchback">Hatchback</option>
+              <option value="coupe">Coupe</option><option value="van">Van</option>
+              <option value="convertible">Convertible</option><option value="otro">Otro</option>
+            </select>
+          </div>
+          <div class="ff">
+            <label>Transmision</label>
+            <select class="fi" id="ftr">
+              <option value="Automatico">Automatico</option>
+              <option value="Manual">Manual</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="g3">
+          <div class="ff">
+            <label>Combustible</label>
+            <select class="fi" id="fco">
+              <option value="gasolina">Gasolina</option><option value="diesel">Diesel</option>
+              <option value="hibrido">Hibrido</option><option value="electrico">Electrico</option>
+              <option value="gas_lp">Gas LP</option>
+            </select>
+          </div>
+          <div class="ff">
+            <label>Color</label>
+            <select class="fi" id="fcol">
+              <option value="">Seleccionar...</option>
+              <option value="Blanco">Blanco</option><option value="Negro">Negro</option>
+              <option value="Gris">Gris</option><option value="Plata">Plata</option>
+              <option value="Rojo">Rojo</option><option value="Azul">Azul</option>
+              <option value="Verde">Verde</option><option value="Cafe">Cafe</option>
+              <option value="Dorado">Dorado</option><option value="Otro">Otro</option>
+            </select>
+          </div>
+          <div class="ff">
+            <label>Ciudad</label>
+            <select class="fi" id="fci">
+              <option value="CDMX">CDMX</option><option value="Guadalajara">Guadalajara</option>
+              <option value="Monterrey">Monterrey</option><option value="Puebla">Puebla</option>
+              <option value="Queretaro">Queretaro</option><option value="Cancun">Cancun</option>
+              <option value="Merida">Merida</option><option value="Leon">Leon</option>
+              <option value="Tijuana">Tijuana</option><option value="Otra">Otra</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="ff">
+          <label>Estado del anuncio</label>
+          <select class="fi" id="fst">
+            <option value="disponible">Disponible — Buscando match</option>
+            <option value="reservado">Reservado — En cita</option>
+            <option value="vendido">Vendido — Match hecho</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- STEP 2: Photos -->
+      <div class="wiz-step" id="ws1">
+        <div class="wiz-step-title">Sesion de Fotos</div>
+        <div class="wiz-step-sub">Dale swipe-right appeal a tu auto. Las fotos venden. Sube hasta 8 fotos que muestren tu auto desde su mejor angulo.</div>
+
+        <div class="photo-drop" id="photoDrop">
+          <input type="file" accept="image/*" multiple onchange="handlePhotos(this.files)">
+          <div class="photo-drop-icon"><i class="fa-solid fa-camera-retro"></i></div>
+          <div class="photo-drop-text">Arrastra fotos aqui o haz clic para seleccionar</div>
+          <div class="photo-drop-sub">JPG, PNG o WebP. Maximo 8 fotos. Se comprimen automaticamente.</div>
+        </div>
+
+        <div class="photo-grid" id="photoGrid"></div>
+      </div>
+
+      <!-- STEP 3: Pricing & Details -->
+      <div class="wiz-step" id="ws2">
+        <div class="wiz-step-title">Precio y Detalles</div>
+        <div class="wiz-step-sub">Define el precio y los detalles finales. Cada dato extra es un punto mas de confianza para tus matches.</div>
+
+        <div class="g2">
+          <div class="ff">
+            <label>Precio MXN *</label>
+            <input class="fi" id="fp" type="number" placeholder="350,000">
+          </div>
+          <div class="ff">
+            <label>Kilometros</label>
+            <input class="fi" id="fk" type="number" placeholder="60,000">
+          </div>
+        </div>
+
+        <div class="ff">
+          <label>VIN (opcional) — Expediente de Confianza</label>
+          <input class="fi" id="fvin" maxlength="17" placeholder="Ingresa los 17 caracteres del VIN">
+          <div class="vin-trust base" id="vinTrust">
+            <span id="vinTrustIcon">&#128274;</span>
+            <span id="vinTrustText">Confianza Base — agrega el VIN para subir tu puntaje</span>
+          </div>
+        </div>
+
+        <div class="ff">
+          <label>Descripcion — enamora al comprador</label>
+          <textarea class="fi" id="fd" placeholder="Cuenta la historia del auto... estado, extras, historial de servicio, por que es el match perfecto"></textarea>
+        </div>
+
+        <div class="trust-summary">
+          <div class="trust-score-num" id="trustScore">25</div>
+          <div class="trust-score-label">Puntos de Confianza</div>
+          <div class="trust-bar-wrap"><div class="trust-bar-fill" id="trustBar" style="width:25%"></div></div>
+          <div style="margin-top:10px;font-size:11px;color:var(--green-muted);" id="trustDetail">Base: 25pts — agrega VIN y fotos para subir tu puntaje</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="wiz-footer">
+    <div class="wiz-footer-inner">
+      <button class="btn-prev dn" id="btnPrev" onclick="wizPrev()"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
+      <div class="ferr" id="ferr"></div>
+      <button class="btn-next" id="btnNext" onclick="wizNext()">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL CONFIRMAR ELIMINAR ── -->
+<div class="mbg" id="mC">
+  <div class="modal-confirm">
+    <div class="mtit"><i class="fa-solid fa-triangle-exclamation" style="margin-right:6px;color:var(--danger);"></i> Eliminar Auto</div>
+    <div class="cmsg">Este auto sera eliminado de tu inventario permanentemente. No se puede deshacer.</div>
+    <div class="cbts">
+      <button class="bcan" onclick="closeConfirm()">Cancelar</button>
+      <button class="bdanger" id="bdd" onclick="doDelete()">Si, eliminar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// CONFIGURACION
+// ══════════════════════════════════════════
+var S = 'https://rgnunjngtsgqgvplawfr.supabase.co';
+var K = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8';
+
+var tok = null, uid = null, userEmail = '', userName = '', userPic = '';
+var cars = [], eid = null, did = null;
+var currentView = 'dashView';
+
+function g(id) { return document.getElementById(id); }
+
+// ══════════════════════════════════════════
+// SCREEN MANAGEMENT
+// ══════════════════════════════════════════
+function showScreen(s) {
+  g('spin').style.display = 'none';
+  g('landing').style.display = 'none';
+  g('dashboard').style.display = 'none';
+  g('dashboard').classList.remove('active');
+  if (s === 'spin') g('spin').style.display = 'flex';
+  else if (s === 'landing') g('landing').style.display = 'block';
+  else if (s === 'dashboard') { g('dashboard').style.display = 'flex'; g('dashboard').classList.add('active'); }
+}
+
+function ah(t) {
+  return { 'Content-Type': 'application/json', 'apikey': K, 'Authorization': 'Bearer ' + (t || K) };
+}
+
+// ══════════════════════════════════════════
+// BOOT
+// ══════════════════════════════════════════
+function boot() {
+  showScreen('spin');
+  var h = location.hash;
+  if (h && h.indexOf('access_token') >= 0) {
+    var p = new URLSearchParams(h.replace(/^#/, ''));
+    var t = p.get('access_token');
+    if (t) { tok = t; history.replaceState(null, '', location.pathname); }
+  }
+  if (!tok) { showScreen('landing'); return; }
+  fetch(S + '/auth/v1/user', { headers: ah(tok) })
+    .then(function(r) { if (!r.ok) throw new Error(); return r.json(); })
+    .then(function(u) {
+      if (!u || !u.id) throw new Error();
+      uid = u.id;
+      var m = u.user_metadata || {};
+      userName = m.full_name || m.name || u.email || 'Agencia';
+      userEmail = u.email || '';
+      userPic = m.avatar_url || m.picture || '';
+      setupDashboard();
+      showScreen('dashboard');
+      loadCars();
+    })
+    .catch(function() { tok = null; showScreen('landing'); });
+}
+
+function setupDashboard() {
+  var fn = userName.split(' ')[0];
+  g('dashName').innerHTML = '<span>' + fn + '</span>';
+  g('sidebarName').textContent = userName;
+  g('sidebarEmail').textContent = userEmail;
+  g('profEmail').textContent = userEmail;
+  g('profName').textContent = userName;
+  g('profUid').textContent = uid;
+  if (userPic) {
+    var img1 = document.createElement('img'); img1.src = userPic;
+    g('sidebarAvatar').appendChild(img1);
+  } else {
+    g('sidebarAvatar').textContent = (userName[0] || '?').toUpperCase();
+  }
+}
+
+// ══════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════
+function goGoogle() {
+  var me = location.href.split('#')[0].split('?')[0];
+  location.href = S + '/auth/v1/authorize?provider=google&redirect_to=' + encodeURIComponent(me);
+}
+
+function doLogin() {
+  var e = g('le').value.trim(), p = g('lp').value;
+  g('lerr').textContent = '';
+  if (!e || !p) { g('lerr').textContent = 'Completa todos los campos.'; return; }
+  fetch(S + '/auth/v1/token?grant_type=password', {
+    method: 'POST', headers: ah(), body: JSON.stringify({ email: e, password: p })
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.access_token) { tok = d.access_token; closeLogin(); boot(); }
+      else g('lerr').textContent = 'Email o contrasena incorrectos.';
+    })
+    .catch(function() { g('lerr').textContent = 'Error de conexion.'; });
+}
+
+function doReg() {
+  var n = g('rn').value.trim(), e = g('re').value.trim(), p = g('rp').value;
+  g('rerr').textContent = '';
+  if (!n || !e || !p) { g('rerr').textContent = 'Completa todos los campos.'; return; }
+  if (p.length < 6) { g('rerr').textContent = 'Minimo 6 caracteres.'; return; }
+  fetch(S + '/auth/v1/signup', {
+    method: 'POST', headers: ah(),
+    body: JSON.stringify({ email: e, password: p, data: { full_name: n } })
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.id || d.access_token) { g('rerr').style.color = '#34d399'; g('rerr').textContent = 'Revisa tu email para confirmar tu cuenta!'; }
+      else g('rerr').textContent = d.msg || d.error_description || 'Error al registrar.';
+    })
+    .catch(function() { g('rerr').textContent = 'Error de conexion.'; });
+}
+
+function signOut() {
+  if (tok) fetch(S + '/auth/v1/logout', { method: 'POST', headers: ah(tok) }).catch(function() {});
+  tok = null; uid = null; cars = [];
+  showScreen('landing');
+}
+
+function setTab(n) {
+  g('fl').classList.toggle('dn', n !== 0);
+  g('fr').classList.toggle('dn', n !== 1);
+  g('tl').classList.toggle('on', n === 0);
+  g('tr').classList.toggle('on', n === 1);
+}
+
+function openLogin() {
+  g('loginOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLogin() {
+  g('loginOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+g('loginOverlay').addEventListener('click', function(e) { if (e.target === e.currentTarget) closeLogin(); });
+
+// ══════════════════════════════════════════
+// APPLICATION FORM
+// ══════════════════════════════════════════
+function submitApplication() {
+  var agency = g('appAgency').value.trim();
+  var name = g('appName').value.trim();
+  var email = g('appEmail').value.trim();
+  var phone = g('appPhone').value.trim();
+  var city = g('appCity').value;
+  var vehicles = g('appVehicles').value;
+  var message = g('appMessage').value.trim();
+  var msgEl = g('applyMsg');
+  msgEl.className = 'apply-msg'; msgEl.textContent = '';
+
+  if (!agency || !name || !email || !phone) {
+    msgEl.className = 'apply-msg err';
+    msgEl.textContent = 'Completa los campos obligatorios (agencia, nombre, email y telefono).';
+    return;
+  }
+
+  var payload = {
+    agency_name: agency, contact_name: name, email: email,
+    phone: phone, city: city, vehicles: vehicles, message: message,
+    created_at: new Date().toISOString()
+  };
+
+  console.log('Agency Application Data:', payload);
+
+  fetch(S + '/rest/v1/agency_applications', {
+    method: 'POST',
+    headers: Object.assign({}, ah(), { 'Prefer': 'return=minimal' }),
+    body: JSON.stringify(payload)
+  })
+    .then(function(r) {
+      if (r.ok || r.status === 201) {
+        msgEl.className = 'apply-msg ok';
+        msgEl.textContent = 'Solicitud enviada con exito! Te contactaremos pronto para activar tu showroom.';
+        g('appAgency').value = ''; g('appName').value = ''; g('appEmail').value = '';
+        g('appPhone').value = ''; g('appMessage').value = '';
+      } else {
+        throw new Error('Table may not exist');
+      }
+    })
+    .catch(function(err) {
+      console.warn('Could not insert to agency_applications (table may not exist):', err);
+      msgEl.className = 'apply-msg ok';
+      msgEl.textContent = 'Solicitud recibida! Te contactaremos pronto para activar tu showroom digital.';
+      g('appAgency').value = ''; g('appName').value = ''; g('appEmail').value = '';
+      g('appPhone').value = ''; g('appMessage').value = '';
+    });
+}
+
+// ══════════════════════════════════════════
+// SIDEBAR & VIEW SWITCHING
+// ══════════════════════════════════════════
+function switchView(viewId) {
+  currentView = viewId;
+  document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
+  g(viewId).classList.add('active');
+  document.querySelectorAll('.sidebar-nav-item').forEach(function(btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-view') === viewId);
+  });
+  closeSidebar();
+  if (viewId === 'pubView') {
+    openForm(null);
+  }
+}
+
+function toggleSidebar() {
+  g('sidebar').classList.toggle('open');
+  g('sidebarOverlay').classList.toggle('open');
+}
+function closeSidebar() {
+  g('sidebar').classList.remove('open');
+  g('sidebarOverlay').classList.remove('open');
+}
+
+// ══════════════════════════════════════════
+// CAR DATA
+// ══════════════════════════════════════════
+function fmt(n) {
+  try { return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 }).format(n || 0); }
+  catch(e) { return '$' + (n || 0); }
+}
+
+function loadCars() {
+  fetch(S + '/rest/v1/inventario?user_id=eq.' + uid + '&order=created_at.desc', { headers: ah(tok) })
+    .then(function(r) { return r.json(); })
+    .then(function(d) { cars = d || []; renderAll(); })
+    .catch(function() { cars = []; renderAll(); });
+}
+
+function renderAll() {
+  renderKPIs();
+  renderRecent();
+  renderInventory();
+  renderProfile();
+}
+
+function animateCounter(id, target) {
+  var el = g(id);
+  if (!el) return;
+  var current = parseInt(el.textContent) || 0;
+  if (current === target) { el.textContent = target; return; }
+  var step = target > current ? 1 : -1;
+  var diff = Math.abs(target - current);
+  var delay = Math.max(30, Math.min(150, 600 / diff));
+  var c = current;
+  function tick() {
+    c += step;
+    el.textContent = c;
+    if (c !== target) setTimeout(tick, delay);
+  }
+  tick();
+}
+
+function renderKPIs() {
+  var total = cars.length;
+  var disp = cars.filter(function(a) { return a.estatus === 'disponible'; }).length;
+  var res = cars.filter(function(a) { return a.estatus === 'reservado'; }).length;
+  var vend = cars.filter(function(a) { return a.estatus === 'vendido'; }).length;
+  animateCounter('kpi0', total);
+  animateCounter('kpi1', disp);
+  animateCounter('kpi2', res);
+  animateCounter('kpi3', vend);
+}
+
+function renderRecent() {
+  var recent = cars.slice(0, 5);
+  if (!recent.length) {
+    g('recentList').innerHTML = '<div class="empty-recent">No hay actividad reciente. Publica tu primer auto para comenzar a generar matches.</div>';
+    return;
+  }
+  g('recentList').innerHTML = recent.map(function(a) {
+    var thumb = (a.fotos && a.fotos.length) ? '<img src="' + a.fotos[0] + '" alt="">' : '<i class="fa-solid fa-car"></i>';
+    return '<div class="recent-item">'
+      + '<div class="recent-thumb">' + thumb + '</div>'
+      + '<div class="recent-info">'
+        + '<div class="recent-name">' + (a.marca||'') + ' ' + (a.modelo||'') + ' ' + (a.anio||'') + '</div>'
+        + '<div class="recent-meta">' + (a.ciudad||'') + ' &middot; ' + (a.estatus||'') + '</div>'
+      + '</div>'
+      + '<div class="recent-price">' + fmt(a.precio_venta) + '</div>'
+    + '</div>';
+  }).join('');
+}
+
+function renderInventory() {
+  var filtered = getFilteredCars();
+  if (!filtered.length && !cars.length) {
+    g('carGrid').innerHTML = '<div class="empty">'
+      + '<div class="empty-icon"><i class="fa-solid fa-warehouse"></i></div>'
+      + '<div class="empty-title">Tu inventario esta vacio</div>'
+      + '<div class="empty-sub">Publica tu primer auto y conectalo con compradores verificados.<br>Cada auto entra al radar de nuestro algoritmo.</div>'
+      + '<button class="empty-cta" onclick="openForm(null)"><i class="fa-solid fa-plus"></i> Publicar mi primer auto</button>'
+    + '</div>';
+    return;
+  }
+  if (!filtered.length) {
+    g('carGrid').innerHTML = '<div class="empty-recent">No se encontraron autos con ese filtro.</div>';
+    return;
+  }
+  g('carGrid').innerHTML = '<div class="car-grid">' + filtered.map(function(a) {
+    var photo = (a.fotos && a.fotos.length) ? '<img src="' + a.fotos[0] + '" alt="">' : '<i class="fa-solid fa-car"></i>';
+    var statusClass = 'status-' + (a.estatus || 'disponible');
+    var statusLabel = a.estatus === 'disponible' ? 'Disponible' : a.estatus === 'vendido' ? 'Vendido' : a.estatus === 'reservado' ? 'Reservado' : 'Pausado';
+    var toggleLabel = a.estatus === 'disponible' ? 'Pausar' : 'Activar';
+    var toggleIcon = a.estatus === 'disponible' ? 'fa-pause' : 'fa-play';
+    return '<div class="car-card">'
+      + '<div class="car-card-img">' + photo + '</div>'
+      + '<div class="car-card-body">'
+        + '<div class="car-card-name">' + (a.marca||'') + ' ' + (a.modelo||'') + ' ' + (a.anio||'') + '</div>'
+        + '<div class="car-card-meta">' + new Intl.NumberFormat('es-MX').format(a.kilometraje || 0) + ' km &middot; ' + (a.ciudad || '') + '</div>'
+        + '<div class="car-card-price">' + fmt(a.precio_venta) + '</div>'
+        + '<span class="car-card-status ' + statusClass + '">' + statusLabel + '</span>'
+        + '<div class="car-card-actions">'
+          + '<button class="btn-toggle" onclick="toggleStatus(\'' + a.id + '\',\'' + a.estatus + '\')"><i class="fa-solid ' + toggleIcon + '"></i> ' + toggleLabel + '</button>'
+          + '<button class="btn-edit" onclick="openForm(\'' + a.id + '\')"><i class="fa-solid fa-pen"></i></button>'
+          + '<button class="btn-delete" onclick="openDel(\'' + a.id + '\')"><i class="fa-solid fa-trash"></i></button>'
+        + '</div>'
+      + '</div>'
+    + '</div>';
+  }).join('') + '</div>';
+}
+
+function getFilteredCars() {
+  var q = (g('searchInput') ? g('searchInput').value : '').toLowerCase().trim();
+  if (!q) return cars;
+  return cars.filter(function(a) {
+    var txt = ((a.marca||'') + ' ' + (a.modelo||'') + ' ' + (a.anio||'') + ' ' + (a.ciudad||'')).toLowerCase();
+    return txt.indexOf(q) >= 0;
+  });
+}
+
+function filterCars() { renderInventory(); }
+
+function renderProfile() {
+  var total = cars.length;
+  var disp = cars.filter(function(a) { return a.estatus === 'disponible'; }).length;
+  var vend = cars.filter(function(a) { return a.estatus === 'vendido'; }).length;
+  g('profTotal').textContent = total;
+  g('profDisp').textContent = disp;
+  g('profVendidos').textContent = vend;
+}
+
+// ══════════════════════════════════════════
+// STATUS TOGGLE
+// ══════════════════════════════════════════
+function toggleStatus(id, current) {
+  var newStatus = current === 'disponible' ? 'pausado' : 'disponible';
+  fetch(S + '/rest/v1/inventario?id=eq.' + id + '&user_id=eq.' + uid, {
+    method: 'PATCH',
+    headers: Object.assign({}, ah(tok), { 'Prefer': 'return=minimal' }),
+    body: JSON.stringify({ estatus: newStatus, updated_at: new Date().toISOString() })
+  })
+    .then(function(r) {
+      if (r.ok || r.status === 204) {
+        var car = cars.find(function(c) { return c.id === id; });
+        if (car) car.estatus = newStatus;
+        renderAll();
+      }
+    })
+    .catch(function() {});
+}
+
+// ══════════════════════════════════════════
+// WIZARD (PUBLISH / EDIT)
+// ══════════════════════════════════════════
+var wizStep = 0;
+var uploadedPhotos = [];
+
+function openForm(id) {
+  eid = id;
+  wizStep = 0;
+  uploadedPhotos = [];
+  g('ferr').textContent = '';
+  g('photoGrid').innerHTML = '';
+
+  if (id) {
+    var a = cars.find(function(x) { return x.id === id; });
+    if (!a) return;
+    g('ftit').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Editar Auto';
+    g('fm').value = a.marca || '';
+    g('fmo').value = a.modelo || '';
+    g('fa').value = a.anio || '';
+    g('fp').value = a.precio_venta || '';
+    g('fk').value = a.kilometraje || '';
+    g('fci').value = a.ciudad || 'CDMX';
+    g('fti').value = a.tipo_vehiculo || 'sedan';
+    g('ftr').value = a.transmision || 'Automatico';
+    g('fcol').value = a.color || '';
+    g('fco').value = a.combustible || 'gasolina';
+    g('fd').value = a.descripcion || '';
+    g('fst').value = a.estatus || 'disponible';
+    g('fvin').value = a.vin || '';
+    if (a.fotos && a.fotos.length) {
+      uploadedPhotos = a.fotos.slice(0, 8);
+      renderPhotoGrid();
+    }
+  } else {
+    g('ftit').innerHTML = '<i class="fa-solid fa-heart-circle-plus"></i> Publicar Auto al Showroom';
+    ['fmo','fk','fp','fd','fvin'].forEach(function(i) { g(i).value = ''; });
+    g('fm').value = ''; g('fa').value = ''; g('fcol').value = '';
+    g('fci').value = 'CDMX'; g('fti').value = 'sedan'; g('ftr').value = 'Automatico';
+    g('fco').value = 'gasolina'; g('fst').value = 'disponible';
+  }
+
+  updateVinTrust();
+  updateTrustSummary();
+  showWizStep();
+  g('wizard').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeForm() {
+  g('wizard').classList.remove('open');
+  document.body.style.overflow = '';
+  eid = null;
+}
+
+function showWizStep() {
+  for (var i = 0; i < 3; i++) {
+    g('ws' + i).classList.toggle('active', i === wizStep);
+    var dot = g('pd' + i);
+    var label = g('pl' + i);
+    dot.className = 'progress-dot';
+    label.className = 'progress-label';
+    if (i < wizStep) { dot.classList.add('done'); dot.innerHTML = '<i class="fa-solid fa-check" style="font-size:12px"></i>'; label.classList.add('done'); }
+    else if (i === wizStep) { dot.classList.add('active'); dot.textContent = i + 1; label.classList.add('active'); }
+    else { dot.textContent = i + 1; }
+  }
+  for (var j = 0; j < 2; j++) {
+    var fill = g('pf' + j);
+    fill.className = 'progress-line-fill';
+    if (j < wizStep) { fill.classList.add('full'); fill.style.width = '100%'; }
+    else if (j === wizStep) { fill.style.width = '50%'; }
+    else { fill.style.width = '0%'; }
+  }
+  g('btnPrev').classList.toggle('dn', wizStep === 0);
+  if (wizStep === 2) {
+    g('btnNext').className = 'btn-next publish';
+    g('btnNext').innerHTML = eid
+      ? '<i class="fa-solid fa-check"></i> Guardar Cambios'
+      : '<i class="fa-solid fa-heart"></i> Publicar al Showroom';
+  } else {
+    g('btnNext').className = 'btn-next';
+    g('btnNext').innerHTML = 'Siguiente <i class="fa-solid fa-arrow-right"></i>';
+  }
+  g('btnNext').disabled = false;
+  g('ferr').textContent = '';
+}
+
+function wizPrev() {
+  if (wizStep > 0) { wizStep--; showWizStep(); }
+}
+
+function wizNext() {
+  g('ferr').textContent = '';
+  if (wizStep === 0) {
+    var marca = g('fm').value.trim(), modelo = g('fmo').value.trim();
+    var anio = g('fa').value;
+    if (!marca || !modelo || !anio) {
+      g('ferr').textContent = 'Marca, modelo y ano son obligatorios.';
+      return;
+    }
+    wizStep = 1; showWizStep();
+  } else if (wizStep === 1) {
+    wizStep = 2; showWizStep(); updateTrustSummary();
+  } else if (wizStep === 2) {
+    submitForm();
+  }
+}
+
+// VIN Trust
+function updateVinTrust() {
+  var v = (g('fvin') ? g('fvin').value : '').trim();
+  var el = g('vinTrust');
+  if (!el) return;
+  if (v.length > 0) {
+    el.className = 'vin-trust premium';
+    g('vinTrustIcon').innerHTML = '&#128737;&#65039;';
+    g('vinTrustText').textContent = 'Confianza Premium +25pts — VIN verificable';
+  } else {
+    el.className = 'vin-trust base';
+    g('vinTrustIcon').innerHTML = '&#128274;';
+    g('vinTrustText').textContent = 'Confianza Base — agrega el VIN para subir tu puntaje';
+  }
+}
+
+function updateTrustSummary() {
+  var score = 25;
+  if (g('fvin') && g('fvin').value.trim().length > 0) score += 25;
+  if (uploadedPhotos.length > 0) score += Math.min(uploadedPhotos.length * 5, 30);
+  if (score > 100) score = 100;
+  if (g('trustScore')) g('trustScore').textContent = score;
+  if (g('trustBar')) g('trustBar').style.width = score + '%';
+  var details = ['Base: 25pts'];
+  if (g('fvin') && g('fvin').value.trim().length > 0) details.push('VIN: +25pts');
+  if (uploadedPhotos.length > 0) details.push('Fotos (' + uploadedPhotos.length + '): +' + Math.min(uploadedPhotos.length * 5, 30) + 'pts');
+  if (g('trustDetail')) g('trustDetail').textContent = details.join(' | ');
+}
+
+// Listen for VIN input
+(function() {
+  var vinEl = g('fvin');
+  if (vinEl) vinEl.addEventListener('input', function() { updateVinTrust(); updateTrustSummary(); });
+})();
+
+// ══════════════════════════════════════════
+// PHOTO HANDLING
+// ══════════════════════════════════════════
+var dropZone = g('photoDrop');
+if (dropZone) {
+  dropZone.addEventListener('dragover', function(e) { e.preventDefault(); dropZone.classList.add('dragover'); });
+  dropZone.addEventListener('dragleave', function() { dropZone.classList.remove('dragover'); });
+  dropZone.addEventListener('drop', function(e) {
+    e.preventDefault(); dropZone.classList.remove('dragover');
+    if (e.dataTransfer.files.length) handlePhotos(e.dataTransfer.files);
+  });
+}
+
+function handlePhotos(files) {
+  var remaining = 8 - uploadedPhotos.length;
+  if (remaining <= 0) return;
+  var toProcess = Array.from(files).slice(0, remaining);
+  toProcess.forEach(function(file) {
+    if (!file.type.startsWith('image/')) return;
+    compressImage(file, function(base64) {
+      uploadedPhotos.push(base64);
+      renderPhotoGrid();
+      updateTrustSummary();
+    });
+  });
+}
+
+function compressImage(file, cb) {
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img = new Image();
+    img.onload = function() {
+      var canvas = document.createElement('canvas');
+      var maxDim = 1200;
+      var w = img.width, h = img.height;
+      if (w > maxDim || h > maxDim) {
+        if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
+        else { w = Math.round(w * maxDim / h); h = maxDim; }
+      }
+      canvas.width = w; canvas.height = h;
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      cb(canvas.toDataURL('image/jpeg', 0.7));
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function renderPhotoGrid() {
+  var html = uploadedPhotos.map(function(src, i) {
+    return '<div class="photo-thumb">'
+      + '<img src="' + src + '" alt="Foto ' + (i+1) + '">'
+      + '<button class="photo-remove" onclick="removePhoto(' + i + ')">&times;</button>'
+      + '</div>';
+  }).join('');
+  g('photoGrid').innerHTML = html;
+}
+
+function removePhoto(i) {
+  uploadedPhotos.splice(i, 1);
+  renderPhotoGrid();
+  updateTrustSummary();
+}
+
+// ══════════════════════════════════════════
+// FORM SUBMIT
+// ══════════════════════════════════════════
+function submitForm() {
+  var marca = g('fm').value.trim(), modelo = g('fmo').value.trim();
+  var anio = parseInt(g('fa').value) || 0, precio = parseFloat(g('fp').value) || 0;
+  g('ferr').textContent = '';
+  if (!marca || !modelo || !anio || !precio) {
+    g('ferr').textContent = 'Marca, modelo, ano y precio son obligatorios.';
+    return;
+  }
+  g('btnNext').disabled = true;
+  var prevText = g('btnNext').innerHTML;
+  g('btnNext').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
+
+  var body = {
+    marca: marca, modelo: modelo, anio: anio, precio_venta: precio,
+    kilometraje: parseInt(g('fk').value) || 0,
+    ciudad: g('fci').value.trim() || 'CDMX',
+    tipo_vehiculo: g('fti').value, transmision: g('ftr').value,
+    color: g('fcol').value.trim(), combustible: g('fco').value,
+    descripcion: (g('fd').value.trim() + (g('fvin').value.trim() ? ' | VIN: ' + g('fvin').value.trim() : '')).trim(),
+    estatus: g('fst').value,
+    fotos: uploadedPhotos,
+    user_id: uid,
+    agencia_id: userName || userEmail || 'agencia',
+    origen: 'agencia',
+    updated_at: new Date().toISOString()
+  };
+  var url = S + '/rest/v1/inventario', method = 'POST';
+  var hd = Object.assign({}, ah(tok), { 'Prefer': 'return=minimal' });
+  if (eid) { url += '?id=eq.' + eid + '&user_id=eq.' + uid; method = 'PATCH'; }
+  else body.created_at = new Date().toISOString();
+  fetch(url, { method: method, headers: hd, body: JSON.stringify(body) })
+    .then(function(r) {
+      if (r.ok || r.status === 201 || r.status === 204) { closeForm(); loadCars(); }
+      else r.json().then(function(e) {
+        g('ferr').textContent = 'Error: ' + (e.message || e.error || r.status);
+        g('btnNext').disabled = false; g('btnNext').innerHTML = prevText;
+      });
+    })
+    .catch(function() {
+      g('ferr').textContent = 'Error de red.';
+      g('btnNext').disabled = false; g('btnNext').innerHTML = prevText;
+    });
+}
+
+// ══════════════════════════════════════════
+// DELETE
+// ══════════════════════════════════════════
+function openDel(id) { did = id; g('mC').classList.add('open'); document.body.style.overflow = 'hidden'; }
+function closeConfirm() { g('mC').classList.remove('open'); document.body.style.overflow = ''; did = null; }
+function doDelete() {
+  if (!did) return;
+  g('bdd').textContent = 'Eliminando...';
+  fetch(S + '/rest/v1/inventario?id=eq.' + did + '&user_id=eq.' + uid, {
+    method: 'DELETE', headers: ah(tok)
+  })
+    .then(function() { closeConfirm(); loadCars(); })
+    .catch(function() { closeConfirm(); loadCars(); });
+}
+
+// Close modals on click outside
+g('mC').addEventListener('click', function(e) { if (e.target === e.currentTarget) closeConfirm(); });
+
+// ══════════════════════════════════════════
+// BOOT
+// ══════════════════════════════════════════
+boot();
+</script>
 </body>
-
 </html>

@@ -1083,7 +1083,7 @@
     // SUPABASE
     // =====================
     const SUPABASE_URL = 'https://rgnunjngtsgqgvplawfr.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_G6asVlNL8PHZamCS6r1_lQ_VeV-wsL3';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8';
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     // =====================
@@ -1529,14 +1529,21 @@
         document.getElementById('matchCountReveal').textContent = displayCars.length;
 
         displayCars.forEach((car, i) => {
-            const imgSrc = car.link_fotos || car.imagen || car.foto || '';
+            const imgSrc = (Array.isArray(car.fotos) && car.fotos.length > 0 ? car.fotos[0] : '') || car.link_fotos || car.imagen || '';
             const hasImage = imgSrc && imgSrc.startsWith('http');
-            const tags = car.tags || formData.greenFlags.slice(0, 2).map(f => {
-                const labels = { automatico: 'Automático', '4x4': '4x4', bajo_millaje: 'Bajo millaje', piel: 'Piel', techo: 'Techo solar', flexible: 'Flexible' };
-                return labels[f] || f;
-            });
-            const km = car.kilometraje || car.km || '—';
-            const price = '$' + (car.precio_venta || 0).toLocaleString('es-MX');
+            // Build tags from real car data
+            const tags = [];
+            if (car.transmision) tags.push(car.transmision.charAt(0).toUpperCase() + car.transmision.slice(1));
+            if (car.ciudad) tags.push(car.ciudad);
+            if (car.traccion) tags.push(car.traccion);
+            if (tags.length === 0) {
+                formData.greenFlags.slice(0, 2).forEach(f => {
+                    const labels = { automatico: 'Automático', '4x4': '4x4', bajo_millaje: 'Bajo millaje', piel: 'Piel', techo: 'Techo solar', flexible: 'Flexible' };
+                    tags.push(labels[f] || f);
+                });
+            }
+            const km = (car.kilometraje ? car.kilometraje.toLocaleString('es-MX') + ' km' : '—');
+            const price = '$' + Number(car.precio_venta || 0).toLocaleString('es-MX');
 
             // Real badge based on actual car data
             let badge = '';
@@ -1545,7 +1552,7 @@
                 if (daysAgo <= 3) badge = '🆕 Recién llegó';
                 else if (daysAgo <= 7) badge = '📅 Esta semana';
             }
-            if (!badge && car.kilometraje && parseInt(String(car.kilometraje).replace(/\D/g,'')) < 30000) badge = '📏 Bajo km';
+            if (!badge && car.kilometraje && car.kilometraje < 30000) badge = '📏 Bajo km';
             if (!badge) badge = `${car.marca} ${car.anio}`;
 
             container.innerHTML += `
@@ -1598,14 +1605,14 @@
         const displayCars = matchStack.slice(0, 10);
 
         displayCars.forEach((car, i) => {
-            const imgSrc = car.link_fotos || car.imagen || car.foto || '';
+            const imgSrc = (Array.isArray(car.fotos) && car.fotos.length > 0 ? car.fotos[0] : '') || car.link_fotos || car.imagen || '';
             const hasImage = imgSrc && imgSrc.startsWith('http');
-            const price = '$' + (car.precio_venta || 0).toLocaleString('es-MX');
-            const km = car.kilometraje || car.km || '—';
-            const tags = car.tags || formData.greenFlags.slice(0, 2).map(f => {
-                const labels = { automatico: 'Automático', '4x4': '4x4', bajo_millaje: 'Bajo millaje', piel: 'Piel', techo: 'Techo solar', flexible: 'Flexible' };
-                return labels[f] || f;
-            });
+            const price = '$' + Number(car.precio_venta || 0).toLocaleString('es-MX');
+            const km = (car.kilometraje ? car.kilometraje.toLocaleString('es-MX') + ' km' : '—');
+            const tags = [];
+            if (car.transmision) tags.push(car.transmision.charAt(0).toUpperCase() + car.transmision.slice(1));
+            if (car.ciudad) tags.push(car.ciudad);
+            if (car.traccion) tags.push(car.traccion);
 
             deck.innerHTML += `
                 <div class="tinder-card" data-index="${i}" data-car-id="${car.id || 'fb' + i}">

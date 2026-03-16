@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alabol | Monitor de Tráfico y Demanda Interna</title>
     <!-- Same fonts and basic styling as the other portals for brand consistency -->
-    <link href="https://fonts.googleapis.com/css2?family=General+Sans:wght@400;500;600;700&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     <!-- Chart.js for Business Intelligence -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -27,14 +27,22 @@
     <style>
         :root {
             --primary: #d4af37;
-            --bg-dark: #0a1f1c;
-            --bg-card: rgba(255, 255, 255, 0.05);
-            --border: rgba(255, 255, 255, 0.1);
+            --gold: #d4af37;
+            --gold-light: #f4e5b0;
+            --gold-dim: rgba(212, 175, 55, 0.25);
+            --bg-dark: #0a1f1a;
+            --bg-mid: #0d2921;
+            --bg-card: rgba(13, 38, 28, 0.65);
+            --glass-bg: rgba(13, 38, 28, 0.65);
+            --glass-border: rgba(212, 175, 55, 0.18);
+            --border: rgba(212, 175, 55, 0.18);
+            --green-text: #a8c5b8;
             --text: #ffffff;
-            --text-muted: #a0aab2;
+            --text-muted: #a8c5b8;
             --success: #10B981;
-            --danger: #EF4444;
-            --warning: #F59E0B;
+            --emerald: #34d399;
+            --danger: #ef4444;
+            --warning: #f59e0b;
             --teal: #14b8a6;
         }
 
@@ -42,25 +50,61 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'General Sans', sans-serif;
+            font-family: 'Poppins', sans-serif;
         }
 
         body {
             background-color: var(--bg-dark);
+            background-image:
+                linear-gradient(rgba(212, 175, 55, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(212, 175, 55, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
             color: var(--text);
             min-height: 100vh;
             display: flex;
+            position: relative;
+        }
+
+        /* Ambient radial glows */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -20%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -15%;
+            left: -5%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(52, 211, 153, 0.06) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
         }
 
         /* Sidebar */
         .sidebar {
             width: 260px;
-            background: rgba(0, 0, 0, 0.2);
-            border-right: 1px solid var(--border);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-right: 1px solid var(--glass-border);
             padding: 24px;
             display: flex;
             flex-direction: column;
             gap: 30px;
+            position: relative;
+            z-index: 1;
         }
 
         .logo {
@@ -92,8 +136,8 @@
 
         .nav-item:hover,
         .nav-item.active {
-            background: var(--bg-card);
-            color: var(--primary);
+            background: var(--gold-dim);
+            color: var(--gold);
         }
 
         /* Main Content */
@@ -101,6 +145,8 @@
             flex: 1;
             padding: 40px;
             overflow-y: auto;
+            position: relative;
+            z-index: 1;
         }
 
         /* Tab Management */
@@ -147,9 +193,11 @@
         }
 
         .metric-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
             padding: 20px;
             display: flex;
             flex-direction: column;
@@ -170,8 +218,10 @@
 
         /* Cards & Sections */
         .dashboard-section {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
             border-radius: 16px;
             padding: 24px;
             margin-bottom: 30px;
@@ -258,8 +308,9 @@
         }
 
         .btn-action:hover {
-            background: var(--primary);
+            background: linear-gradient(135deg, #d4af37, #f4e5b0, #d4af37);
             color: var(--bg-dark);
+            border-color: var(--gold-light);
         }
 
         .whatsapp-link {
@@ -470,7 +521,7 @@
                 z-index: 2000;
                 transform: translateX(-100%);
                 transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                background: #0a1f1c;
+                background: #0a1f1a;
                 /* Solid for mobile */
                 width: 280px;
             }
@@ -543,6 +594,7 @@
             <a onclick="switchTab('traffic')" id="nav-traffic" class="nav-item">📈 Tráfico & Leads</a>
             <a onclick="switchTab('hotleads')" id="nav-hotleads" class="nav-item">🎯 Hot Leads</a>
             <a onclick="switchTab('reports')" id="nav-reports" class="nav-item">📅 Reportes Mensuales</a>
+            <a onclick="switchTab('trends')" id="nav-trends" class="nav-item">📈 Tendencias</a>
             <a href="portal-agencias.html" class="nav-item">🏢 Portal B2B</a>
             <a href="transacciones.html" class="nav-item">💰 Transacciones</a>
             <a href="asignaciones.html" class="nav-item">👤 Asignaciones</a>
@@ -564,9 +616,6 @@
             <select id="agencySelector" onchange="applyGlobalFilter()"
                 style="background: var(--bg-dark); color: white; border: 1px solid var(--primary); padding: 8px 12px; border-radius: 8px; font-size: 14px; outline: none; cursor: pointer;">
                 <option value="all">Ver Todas las Agencias</option>
-                <option value="Alabol HQ">Alabol HQ</option>
-                <option value="Agencia Premium">Agencia Premium</option>
-                <option value="Subastas Express">Subastas Express</option>
             </select>
             <span id="filterStatus" style="font-size: 11px; color: var(--text-muted);">Mostrando datos globales</span>
         </div>
@@ -914,6 +963,58 @@
             </div>
         </div>
 
+        <!-- ============================================== -->
+        <!-- TAB 6: TENDENCIAS DE MERCADO                   -->
+        <!-- ============================================== -->
+        <div id="tab-trends" class="tab-content">
+            <div class="header">
+                <h1>📈 Tendencias de Mercado</h1>
+                <p>Análisis de patrones de compra y predicción de demanda para toma de decisiones estratégicas.</p>
+            </div>
+
+            <div class="metrics-grid">
+                <!-- Top Brands Chart -->
+                <div class="dashboard-section" style="grid-column: span 2;">
+                    <div class="section-header">
+                        <h2>Top 10 Marcas Más Buscadas vs Disponibles</h2>
+                    </div>
+                    <div class="canvas-container" style="height: 300px;">
+                        <canvas id="chartBrandTrends"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h2>Rango de Precio Más Demandado</h2>
+                    </div>
+                    <div class="canvas-container" style="height: 250px;">
+                        <canvas id="chartPriceTrends"></canvas>
+                    </div>
+                </div>
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h2>Demanda vs Oferta por Ciudad</h2>
+                    </div>
+                    <div class="canvas-container" style="height: 250px;">
+                        <canvas id="chartCitySupplyDemand"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Market Insights Table -->
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h2>Insights del Mercado</h2>
+                    <button class="btn-action" onclick="renderTrends()">🔄 Actualizar</button>
+                </div>
+                <div id="trendsInsights">
+                    <div style="text-align:center;padding:30px;color:var(--green-text);">Analizando tendencias...</div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <!-- Supabase JS -->
@@ -946,8 +1047,8 @@
         let chartDeviceObj = null;
 
         // Common Chart Defaults for Dark Theme
-        Chart.defaults.color = '#a0aab2';
-        Chart.defaults.font.family = "'General Sans', sans-serif";
+        Chart.defaults.color = '#a8c5b8';
+        Chart.defaults.font.family = "'Poppins', sans-serif";
 
         // =====================
         // UI HELPERS
@@ -978,6 +1079,8 @@
                 fetchHotLeads();
             } else if (tabId === 'reports') {
                 generateMonthlyReport();
+            } else if (tabId === 'trends') {
+                renderTrends();
             }
 
             // Auto-hide sidebar on mobile after clicking
@@ -1006,6 +1109,26 @@
             // Re-fetch/Re-render active tab
             const activeTab = document.querySelector('.tab-content.active').id.replace('tab-', '');
             switchTab(activeTab);
+        }
+
+        // =====================
+        // DYNAMIC AGENCY FILTER
+        // =====================
+        async function populateAgencyFilter() {
+            const sel = document.getElementById('agencySelector');
+            try {
+                const { data } = await supabaseClient.from('inventario').select('agencia_id');
+                if (data) {
+                    const agencies = [...new Set(data.map(d => d.agencia_id).filter(Boolean))];
+                    agencies.sort();
+                    agencies.forEach(a => {
+                        const opt = document.createElement('option');
+                        opt.value = a;
+                        opt.textContent = a;
+                        sel.appendChild(opt);
+                    });
+                }
+            } catch(e) { console.warn('Could not load agencies', e); }
         }
 
         // =====================
@@ -1409,6 +1532,9 @@
                 if (resInv.error) throw resInv.error;
                 globalInventory = resInv.data || [];
 
+                // Populate agency filter dynamically
+                populateAgencyFilter();
+
                 // Render Radar View By Default
                 renderLeadsBoard(globalLeads);
                 calculateBasicDemands(globalLeads);
@@ -1656,6 +1782,131 @@
             });
 
             if (expressCount === 0) expressList.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px;">No se detectaron "Cierres Express". Las diferencias de precio son muy anchas o no hay coincidencia de modelos.</div>';
+        }
+
+        // =====================
+        // TRENDS TAB
+        // =====================
+        async function renderTrends() {
+            try {
+                // Use already loaded globalLeads and globalInventory
+                const leads = globalLeads.length > 0 ? globalLeads : [];
+                const inventory = globalInventory.length > 0 ? globalInventory : [];
+
+                // If no data loaded yet, fetch it
+                if (leads.length === 0) {
+                    const { data: lData } = await supabaseClient.from('leads_matchmaker').select('*');
+                    if (lData) globalLeads = lData;
+                }
+                if (inventory.length === 0) {
+                    const { data: iData } = await supabaseClient.from('inventario').select('*').eq('estatus', 'disponible');
+                    if (iData) globalInventory = iData;
+                }
+
+                // 1. Top Brands: searched vs available
+                const brandSearch = {};
+                const brandAvail = {};
+
+                globalLeads.forEach(l => {
+                    const brands = l.marcas || l.brand || [];
+                    (Array.isArray(brands) ? brands : [brands]).forEach(b => {
+                        if (b) brandSearch[b] = (brandSearch[b] || 0) + 1;
+                    });
+                });
+
+                globalInventory.forEach(i => {
+                    const b = i.marca || i.brand;
+                    if (b) brandAvail[b] = (brandAvail[b] || 0) + 1;
+                });
+
+                const allBrands = [...new Set([...Object.keys(brandSearch), ...Object.keys(brandAvail)])];
+                allBrands.sort((a, b) => (brandSearch[b] || 0) - (brandSearch[a] || 0));
+                const top10 = allBrands.slice(0, 10);
+
+                // Chart: Brand Trends
+                if (window.chartBrandTrendsObj) window.chartBrandTrendsObj.destroy();
+                window.chartBrandTrendsObj = new Chart(document.getElementById('chartBrandTrends'), {
+                    type: 'bar',
+                    data: {
+                        labels: top10,
+                        datasets: [
+                            { label: 'Búsquedas', data: top10.map(b => brandSearch[b] || 0), backgroundColor: 'rgba(212,175,55,0.7)', borderRadius: 6 },
+                            { label: 'Disponibles', data: top10.map(b => brandAvail[b] || 0), backgroundColor: 'rgba(52,211,153,0.7)', borderRadius: 6 }
+                        ]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { y: { grid: { color: 'rgba(255,255,255,0.05)' } }, x: { grid: { display: false } } } }
+                });
+
+                // 2. Price Range Distribution
+                const priceRanges = { '< $150k': 0, '$150k-$300k': 0, '$300k-$500k': 0, '$500k-$800k': 0, '$800k+': 0 };
+                globalLeads.forEach(l => {
+                    const max = l.presupuesto_max || parseInt((l.budget || '0').replace(/[^0-9]/g, '')) || 0;
+                    if (max < 150000) priceRanges['< $150k']++;
+                    else if (max < 300000) priceRanges['$150k-$300k']++;
+                    else if (max < 500000) priceRanges['$300k-$500k']++;
+                    else if (max < 800000) priceRanges['$500k-$800k']++;
+                    else priceRanges['$800k+']++;
+                });
+
+                if (window.chartPriceTrendsObj) window.chartPriceTrendsObj.destroy();
+                window.chartPriceTrendsObj = new Chart(document.getElementById('chartPriceTrends'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(priceRanges),
+                        datasets: [{ data: Object.values(priceRanges), backgroundColor: ['#ef4444', '#f59e0b', '#d4af37', '#34d399', '#3b82f6'], borderWidth: 0 }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+                });
+
+                // 3. City Supply vs Demand
+                const cityDemand = {};
+                const citySupply = {};
+                globalLeads.forEach(l => { const c = l.ciudad || 'Sin ciudad'; cityDemand[c] = (cityDemand[c] || 0) + 1; });
+                globalInventory.forEach(i => { const c = i.ciudad || 'Sin ciudad'; citySupply[c] = (citySupply[c] || 0) + 1; });
+                const allCities = [...new Set([...Object.keys(cityDemand), ...Object.keys(citySupply)])].sort((a, b) => (cityDemand[b] || 0) - (cityDemand[a] || 0)).slice(0, 8);
+
+                if (window.chartCitySDObj) window.chartCitySDObj.destroy();
+                window.chartCitySDObj = new Chart(document.getElementById('chartCitySupplyDemand'), {
+                    type: 'bar',
+                    data: {
+                        labels: allCities,
+                        datasets: [
+                            { label: 'Demanda', data: allCities.map(c => cityDemand[c] || 0), backgroundColor: 'rgba(212,175,55,0.7)', borderRadius: 6 },
+                            { label: 'Oferta', data: allCities.map(c => citySupply[c] || 0), backgroundColor: 'rgba(52,211,153,0.7)', borderRadius: 6 }
+                        ]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { position: 'top' } }, scales: { x: { grid: { color: 'rgba(255,255,255,0.05)' } }, y: { grid: { display: false } } } }
+                });
+
+                // 4. Insights text
+                const topBrand = top10[0] || 'N/A';
+                const topPriceRange = Object.entries(priceRanges).sort((a,b) => b[1] - a[1])[0];
+                const gapBrands = top10.filter(b => (brandSearch[b] || 0) > (brandAvail[b] || 0) * 2);
+
+                document.getElementById('trendsInsights').innerHTML = `
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;">
+                        <div style="background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:14px;padding:16px;">
+                            <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Marca Estrella</div>
+                            <div style="font-size:20px;font-weight:800;color:white;">${topBrand}</div>
+                            <div style="font-size:12px;color:var(--green-text);margin-top:4px;">${brandSearch[topBrand] || 0} búsquedas activas</div>
+                        </div>
+                        <div style="background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:14px;padding:16px;">
+                            <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Rango de Precio Top</div>
+                            <div style="font-size:20px;font-weight:800;color:white;">${topPriceRange ? topPriceRange[0] : 'N/A'}</div>
+                            <div style="font-size:12px;color:var(--green-text);margin-top:4px;">${topPriceRange ? topPriceRange[1] : 0} leads en este rango</div>
+                        </div>
+                        <div style="background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:14px;padding:16px;">
+                            <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Oportunidad de Inventario</div>
+                            <div style="font-size:20px;font-weight:800;color:white;">${gapBrands.length > 0 ? gapBrands.join(', ') : 'Equilibrado'}</div>
+                            <div style="font-size:12px;color:var(--green-text);margin-top:4px;">Marcas con demanda > 2x oferta</div>
+                        </div>
+                    </div>
+                `;
+
+            } catch(err) {
+                console.error('Trends error:', err);
+                document.getElementById('trendsInsights').innerHTML = '<div style="color:var(--danger);text-align:center;padding:20px;">Error cargando tendencias.</div>';
+            }
         }
 
         // Kick off

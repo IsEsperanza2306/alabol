@@ -367,6 +367,17 @@
   };
 })();
 
+        // --- 0. CHECK EXISTING SESSION (OAuth callback) ---
+        (async function() {
+            const sb = getSB();
+            if (!sb) return;
+            const { data: { session } } = await sb.auth.getSession();
+            if (session) {
+                window.location.href = 'index.html';
+                return;
+            }
+        })();
+
         // --- 1. UI TOGGLE LOGIC ---
         let isLogin = true;
 
@@ -413,7 +424,7 @@
         // --- 3. AUTH SUBMISSION ---
         const authForm = document.getElementById('authForm');
         const errorBox = document.getElementById('errorBox');
-        const oauthRedirect = window.location.origin + window.location.pathname.replace('login.html', 'index.html');
+        const oauthRedirect = window.location.origin + '/login.html';
 
         async function oauthLogin(provider) {
             const sb = getSB();

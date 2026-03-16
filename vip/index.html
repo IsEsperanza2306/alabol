@@ -1094,7 +1094,9 @@
     let currentStep = 0;
     let matchStack = [];
     let likedCars = [];
+    let passedCars = [];
     let currentCardIndex = 0;
+    let savedLeadId = null; // UUID from Supabase after lead is saved
 
     const formData = {
         carroceria: '', marcas: [], greenFlags: [], anioDesde: '2018', anioHasta: '2026',
@@ -1660,11 +1662,27 @@
         card.classList.remove('active');
         card.classList.add(direction === 'right' ? 'swiped-right' : 'swiped-left');
 
-        if (direction === 'right' && car) {
+        const isLike = direction === 'right';
+
+        if (isLike && car) {
             likedCars.push(car);
             trackGA('matchmaker_swipe_like', { car_id: car.id, marca: car.marca, modelo: car.modelo });
         } else {
+            if (car) passedCars.push(car);
             trackGA('matchmaker_swipe_pass', { car_id: car ? car.id : '' });
+        }
+
+        // Save match decision to Supabase in real-time
+        if (savedLeadId && car && car.id) {
+            supabaseClient.from('matches').insert([{
+                lead_id: savedLeadId,
+                vehiculo_id: car.id,
+                estatus: isLike ? 'liked' : 'passed',
+                score_match: isLike ? 100 : 0
+            }]).then(({ error }) => {
+                if (error) console.warn('Match save error:', error);
+                else console.log(`Match saved: ${car.marca} ${car.modelo} → ${isLike ? 'LIKED' : 'PASSED'}`);
+            });
         }
 
         currentCardIndex++;
@@ -1673,7 +1691,6 @@
             if (currentCardIndex < cards.length) {
                 updateTinderCards();
             } else {
-                // All swiped - show success
                 document.getElementById('tinderDeck').classList.remove('active');
                 document.getElementById('tinderActions').classList.remove('active');
                 showFinalSuccess();
@@ -1725,25 +1742,21 @@
             anio_desde: formData.anioDesde, anio_hasta: formData.anioHasta,
             presupuesto_min: formData.presupuestoMin, presupuesto_max: formData.presupuestoMax,
             dinero_status: formData.dineroStatus, urgencia: formData.urgencia, proposito: formData.proposito,
-            matches_liked: likedCars.map(c => c.id || `${c.marca}_${c.modelo}`),
-            matches_passed: matchStack
-                .filter(c => !likedCars.includes(c)).map(c => c.id || `${c.marca}_${c.modelo}`).slice(0, 10),
+            lead_id: savedLeadId,
+            matches_liked: likedCars.map(c => ({ id: c.id, marca: c.marca, modelo: c.modelo, anio: c.anio, precio: c.precio_venta })),
+            matches_passed: passedCars.map(c => ({ id: c.id, marca: c.marca, modelo: c.modelo })),
             tiene_matches: numLikes > 0,
             fuente: 'matchmaker_v2'
         };
 
-        // Supabase lead save
-        try {
-            await supabaseClient.from('leads_matchmaker').insert([{
-                nombre: formData.nombre, whatsapp: formData.whatsapp, ciudad: formData.ciudad,
-                tipo_vehiculo: formData.carroceria, marcas: formData.marcas,
-                anio_min: parseInt(formData.anioDesde) || null, anio_max: parseInt(formData.anioHasta) || null,
-                presupuesto_min: formData.presupuestoMin, presupuesto_max: formData.presupuestoMax,
-                dinero_listo: formData.dineroStatus, prioridad: formData.urgencia,
-                uso_auto: formData.proposito, caracteristicas: formData.greenFlags
-            }]);
-            trackGA('lead_submitted', { presupuesto_max: formData.presupuestoMax, marcas: formData.marcas.join(', ') });
-        } catch (e) { console.warn('Supabase save failed:', e); }
+        // Lead already saved in step 5 unlock — update it with match results
+        if (savedLeadId) {
+            try {
+                await supabaseClient.from('leads_matchmaker')
+                    .update({ matches_iniciales: likedCars.length })
+                    .eq('id', savedLeadId);
+            } catch (e) { console.warn('Lead update failed:', e); }
+        }
 
         // Webhook
         const N8N_WEBHOOK_URL = 'https://hook.us2.make.com/z9xj6uu5nfuj54ko2eepzox336fly4ib';
@@ -1825,10 +1838,31 @@
             renderStep();
 
         } else if (currentStep === 4) {
-            // After personal data → unlock with confetti → go to swipe
+            // After personal data → save lead NOW, then unlock with confetti → go to swipe
             collectStepData(4);
             trackGA('matchmaker_data_submitted', { nombre: formData.nombre, ciudad: formData.ciudad });
             trackFunnelStep(6, 'data_submitted');
+
+            // Save lead to Supabase immediately and capture the ID
+            try {
+                const { data: insertedLead, error } = await supabaseClient
+                    .from('leads_matchmaker')
+                    .insert([{
+                        nombre: formData.nombre, whatsapp: formData.whatsapp, ciudad: formData.ciudad,
+                        tipo_vehiculo: formData.carroceria, marcas: formData.marcas,
+                        anio_min: parseInt(formData.anioDesde) || null, anio_max: parseInt(formData.anioHasta) || null,
+                        presupuesto_min: formData.presupuestoMin, presupuesto_max: formData.presupuestoMax,
+                        dinero_listo: formData.dineroStatus, prioridad: formData.urgencia,
+                        uso_auto: formData.proposito, caracteristicas: formData.greenFlags
+                    }])
+                    .select('id')
+                    .single();
+                if (!error && insertedLead) {
+                    savedLeadId = insertedLead.id;
+                    console.log('Lead saved with ID:', savedLeadId);
+                }
+                trackGA('lead_submitted', { presupuesto_max: formData.presupuestoMax, marcas: formData.marcas.join(', ') });
+            } catch (e) { console.warn('Lead save failed:', e); }
 
             // Confetti celebration
             if (typeof confetti === 'function') {

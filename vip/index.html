@@ -22,6 +22,8 @@
     </script>
 
     <style>
+        @property --card-glow-angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+
         :root {
             --bg-dark: #0a1f1a;
             --bg-mid: #0d2921;
@@ -128,7 +130,8 @@
         @keyframes cardIn { from { opacity:0; transform:translateY(30px) scale(0.97); } to { opacity:1; transform:translateY(0) scale(1); } }
 
         /* Logo */
-        .logo-section { text-align: center; margin-bottom: 6px; position: relative; }
+        .logo-section { text-align: center; margin-bottom: 6px; position: relative; transition: height 0.4s ease, opacity 0.4s ease, margin 0.4s ease, overflow 0s; }
+        .logo-section.compact { height: 0; overflow: hidden; margin: 0; opacity: 0; }
         .logo-container { position: relative; width: 100px; height: 100px; margin: 0 auto 14px; }
         .logo-glow {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
@@ -168,22 +171,14 @@
         }
         .trust-item .icon { font-size: 12px; filter: drop-shadow(0 0 4px rgba(212,175,55,0.5)); }
 
-        /* Progress Bar */
-        .progress-bar { display: flex; align-items: center; gap: 4px; margin-bottom: 20px; }
-        .progress-segment {
-            flex: 1; height: 3px;
-            background: rgba(255,255,255,0.08); border-radius: 4px;
-            transition: all 0.6s cubic-bezier(0.4,0,0.2,1);
-            position: relative; overflow: hidden;
-        }
-        .progress-segment.active { background: var(--gold); box-shadow: 0 0 12px rgba(212,175,55,0.5); }
-        .progress-segment.active::after {
-            content: ''; position: absolute; top:0; left:0; right:0; bottom:0;
-            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.6) 50%, transparent 100%);
-            animation: progressShimmer 2s infinite;
-        }
-        @keyframes progressShimmer { 0% { transform:translateX(-100%); } 100% { transform:translateX(100%); } }
-        .progress-label { font-size: 11px; color: var(--gold); font-weight: 600; white-space: nowrap; min-width: 36px; text-align: right; letter-spacing: 1px; }
+        /* Progress Bar - Circular Compatibility Ring */
+        .progress-bar { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; gap: 4px; }
+        .progress-ring-svg { width: 50px; height: 50px; transform: rotate(-90deg); }
+        .progress-ring-bg { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 4; }
+        .progress-ring-fg { fill: none; stroke: var(--gold); stroke-width: 4; stroke-linecap: round; transition: stroke-dashoffset 0.8s cubic-bezier(0.4,0,0.2,1); filter: drop-shadow(0 0 6px rgba(212,175,55,0.5)); }
+        .progress-ring-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 12px; font-weight: 700; color: var(--gold); }
+        .progress-ring-wrap { position: relative; width: 50px; height: 50px; }
+        .progress-label { font-size: 10px; color: var(--gold); font-weight: 500; letter-spacing: 0.5px; opacity: 0.8; }
 
         /* Personality Hook */
         .personality-hook {
@@ -192,10 +187,12 @@
             font-style: italic; opacity: 0; transition: opacity 0.5s;
         }
 
-        /* Steps */
-        .step { display: none; animation: fadeSlideIn 0.35s ease-out; }
-        .step.active { display: block; }
-        @keyframes fadeSlideIn { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
+        /* Steps - Swipe transitions */
+        .step { display: none; }
+        .step.active { display: block; animation: stepEnter 0.4s cubic-bezier(0.16,1,0.3,1) forwards; }
+        .step.step-exit { display: block; animation: stepExit 0.3s ease-in forwards; }
+        @keyframes stepEnter { from { opacity:0; transform:translateX(60px) scale(0.95); } to { opacity:1; transform:translateX(0) scale(1); } }
+        @keyframes stepExit { from { opacity:1; transform:translateX(0) rotate(0); } to { opacity:0; transform:translateX(-80px) rotate(-3deg); } }
 
         .step-header { margin-bottom: 20px; }
         .step-icon { font-size: 32px; margin-bottom: 6px; filter: drop-shadow(0 0 10px rgba(212,175,55,0.4)); }
@@ -559,7 +556,7 @@
 
         /* Success screen */
         .success-screen { display: none; text-align: center; padding: 10px 0; }
-        .success-screen.active { display: block; animation: fadeSlideIn 0.5s ease-out; }
+        .success-screen.active { display: block; animation: stepEnter 0.5s ease-out; }
         .success-icon {
             width: 90px; height: 90px; border-radius: 50%;
             background: linear-gradient(135deg, #d4af37, #f4e5b0, #d4af37);
@@ -680,6 +677,56 @@
             100% { bottom:110vh; transform:translateX(calc(100px * var(--sway))) scale(var(--scale)); opacity:0; }
         }
 
+        /* Upgrade 4: Body card gradient backgrounds */
+        .body-card[data-value="sedan"] { background: linear-gradient(135deg, rgba(212,175,55,0.05) 0%, rgba(10,31,26,0.6) 50%, rgba(52,211,153,0.05) 100%); background-size: 100% 100%; transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275), background-size 0.4s ease; }
+        .body-card[data-value="suv"] { background: linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(10,31,26,0.6) 50%, rgba(212,175,55,0.03) 100%); background-size: 100% 100%; transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275), background-size 0.4s ease; }
+        .body-card[data-value="pickup"] { background: linear-gradient(135deg, rgba(255,140,0,0.05) 0%, rgba(10,31,26,0.6) 50%, rgba(212,175,55,0.05) 100%); background-size: 100% 100%; transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275), background-size 0.4s ease; }
+        .body-card[data-value="deportivo"] { background: linear-gradient(135deg, rgba(255,50,50,0.05) 0%, rgba(10,31,26,0.6) 50%, rgba(212,175,55,0.08) 100%); background-size: 100% 100%; transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275), background-size 0.4s ease; }
+        .body-card[data-value="sedan"]:hover,
+        .body-card[data-value="suv"]:hover,
+        .body-card[data-value="pickup"]:hover,
+        .body-card[data-value="deportivo"]:hover { background-size: 200% 200%; }
+
+        /* Upgrade 5: Pulse ring on selection */
+        @keyframes pulseRing {
+            0% { box-shadow: 0 0 0 0 rgba(212,175,55,0.5); }
+            70% { box-shadow: 0 0 0 15px rgba(212,175,55,0); }
+            100% { box-shadow: 0 0 0 0 rgba(212,175,55,0); }
+        }
+        .pulse-ring { animation: pulseRing 0.6s ease-out; }
+
+        /* Upgrade 6: Compatibility counter on reveal */
+        .compat-score {
+            font-size: 48px; font-weight: 900;
+            background: linear-gradient(135deg, #d4af37, #f4e5b0);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 8px 0;
+        }
+
+        /* Upgrade 7: Rotating border glow */
+        .card::after {
+            content: ''; position: absolute; inset: -2px; border-radius: 26px;
+            background: conic-gradient(from var(--card-glow-angle, 0deg), transparent 0%, rgba(212,175,55,0.3) 10%, transparent 20%);
+            z-index: -1; animation: borderGlow 6s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes borderGlow { to { --card-glow-angle: 360deg; } }
+
+        /* Upgrade 8: Toast notifications */
+        .toast-container { position: fixed; top: 20px; right: 20px; z-index: 9998; display: flex; flex-direction: column; gap: 8px; pointer-events: none; max-width: 280px; }
+        .toast {
+            background: rgba(13,41,33,0.9); backdrop-filter: blur(15px);
+            border: 1px solid rgba(212,175,55,0.25); border-left: 3px solid #d4af37;
+            border-radius: 12px; padding: 10px 14px;
+            color: white; font-size: 12px; font-family: 'Poppins', sans-serif;
+            animation: toastIn 0.4s ease-out forwards;
+            opacity: 0; transform: translateX(100px);
+        }
+        .toast.exit { animation: toastOut 0.3s ease-in forwards; }
+        @keyframes toastIn { to { opacity: 1; transform: translateX(0); } }
+        @keyframes toastOut { to { opacity: 0; transform: translateX(100px); } }
+
         @media (max-width: 400px) {
             .card { padding: 24px 18px; }
             .chip-grid { grid-template-columns: repeat(2, 1fr); }
@@ -690,6 +737,7 @@
 </head>
 
 <body>
+    <div class="toast-container" id="toastContainer"></div>
     <div class="bubbles-container" id="bubblesContainer"></div>
 
     <div class="container">
@@ -716,15 +764,16 @@
                 <div class="trust-item"><span class="icon">🔒</span> Datos seguros</div>
             </div>
 
-            <!-- Progress Bar (6 segments) -->
+            <!-- Progress Bar - Compatibility Circle -->
             <div class="progress-bar" id="progressBar">
-                <div class="progress-segment active"></div>
-                <div class="progress-segment"></div>
-                <div class="progress-segment"></div>
-                <div class="progress-segment"></div>
-                <div class="progress-segment"></div>
-                <div class="progress-segment"></div>
-                <div class="progress-label" id="progressLabel">1 / 6</div>
+                <div class="progress-ring-wrap">
+                    <svg class="progress-ring-svg" viewBox="0 0 50 50">
+                        <circle class="progress-ring-bg" cx="25" cy="25" r="20"/>
+                        <circle class="progress-ring-fg" id="progressRing" cx="25" cy="25" r="20" stroke-dasharray="125.66" stroke-dashoffset="104.30"/>
+                    </svg>
+                    <span class="progress-ring-text" id="progressPercent">17%</span>
+                </div>
+                <div class="progress-label" id="progressLabel">Compatibilidad</div>
             </div>
 
             <div class="personality-hook" id="personalityHook">Que empiece el match...</div>
@@ -896,6 +945,7 @@
                         Alguien te hizo match... (<span id="matchCountReveal">3</span> veces)
                     </div>
                     <div class="step-subtitle">Les gustó tu perfil. ¿Quieres ver quiénes son?</div>
+                    <div class="compat-score" id="compatScore">0%</div>
                 </div>
                 <div id="revealCardsContainer">
                     <!-- Injected via JS -->
@@ -1128,7 +1178,8 @@
     // DOM REFS
     // =====================
     const allSteps = document.querySelectorAll('.step');
-    const progressSegments = document.querySelectorAll('.progress-segment');
+    const progressRing = document.getElementById('progressRing');
+    const progressPercent = document.getElementById('progressPercent');
     const progressLabel = document.getElementById('progressLabel');
     const backBtn = document.getElementById('backBtn');
     const nextBtn = document.getElementById('nextBtn');
@@ -1138,10 +1189,22 @@
     const logoSection = document.getElementById('logoSection');
     const trustRow = document.getElementById('trustRow');
 
+    // Progress ring constants: circumference = 2 * PI * 20 = 125.66
+    const RING_CIRCUMFERENCE = 125.66;
+    const STEP_PERCENTS = [17, 33, 50, 67, 83, 100];
+
     // =====================
     // MICRO-INTERACTIONS
     // =====================
+    function addPulseRing(el) {
+        el.classList.remove('pulse-ring');
+        void el.offsetWidth; // force reflow
+        el.classList.add('pulse-ring');
+        setTimeout(() => el.classList.remove('pulse-ring'), 600);
+    }
+
     function sparkleAt(el) {
+        addPulseRing(el);
         const rect = el.getBoundingClientRect();
         const x = rect.left + rect.width / 2;
         const y = rect.top + rect.height / 2;
@@ -1287,6 +1350,7 @@
                 list.querySelectorAll('.option-card').forEach(c => { c.classList.remove('selected'); c.querySelector('.check').textContent = ''; });
                 card.classList.add('selected');
                 card.querySelector('.check').textContent = '✓';
+                addPulseRing(card);
                 updateValidation();
             });
         });
@@ -1296,6 +1360,7 @@
         card.addEventListener('click', () => {
             document.querySelectorAll('.urgency-card').forEach(c => c.classList.remove('selected'));
             card.classList.add('selected');
+            addPulseRing(card);
             updateValidation();
         });
     });
@@ -1739,9 +1804,34 @@
     });
 
     function renderStep() {
-        allSteps.forEach((s, i) => s.classList.toggle('active', i === currentStep));
-        progressSegments.forEach((seg, i) => seg.classList.toggle('active', i <= currentStep));
-        progressLabel.textContent = `${currentStep + 1} / ${TOTAL_STEPS}`;
+        // Swipe-style exit animation on previous active step
+        const prevActive = document.querySelector('.step.active');
+        if (prevActive && parseInt(prevActive.dataset.step) !== currentStep) {
+            prevActive.classList.remove('active');
+            prevActive.classList.add('step-exit');
+            setTimeout(() => prevActive.classList.remove('step-exit'), 300);
+        }
+
+        // Activate the new step after a brief delay for exit anim
+        setTimeout(() => {
+            allSteps.forEach((s, i) => {
+                if (i === currentStep) {
+                    s.classList.remove('step-exit');
+                    s.classList.add('active');
+                } else {
+                    s.classList.remove('active');
+                }
+            });
+        }, prevActive && parseInt(prevActive.dataset.step) !== currentStep ? 150 : 0);
+
+        // Update progress ring
+        const pct = STEP_PERCENTS[currentStep] || 17;
+        const offset = RING_CIRCUMFERENCE - (RING_CIRCUMFERENCE * pct / 100);
+        progressRing.style.strokeDashoffset = offset;
+        progressPercent.textContent = pct + '%';
+
+        // Collapsing header (Upgrade 3)
+        logoSection.classList.toggle('compact', currentStep > 0);
 
         backBtn.style.display = currentStep > 0 && currentStep < 5 ? 'block' : 'none';
 
@@ -1768,6 +1858,11 @@
             trustRow.style.display = 'flex';
         }
 
+        // Keep trust row visible on steps 0-2
+        if (currentStep <= 2) {
+            trustRow.style.display = 'flex';
+        }
+
         // Show success screen hides steps
         if (successScreen.classList.contains('active')) {
             allSteps.forEach(s => s.classList.remove('active'));
@@ -1782,6 +1877,27 @@
             document.getElementById('marketTypeLabel').textContent = range.label;
             document.getElementById('marketYearLabel').textContent = `${formData.anioDesde || '2018'}-${formData.anioHasta || '2026'}`;
             document.querySelector('.market-info .mi-value').textContent = `Rango promedio ${range.min} - ${range.max} MXN`;
+        }
+
+        // Animated compatibility counter on reveal (Upgrade 6)
+        if (currentStep === 3) {
+            const compatEl = document.getElementById('compatScore');
+            if (compatEl) {
+                const target = 88 + Math.floor(Math.random() * 10); // 88-97
+                let current = 0;
+                const startTime = performance.now();
+                const duration = 1500;
+                function animateCompat(now) {
+                    const elapsed = now - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    // ease-out
+                    const eased = 1 - Math.pow(1 - progress, 3);
+                    current = Math.round(eased * target);
+                    compatEl.textContent = current + '%';
+                    if (progress < 1) requestAnimationFrame(animateCompat);
+                }
+                requestAnimationFrame(animateCompat);
+            }
         }
 
         // Personality hook
@@ -1816,6 +1932,52 @@
         }
     }
     createBubbles();
+
+    // =====================
+    // TOAST NOTIFICATIONS (Upgrade 8)
+    // =====================
+    const toastMessages = [
+        "🚗 Un Toyota 2023 acaba de llegar",
+        "💛 3 personas hicieron match cerca de ti",
+        "🔥 Nuevo: Honda CR-V recién importado",
+        "📍 Hay SUVs disponibles en tu zona",
+        "✨ Un Mazda CX-5 2024 fue publicado",
+        "💰 Precio especial en sedanes esta semana",
+        "🏆 Un Ford Explorer con bajo millaje disponible",
+        "🚀 5 autos nuevos agregados hoy"
+    ];
+    let toastInterval = null;
+
+    function showToast(msg) {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = msg;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.classList.add('exit');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    function startToasts() {
+        function scheduleNext() {
+            const delay = 8000 + Math.random() * 4000; // 8-12 seconds
+            toastInterval = setTimeout(() => {
+                if (currentStep >= 4) { stopToasts(); return; } // stop after step 4
+                const msg = toastMessages[Math.floor(Math.random() * toastMessages.length)];
+                showToast(msg);
+                scheduleNext();
+            }, delay);
+        }
+        scheduleNext();
+    }
+
+    function stopToasts() {
+        if (toastInterval) { clearTimeout(toastInterval); toastInterval = null; }
+    }
+
+    startToasts();
 
     // =====================
     // INIT

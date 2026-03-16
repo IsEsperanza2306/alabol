@@ -1,297 +1,357 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="logo-circular.png" type="image/png">
     <title>Alabol Car Broker | El Tinder de los Autos</title>
-    <meta name="description" content="El Tinder de los Autos — encuentra tu media naranja con llantas. Compra y vende autos verificados.">
+    <meta name="description" content="El Tinder de los Autos — encuentra tu media naranja con llantas.">
     <meta property="og:title" content="Alabol Car Broker | El Tinder de los Autos">
     <meta property="og:description" content="Encuentra tu media naranja con llantas. Compra y vende autos verificados.">
     <meta property="og:image" content="https://alabol.netlify.app/logo-circular.png">
     <meta property="og:url" content="https://alabol.netlify.app/links-alabol.html">
     <meta property="og:type" content="website">
-
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: #0a1f1a;
+            background: #060e0a;
             min-height: 100vh;
             overflow-x: hidden;
-            position: relative;
+            color: white;
         }
 
+        /* Fondo tech: grid sutil + gradientes */
         body::before {
             content: '';
-            position: fixed; inset: 0; z-index: -2;
-            background: linear-gradient(135deg, #0a1f1a 0%, #0d2921 25%, #0f3329 50%, #0d2921 75%, #0a1f1a 100%);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
+            position: fixed; inset: 0; z-index: 0;
+            background:
+                linear-gradient(rgba(212,175,55,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(212,175,55,0.03) 1px, transparent 1px);
+            background-size: 32px 32px;
         }
 
-        body::after {
-            content: '';
-            position: fixed; inset: 0; z-index: -1;
-            background-image:
-                radial-gradient(2px 2px at 20% 30%, rgba(212,175,55,0.3), transparent),
-                radial-gradient(2px 2px at 60% 70%, rgba(212,175,55,0.2), transparent),
-                radial-gradient(1px 1px at 50% 50%, rgba(212,175,55,0.2), transparent),
-                radial-gradient(1px 1px at 80% 10%, rgba(212,175,55,0.3), transparent);
-            background-size: 200% 200%;
-            animation: float 20s ease-in-out infinite;
+        /* Ambient glows */
+        .glow-1 {
+            position: fixed; top: -20%; left: -15%; width: 50vw; height: 50vw;
+            background: radial-gradient(circle, rgba(212,175,55,0.12) 0%, transparent 60%);
+            border-radius: 50%; z-index: 0; filter: blur(60px);
+            animation: drift1 14s ease-in-out infinite alternate;
         }
-
-        @keyframes gradientShift { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
-        @keyframes float { 0%,100% { transform: translate(0,0); } 33% { transform: translate(30px,-30px); } 66% { transform: translate(-20px,20px); } }
+        .glow-2 {
+            position: fixed; bottom: -20%; right: -15%; width: 45vw; height: 45vw;
+            background: radial-gradient(circle, rgba(52,211,153,0.08) 0%, transparent 60%);
+            border-radius: 50%; z-index: 0; filter: blur(60px);
+            animation: drift2 12s ease-in-out infinite alternate;
+        }
+        @keyframes drift1 { to { transform: translate(30px, 40px) scale(1.1); } }
+        @keyframes drift2 { to { transform: translate(-25px, -30px) scale(1.05); } }
 
         .container {
-            max-width: 480px;
+            max-width: 440px;
             margin: 0 auto;
-            padding: 50px 20px 40px;
+            padding: 48px 20px 36px;
             position: relative;
             z-index: 1;
         }
 
-        /* Profile */
+        /* ── PROFILE ── */
         .profile {
             text-align: center;
-            margin-bottom: 40px;
-            animation: fadeInDown 0.8s ease-out;
+            margin-bottom: 36px;
         }
 
-        @keyframes fadeInDown { from { opacity:0; transform:translateY(-30px); } to { opacity:1; transform:translateY(0); } }
-
-        .logo-container {
+        .logo-area {
             position: relative;
-            width: 140px; height: 140px;
-            margin: 0 auto 24px;
+            width: 110px; height: 110px;
+            margin: 0 auto 20px;
         }
 
+        /* Anillo exterior animado (orbital ring) */
+        .logo-ring {
+            position: absolute; inset: -8px;
+            border: 2px solid transparent;
+            border-top-color: rgba(212,175,55,0.6);
+            border-right-color: rgba(212,175,55,0.2);
+            border-radius: 50%;
+            animation: orbitSpin 4s linear infinite;
+        }
+        .logo-ring-2 {
+            position: absolute; inset: -14px;
+            border: 1px solid transparent;
+            border-bottom-color: rgba(52,211,153,0.3);
+            border-left-color: rgba(52,211,153,0.1);
+            border-radius: 50%;
+            animation: orbitSpin 7s linear infinite reverse;
+        }
+        @keyframes orbitSpin { to { transform: rotate(360deg); } }
+
+        /* Glow detrás del logo — proporcional */
         .logo-glow {
             position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%,-50%);
-            width: 170px; height: 170px;
-            background: radial-gradient(circle, rgba(212,175,55,0.4) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            width: 130px; height: 130px;
+            background: radial-gradient(circle, rgba(212,175,55,0.35) 0%, transparent 65%);
             border-radius: 50%;
-            animation: logoGlowPulse 3s ease-in-out infinite;
+            animation: glowPulse 3s ease-in-out infinite;
         }
+        @keyframes glowPulse { 0%,100% { opacity:0.5; transform: translate(-50%,-50%) scale(0.95); } 50% { opacity:1; transform: translate(-50%,-50%) scale(1.05); } }
 
-        @keyframes logoGlowPulse { 0%,100% { transform: translate(-50%,-50%) scale(1); opacity:0.6; } 50% { transform: translate(-50%,-50%) scale(1.1); opacity:0.9; } }
-
-        .logo {
-            position: relative;
-            width: 140px; height: 140px;
-            background: rgba(15,51,41,0.3);
-            border-radius: 50%;
-            border: 3px solid rgba(212,175,55,0.5);
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 40px rgba(212,175,55,0.3), 0 10px 50px rgba(0,0,0,0.5), inset 0 0 30px rgba(212,175,55,0.1);
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-            margin: 0 auto;
+        .logo-img {
+            position: relative; z-index: 2;
+            width: 110px; height: 110px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 12px rgba(212,175,55,0.4));
         }
-
-        .logo img { width: 120px; height: 120px; object-fit: contain; filter: drop-shadow(0 0 15px rgba(212,175,55,0.5)); }
 
         .profile h1 {
-            font-size: 28px; font-weight: 800;
-            background: linear-gradient(135deg, #d4af37 0%, #f4e5b0 25%, #d4af37 50%, #c9a961 75%, #d4af37 100%);
+            font-size: 22px; font-weight: 900; letter-spacing: 3px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #d4af37 0%, #f4e5b0 40%, #d4af37 70%, #c9a961 100%);
             background-size: 200% auto;
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 8px; letter-spacing: 1px;
-            animation: shimmer 3s linear infinite;
+            animation: shimmer 4s linear infinite;
+            margin-bottom: 6px;
         }
-
         @keyframes shimmer { to { background-position: 200% center; } }
 
         .profile .tagline {
-            font-size: 16px; color: #a8c5b8; font-weight: 400; line-height: 1.6; margin-bottom: 6px;
+            font-size: 15px; color: #a8c5b8; font-weight: 400; line-height: 1.5;
         }
 
-        .profile .highlight {
-            font-size: 14px; color: #d4af37; font-weight: 600; margin-top: 8px;
-            text-shadow: 0 0 20px rgba(212,175,55,0.3);
+        .profile .badge {
             display: inline-flex; align-items: center; gap: 6px;
-            background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.25);
-            padding: 6px 16px; border-radius: 20px;
+            margin-top: 12px;
+            font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+            color: #d4af37;
+            background: rgba(212,175,55,0.08);
+            border: 1px solid rgba(212,175,55,0.2);
+            padding: 5px 14px; border-radius: 20px;
         }
-
-        /* Links */
-        .links {
-            display: flex; flex-direction: column; gap: 14px;
-            animation: fadeInUp 0.8s ease-out 0.2s both;
+        .badge-dot {
+            width: 6px; height: 6px; background: #34d399; border-radius: 50%;
+            box-shadow: 0 0 8px #34d399;
+            animation: blink 2s infinite;
         }
+        @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
 
-        @keyframes fadeInUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+        /* ── LINKS ── */
+        .links { display: flex; flex-direction: column; gap: 12px; }
 
         .link {
             position: relative;
-            background: linear-gradient(135deg, rgba(15,51,41,0.6) 0%, rgba(13,41,33,0.6) 100%);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(212,175,55,0.3);
-            border-radius: 16px;
-            padding: 18px 22px;
+            background: rgba(13,38,28,0.5);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(212,175,55,0.15);
+            border-radius: 14px;
+            padding: 16px 18px;
             text-decoration: none; color: white;
-            transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
             display: flex; align-items: center; gap: 14px;
+            transition: all 0.35s cubic-bezier(0.25,0.46,0.45,0.94);
             overflow: hidden;
         }
 
-        .link::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(212,175,55,0.15), transparent);
-            transition: left 0.6s;
+        /* Shine sweep on hover */
+        .link::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212,175,55,0.08), transparent);
+            transition: left 0.5s;
         }
-
-        .link:hover::before { left: 100%; }
+        .link:hover::after { left: 120%; }
 
         .link:hover {
-            transform: translateY(-4px) scale(1.02);
+            border-color: rgba(212,175,55,0.5);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(212,175,55,0.15), 0 0 0 1px rgba(212,175,55,0.1);
+        }
+
+        .link:active { transform: translateY(-1px); }
+
+        .link-icon {
+            width: 44px; height: 44px; min-width: 44px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px;
+            background: rgba(212,175,55,0.08);
+            border: 1px solid rgba(212,175,55,0.15);
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+        .link:hover .link-icon {
+            background: rgba(212,175,55,0.15);
+            border-color: rgba(212,175,55,0.3);
+            transform: scale(1.05);
+        }
+
+        .link-content { flex: 1; min-width: 0; }
+        .link-title { font-size: 14px; font-weight: 700; line-height: 1.3; }
+        .link-sub { font-size: 11px; color: #7a9e8c; margin-top: 2px; }
+
+        .link-arrow {
+            color: rgba(212,175,55,0.3);
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .link:hover .link-arrow { color: #d4af37; transform: translateX(3px); }
+
+        /* CTA Principal — dorado */
+        .link-cta {
+            background: linear-gradient(135deg, rgba(212,175,55,0.15) 0%, rgba(212,175,55,0.05) 100%);
+            border-color: rgba(212,175,55,0.4);
+            box-shadow: 0 0 20px rgba(212,175,55,0.08);
+        }
+        .link-cta .link-icon {
+            background: linear-gradient(135deg, #d4af37, #c9a961);
+            border: none;
+            color: #0a1f1a; font-size: 20px;
+            box-shadow: 0 4px 12px rgba(212,175,55,0.3);
+        }
+        .link-cta .link-title { color: #f4e5b0; }
+        .link-cta:hover {
             border-color: #d4af37;
-            box-shadow: 0 0 30px rgba(212,175,55,0.4), 0 10px 40px rgba(0,0,0,0.4);
+            box-shadow: 0 8px 35px rgba(212,175,55,0.25);
         }
 
-        /* CTA Principal */
-        .link-priority {
-            background: linear-gradient(135deg, #d4af37 0%, #f4e5b0 50%, #d4af37 100%);
-            background-size: 200% 200%;
-            border: 2px solid #c9a961;
-            box-shadow: 0 0 30px rgba(212,175,55,0.5), 0 10px 30px rgba(0,0,0,0.3);
-            animation: glow 2s ease-in-out infinite, goldShine 3s linear infinite;
-        }
-
-        .link-priority .link-title, .link-priority .link-description { color: #0a1f1a; }
-        .link-priority .link-icon { filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
-
-        @keyframes goldShine { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
-        @keyframes glow {
-            0%,100% { box-shadow: 0 0 20px rgba(212,175,55,0.5), 0 10px 30px rgba(0,0,0,0.3); }
-            50% { box-shadow: 0 0 40px rgba(212,175,55,0.7), 0 10px 40px rgba(0,0,0,0.4); }
-        }
-
-        .link-priority:hover { transform: translateY(-6px) scale(1.03); }
-
-        /* WhatsApp special */
+        /* WhatsApp */
         .link-wa {
-            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            background: rgba(37,211,102,0.08);
+            border-color: rgba(37,211,102,0.25);
+        }
+        .link-wa .link-icon {
+            background: #25D366;
+            border: none; color: white;
+            box-shadow: 0 4px 12px rgba(37,211,102,0.3);
+        }
+        .link-wa:hover {
             border-color: #25D366;
-            box-shadow: 0 0 20px rgba(37,211,102,0.3);
+            box-shadow: 0 8px 30px rgba(37,211,102,0.2);
         }
-        .link-wa .link-title, .link-wa .link-description { color: white; }
-        .link-wa .link-icon { filter: none; }
-        .link-wa:hover { box-shadow: 0 0 30px rgba(37,211,102,0.5), 0 10px 30px rgba(0,0,0,0.3); border-color: #25D366; }
 
-        .link-icon { font-size: 30px; min-width: 45px; text-align: center; }
-        .link-content { flex: 1; }
-        .link-title { font-size: 16px; font-weight: 700; margin-bottom: 3px; letter-spacing: 0.3px; }
-        .link-description { font-size: 12px; color: #a8c5b8; font-weight: 400; }
+        /* Social proof counter */
+        .social-proof {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 11px; color: #5a7a6a;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .sp-bar { width: 20px; height: 1px; background: rgba(212,175,55,0.2); }
 
-        /* Footer mini */
+        /* Footer */
         .footer-mini {
-            text-align: center; margin-top: 40px; padding: 20px;
-            color: #6b8a7a; font-size: 12px;
+            text-align: center; margin-top: 28px; padding: 16px;
+            font-size: 11px; color: #3a5a4a;
         }
-        .footer-mini a { color: #d4af37; text-decoration: none; font-weight: 600; }
-        .footer-mini a:hover { color: #f4e5b0; }
+        .footer-mini a { color: rgba(212,175,55,0.5); text-decoration: none; }
+        .footer-mini a:hover { color: #d4af37; }
 
+        /* Responsive */
         @media (max-width: 480px) {
-            .container { padding: 35px 16px 30px; }
-            .profile h1 { font-size: 24px; }
-            .logo-container { width: 120px; height: 120px; }
-            .logo { width: 120px; height: 120px; }
-            .logo img { width: 100px; height: 100px; }
-            .link { padding: 15px 18px; }
-            .link-title { font-size: 15px; }
-            .link-icon { font-size: 26px; min-width: 40px; }
+            .container { padding: 36px 16px 28px; }
+            .profile h1 { font-size: 19px; letter-spacing: 2px; }
+            .logo-area { width: 95px; height: 95px; }
+            .logo-img { width: 95px; height: 95px; }
+            .logo-glow { width: 110px; height: 110px; }
+            .link { padding: 14px 16px; }
+            .link-icon { width: 40px; height: 40px; min-width: 40px; font-size: 20px; }
+            .link-title { font-size: 13px; }
         }
     </style>
 </head>
-
 <body>
-    <div class="container">
-        <!-- Profile -->
-        <div class="profile">
-            <div class="logo-container">
-                <div class="logo-glow"></div>
-                <div class="logo">
-                    <img src="logo-circular.png" alt="Alabol Car Broker">
-                </div>
-            </div>
-            <h1>ALABOL CAR BROKER</h1>
-            <p class="tagline">El Tinder de los Autos<br>Tu media naranja con llantas te espera</p>
-            <p class="highlight">💘 Compra y vende autos verificados</p>
+
+<div class="glow-1"></div>
+<div class="glow-2"></div>
+
+<div class="container">
+
+    <div class="profile">
+        <div class="logo-area">
+            <div class="logo-ring"></div>
+            <div class="logo-ring-2"></div>
+            <div class="logo-glow"></div>
+            <img src="logo-circular.png" alt="Alabol" class="logo-img">
         </div>
-
-        <!-- Links -->
-        <div class="links">
-            <!-- 1. CTA Principal: Matchmaker -->
-            <a href="./formulario-match.html" class="link link-priority">
-                <div class="link-icon">💘</div>
-                <div class="link-content">
-                    <div class="link-title">Hacer Match con tu Auto Ideal</div>
-                    <div class="link-description">Cuéntanos qué buscas y nuestro algoritmo lo encuentra</div>
-                </div>
-            </a>
-
-            <!-- 2. Inventario -->
-            <a href="./inventario.html" class="link">
-                <div class="link-icon">🚗</div>
-                <div class="link-content">
-                    <div class="link-title">Ver Inventario Disponible</div>
-                    <div class="link-description">Desliza y haz swipe en autos verificados</div>
-                </div>
-            </a>
-
-            <!-- 3. Calculadoras -->
-            <a href="https://alabolcar-hwh56g8k.manus.space/calculators" class="link" target="_blank" rel="noopener">
-                <div class="link-icon">🧮</div>
-                <div class="link-content">
-                    <div class="link-title">Calculadoras de Costos (Gratis)</div>
-                    <div class="link-description">Calcula inversión, fletes y aranceles al instante</div>
-                </div>
-            </a>
-
-            <!-- 4. WhatsApp -->
-            <a href="https://wa.me/525568667571?text=Hola%20Alabol%2C%20vengo%20de%20redes%20sociales%20y%20me%20interesa%20un%20auto"
-                class="link link-wa" target="_blank" rel="noopener">
-                <div class="link-icon">💬</div>
-                <div class="link-content">
-                    <div class="link-title">Escríbenos por WhatsApp</div>
-                    <div class="link-description">Respuesta inmediata de un asesor</div>
-                </div>
-            </a>
-
-            <!-- 5. Sitio Web -->
-            <a href="./index.html" class="link">
-                <div class="link-icon">🌐</div>
-                <div class="link-content">
-                    <div class="link-title">Visitar Sitio Web</div>
-                    <div class="link-description">Conoce todo sobre el Tinder de los Autos</div>
-                </div>
-            </a>
-        </div>
-
-        <div class="footer-mini">
-            <p>© 2026 Alabol Car Broker</p>
-            <p style="margin-top:6px;"><a href="./index.html">alabol.netlify.app</a></p>
-        </div>
+        <h1>Alabol Car Broker</h1>
+        <p class="tagline">El Tinder de los Autos<br>Tu media naranja con llantas te espera</p>
+        <div class="badge"><span class="badge-dot"></span> Plataforma activa</div>
     </div>
 
-    <script>
-        document.querySelectorAll('.link').forEach((link, i) => {
-            link.style.animationDelay = `${0.1 * i}s`;
-            link.addEventListener('click', function() {
-                const title = this.querySelector('.link-title').textContent;
-                console.log('Click en:', title);
-            });
-        });
-    </script>
-</body>
+    <div class="links">
 
+        <a href="./formulario-match.html" class="link link-cta">
+            <div class="link-icon">💘</div>
+            <div class="link-content">
+                <div class="link-title">Hacer Match con tu Auto Ideal</div>
+                <div class="link-sub">Nuestro algoritmo encuentra tu match perfecto</div>
+            </div>
+            <span class="link-arrow">›</span>
+        </a>
+
+        <a href="./inventario.html" class="link">
+            <div class="link-icon">🚗</div>
+            <div class="link-content">
+                <div class="link-title">Explorar Inventario</div>
+                <div class="link-sub">Desliza entre autos verificados</div>
+            </div>
+            <span class="link-arrow">›</span>
+        </a>
+
+        <a href="https://alabolcar-hwh56g8k.manus.space/calculators" class="link" target="_blank" rel="noopener">
+            <div class="link-icon">🧮</div>
+            <div class="link-content">
+                <div class="link-title">Calculadora de Costos</div>
+                <div class="link-sub">Inversión, fletes y aranceles al instante</div>
+            </div>
+            <span class="link-arrow">›</span>
+        </a>
+
+        <a href="https://wa.me/525568667571?text=Hola%20Alabol%2C%20vengo%20de%20redes%20sociales%20y%20me%20interesa%20un%20auto" class="link link-wa" target="_blank" rel="noopener">
+            <div class="link-icon">💬</div>
+            <div class="link-content">
+                <div class="link-title">Escríbenos por WhatsApp</div>
+                <div class="link-sub">Respuesta inmediata de un asesor</div>
+            </div>
+            <span class="link-arrow">›</span>
+        </a>
+
+        <a href="./index.html" class="link">
+            <div class="link-icon">🌐</div>
+            <div class="link-content">
+                <div class="link-title">Conoce Alabol</div>
+                <div class="link-sub">Todo sobre el Tinder de los Autos</div>
+            </div>
+            <span class="link-arrow">›</span>
+        </a>
+
+    </div>
+
+    <div class="social-proof">
+        <span class="sp-bar"></span>
+        Autos verificados y certificados
+        <span class="sp-bar"></span>
+    </div>
+
+    <div class="footer-mini">
+        <a href="./index.html">alabol.netlify.app</a>
+    </div>
+
+</div>
+
+<script>
+// Entrada escalonada de links
+document.querySelectorAll('.link').forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    setTimeout(() => {
+        el.style.transition = 'all 0.5s cubic-bezier(0.25,0.46,0.45,0.94)';
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+    }, 300 + i * 100);
+});
+</script>
+
+</body>
 </html>

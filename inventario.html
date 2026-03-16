@@ -943,6 +943,121 @@
                 }
             }
         }
+
+        /* === PSYCHOLOGY-BASED BADGES === */
+
+        /* Scarcity: Único en inventario */
+        .badge-unique {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(8px);
+            animation: pulseUnique 2s ease-in-out infinite;
+            z-index: 3;
+        }
+
+        @keyframes pulseUnique {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+            50% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+        }
+
+        /* Recency: Nuevo / Recién Llegó */
+        .badge-recency {
+            position: absolute;
+            top: 15px;
+            right: 55px;
+            background: rgba(212, 175, 55, 0.9);
+            color: var(--bg-dark);
+            font-size: 10px;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(8px);
+            z-index: 3;
+            text-transform: uppercase;
+        }
+
+        .badge-recency.extra-emphasis {
+            background: linear-gradient(135deg, #d4af37 0%, #f4e5b0 50%, #d4af37 100%);
+            background-size: 200% auto;
+            animation: shimmerRecency 2s linear infinite;
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.5);
+        }
+
+        @keyframes shimmerRecency {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        /* Featured: Destacado */
+        .badge-featured {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.95) 0%, rgba(244, 229, 176, 0.95) 100%);
+            color: var(--bg-dark);
+            font-size: 11px;
+            font-weight: 800;
+            padding: 5px 14px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(8px);
+            z-index: 4;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+        }
+
+        /* Low KM highlight */
+        .spec-value.low-km {
+            color: var(--gold) !important;
+            font-weight: 700;
+        }
+
+        .low-km-badge {
+            display: inline-block;
+            font-size: 9px;
+            background: rgba(212, 175, 55, 0.2);
+            color: var(--gold);
+            padding: 1px 6px;
+            border-radius: 8px;
+            margin-left: 4px;
+            font-weight: 600;
+        }
+
+        /* Match indicator */
+        .match-indicator {
+            font-size: 12px;
+            color: var(--gold);
+            padding: 6px 0 2px;
+            font-weight: 500;
+            opacity: 0.85;
+        }
+
+        /* Views indicator */
+        .views-indicator {
+            font-size: 11px;
+            color: var(--green-text);
+            opacity: 0.7;
+            padding: 2px 0 4px;
+            font-weight: 400;
+        }
+
+        /* Inventory live counter in subtitle */
+        .inventory-live-count {
+            display: inline-block;
+            color: var(--gold);
+            font-weight: 600;
+            font-size: 15px;
+            margin-top: 4px;
+        }
     </style>
 <style id="alabol-nav-styles">
   :root {
@@ -1220,6 +1335,7 @@
             </div>
             <h1 class="title">Alabol | Inventario VIP</h1>
             <p class="subtitle">Descubre tu próximo auto entre nuestra selección premium garantizada.</p>
+            <p class="inventory-live-count" id="inventoryLiveCount"></p>
         </div>
 
         <!-- FILTER BAR -->
@@ -1415,6 +1531,15 @@
                 }
 
                 if (data && data.length > 0) {
+                    // Count models for scarcity badge
+                    const modelCounts = {};
+                    data.forEach(car => {
+                        const modelo = (car.modelo || car.model || '').toLowerCase().trim();
+                        if (modelo) {
+                            modelCounts[modelo] = (modelCounts[modelo] || 0) + 1;
+                        }
+                    });
+
                     // Map live database rows into our frontend 'database_inventory' array
                     database_inventory = data.map(car => {
                         let carImg = defaultImg;
@@ -1440,6 +1565,16 @@
                         if (hasRealPhotos && hasDesc && hasKm) trustLevel = 'green';
                         else if (hasRealPhotos) trustLevel = 'yellow';
 
+                        // Recency: days since created_at
+                        let daysOnMarket = null;
+                        if (car.created_at) {
+                            daysOnMarket = Math.floor((Date.now() - new Date(car.created_at).getTime()) / (1000 * 60 * 60 * 24));
+                        }
+
+                        // Scarcity: model count
+                        const modelo = (car.modelo || car.model || '').toLowerCase().trim();
+                        const modelCount = modelo ? (modelCounts[modelo] || 1) : 1;
+
                         return {
                             id: car.id_interno || car.id,
                             agencia: car.agencia || 'Alabol',
@@ -1455,7 +1590,12 @@
                             combustible: car.combustible || 'Gasolina',
                             descripcion: car.descripcion || '',
                             url_fotos: carImg,
-                            trustLevel: trustLevel
+                            trustLevel: trustLevel,
+                            modelCount: modelCount,
+                            daysOnMarket: daysOnMarket,
+                            matchCount: car.total_matches || 0,
+                            views: car.vistas || 0,
+                            featured: car.destacado === true
                         };
                     });
                 }
@@ -1619,6 +1759,40 @@
             };
             const tc = trustConfig[tl];
 
+            // Recency badge (only from real created_at)
+            let recencyBadge = '';
+            if (auto.daysOnMarket !== null && auto.daysOnMarket <= 3) {
+                recencyBadge = '<div class="badge-recency extra-emphasis">Recién llegó</div>';
+            } else if (auto.daysOnMarket !== null && auto.daysOnMarket <= 7) {
+                recencyBadge = '<div class="badge-recency">Nuevo</div>';
+            }
+
+            // Scarcity badge (only when truly unique)
+            const uniqueBadge = auto.modelCount === 1 ? '<div class="badge-unique">Único en inventario</div>' : '';
+
+            // Featured badge (from real destacado field)
+            const featuredBadge = auto.featured === true ? '<div class="badge-featured">⭐ Destacado</div>' : '';
+
+            // Low KM highlight (real data only)
+            const isLowKm = auto.km > 0 && auto.km < 30000;
+            const kmValueClass = isLowKm ? 'spec-value low-km' : 'spec-value';
+            const kmBadge = isLowKm ? '<span class="low-km-badge">Bajo km</span>' : '';
+
+            // Match count (from real total_matches)
+            const matchIndicator = auto.matchCount > 0
+                ? `<div class="match-indicator">💘 ${auto.matchCount} persona${auto.matchCount !== 1 ? 's' : ''} hicieron match con este auto</div>`
+                : '';
+
+            // Views count (from real vistas)
+            const viewsIndicator = auto.views > 0
+                ? `<div class="views-indicator">👁 ${auto.views} visita${auto.views !== 1 ? 's' : ''}</div>`
+                : '';
+
+            // CTA text based on trust level (dating app language)
+            let ctaText = '🔍 Explorar este auto';
+            if (tl === 'green') ctaText = '💘 Conocer este auto';
+            else if (tl === 'yellow') ctaText = '👀 Ver más de este auto';
+
             return `
                 <div class="card" onclick="openCarDetails('${auto.id}')" style="cursor:pointer;">
                     <button class="wishlist-btn ${likedClass}" onclick="event.stopPropagation(); toggleWishlist('${auto.id}', this)">
@@ -1631,33 +1805,38 @@
                                 <i class="fa-solid ${badgeIcon}"></i> ${badgeText}
                             </div>
                         </div>
+                        ${featuredBadge}
+                        ${recencyBadge}
                         <div style="position:absolute;bottom:8px;left:8px;display:inline-flex;align-items:center;gap:5px;background:${tc.bg};border:1px solid ${tc.border};color:${tc.color};padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;backdrop-filter:blur(8px);">
                             <i class="fa-solid ${tc.icon}"></i> ${tc.text}
                         </div>
+                        ${uniqueBadge}
                     </div>
-                    
+
                     <div class="card-body">
                         <div class="car-title">${auto.vehicle}</div>
                         <div class="car-version" style="height: 40px; overflow: hidden; opacity: 0.7;">${auto.version}</div>
-                        
+
                         <div class="price-tag">
                             ${formatCurrency(auto.priceMXN)} <span style="font-size: 10px; opacity: 0.6">MXN</span>
                         </div>
-                        
+
                         <div class="specs">
                             <div class="spec-item">
                                 <span class="spec-label">KM</span>
-                                <span class="spec-value">${auto.km.toLocaleString()}</span>
+                                <span class="${kmValueClass}">${auto.km.toLocaleString()}${kmBadge}</span>
                             </div>
                             <div class="spec-item">
                                 <span class="spec-label">Transmisión</span>
                                 <span class="spec-value">${auto.transmision}</span>
                             </div>
                         </div>
-                        
+                        ${matchIndicator}
+                        ${viewsIndicator}
+
                         <div class="actions">
                             <button class="btn btn-primary" style="width:100%; letter-spacing: 1px; font-weight: 800;">
-                                VER DETALLES <i class="fa-solid fa-arrow-right" style="font-size: 10px"></i>
+                                ${ctaText} <i class="fa-solid fa-arrow-right" style="font-size: 10px"></i>
                             </button>
                         </div>
                     </div>
@@ -1792,6 +1971,12 @@
         function renderGrid(dataToRender) {
             const grid = document.getElementById('vehiculosGrid');
             document.getElementById('totalAutos').textContent = dataToRender.length;
+
+            // Update live inventory counter in header
+            const liveCountEl = document.getElementById('inventoryLiveCount');
+            if (liveCountEl && database_inventory.length > 0) {
+                liveCountEl.textContent = `${database_inventory.length} autos disponibles ahora`;
+            }
 
             if (dataToRender.length === 0) {
                 grid.innerHTML = `

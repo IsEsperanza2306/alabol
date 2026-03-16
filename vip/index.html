@@ -819,9 +819,9 @@
                         <span class="body-examples">Mustang, BMW, Camaro</span>
                     </div>
                 </div>
-                <div class="social-proof">
+                <div class="social-proof" id="socialProofBanner" style="display:none;">
                     <span class="sp-icon">🔥</span>
-                    <span class="sp-text"><strong id="socialProofCount">47</strong> personas buscando su match ahora mismo</span>
+                    <span class="sp-text"><strong id="socialProofCount">—</strong> autos disponibles en inventario</span>
                 </div>
             </div>
 
@@ -941,10 +941,10 @@
             <div class="step" data-step="3">
                 <div style="text-align: center; margin-bottom: 16px;">
                     <div style="font-size: 44px; margin-bottom: 6px;">😏</div>
-                    <div class="step-title" style="font-size: 22px; background: linear-gradient(135deg, #d4af37, #f4e5b0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-                        Alguien te hizo match... (<span id="matchCountReveal">3</span> veces)
+                    <div class="step-title" id="revealTitle" style="font-size: 22px; background: linear-gradient(135deg, #d4af37, #f4e5b0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                        Alguien te hizo match... (<span id="matchCountReveal">0</span> veces)
                     </div>
-                    <div class="step-subtitle">Les gustó tu perfil. ¿Quieres ver quiénes son?</div>
+                    <div class="step-subtitle" id="revealSubtitle">Les gustó tu perfil. ¿Quieres ver quiénes son?</div>
                     <div class="compat-score" id="compatScore">0%</div>
                 </div>
                 <div id="revealCardsContainer">
@@ -1226,23 +1226,31 @@
         setTimeout(() => { el.style.transform = ''; }, 150);
     }
 
-    // Animated social proof counter
-    function animateSocialProof() {
+    // Real social proof: count actual leads from Supabase
+    let realInventory = []; // cached inventory for toasts + matches
+    async function loadRealData() {
+        const banner = document.getElementById('socialProofBanner');
         const el = document.getElementById('socialProofCount');
-        if (!el) return;
-        const base = 42 + Math.floor(Math.random() * 15);
-        el.textContent = base;
-        setInterval(() => {
-            const delta = Math.random() > 0.5 ? 1 : -1;
-            const current = parseInt(el.textContent);
-            const next = Math.max(35, Math.min(65, current + delta));
-            el.textContent = next;
-            el.style.transition = 'transform 0.2s';
-            el.style.transform = 'scale(1.15)';
-            setTimeout(() => { el.style.transform = 'scale(1)'; }, 200);
-        }, 4000 + Math.random() * 3000);
+        try {
+            // Pre-load inventory for toasts, matches, and social proof
+            const { data: invData } = await supabaseClient
+                .from('inventario')
+                .select('*')
+                .eq('estatus', 'disponible');
+
+            if (invData && invData.length > 0) {
+                realInventory = invData;
+                // Show banner with real inventory count
+                if (el) el.textContent = invData.length;
+                if (banner) banner.style.display = 'flex';
+            }
+            // If no inventory, banner stays hidden — no fake numbers
+        } catch (e) {
+            // DB failed — banner stays hidden, no fake data shown
+            console.warn('Could not load inventory:', e);
+        }
     }
-    animateSocialProof();
+    loadRealData();
 
     // =====================
     // BODY TYPE (Step 1)
@@ -1488,12 +1496,8 @@
         }
     }
 
-    // Fallback matches when no inventory available
-    const FALLBACK_MATCHES = [
-        { id: 'fb1', marca: 'Toyota', modelo: 'RAV4 XLE', anio: 2022, precio_venta: 385000, kilometraje: '32,000 km', link_fotos: '', tags: ['Automático', 'Bajo millaje'] },
-        { id: 'fb2', marca: 'Honda', modelo: 'CR-V Touring', anio: 2021, precio_venta: 410000, kilometraje: '45,000 km', link_fotos: '', tags: ['Piel', 'AWD'] },
-        { id: 'fb3', marca: 'Mazda', modelo: 'CX-5 Signature', anio: 2023, precio_venta: 450000, kilometraje: '18,000 km', link_fotos: '', tags: ['Techo solar', 'Piel'] },
-    ];
+    // No fallback matches — only real inventory
+    // If there are no matches, we show an honest "no matches yet" screen
 
     // =====================
     // RENDER REVEAL CARDS (Step 4)
@@ -1501,8 +1505,27 @@
     function renderRevealCards(cars) {
         const container = document.getElementById('revealCardsContainer');
         container.innerHTML = '';
-        const displayCars = cars.length > 0 ? cars.slice(0, 3) : FALLBACK_MATCHES;
 
+        if (!cars || cars.length === 0) {
+            // Honest "no matches yet" — no fake data
+            document.getElementById('matchCountReveal').textContent = '0';
+            container.innerHTML = `
+                <div style="text-align:center; padding: 30px 16px;">
+                    <div style="font-size: 48px; margin-bottom: 12px;">🔍</div>
+                    <div style="font-size: 16px; font-weight: 700; color: white; margin-bottom: 8px;">
+                        Aún no hay matches exactos
+                    </div>
+                    <div style="font-size: 13px; color: var(--green-text); line-height: 1.5;">
+                        No encontramos autos que cumplan todos tus criterios en este momento,
+                        pero nuestro equipo buscará activamente para ti.
+                        Déjanos tus datos y te avisamos apenas llegue algo.
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        const displayCars = cars.slice(0, 3);
         document.getElementById('matchCountReveal').textContent = displayCars.length;
 
         displayCars.forEach((car, i) => {
@@ -1514,8 +1537,16 @@
             });
             const km = car.kilometraje || car.km || '—';
             const price = '$' + (car.precio_venta || 0).toLocaleString('es-MX');
-            const interestMsgs = ['Muy solicitad@', 'Tiene 3 pretendientes', 'Recién llegó al inventario'];
-            const interestMsg = interestMsgs[i] || `${3-i} personas interesadas`;
+
+            // Real badge based on actual car data
+            let badge = '';
+            if (car.created_at) {
+                const daysAgo = Math.floor((Date.now() - new Date(car.created_at).getTime()) / (1000*60*60*24));
+                if (daysAgo <= 3) badge = '🆕 Recién llegó';
+                else if (daysAgo <= 7) badge = '📅 Esta semana';
+            }
+            if (!badge && car.kilometraje && parseInt(String(car.kilometraje).replace(/\D/g,'')) < 30000) badge = '📏 Bajo km';
+            if (!badge) badge = `${car.marca} ${car.anio}`;
 
             container.innerHTML += `
                 <div class="reveal-card">
@@ -1527,7 +1558,7 @@
                                 <div class="lock-text">¿Quién será?</div>
                             </div>
                         </div>
-                        <div class="interest-badge">💛 ${interestMsg}</div>
+                        <div class="interest-badge">💛 ${badge}</div>
                     </div>
                     <div class="reveal-card-info">
                         <div class="rc-top">
@@ -1556,7 +1587,15 @@
         currentCardIndex = 0;
         likedCars = [];
 
-        const displayCars = matchStack.length > 0 ? matchStack.slice(0, 10) : FALLBACK_MATCHES;
+        if (!matchStack || matchStack.length === 0) {
+            // No matches — skip swipe, go straight to success with "searching" message
+            document.getElementById('tinderDeck').classList.remove('active');
+            document.getElementById('tinderActions').classList.remove('active');
+            showFinalSuccess();
+            return;
+        }
+
+        const displayCars = matchStack.slice(0, 10);
 
         displayCars.forEach((car, i) => {
             const imgSrc = car.link_fotos || car.imagen || car.foto || '';
@@ -1605,7 +1644,7 @@
 
     function swipe(direction) {
         const cards = document.querySelectorAll('.tinder-card');
-        const displayCars = matchStack.length > 0 ? matchStack.slice(0, 10) : FALLBACK_MATCHES;
+        const displayCars = matchStack.slice(0, 10);
         if (currentCardIndex >= cards.length) return;
 
         const card = cards[currentCardIndex];
@@ -1680,7 +1719,7 @@
             presupuesto_min: formData.presupuestoMin, presupuesto_max: formData.presupuestoMax,
             dinero_status: formData.dineroStatus, urgencia: formData.urgencia, proposito: formData.proposito,
             matches_liked: likedCars.map(c => c.id || `${c.marca}_${c.modelo}`),
-            matches_passed: (matchStack.length > 0 ? matchStack : FALLBACK_MATCHES)
+            matches_passed: matchStack
                 .filter(c => !likedCars.includes(c)).map(c => c.id || `${c.marca}_${c.modelo}`).slice(0, 10),
             tiene_matches: numLikes > 0,
             fuente: 'matchmaker_v2'
@@ -1759,6 +1798,17 @@
 
             // Render blurred reveal cards
             renderRevealCards(matchStack);
+
+            // Update reveal header based on real results
+            const revealTitle = document.getElementById('revealTitle');
+            const revealSubtitle = document.getElementById('revealSubtitle');
+            if (matchStack.length === 0) {
+                revealTitle.innerHTML = 'Todavía no hay matches exactos';
+                revealSubtitle.textContent = 'Pero nuestro equipo buscará activamente para ti. Déjanos tus datos.';
+            } else {
+                revealTitle.innerHTML = `Alguien te hizo match... (<span id="matchCountReveal">${matchStack.length > 3 ? 3 : matchStack.length}</span> veces)`;
+                revealSubtitle.textContent = 'Les gustó tu perfil. ¿Quieres ver quiénes son?';
+            }
 
             // Go to step 4 (reveal)
             currentStep = 3;
@@ -1871,32 +1921,57 @@
             personalityHook.style.display = 'none';
         }
 
-        // Market info update for step 3
+        // Market info update for step 3 — use real data when available
         if (currentStep === 2) {
-            const range = marketRanges[formData.carroceria] || marketRanges.suv;
-            document.getElementById('marketTypeLabel').textContent = range.label;
+            const fallbackRange = marketRanges[formData.carroceria] || marketRanges.suv;
+            document.getElementById('marketTypeLabel').textContent = fallbackRange.label;
             document.getElementById('marketYearLabel').textContent = `${formData.anioDesde || '2018'}-${formData.anioHasta || '2026'}`;
-            document.querySelector('.market-info .mi-value').textContent = `Rango promedio ${range.min} - ${range.max} MXN`;
+
+            // Try to compute range from real inventory
+            if (realInventory.length > 0) {
+                const prices = realInventory
+                    .filter(c => c.precio_venta && c.precio_venta > 0)
+                    .map(c => c.precio_venta)
+                    .sort((a,b) => a - b);
+                if (prices.length >= 2) {
+                    const realMin = '$' + prices[Math.floor(prices.length * 0.1)].toLocaleString('es-MX');
+                    const realMax = '$' + prices[Math.floor(prices.length * 0.9)].toLocaleString('es-MX');
+                    document.querySelector('.market-info .mi-value').textContent = `Rango en inventario: ${realMin} - ${realMax} MXN`;
+                } else {
+                    document.querySelector('.market-info .mi-value').textContent = `Rango promedio ${fallbackRange.min} - ${fallbackRange.max} MXN`;
+                }
+            } else {
+                document.querySelector('.market-info .mi-value').textContent = `Rango promedio ${fallbackRange.min} - ${fallbackRange.max} MXN`;
+            }
         }
 
-        // Animated compatibility counter on reveal (Upgrade 6)
+        // Real compatibility score based on actual matches found
         if (currentStep === 3) {
             const compatEl = document.getElementById('compatScore');
             if (compatEl) {
-                const target = 88 + Math.floor(Math.random() * 10); // 88-97
-                let current = 0;
-                const startTime = performance.now();
-                const duration = 1500;
-                function animateCompat(now) {
-                    const elapsed = now - startTime;
-                    const progress = Math.min(elapsed / duration, 1);
-                    // ease-out
-                    const eased = 1 - Math.pow(1 - progress, 3);
-                    current = Math.round(eased * target);
-                    compatEl.textContent = current + '%';
-                    if (progress < 1) requestAnimationFrame(animateCompat);
+                let target = 0;
+                if (matchStack.length >= 5) target = 90 + Math.min(matchStack.length, 10);
+                else if (matchStack.length >= 3) target = 75 + matchStack.length * 3;
+                else if (matchStack.length >= 1) target = 50 + matchStack.length * 10;
+                else target = 0; // honest: no matches
+
+                if (target === 0) {
+                    compatEl.textContent = '—';
+                    compatEl.style.fontSize = '32px';
+                } else {
+                    let current = 0;
+                    const startTime = performance.now();
+                    const duration = 1500;
+                    function animateCompat(now) {
+                        const elapsed = now - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+                        const eased = 1 - Math.pow(1 - progress, 3);
+                        current = Math.round(eased * target);
+                        compatEl.textContent = current + '%';
+                        if (progress < 1) requestAnimationFrame(animateCompat);
+                    }
+                    requestAnimationFrame(animateCompat);
                 }
-                requestAnimationFrame(animateCompat);
             }
         }
 
@@ -1934,22 +2009,34 @@
     createBubbles();
 
     // =====================
-    // TOAST NOTIFICATIONS (Upgrade 8)
+    // TOAST NOTIFICATIONS — REAL DATA ONLY
     // =====================
-    const toastMessages = [
-        "🚗 Un Toyota 2023 acaba de llegar",
-        "💛 3 personas hicieron match cerca de ti",
-        "🔥 Nuevo: Honda CR-V recién importado",
-        "📍 Hay SUVs disponibles en tu zona",
-        "✨ Un Mazda CX-5 2024 fue publicado",
-        "💰 Precio especial en sedanes esta semana",
-        "🏆 Un Ford Explorer con bajo millaje disponible",
-        "🚀 5 autos nuevos agregados hoy"
-    ];
     let toastInterval = null;
+    let usedToastIndexes = [];
+
+    function buildRealToast() {
+        // Only show toasts based on real inventory
+        if (!realInventory || realInventory.length === 0) return null;
+
+        // Pick a random car we haven't shown yet
+        let available = realInventory.map((c, i) => i).filter(i => !usedToastIndexes.includes(i));
+        if (available.length === 0) { usedToastIndexes = []; available = realInventory.map((c, i) => i); }
+
+        const idx = available[Math.floor(Math.random() * available.length)];
+        usedToastIndexes.push(idx);
+        const car = realInventory[idx];
+
+        const templates = [
+            `🚗 ${car.marca} ${car.modelo} ${car.anio} disponible`,
+            `📍 ${car.marca} ${car.modelo} en inventario — $${(car.precio_venta||0).toLocaleString('es-MX')}`,
+            `🆕 ${car.marca} ${car.modelo} ${car.anio} · ${car.kilometraje || '—'}`,
+        ];
+        return templates[Math.floor(Math.random() * templates.length)];
+    }
 
     function showToast(msg) {
         const container = document.getElementById('toastContainer');
+        if (!container || !msg) return;
         const toast = document.createElement('div');
         toast.className = 'toast';
         toast.textContent = msg;
@@ -1961,16 +2048,19 @@
     }
 
     function startToasts() {
-        function scheduleNext() {
-            const delay = 8000 + Math.random() * 4000; // 8-12 seconds
-            toastInterval = setTimeout(() => {
-                if (currentStep >= 4) { stopToasts(); return; } // stop after step 4
-                const msg = toastMessages[Math.floor(Math.random() * toastMessages.length)];
-                showToast(msg);
-                scheduleNext();
-            }, delay);
-        }
-        scheduleNext();
+        // Wait 3s for real data to load, then start
+        setTimeout(() => {
+            function scheduleNext() {
+                const delay = 10000 + Math.random() * 5000; // 10-15 seconds
+                toastInterval = setTimeout(() => {
+                    if (currentStep >= 4) { stopToasts(); return; }
+                    const msg = buildRealToast();
+                    if (msg) showToast(msg);
+                    scheduleNext();
+                }, delay);
+            }
+            scheduleNext();
+        }, 3000);
     }
 
     function stopToasts() {

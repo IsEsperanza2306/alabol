@@ -1,0 +1,3092 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../logo-circular.png" type="image/png">
+    <meta property="og:title" content="Alabol Car Broker | El Tinder de los Autos">
+    <meta property="og:description" content="Encuentra tu media naranja con llantas. Compra, vende o invierte en autos verificados.">
+    <meta property="og:image" content="https://alabol.netlify.app/logo-circular.png">
+    <meta property="og:url" content="https://alabol.netlify.app">
+    <meta property="og:type" content="website">
+    <title>Lista de Espera VIP | Alabol Car Broker</title>
+    <meta name="description"
+        content="Encuentra tu media naranja con llantas. Configura tus preferencias y nuestro algoritmo encontrará tu auto ideal.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- =========================================================
+         FASE 11: Analítica de Tráfico MKT
+         Pasos:
+         1. Reemplaza G-XXXXXXXXXX con tu Measurement ID de Google Analytics 4.
+            (Créalo en analytics.google.com > Admin > Data Streams > Web > Tag Setup)
+         2. Reemplaza {'YOUR_PIXEL_ID'} con tu Meta Pixel ID.
+            (bm.facebook.com > Events Manager > Pixels > Create Pixel)
+         ========================================================= -->
+
+    <!-- Google Analytics 4 (GA4) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RMENV8G466"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-RMENV8G466');
+    </script>
+
+    <!-- Meta Pixel (Facebook/Instagram Ads) -->
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '1921374571843729');
+        fbq('track', 'PageView');
+    </script>
+    <style>
+        :root {
+            --bg-dark: #0a1f1a;
+            --bg-mid: #0d2921;
+            --bg-light: #0f3329;
+            --gold: #d4af37;
+            --gold-bright: #F4E5B0;
+            --gold-light: #f4e5b0;
+            --gold-dim: rgba(212, 175, 55, 0.3);
+            --green-text: #a8c5b8;
+            --glass-bg: rgba(15, 51, 41, 0.5);
+            --glass-border: rgba(212, 175, 55, 0.25);
+            --premium-gradient: linear-gradient(135deg, #D4AF37 0%, #F4E5B0 50%, #D4AF37 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-dark);
+            min-height: 100vh;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated gradient background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg,
+                    #0a1f1a 0%, #0d2921 25%, #0f3329 50%, #0d2921 75%, #0a1f1a 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            z-index: -2;
+        }
+
+        /* Gold particles */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(2px 2px at 20% 30%, rgba(212, 175, 55, 0.3), transparent),
+                radial-gradient(2px 2px at 60% 70%, rgba(212, 175, 55, 0.2), transparent),
+                radial-gradient(1px 1px at 50% 50%, rgba(212, 175, 55, 0.2), transparent),
+                radial-gradient(1px 1px at 80% 10%, rgba(212, 175, 55, 0.3), transparent),
+                radial-gradient(1px 1px at 30% 80%, rgba(212, 175, 55, 0.2), transparent),
+                radial-gradient(1.5px 1.5px at 10% 60%, rgba(212, 175, 55, 0.25), transparent),
+                radial-gradient(1px 1px at 90% 40%, rgba(212, 175, 55, 0.2), transparent);
+            background-size: 200% 200%;
+            animation: floatParticles 20s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes gradientShift {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        @keyframes floatParticles {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            33% {
+                transform: translate(30px, -30px);
+            }
+
+            66% {
+                transform: translate(-20px, 20px);
+            }
+        }
+
+        .container {
+            max-width: 550px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            margin: 0 auto;
+        }
+
+        /* VIP Badge */
+        .vip-badge {
+            text-align: center;
+            margin-bottom: 16px;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        .vip-badge span {
+            display: inline-block;
+            background: linear-gradient(135deg, #d4af37, #f4e5b0, #d4af37);
+            background-size: 200% auto;
+            color: var(--bg-dark);
+            font-weight: 700;
+            font-size: 11px;
+            letter-spacing: 3px;
+            padding: 8px 24px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 25px rgba(212, 175, 55, 0.5), 0 0 40px rgba(212, 175, 55, 0.2);
+            animation: shimmerBadge 3s linear infinite;
+        }
+
+        @keyframes shimmerBadge {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- PREMIUM BUTTONS SYSTEM --- */
+        .btn-premium-gold {
+            background: var(--premium-gradient);
+            background-size: 200% auto;
+            color: #000 !important;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: none;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn-premium-gold:hover {
+            transform: translateY(-3px) scale(1.02);
+            background-position: right center;
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
+        }
+
+        .btn-premium-teal {
+            background: rgba(13, 148, 136, 0.1);
+            color: #fff !important;
+            border: 1px solid #0d9488;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+            backdrop-filter: blur(5px);
+            font-size: 12px;
+        }
+
+        .btn-premium-teal:hover {
+            background: #0d9488;
+            box-shadow: 0 0 15px rgba(13, 148, 136, 0.4);
+        }
+
+        /* Ecosystem Nav */
+        .match-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        .match-nav a:not(.btn-premium-teal) {
+            color: var(--green-text);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.3s;
+        }
+
+        .match-nav a:hover {
+            color: var(--gold);
+        }
+
+        /* Main Card - Glassmorphism */
+        .card {
+            background: linear-gradient(135deg,
+                    rgba(15, 51, 41, 0.7) 0%,
+                    rgba(13, 41, 33, 0.7) 100%);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 28px;
+            padding: 40px 30px;
+            border: 2px solid var(--glass-border);
+            box-shadow:
+                0 30px 100px rgba(0, 0, 0, 0.8),
+                0 0 50px rgba(212, 175, 55, 0.15),
+                inset 0 1px 0 rgba(212, 175, 55, 0.15);
+            animation: cardIn 0.5s ease-out 0.2s both;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 30px 20px;
+                border-radius: 20px;
+            }
+
+            .logo-container {
+                width: 100px;
+                height: 100px;
+            }
+
+            .logo-circle {
+                width: 100px;
+                height: 100px;
+            }
+
+            .logo-circle img {
+                width: 85px;
+                height: 85px;
+            }
+
+            .logo-section h1 {
+                font-size: 19px;
+            }
+
+            .logo-section p {
+                font-size: 13px;
+            }
+        }
+
+        /* Scan line effect */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(180deg,
+                    transparent 0%,
+                    rgba(212, 175, 55, 0.03) 40%,
+                    rgba(212, 175, 55, 0.06) 50%,
+                    rgba(212, 175, 55, 0.03) 60%,
+                    transparent 100%);
+            animation: scanLine 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes scanLine {
+            0% {
+                top: -50%;
+            }
+
+            100% {
+                top: 150%;
+            }
+        }
+
+        @keyframes cardIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.97);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Logo / Header */
+        .logo-section {
+            text-align: center;
+            margin-bottom: 6px;
+            position: relative;
+        }
+
+        .logo-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 14px;
+        }
+
+        .logo-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 155px;
+            height: 155px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.4) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: logoGlowPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes logoGlowPulse {
+
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.15);
+                opacity: 0.9;
+            }
+        }
+
+        .logo-circle {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            background: rgba(15, 51, 41, 0.3);
+            border-radius: 50%;
+            border: 3px solid rgba(212, 175, 55, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow:
+                0 0 40px rgba(212, 175, 55, 0.3),
+                0 10px 50px rgba(0, 0, 0, 0.5),
+                inset 0 0 30px rgba(212, 175, 55, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-circle img {
+            width: 105px;
+            height: 105px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.5));
+        }
+
+        .logo-section h1 {
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(135deg,
+                    #d4af37 0%, #f4e5b0 25%, #d4af37 50%, #c9a961 75%, #d4af37 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1.5px;
+            animation: shimmerText 3s linear infinite;
+            margin-bottom: 4px;
+        }
+
+        @keyframes shimmerText {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        .logo-section p {
+            color: var(--green-text);
+            font-size: 14px;
+            line-height: 1.4;
+            font-weight: 300;
+        }
+
+        .logo-section .highlight {
+            color: var(--gold);
+            font-weight: 600;
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+        }
+
+        /* Trust badges */
+        .trust-row {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin: 16px 0 22px;
+            flex-wrap: wrap;
+        }
+
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            color: var(--green-text);
+            font-weight: 500;
+            background: rgba(212, 175, 55, 0.08);
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+        }
+
+        .trust-item .icon {
+            font-size: 13px;
+            filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.5));
+        }
+
+        /* Progress Bar */
+        .chip-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .brand-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 480px) {
+            .brand-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .brand-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 15px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            aspect-ratio: 1;
+        }
+
+        .brand-card img {
+            width: 75%;
+            height: 75%;
+            object-fit: contain;
+            filter: brightness(0) invert(1) opacity(0.9);
+            transition: all 0.3s;
+        }
+
+        .brand-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .brand-card.selected {
+            background: rgba(255, 215, 0, 0.2);
+            /* Gold hue */
+            border-color: #ffd700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .brand-card.selected img {
+            filter: none;
+            /* Show original colors if it's an SGV that supports it, or just make it brighter */
+            scale: 1.1;
+        }
+
+        /* Specific fix for colored logos to just glow white/gold when active */
+        .brand-card.selected img {
+            transform: scale(1.15);
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.6));
+        }
+
+        /* Dual Range Slider Styles */
+        .range-slider {
+            position: relative;
+            width: 100%;
+            height: 40px;
+            margin-top: 20px;
+        }
+
+        .slider-track {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+
+        .slider-fill {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 6px;
+            background: linear-gradient(90deg, #d4af37, #f4e5b0);
+            border-radius: 5px;
+            z-index: 1;
+        }
+
+        .range-slider input[type="range"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            background: none;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .range-slider input[type="range"]::-webkit-slider-thumb {
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid #d4af37;
+            -webkit-appearance: none;
+            pointer-events: auto;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+
+        .range-slider input[type="range"]::-moz-range-thumb {
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid #d4af37;
+            pointer-events: auto;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+
+        .budget-display {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            color: #d4af37;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .progress-bar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 28px;
+        }
+
+        .progress-segment {
+            flex: 1;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 4px;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-segment.active {
+            background: var(--gold);
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.5);
+        }
+
+        .progress-segment.active::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.6) 50%, transparent 100%);
+            animation: progressShimmer 2s infinite;
+        }
+
+        @keyframes progressShimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .progress-label {
+            font-size: 11px;
+            color: var(--gold);
+            font-weight: 600;
+            white-space: nowrap;
+            min-width: 42px;
+            text-align: right;
+            letter-spacing: 1px;
+        }
+
+        /* Steps */
+        .step {
+            display: none;
+            animation: fadeSlideIn 0.4s ease-out;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .step-header {
+            margin-bottom: 22px;
+        }
+
+        .step-icon {
+            font-size: 36px;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.4));
+        }
+
+        .step-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+
+        .step-subtitle {
+            font-size: 13px;
+            color: rgba(168, 197, 184, 0.6);
+        }
+
+        /* Form elements */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 7px;
+            color: var(--green-text);
+            font-weight: 600;
+            font-size: 13px;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group label .required {
+            color: var(--gold);
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid rgba(212, 175, 55, 0.2);
+            border-radius: 14px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.3s;
+            background: rgba(10, 31, 26, 0.6);
+            color: white;
+            backdrop-filter: blur(5px);
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2), 0 0 0 4px rgba(212, 175, 55, 0.08);
+            background: rgba(10, 31, 26, 0.8);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: rgba(168, 197, 184, 0.35);
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23d4af37' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 24px;
+            padding-right: 40px;
+        }
+
+        select option {
+            background: #0a1f1a;
+            color: white;
+        }
+
+        /* Multi-select chips */
+        .chip-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .chip {
+            padding: 10px 6px;
+            border: 2px solid rgba(212, 175, 55, 0.15);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(10, 31, 26, 0.4);
+            text-align: center;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--green-text);
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chip .chip-icon {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+
+        .chip::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .chip:hover::before {
+            left: 100%;
+        }
+
+        .chip:hover {
+            border-color: var(--gold-dim);
+            background: rgba(212, 175, 55, 0.08);
+        }
+
+        .chip.selected {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--gold-light);
+            font-weight: 700;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2), inset 0 0 15px rgba(212, 175, 55, 0.05);
+        }
+
+        .chip.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 3px;
+            right: 5px;
+            font-size: 10px;
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        /* Single select option cards */
+        .option-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .option-card {
+            padding: 14px 16px;
+            border: 2px solid rgba(212, 175, 55, 0.15);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(10, 31, 26, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.08), transparent);
+            transition: left 0.5s;
+        }
+
+        .option-card:hover::before {
+            left: 100%;
+        }
+
+        .option-card:hover {
+            border-color: var(--gold-dim);
+            transform: translateX(4px);
+            background: rgba(212, 175, 55, 0.06);
+        }
+
+        .option-card.selected {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.12);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.15), inset 0 0 20px rgba(212, 175, 55, 0.05);
+        }
+
+        .option-card .option-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+            filter: drop-shadow(0 0 6px rgba(212, 175, 55, 0.4));
+        }
+
+        .option-card .option-text {
+            flex: 1;
+        }
+
+        .option-card .option-text .main {
+            font-weight: 600;
+            color: white;
+            font-size: 14px;
+        }
+
+        .option-card .option-text .sub {
+            font-size: 11px;
+            color: rgba(168, 197, 184, 0.5);
+            margin-top: 2px;
+        }
+
+        .option-card.selected .option-text .main {
+            color: var(--gold-light);
+        }
+
+        .option-card .check {
+            width: 22px;
+            height: 22px;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            font-size: 12px;
+            color: transparent;
+        }
+
+        .option-card.selected .check {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: var(--bg-dark);
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+        }
+
+        /* Range row */
+        .range-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* Navigation */
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 28px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--green-text);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            flex: 0.4;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #d4af37 0%, #f4e5b0 50%, #d4af37 100%);
+            background-size: 200% auto;
+            color: var(--bg-dark);
+            border: none;
+            box-shadow:
+                0 0 25px rgba(212, 175, 55, 0.4),
+                0 8px 30px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            animation: goldShine 3s linear infinite;
+        }
+
+        .btn-next::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+            transition: left 0.6s;
+        }
+
+        .btn-next:hover:not(:disabled)::before {
+            left: 100%;
+        }
+
+        .btn-next:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow:
+                0 0 40px rgba(212, 175, 55, 0.6),
+                0 12px 40px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+
+        .btn-next:active:not(:disabled) {
+            transform: translateY(-1px) scale(1.01);
+        }
+
+        .btn-next:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            animation: none;
+        }
+
+        @keyframes goldShine {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            100% {
+                background-position: 200% 50%;
+            }
+        }
+
+        /* Success screen */
+        .success-screen {
+            display: none;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .success-screen.active {
+            display: block;
+            animation: fadeSlideIn 0.5s ease-out;
+        }
+
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d4af37, #f4e5b0, #d4af37);
+            background-size: 200% auto;
+            margin: 0 auto 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.5), 0 12px 40px rgba(0, 0, 0, 0.4);
+            animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55), pulseGlow 2s ease-in-out infinite 0.6s;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0);
+            }
+
+            60% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes pulseGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 30px rgba(212, 175, 55, 0.4), 0 12px 40px rgba(0, 0, 0, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 60px rgba(212, 175, 55, 0.6), 0 12px 40px rgba(0, 0, 0, 0.4);
+            }
+        }
+
+        .success-title {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #d4af37, #f4e5b0, #d4af37);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmerText 3s linear infinite;
+            margin-bottom: 10px;
+        }
+
+        .success-message {
+            font-size: 14px;
+            color: var(--green-text);
+            line-height: 1.6;
+            margin-bottom: 24px;
+            font-weight: 300;
+        }
+
+        .success-summary {
+            background: rgba(212, 175, 55, 0.06);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .success-summary h3 {
+            font-size: 12px;
+            color: var(--gold);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 7px 0;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+            font-size: 13px;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-row .label {
+            color: var(--green-text);
+            font-weight: 400;
+        }
+
+        .summary-row .value {
+            font-weight: 600;
+            color: white;
+        }
+
+        .cta-whatsapp {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 36px;
+            background: #25D366;
+            color: white;
+            border-radius: 16px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            transition: all 0.4s;
+            box-shadow: 0 0 30px rgba(37, 211, 102, 0.3), 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .cta-whatsapp:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 0 50px rgba(37, 211, 102, 0.5), 0 12px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .cta-group {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: rgba(37, 211, 102, 0.15);
+            color: #25D366;
+            border: 2px solid rgba(37, 211, 102, 0.4);
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.4s;
+            margin-top: 12px;
+        }
+
+        .cta-group:hover {
+            background: rgba(37, 211, 102, 0.25);
+            border-color: #25D366;
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(37, 211, 102, 0.3);
+        }
+
+        .cta-secondary {
+            display: block;
+            margin-top: 14px;
+            color: var(--gold);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .cta-secondary:hover {
+            color: var(--gold-light);
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 16px;
+            color: rgba(168, 197, 184, 0.3);
+            font-size: 12px;
+        }
+
+        .footer a {
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .footer a:hover {
+            color: var(--gold-light);
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+
+        /* Loading Overlay */
+        .sending-overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 31, 26, 0.92);
+            backdrop-filter: blur(10px);
+            z-index: 10;
+            border-radius: 24px;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sending-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 44px;
+            height: 44px;
+            border: 3px solid rgba(212, 175, 55, 0.2);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .sending-text {
+            font-weight: 600;
+            color: var(--gold-light);
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        .helper-text {
+            font-size: 11px;
+            color: rgba(168, 197, 184, 0.35);
+            margin-top: 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 400px) {
+            .card {
+                padding: 24px 20px;
+            }
+
+            .chip-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .logo h1 {
+                font-size: 22px;
+            }
+
+            .step-title {
+                font-size: 18px;
+            }
+
+            .trust-row {
+                gap: 8px;
+            }
+
+            .trust-item {
+                font-size: 10px;
+                padding: 4px 10px;
+            }
+        }
+
+        /* Golden Bubbles Efervescence Effect */
+        .bubbles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bubble {
+            position: absolute;
+            bottom: -100px;
+            background: radial-gradient(circle at 30% 30%, rgba(212, 175, 55, 0.4) 0%, rgba(212, 175, 55, 0.1) 60%, transparent 100%);
+            border-radius: 50%;
+            filter: blur(2px);
+            animation: rise var(--duration) ease-in infinite;
+            opacity: 0;
+        }
+
+        @keyframes rise {
+            0% {
+                bottom: -100px;
+                transform: translateX(0) scale(var(--scale));
+                opacity: 0;
+            }
+
+            10% {
+                opacity: var(--max-opacity);
+            }
+
+            90% {
+                opacity: var(--max-opacity);
+            }
+
+            100% {
+                bottom: 110vh;
+                transform: translateX(calc(100px * var(--sway))) scale(var(--scale));
+                opacity: 0;
+            }
+        }
+
+        /* Tinder Deck UI */
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 13px;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        /* Radar pulses */
+        .radar {
+            width: 150px;
+            height: 150px;
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            position: relative;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.2) 0%, transparent 70%);
+        }
+
+        .radar::before,
+        .radar::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+            animation: radarPulse 2s linear infinite;
+        }
+
+        .radar::after {
+            animation-delay: 1s;
+        }
+
+        @keyframes radarPulse {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 1;
+            }
+
+            100% {
+                width: 300px;
+                height: 300px;
+                opacity: 0;
+            }
+        }
+
+        /* Tinder-style deck */
+        .tinder-deck {
+            position: relative;
+            height: 450px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            .tinder-deck {
+                height: 400px;
+            }
+        }
+
+        .tinder-deck.active {
+            display: block;
+        }
+
+        .tinder-card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            cursor: grab;
+            display: none;
+        }
+
+        .tinder-card.active {
+            display: block;
+            z-index: 10;
+        }
+
+        .tinder-card.next {
+            display: block;
+            z-index: 5;
+            transform: scale(0.95) translateY(10px);
+            opacity: 0.8;
+        }
+
+        .t-card-img {
+            width: 100%;
+            height: 60%;
+            object-fit: cover;
+        }
+
+        .t-card-info {
+            padding: 20px;
+            height: 40%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: #333;
+        }
+
+        .t-card-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .t-card-year {
+            font-size: 16px;
+            font-weight: 400;
+            color: #666;
+        }
+
+        .t-card-price {
+            font-size: 22px;
+            font-weight: 800;
+            color: #0d2921;
+        }
+
+        .t-card-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .t-badge {
+            background: #f4e5b0;
+            color: #856404;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .tinder-actions {
+            display: none;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .tinder-actions.active {
+            display: flex;
+        }
+
+        .t-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s;
+        }
+
+        .t-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .t-btn.pass {
+            background: #fff;
+            color: #ff4444;
+            border: 2px solid #ff4444;
+        }
+
+        .t-btn.match {
+            background: #fff;
+            color: #25D366;
+            border: 2px solid #25D366;
+        }
+
+        /* Swiping animations */
+        .swiped-left {
+            transform: translateX(-150%) rotate(-20deg) !important;
+            opacity: 0 !important;
+        }
+
+        .swiped-right {
+            transform: translateX(150%) rotate(20deg) !important;
+            opacity: 0 !important;
+        }
+
+        .finding-matches {
+            display: none;
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .finding-matches.active {
+            display: block;
+        }
+
+        .sending-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 31, 26, 0.9);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 28px;
+        }
+
+        .sending-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(212, 175, 55, 0.1);
+            border-left-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .sending-text {
+            margin-top: 15px;
+            color: var(--gold);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            padding-bottom: 20px;
+        }
+
+        .footer p {
+            font-size: 12px;
+            color: rgba(168, 197, 184, 0.4);
+        }
+
+        .footer a {
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* VIP Floating Badge */
+        .vip-floating {
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: linear-gradient(135deg, #d4af37, #f4e5b0);
+            color: #0a1f1a;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+            z-index: 10;
+        }
+    </style>
+<style id="alabol-nav-styles">
+  :root {
+    --nav-bg: rgba(10, 31, 26, 0.92);
+    --gold: #d4af37;
+    --gold-dim: rgba(212, 175, 55, 0.25);
+    --green-text: #a8c5b8;
+    --bg-dark: #0a1f1a;
+  }
+
+  /* ── NAVBAR ── */
+  .alabol-nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 999;
+    background: var(--nav-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    height: 64px;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 0;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .nav-logo img {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.5));
+    transition: transform 0.3s ease;
+  }
+
+  .nav-logo:hover img { transform: scale(1.08) rotate(5deg); }
+
+  .nav-logo-text {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    color: var(--gold);
+    letter-spacing: -0.5px;
+    text-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    list-style: none;
+    padding: 0; margin-right: 0;
+  }
+
+  .nav-links a {
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--green-text);
+    text-decoration: none;
+    padding: 7px 14px;
+    border-radius: 20px;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+    border: 1px solid transparent;
+  }
+
+  .nav-links a:hover {
+    color: var(--gold);
+    background: rgba(212, 175, 55, 0.08);
+    border-color: rgba(212, 175, 55, 0.2);
+  }
+
+  .nav-links a.active {
+    color: var(--gold);
+    background: rgba(212, 175, 55, 0.12);
+    border-color: rgba(212, 175, 55, 0.3);
+  }
+
+  .nav-cta {
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--bg-dark) !important;
+    background: linear-gradient(135deg, var(--gold) 0%, #f4e5b0 100%) !important;
+    padding: 8px 18px !important;
+    border-radius: 20px !important;
+    border: none !important;
+    margin-left: 8px;
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.35);
+    transition: all 0.25s ease !important;
+  }
+
+  .nav-cta:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(212, 175, 55, 0.5) !important;
+    filter: brightness(1.05);
+  }
+
+  /* Hamburger */
+  .nav-hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    margin-left: auto;
+    padding: 8px;
+    background: none;
+    border: none;
+  }
+
+  .nav-hamburger span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--gold);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+  }
+
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+  .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    .nav-links { display: none; flex-direction: column; position: absolute;
+      top: 64px; left: 0; right: 0; background: rgba(10, 31, 26, 0.98);
+      border-bottom: 1px solid rgba(212,175,55,0.2); padding: 16px 24px 24px;
+      gap: 8px; }
+    .nav-links.open { display: flex; }
+    .nav-hamburger { display: flex; }
+    .nav-links a { padding: 10px 16px; border-radius: 12px; border: 1px solid rgba(212,175,55,0.1); }
+    .nav-cta { margin-left: 0; }
+  }
+
+  /* Offset body so nav no cubre contenido */
+  body { padding-top: 64px; }
+
+  /* ── FOOTER ── */
+  .alabol-footer {
+    background: rgba(10, 31, 26, 0.95);
+    border-top: 1px solid rgba(212, 175, 55, 0.15);
+    padding: 40px 24px 24px;
+    margin-top: 80px;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .footer-grid {
+    max-width: 1200px;
+    margin: 0 auto 32px;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 40px;
+  }
+
+  .footer-brand img {
+    width: 48px; height: 48px; object-fit: contain;
+    filter: drop-shadow(0 0 8px rgba(212,175,55,0.4));
+    margin-bottom: 12px;
+  }
+
+  .footer-brand p {
+    font-size: 12px;
+    color: var(--green-text);
+    line-height: 1.6;
+    opacity: 0.8;
+    max-width: 200px;
+  }
+
+  .footer-col h4 {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 14px;
+  }
+
+  .footer-col a {
+    display: block;
+    font-size: 13px;
+    color: var(--green-text);
+    text-decoration: none;
+    margin-bottom: 8px;
+    opacity: 0.8;
+    transition: all 0.2s;
+  }
+
+  .footer-col a:hover { color: var(--gold); opacity: 1; padding-left: 4px; }
+
+  .footer-bottom {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .footer-bottom p {
+    font-size: 12px;
+    color: var(--green-text);
+    opacity: 0.5;
+  }
+
+  .footer-wa-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #25D366;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 24px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    transition: all 0.25s;
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+  }
+  .footer-wa-btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
+  @media (max-width: 768px) {
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
+    .footer-bottom { flex-direction: column; text-align: center; }
+  }
+
+  @media (max-width: 480px) {
+    .footer-grid { grid-template-columns: 1fr; }
+  }
+</style>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+
+<body>
+<nav class="alabol-nav" role="navigation" aria-label="Navegación principal">
+  <a href="../index.html" class="nav-logo" aria-label="Ir al inicio">
+    <img src="../logo-circular.png" alt="Alabol">
+    <span class="nav-logo-text">Alabol</span>
+  </a>
+
+  <button class="nav-hamburger" id="navHamburger" aria-label="Menú" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+
+  <ul class="nav-links" id="navLinks" role="list">
+    <li><a href="../inventario.html">🚗 Inventario</a></li>
+    <li><a href="../formulario-match.html">💘 Hacer Match</a></li>
+    <li><a href="../precalificacion/index.html">💳 Precalificación</a></li>
+    <li><a href="../vip/index.html">⭐ VIP</a></li>
+    <li><a href="../oportunidades/index.html">🔥 Oportunidades</a></li>
+    <li><a href="../vendedor.html">🏷️ Vende tu Auto</a></li>
+    <li><a href="../formulario-match.html" class="nav-cta">Buscar mi Auto →</a></li>
+  </ul>
+</nav>
+    <!-- Bubble Background -->
+    <div class="bubbles-container" id="bubbles-container"></div>
+
+    <div class="container">
+
+        <!-- VIP Badge -->
+        <div class="vip-badge">
+            <span>VIP Matchmaker Premium</span>
+        </div>
+
+        <!-- Glass container for the form -->
+        <div class="card">
+            <!-- Sending overlay -->
+            <div class="sending-overlay" id="sendingOverlay">
+                <div class="spinner"></div>
+                <div class="sending-text">Registrando tu solicitud...</div>
+            </div>
+
+            <div class="logo-section">
+                <div class="logo-container">
+                    <div class="logo-glow"></div>
+                    <div class="logo-circle">
+                        <img src="../logo-circular.png" alt="Alabol Car Broker">
+                    </div>
+                </div>
+                <h1>ALABOL VIP MATCHMAKER</h1>
+                <p>Déjate enamorar. Dinos qué buscas y haremos <span class="highlight">MATCH</span> con tu próximo auto
+                </p>
+            </div>
+
+            <div class="trust-row">
+                <div class="trust-item"><span class="icon">💰</span> Ahorra 30-40%</div>
+                <div class="trust-item"><span class="icon">🔍</span> Búsqueda gratis</div>
+                <div class="trust-item"><span class="icon">🔒</span> Datos seguros</div>
+            </div>
+
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-segment active"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-label" id="progressLabel">1 / 5</div>
+            </div>
+
+            <div id="personalityHook"
+                style="text-align: center; margin-bottom: 20px; min-height: 24px; color: var(--gold-bright); font-size: 0.85rem; font-weight: 500; font-style: italic; opacity: 0; transition: opacity 0.5s;">
+                "Excelente inicio, vamos por tu auto ideal..."
+            </div>
+        </div>
+        <form id="vipForm" autocomplete="off">
+            <!-- STEP 1: Contact Info -->
+            <div class="step active" data-step="0">
+                <div class="step-header">
+                    <div class="step-icon">👤</div>
+                    <div class="step-title">Paso 1: ¿Quién eres tú?</div>
+                    <div class="step-subtitle">Para presentarte a tu próximo gran amor sobre ruedas</div>
+                </div>
+                <div class="form-group"><label>Nombre <span class="required">*</span></label><input type="text"
+                        id="nombre" placeholder="Tu nombre completo" required></div>
+                <div class="form-group"><label>WhatsApp <span class="required">*</span></label><input type="tel"
+                        id="whatsapp" placeholder="+52 1 55 1234 5678" required></div>
+                <div class="form-group"><label>Ciudad / Estado <span class="required">*</span></label><input type="text"
+                        id="ciudad" placeholder="Ej: Monterrey, NL" required></div>
+            </div>
+            <!-- STEP 2: Vehicle Type & Brand -->
+            <div class="step" data-step="1">
+                <div class="step-header">
+                    <div class="step-icon">🚘</div>
+                    <div class="step-title">¿Cuál es tu tipo ideal?</div>
+                    <div class="step-subtitle">Elige la carrocería que te acelera el corazón</div>
+                </div>
+                <div class="form-group"><label>Tipo de vehículo <span class="required">*</span></label>
+                    <div class="option-list" id="tipoVehiculo">
+                        <div class="option-card" data-value="sedan"><span class="option-icon">🚗</span>
+                            <div class="option-text">
+                                <div class="main">Sedán</div>
+                                <div class="sub">Camry,
+                                    Civic,
+                                    Corolla,
+                                    Altima...</div>
+                            </div>
+                            <div class="check"></div>
+                        </div>
+                        <div class="option-card" data-value="suv"><span class="option-icon">🚙</span>
+                            <div class="option-text">
+                                <div class="main">SUV / Camioneta</div>
+                                <div class="sub">CR-V,
+                                    RAV4,
+                                    Explorer,
+                                    Highlander...</div>
+                            </div>
+                            <div class="check"></div>
+                        </div>
+                        <div class="option-card" data-value="pickup"><span class="option-icon">🛻</span>
+                            <div class="option-text">
+                                <div class="main">Pick-up</div>
+                                <div class="sub">RAM,
+                                    F-150,
+                                    Silverado,
+                                    Tacoma...</div>
+                            </div>
+                            <div class="check"></div>
+                        </div>
+                        <div class="option-card" data-value="deportivo"><span class="option-icon">🏎️</span>
+                            <div class="option-text">
+                                <div class="main">Deportivo / Lujo</div>
+                                <div class="sub">Mustang,
+                                    Camaro,
+                                    BMW,
+                                    Mercedes...</div>
+                            </div>
+                            <div class="check"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group"><label>Marcas preferidas (selecciona varias)</label>
+                    <div class="brand-grid" id="marcasGrid">
+                        <!-- Popular brands with logos -->
+                        <div class="brand-card" data-value="Nissan"><img
+                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Nissan_logo.png/512px-Nissan_logo.png"
+                                alt="Nissan">
+                        </div>
+                        <div class="brand-card" data-value="Volkswagen"><img
+                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Volkswagen_logo_2019.svg/512px-Volkswagen_logo_2019.svg.png"
+                                alt="Volkswagen"></div>
+                        <div class="brand-card" data-value="Chevrolet"><img
+                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Chevrolet-logo.png/640px-Chevrolet-logo.png"
+                                alt="Chevrolet"></div>
+                        <div class="brand-card" data-value="Toyota"><img
+                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Toyota_carlogo.svg/512px-Toyota_carlogo.svg.png"
+                                alt="Toyota">
+                        </div>
+                        <div class="brand-card" data-value="Kia"><img
+                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/KIA_logo2.svg/512px-KIA_logo2.svg.png"
+                                alt="Kia"></div>
+                        <div class="brand-card" data-value="Honda"><img
+                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Honda_Logo.svg/512px-Honda_Logo.svg.png"
+                                alt="Honda"></div>
+                        <div class="brand-card" data-value="Mazda"><img
+                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Mazda_Logo.svg/512px-Mazda_Logo.svg.png"
+                                alt="Mazda"></div>
+                        <div class="brand-card" data-value="Ford"><img
+                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Ford_Motor_Company_Logo.svg/512px-Ford_Motor_Company_Logo.svg.png"
+                                alt="Ford"></div>
+                    </div>
+                    <div style="margin-top: 15px;"><select id="selMasMarcas" class="styled-input">
+                            <option value="">+Más Marcas (Desplegable)</option>
+                            <!-- Injected via JS -->
+                        </select></div>
+                    <p class="helper-text">Toca los logos para seleccionar tus favoritas</p>
+                </div>
+            </div>
+            <!-- STEP 3: Specifics -->
+            <div class="step" data-step="2">
+                <div class="step-header">
+                    <div class="step-icon">📋</div>
+                    <div class="step-title">Lo que te enamora</div>
+                    <div class="step-subtitle">Los detalles importan para un match perfecto 💖</div>
+                </div>
+                <div class="form-group" id="groupModelos" style="display: none;"><label>¿Tienes a un modelo
+                        en mente?</label>
+                    <div class="chip-grid" id="modelosGrid">
+                        <!-- Injected dynamically based on selected brands -->
+                    </div>
+                    <p class="helper-text">Déjalo vacío si estás abierto a conocer nuevos modelos de las
+                        marcas que elegiste</p>
+                </div>
+                <div class="form-group"><label>Rango de año <span class="required">*</span></label>
+                    <div class="range-row"><select id="anioDesde">
+                            <option value="">Desde...</option>
+                            <option value="2026">2026</option>
+                            <option value="2025">2025</option>
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                            <option value="2022">2022</option>
+                            <option value="2021">2021</option>
+                            <option value="2020">2020</option>
+                            <option value="2019">2019</option>
+                            <option value="2018" selected>2018</option>
+                            <option value="2017">2017</option>
+                            <option value="2016">2016</option>
+                            <option value="2015">2015</option>
+                            <option value="2014">2014</option>
+                            <option value="2013">2013</option>
+                            <option value="2012">2012</option>
+                        </select><select id="anioHasta">
+                            <option value="">Hasta...</option>
+                            <option value="2026" selected>2026</option>
+                            <option value="2025">2025</option>
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                            <option value="2022">2022</option>
+                            <option value="2021">2021</option>
+                            <option value="2020">2020</option>
+                            <option value="2019">2019</option>
+                            <option value="2018">2018</option>
+                            <option value="2017">2017</option>
+                            <option value="2016">2016</option>
+                            <option value="2015">2015</option>
+                        </select></div>
+                </div>
+                <div class="form-group"><label>Atributos innegociables (Green Flags)</label>
+                    <div class="chip-grid" id="caracteristicasGrid">
+                        <div class="chip" data-value="automatico"><span class="chip-icon">⚙️</span>Automático</div>
+                        <div class="chip" data-value="4x4"><span class="chip-icon">🏔️</span>4x4 / AWD</div>
+                        <div class="chip" data-value="bajo_millaje"><span class="chip-icon">📏</span>Bajo
+                            Millaje </div>
+                        <div class="chip" data-value="piel"><span class="chip-icon">💺</span>Piel</div>
+                        <div class="chip" data-value="techo"><span class="chip-icon">☀️</span>T. Solar</div>
+                        <div class="chip" data-value="no_importa"><span class="chip-icon">👍</span>Flexible
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- STEP 4: Budget -->
+            <div class="step" data-step="3">
+                <div class="step-header">
+                    <div class="step-icon">💰</div>
+                    <div class="step-title">¿De cuánto es tu presupuesto?</div>
+                    <div class="step-subtitle">Saber esto nos ahorra citas a ciegas inalcanzables</div>
+                </div>
+                <div class="form-group"><label>Rango de Presupuesto Exacto (MXN) <span class="required">*</span></label>
+                    <div
+                        style="background: rgba(0,0,0,0.2); padding: 25px 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); margin-top: 15px;">
+                        <div class="budget-display"><span id="budgetMinDisplay">$150,
+                                000</span><span>-</span><span id="budgetMaxDisplay">$350,
+                                000</span></div>
+                        <div class="range-slider">
+                            <div class="slider-track"></div>
+                            <div class="slider-fill" id="sliderFill"></div><input type="range" id="inputMin" min="80000"
+                                max="1500000" value="150000" step="10000" oninput="updateSliders()"><input type="range"
+                                id="inputMax" min="80000" max="1500000" value="350000" step="10000"
+                                oninput="updateSliders()">
+                        </div>
+                        <p class="helper-text" style="text-align: center; margin-top: 15px; margin-bottom: 0;">Desliza
+                            para
+                            ajustar tu presupuesto</p>
+                    </div>
+                </div>
+                <div class="form-group"><label>¿Ya tienes el dinero? <span class="required">*</span></label>
+                    <div class="option-list" id="dineroListo">
+                        <div class="option-card" data-value="si" data-priority="alta"><span class="option-icon">✅</span>
+                            <div class="option-text">
+                                <div class="main">Sí,
+                                    dinero en mano</div>
+                                <div class="sub">Listo para comprar cuando aparezca el auto</div>
+                            </div>
+                            <div class="check"></div>
+                        </div>
+                        <div class="option-card" data-value="pronto" data-priority="media"><span
+                                class="option-icon">⏳</span>
+                            <div class="option-text">
+                                <div class="main">Lo tendré en 1-2 semanas</div>
+                                <div class="sub">Casi listo</div>
+                            </div>
+                            <div class="check"></div>
+                        </div>
+                        <div class="option-card" data-value="ahorrando" data-priority="baja"><span
+                                class="option-icon">🏦</span>
+                            <div class="option-text">
+                                <div class="main">Estoy ahorrando</div>
+                                <div class="sub">Quiero ir viendo opciones</div>
+                            </div>
+                            <div class="check"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- STEP 5: Use & Notes -->
+            <div class="step" data-step="4">
+                <div class="step-header">
+                    <div class="step-icon">🎯</div>
+                    <div class="step-title">¿Qué tipo de relación buscas?</div>
+                    <div class="step-subtitle">El contexto lo es todo</div>
+                </div>
+                <div class="form-group"><label>¿Para qué es el auto? <span class="required">*</span></label>
+                    <div class="option-list" id="usoAuto">
+                        <div class="option-card" data-value="personal"><span class="option-icon">💘</span>
+                            <div class="option-text">
+                                <div class="main">Amor verdadero (Uso personal)</div>
+                            </div>
+                            <div class="check"></div>
+                        </div>
+                        <div class="option-card" data-value="negocio"><span class="option-icon">💼</span>
+                            <div class="option-text">
+                                <div class="main">Relación formal (Trabajo / Negocio)</div>
+                            </div>
+                            <div class="check"></div>
+                        </div>
+                        <div class="option-card" data-value="reventa"><span class="option-icon">😉</span>
+                            <div class="option-text">
+                                <div class="main">Aventura a corto plazo (Reventa / Inversión)</div>
+                            </div>
+                            <div class="check"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group"><label>¿Algo más que debamos saber?
+                        (opcional)</label><textarea id="notas"
+                        placeholder="Ej: Prefiero color blanco o negro, necesito que sea de bajo consumo, quiero un auto para Uber..."></textarea>
+                </div>
+            </div>
+        </form>
+        <!-- Success Screen (Fallback if 0 matches) -->
+        <div class="success-screen" id="successScreen">
+            <div class="success-icon">💘</div>
+            <div class="success-title">¡Cupido está trabajando !</div>
+            <div class="success-message">Tomamos nota de tus preferencias. Nuestro algoritmo buscará activamente en
+                la red de agencias para encontrar tu match perfecto. Te avisaremos pronto. </div>
+            <div class="success-summary" id="summaryBox">
+                <h3>📋 Tu búsqueda</h3>
+            </div>
+            <!-- Urgency block: client initiates WhatsApp -->
+            <div
+                style="background:linear-gradient(135deg,#0d2e1a,#1a4d2e);border:1px solid #25D366;border-radius:16px;padding:20px;margin:20px 0;text-align:center">
+                <div style="font-size:13px;color:#a0d4b0;margin-bottom:6px;letter-spacing:1px;text-transform:uppercase">
+                    ⚡ Respuesta garantizada</div>
+                <div style="font-size:22px;font-weight:700;color:#fff;margin-bottom:4px">Nos contactamos contigo
+                    en <span style="color:#25D366" id="responseTimer">30 min</span></div>
+                <div style="font-size:13px;color:#a0d4b0;margin-bottom:16px">¿Tienes prisa? Escríbenos ahora y
+                    te respondemos de inmediato 👇</div><a
+                    href="https://wa.me/525568667571?text=Hola%2C%20acabo%20de%20llenar%20el%20Matchmaker%20de%20Alabol%20y%20quiero%20hablar%20con%20un%20asesor%20%F0%9F%9A%97"
+                    target="_blank"
+                    style="display:inline-flex;align-items:center;gap:10px;background:#25D366;color:#fff;padding:16px 32px;border-radius:50px;font-size:16px;font-weight:700;text-decoration:none;box-shadow:0 0 20px rgba(37,211,102,0.4);animation:waPulse 2s infinite"><svg
+                        width="24" height="24" viewBox="0 0 24 24" fill="white">
+                        <path
+                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347" />
+                    </svg>Escribir por WhatsApp Ahora </a>
+            </div>
+            <style>
+                @keyframes waPulse {
+
+                    0%,
+                    100% {
+                        box-shadow: 0 0 20px rgba(37, 211, 102, 0.4);
+                        transform: scale(1);
+                    }
+
+                    50% {
+                        box-shadow: 0 0 35px rgba(37, 211, 102, 0.7);
+                        transform: scale(1.03);
+                    }
+                }
+            </style>
+
+            <a href="https://wa.me/525568667571?text=Hola%2C%20acabo%20de%20llenar%20el%20Matchmaker%20de%20Alabol%20y%20quiero%20hablar%20con%20un%20asesor%20%F0%9F%9A%97"
+                class="btn-premium-gold" id="ctaWhatsApp" style="padding: 16px 36px; font-size: 16px;">
+                <i class="fa-brands fa-whatsapp"></i> Hablar con mi Asesor Experto
+            </a>
+            <a href="../index.html" class="btn-premium-teal"
+                style="margin-top: 15px; padding: 12px 24px; font-size: 14px;">🌐
+                Volver al Lobby Principal</a>
+        </div>
+
+        <!-- Finding Matches Screen -->
+        <div class="finding-matches" id="findingMatchesScreen">
+            <div class="radar"></div>
+            <div class="success-title" style="font-size: 20px;">Analizando Inventario...</div>
+            <div class="success-message">Cruzando tu presupuesto y preferencias con nuestra red de concesionarios a
+                nivel nacional.</div>
+        </div>
+
+        <!-- Tinder Deck UI -->
+        <div class="tinder-deck" id="tinderDeck">
+            <!-- Cards injected via JS -->
+        </div>
+
+        <div class="tinder-actions" id="tinderActions">
+            <button class="t-btn pass" onclick="swipe('left')">❌</button>
+            <button class="t-btn match" onclick="swipe('right')">💖</button>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-buttons" id="navButtons">
+            <button type="button" class="btn-premium-teal" id="backBtn"
+                style="display:none; width: auto; font-size: 14px;">← Atrás</button>
+            <button type="button" class="btn-premium-gold" id="nextBtn" style="width: auto; min-width: 180px;">Siguiente
+                →</button>
+        </div>
+    </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../config.js"></script>
+    <script>
+        // =====================
+        // SUPABASE BACKEND
+        // =====================
+        const SUPABASE_URL = 'https://rgnunjngtsgqgvplawfr.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // =====================
+        // STATE
+        // =====================
+        const WHATSAPP_NUMBER = '525568667571';
+        let currentStep = 0;
+        const totalSteps = 5;
+        let matchStack = [];
+        let likedCars = [];
+        let currentCardIndex = 0;
+
+        // =====================
+        // TRAFFIC TRACKING (Phase 12)
+        // =====================
+        // Generate or retrieve a unique session ID for this visitor
+        function getSessionId() {
+            let sid = sessionStorage.getItem('alabol_session');
+            if (!sid) {
+                sid = 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                sessionStorage.setItem('alabol_session', sid);
+            }
+            return sid;
+        }
+
+        async function trackVisit() {
+            try {
+                const referrer = document.referrer ? new URL(document.referrer).hostname : 'directo';
+                const ua = navigator.userAgent;
+                const device = /Mobi|Android/i.test(ua) ? 'mobile' : 'desktop';
+                await supabaseClient.from('page_visits').insert([{
+                    session_id: getSessionId(),
+                    page: 'matchmaker',
+                    referrer: referrer,
+                    user_agent: device
+                }]);
+            } catch (e) { /* silent fail */ }
+        }
+
+        async function trackFunnelStep(stepNum, stepName) {
+            try {
+                await supabaseClient.from('funnel_events').insert([{
+                    session_id: getSessionId(),
+                    step_number: stepNum,
+                    step_name: stepName
+                }]);
+            } catch (e) { /* silent fail */ }
+        }
+
+        // Fire visit tracking immediately on page load
+        trackVisit();
+
+
+        // Dynamic Mexico Catalog
+        const mexicoCatalog = {
+            "Nissan": ["Versa", "Sentra", "March", "Altima", "Kicks", "X-Trail", "Frontier", "NP300", "Maxima", "Pathfinder", "V-Drive"],
+            "Volkswagen": ["Jetta", "Vento", "Virtus", "Polo", "Golf", "Tiguan", "Taos", "Nivus", "Teramont", "Saveiro", "Amarok"],
+            "Chevrolet": ["Onix", "Aveo", "Cavalier", "Tracker", "Captiva", "Silverado", "Colorado", "Tahoe", "Suburban", "Tornado", "Groove", "Trax", "Blazer"],
+            "Toyota": ["Corolla", "Camry", "Yaris", "Prius", "RAV4", "Highlander", "Sienna", "Tacoma", "Hilux", "Avanza", "Sequoia", "Land Cruiser", "Raize"],
+            "Honda": ["Civic", "Accord", "City", "CR-V", "HR-V", "BR-V", "Odyssey", "Pilot", "Insight", "Ridgeline"],
+            "Ford": ["Mustang", "Escape", "Edge", "Explorer", "Expedition", "F-150", "Lobo", "Ranger", "Maverick", "Bronco", "Territory"],
+            "Kia": ["Rio", "Forte", "Soul", "Seltos", "Sportage", "Sorento", "Sedona", "K3", "Niro", "Ev6"],
+            "Mazda": ["Mazda2", "Mazda3", "Mazda6", "CX-3", "CX-30", "CX-5", "CX-50", "CX-9", "CX-90", "MX-5"],
+            "Hyundai": ["Grand i10", "Elantra", "Accent", "Creta", "Tucson", "Santa Fe", "Palisade", "Kona", "HB20"],
+            "BMW": ["Serie 1", "Serie 2", "Serie 3", "Serie 4", "Serie 5", "X1", "X2", "X3", "X4", "X5", "X6", "X7"],
+            "Mercedes-Benz": ["Clase A", "Clase B", "Clase C", "Clase E", "GLA", "GLB", "GLC", "GLE", "GLS"],
+            "Audi": ["A1", "A3", "A4", "A5", "A6", "Q2", "Q3", "Q5", "Q7", "Q8", "e-tron"],
+            "MG": ["MG5", "GT", "ZS", "HS", "RX8", "One", "MG4"],
+            "Peugeot": ["208", "2008", "3008", "5008", "Rifter", "Partner", "Landtrek"],
+            "Renault": ["Kwid", "Stepway", "Logan", "Duster", "Captur", "Koleos", "Oroch", "Master"],
+            "Suzuki": ["Swift", "Ignis", "Baleno", "Ciaz", "Vitara", "S-Cross", "Jimny", "Ertiga"],
+            "Seat": ["Ibiza", "Leon", "Arona", "Ateca", "Tarraco"],
+            "Mitsubishi": ["Mirage G4", "L200", "Montero Sport", "Outlander", "Xpander"],
+            "Jeep": ["Wrangler", "Grand Cherokee", "Compass", "Renegade", "Gladiator", "Cherokee"],
+            "Dodge": ["Attitude", "Journey", "Durango", "Challenger"],
+            "RAM": ["700", "1500", "2500", "4000"],
+            "BYD": ["Dolphin", "Yuan Plus", "Han", "Tang", "Seal", "Song Plus"],
+            "Chirey": ["Tiggo 2", "Tiggo 4", "Tiggo 7", "Tiggo 8"],
+            "Omoda": ["O5", "O5 GT", "C5"],
+            "JAC": ["J7", "JS2", "JS3", "JS4", "JS6", "JS8", "T6", "T8", "E10X"],
+            "Cupra": ["Formentor", "Leon", "Ateca"],
+            "Volvo": ["XC40", "XC60", "XC90", "C40", "S60"],
+            "Tesla": ["Model 3", "Model Y", "Model S", "Model X"],
+            "Subaru": ["WRX", "Forester", "XV", "Outback", "BRZ"],
+            "Lexus": ["IS", "ES", "LS", "UX", "NX", "RX", "LX"],
+            "Infiniti": ["Q50", "Q60", "QX50", "QX55", "QX60", "QX80"],
+            "Acura": ["Integra", "TLX", "RDX", "MDX"],
+            "GWM": ["Haval H6", "Jolion", "Poer", "Ora 03"],
+            "Geely": ["Coolray", "Geometry C"]
+        };
+
+        const formData = {
+            nombre: '', whatsapp: '', ciudad: '',
+            tipoVehiculo: '', marcas: [], modelos: [],
+            anioDesde: '', anioHasta: '', caracteristicas: [],
+            presupuestoMin: 150000, presupuestoMax: 350000,
+            dineroListo: '', prioridad: '', usoAuto: '', notas: ''
+        };
+
+        const personalityMessages = [
+            "Excelente inicio, vamos por tu auto ideal...",
+            "¡Gran elección! Ese estilo te va muy bien 🚗",
+            "Casi lo tenemos, los detalles hacen la diferencia ✨",
+            "¡Perfecto! Ya estamos diseñando tu match ideal 💰",
+            "¡Último paso! Cuéntanos más para sellar el trato 🎯"
+        ];
+
+        // =====================
+        // DOM
+        // =====================
+        const steps = document.querySelectorAll('.step');
+        const progressSegments = document.querySelectorAll('.progress-segment');
+        const progressLabel = document.getElementById('progressLabel');
+        const backBtn = document.getElementById('backBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const navButtons = document.getElementById('navButtons');
+        const successScreen = document.getElementById('successScreen');
+        const sendingOverlay = document.getElementById('sendingOverlay');
+
+        // =====================
+        // CHIP MULTI-SELECT & BRANDS
+        // =====================
+        // Handle normal text chips
+        function attachChipListeners(containerSelector) {
+            document.querySelectorAll(`${containerSelector} .chip`).forEach(chip => {
+                chip.addEventListener('click', () => {
+                    chip.classList.toggle('selected');
+                    updateValidation();
+                });
+            });
+        }
+        attachChipListeners('#caracteristicasGrid');
+
+        // Handle Brand Logos
+        document.querySelectorAll('.brand-card').forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.toggle('selected');
+                updateValidation();
+                refreshModelsGrid();
+            });
+        });
+
+        // Add 'Other Brands' to Select
+        const selMasMarcas = document.getElementById('selMasMarcas');
+        Object.keys(mexicoCatalog).sort().forEach(marca => {
+            // Only add if not already in the popular grid
+            if (!document.querySelector(`.brand-card[data-value="${marca}"]`)) {
+                selMasMarcas.innerHTML += `<option value="${marca}">${marca}</option>`;
+            }
+        });
+
+        selMasMarcas.addEventListener('change', () => {
+            if (selMasMarcas.value) {
+                updateValidation();
+                refreshModelsGrid();
+            }
+        });
+
+        // Dynamic Models
+        function refreshModelsGrid() {
+            const groupModelos = document.getElementById('groupModelos');
+            const modelosGrid = document.getElementById('modelosGrid');
+
+            // Get selected brands (from cards + select)
+            let selectedBrands = [...document.querySelectorAll('.brand-card.selected')].map(c => c.dataset.value);
+            if (selMasMarcas.value) {
+                selectedBrands.push(selMasMarcas.value);
+            }
+
+            if (selectedBrands.length === 0) {
+                groupModelos.style.display = 'none';
+                modelosGrid.innerHTML = '';
+                return;
+            }
+
+            groupModelos.style.display = 'block';
+
+            // Keep track of currently selected models to persist selection across re-renders
+            const previouslySelected = [...modelosGrid.querySelectorAll('.chip.selected')].map(c => c.dataset.value);
+
+            modelosGrid.innerHTML = '';
+
+            let allModels = [];
+            selectedBrands.forEach(b => {
+                if (mexicoCatalog[b]) {
+                    allModels = allModels.concat(mexicoCatalog[b]);
+                }
+            });
+
+            // Remove duplicates and sort
+            allModels = [...new Set(allModels)].sort();
+
+            allModels.forEach(m => {
+                const isSelected = previouslySelected.includes(m) ? 'selected' : '';
+                modelosGrid.innerHTML += `<div class="chip ${isSelected}" data-value="${m}">${m}</div>`;
+            });
+
+            attachChipListeners('#modelosGrid');
+        }
+
+        // =====================
+        // SINGLE-SELECT
+        // =====================
+        document.querySelectorAll('.option-list').forEach(list => {
+            list.querySelectorAll('.option-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    list.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    card.querySelector('.check').textContent = '✓';
+                    list.querySelectorAll('.option-card:not(.selected) .check').forEach(c => c.textContent = '');
+                    updateValidation();
+                });
+            });
+        });
+
+        // =====================
+        // INPUT TRACKING
+        // =====================
+        document.querySelectorAll('input, select, textarea').forEach(el => {
+            el.addEventListener('input', updateValidation);
+            el.addEventListener('change', updateValidation);
+        });
+
+        // =====================
+        // NAVIGATION
+        // =====================
+        nextBtn.addEventListener('click', () => {
+            if (!validateStep(currentStep)) return;
+            collectStepData(currentStep);
+
+            // --- GA4 + Supabase: Step tracking (Phase 11 & 12 Analytics) ---
+            const stepNames = ['tipo_vehiculo', 'marca_modelo', 'presupuesto', 'tiempo', 'datos_contacto'];
+            const stepName = stepNames[currentStep] || `paso_${currentStep + 1}`;
+
+            // GA4 event
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'matchmaker_step_completado', {
+                    step_number: currentStep + 1,
+                    step_name: stepName
+                });
+            }
+            // Supabase Funnel Tracking
+            trackFunnelStep(currentStep + 1, stepName);
+
+            if (currentStep < totalSteps - 1) {
+                currentStep++;
+                renderStep();
+            } else {
+                submitForm();
+            }
+        });
+
+
+        backBtn.addEventListener('click', () => {
+            if (currentStep > 0) { currentStep--; renderStep(); }
+        });
+
+        function renderStep() {
+            steps.forEach((s, i) => s.classList.toggle('active', i === currentStep));
+            progressSegments.forEach((seg, i) => seg.classList.toggle('active', i <= currentStep));
+            progressLabel.textContent = `${currentStep + 1} / ${totalSteps}`;
+            backBtn.style.display = currentStep > 0 ? 'block' : 'none';
+            nextBtn.textContent = currentStep === totalSteps - 1 ? '🔥 Hacer Match' : 'Siguiente →';
+
+            // Personality Hook Update
+            const hook = document.getElementById('personalityHook');
+            if (hook) {
+                hook.style.opacity = 0;
+                setTimeout(() => {
+                    hook.textContent = personalityMessages[currentStep];
+                    hook.style.opacity = 1;
+                }, 300);
+            }
+
+            updateValidation();
+            document.querySelector('.card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // =====================
+        // VALIDATION
+        // =====================
+        function updateValidation() { nextBtn.disabled = !validateStep(currentStep); }
+
+        function validateStep(step) {
+            switch (step) {
+                case 0:
+                    return document.getElementById('nombre').value.trim() !== '' &&
+                        document.getElementById('whatsapp').value.trim() !== '' &&
+                        document.getElementById('ciudad').value.trim() !== '';
+                case 1: return document.querySelector('#tipoVehiculo .option-card.selected') !== null;
+                case 2: return document.getElementById('anioDesde').value !== '' &&
+                    document.getElementById('anioHasta').value !== '';
+                case 3: return document.querySelector('#dineroListo .option-card.selected') !== null;
+                case 4: return document.querySelector('#usoAuto .option-card.selected') !== null;
+                default: return true;
+            }
+        }
+
+        // =====================
+        // DATA COLLECTION
+        // =====================
+        function collectStepData(step) {
+            switch (step) {
+                case 0:
+                    formData.nombre = document.getElementById('nombre').value.trim();
+                    formData.whatsapp = document.getElementById('whatsapp').value.trim();
+                    formData.ciudad = document.getElementById('ciudad').value.trim();
+                    break;
+                case 1:
+                    const tipoEl = document.querySelector('#tipoVehiculo .option-card.selected');
+                    formData.tipoVehiculo = tipoEl ? tipoEl.dataset.value : '';
+
+                    formData.marcas = [...document.querySelectorAll('.brand-card.selected')].map(c => c.dataset.value);
+                    if (document.getElementById('selMasMarcas').value) {
+                        formData.marcas.push(document.getElementById('selMasMarcas').value);
+                    }
+                    break;
+                case 2:
+                    formData.modelos = [...document.querySelectorAll('#modelosGrid .chip.selected')].map(c => c.dataset.value);
+                    formData.anioDesde = document.getElementById('anioDesde').value;
+                    formData.anioHasta = document.getElementById('anioHasta').value;
+                    formData.caracteristicas = [...document.querySelectorAll('#caracteristicasGrid .chip.selected')].map(c => c.dataset.value);
+                    break;
+                case 3:
+                    const dineroEl = document.querySelector('#dineroListo .option-card.selected');
+                    formData.presupuestoMin = parseInt(document.getElementById('inputMin').value);
+                    formData.presupuestoMax = parseInt(document.getElementById('inputMax').value);
+                    formData.dineroListo = dineroEl ? dineroEl.dataset.value : '';
+                    formData.prioridad = dineroEl ? (dineroEl.dataset.priority || '') : '';
+                    break;
+                case 4:
+                    const usoEl = document.querySelector('#usoAuto .option-card.selected');
+                    formData.usoAuto = usoEl ? usoEl.dataset.value : '';
+                    formData.notas = document.getElementById('notas').value.trim();
+                    break;
+            }
+        }
+
+        // =====================
+        // TINDER MATCH ENGINE
+        // =====================
+        async function findMatches() {
+            try {
+                // Fetch active inventory from live database
+                const { data: invData, error } = await supabaseClient
+                    .from('inventario')
+                    .select('*')
+                    .eq('estatus', 'disponible');
+
+                if (error) throw error;
+                if (!invData || invData.length === 0) return [];
+
+                // Clean inputs for matching
+                const minYear = parseInt(formData.anioDesde) || 2010;
+                const maxYear = parseInt(formData.anioHasta) || 2026;
+                const minBudget = formData.presupuestoMin * 0.9; // 10% flexibility below
+                const maxBudget = formData.presupuestoMax * 1.1; // 10% flexibility above
+                const preferredBrands = formData.marcas.map(m => m.toLowerCase());
+                const preferredModels = formData.modelos.map(m => m.toLowerCase());
+
+                const matches = invData.filter(car => {
+                    if (car.precio_venta < minBudget || car.precio_venta > maxBudget) return false;
+                    if (car.anio < minYear || car.anio > maxYear) return false;
+
+                    // Brand filtering if explicitly selected
+                    if (preferredBrands.length > 0 && !preferredBrands.includes('otra')) {
+                        const carBrand = (car.marca || '').toLowerCase();
+                        const brandMatch = preferredBrands.some(pb => pb.includes(carBrand) || carBrand.includes(pb));
+                        if (!brandMatch) return false;
+
+                        // Model filtering ONLY if brand matches AND specific models were selected
+                        if (preferredModels.length > 0) {
+                            const carModel = (car.modelo || '').toLowerCase();
+                            // Simple text includes for model match
+                            const modelMatch = preferredModels.some(pm => carModel.includes(pm) || pm.includes(carModel));
+                            if (!modelMatch) return false;
+                        }
+                    }
+                    return true;
+                });
+
+                // Return top 10 closest to budget
+                return matches.sort((a, b) => b.precio_venta - a.precio_venta).slice(0, 10);
+            } catch (err) {
+                console.error("Error fetching matches:", err);
+                return [];
+            }
+        }
+
+        async function submitForm() {
+      const allData = {};
+      for (let s = 0; s <= currentStep; s++) Object.assign(allData, collectStepData(s));
+
+      if (!allData.nombre || !allData.whatsapp) {
+        showCustomAlert('error', 'Datos incompletos', 'Por favor llena tu nombre y WhatsApp.');
+        return;
+      }
+
+      const loader = document.getElementById('loaderOverlay');
+      if (loader) loader.style.display = 'flex';
+
+      const payload = {
+        nombre: allData.nombre,
+        whatsapp: allData.whatsapp,
+        ciudad: allData.ciudad || 'No especificada',
+        tipo_vehiculo: allData.tipoVehiculo || null,
+        marcas: allData.marcas || [],
+        modelos: allData.modelos || [],
+        anio_min: allData.anioDesde ? parseInt(allData.anioDesde) : null,
+        anio_max: allData.anioHasta ? parseInt(allData.anioHasta) : null,
+        presupuesto_min: allData.presupuestoMin ? parseInt(allData.presupuestoMin) : 150000,
+        presupuesto_max: allData.presupuestoMax ? parseInt(allData.presupuestoMax) : 350000,
+        dinero_listo: allData.dineroListo || null,
+        uso_auto: allData.usoAuto || null,
+        caracteristicas: allData.caracteristicas || [],
+        notas: allData.notas || '',
+        fuente: new URLSearchParams(window.location.search).get('utm_source') || 'vip'
+      };
+
+      fetch(SUPABASE_URL + '/functions/v1/matchmaker-submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(response => response.json())
+      .then(result => {
+        if (loader) loader.style.display = 'none';
+        if (result.success) {
+          console.log('VIP Matchmaker result:', result);
+          sessionStorage.setItem('matchResult', JSON.stringify(result));
+          try {
+            if (typeof gtag === 'function') gtag('event', 'generate_lead', { event_category: 'matchmaker_vip', event_label: payload.ciudad, value: payload.presupuesto_max });
+            if (typeof fbq === 'function') fbq('track', 'Lead', { content_name: 'Matchmaker VIP', currency: 'MXN', value: payload.presupuesto_max });
+          } catch(e) {}
+          if (result.top_matches && result.top_matches.length > 0) {
+            window._backendMatches = result.top_matches;
+            showSuccess(result);
+          } else {
+            findMatches(allData);
+            new Promise(r => setTimeout(r, 2000)).then(() => showSuccess(result));
+          }
+          showCustomAlert('success', 'Match Perfecto', result.message || 'Encontramos ' + (result.total_matches || 0) + ' opciones para ti.');
+        } else {
+          showCustomAlert('error', 'Error', result.error || 'Intenta de nuevo.');
+        }
+      })
+      .catch(err => {
+        console.warn('Edge Function failed, fallback:', err);
+        if (typeof supabase !== 'undefined') {
+          supabase.from('leads_matchmaker').insert({
+            nombre: payload.nombre, whatsapp: payload.whatsapp, ciudad: payload.ciudad,
+            tipo_vehiculo: payload.tipo_vehiculo, marcas: payload.marcas, modelos: payload.modelos,
+            anio_min: payload.anio_min, anio_max: payload.anio_max,
+            presupuesto_min: payload.presupuesto_min, presupuesto_max: payload.presupuesto_max,
+            dinero_listo: payload.dinero_listo, uso_auto: payload.uso_auto,
+            caracteristicas: payload.caracteristicas, notas: payload.notas, fuente: payload.fuente
+          }).then(({ error }) => {
+            if (loader) loader.style.display = 'none';
+            if (error) { showCustomAlert('error', 'Error', 'Escr\u00edbenos por WhatsApp.'); }
+            else { findMatches(allData); new Promise(r => setTimeout(r, 2000)).then(() => showSuccess({ success: true, total_matches: 0, message: 'Te contactaremos pronto.' })); }
+          });
+        } else {
+          if (loader) loader.style.display = 'none';
+          showCustomAlert('error', 'Error', 'Error de conexi\u00f3n.');
+        }
+      });
+    }
+
+    function initTinderDeck() {
+            const deck = document.getElementById('tinderDeck');
+            const actions = document.getElementById('tinderActions');
+            deck.innerHTML = '';
+
+            matchStack.forEach((car, index) => {
+                const isTop = index === 0;
+                const isNext = index === 1;
+
+                // 🚗 MODELO CIEGO: No logos, no agency name. Just car data.
+                const coverPhoto = (car.fotos && car.fotos.length > 0) ? car.fotos[0] : 'car-placeholder.png';
+                const kmsStr = car.kilometraje ? car.kilometraje.toLocaleString('es-MX') : '0';
+
+                const cardHtml = `
+                    <div class="tinder-card ${isTop ? 'active' : ''} ${isNext ? 'next' : ''}" id="tCard-${index}">
+                        <img src="${coverPhoto}" alt="${car.marca} ${car.modelo}" class="t-card-img" onerror="this.src='https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&w=400&q=60'">
+                        <div class="t-card-info">
+                            <div>
+                                <div class="t-card-title">${car.marca} ${car.modelo} <span class="t-card-year">${car.anio}</span></div>
+                                <div class="t-card-price">$${car.precio_venta.toLocaleString('es-MX')} MXN</div>
+                            </div>
+                            <div class="t-card-details">
+                                <span>🛣️ ${kmsStr} km</span>
+                                <span class="t-badge">Verificado por Alabol</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                // Prepend so the first item is on top (if using standard DOM order, but we use absolute + z-index so append is fine)
+                deck.insertAdjacentHTML('beforeend', cardHtml);
+            });
+
+            deck.classList.add('active');
+            actions.classList.add('active');
+            currentCardIndex = 0;
+
+            document.querySelector('.card').style.background = 'transparent';
+            document.querySelector('.card').style.border = 'none';
+            document.querySelector('.card').style.boxShadow = 'none';
+        }
+
+        function swipe(direction) {
+            if (currentCardIndex >= matchStack.length) return;
+
+            const currentCard = document.getElementById(`tCard-${currentCardIndex}`);
+            const carData = matchStack[currentCardIndex];
+
+            if (direction === 'right') {
+                // MATCH!
+                currentCard.classList.add('swiped-right');
+                likedCars.push(carData);
+
+                // Advance deck instead of immediately sending whatsapp
+                setTimeout(advanceDeck, 300);
+
+            } else {
+                // PASS!
+                currentCard.classList.add('swiped-left');
+                setTimeout(advanceDeck, 300);
+            }
+        }
+
+        function advanceDeck() {
+            const currentCard = document.getElementById(`tCard-${currentCardIndex}`);
+            if (currentCard) {
+                currentCard.classList.remove('active');
+                currentCard.style.display = 'none';
+            }
+
+            currentCardIndex++;
+
+            if (currentCardIndex < matchStack.length) {
+                // Show next card
+                const nextCard = document.getElementById(`tCard-${currentCardIndex}`);
+                if (nextCard) {
+                    nextCard.classList.remove('next');
+                    nextCard.classList.add('active');
+                }
+
+                // Prep the one after next
+                const futureCard = document.getElementById(`tCard-${currentCardIndex + 1}`);
+                if (futureCard) {
+                    futureCard.classList.add('next');
+                }
+            } else {
+                // Out of matches!
+                document.getElementById('tinderDeck').classList.remove('active');
+                document.getElementById('tinderActions').classList.remove('active');
+                showSuccess(); // Show fallback success screen telling them we will keep looking
+                document.querySelector('.card').style = ''; // Reset card styles
+            }
+        }
+
+        // =====================
+        // SUCCESS (Fallback)
+        // =====================
+        function showSuccess() {
+            steps.forEach(s => s.classList.remove('active'));
+            navButtons.style.display = 'none';
+            document.querySelector('.progress-bar').style.display = 'none';
+            document.querySelector('.trust-row').style.display = 'none';
+            document.querySelector('.logo-section p').innerHTML = '¡Registro completado!';
+
+            const summaryBox = document.getElementById('summaryBox');
+            let msg = '';
+
+            const tipoLabels = { sedan: '🚗 Sedán', suv: '🚙 SUV / Camioneta', pickup: '🛻 Pick-up', deportivo: '🏎️ Deportivo / Lujo' };
+            const presupuestoText = `$${formData.presupuestoMin.toLocaleString('es-MX')} - $${formData.presupuestoMax.toLocaleString('es-MX')}`;
+            const modelosStr = formData.modelos.length ? formData.modelos.join(', ') : 'Abierto a opciones';
+
+            if (likedCars && likedCars.length > 0) {
+                document.querySelector('.success-title').textContent = '¡Tienes Matches! 💖';
+                document.querySelector('.success-message').textContent = 'Hemos guardado los autos que seleccionaste. Escríbenos para enviarte las fichas técnicas.';
+
+                let carsHtml = likedCars.map(c => `<div class="summary-row"><span class="label">${c.marca} ${c.modelo} ${c.anio}</span><span class="value">$${c.precio_venta.toLocaleString('es-MX')}</span></div>`).join('');
+
+                summaryBox.innerHTML = `
+                    <h3>🚗 Autos Seleccionados</h3>
+                    ${carsHtml}
+                `;
+
+                // Secret metadata to identify the agency on internal chat (ID only, no name exposed to client)
+                let textCars = likedCars.map(c => `🚗 ${c.marca} ${c.modelo} ${c.anio} - $${c.precio_venta.toLocaleString('es-MX')} (Cód: ${c.agencia_id})`).join('\n');
+                msg = encodeURIComponent(
+                    `¡Hola! 💖 Hice MATCH con estos autos en la Lista VIP de Alabol:\n\n` +
+                    `${textCars}\n\n` +
+                    `Mi nombre es ${formData.nombre}. ¿Me pueden dar más información y agendar una cita?\n` +
+                    `Presupuesto: ${presupuestoText}`
+                );
+            } else {
+                document.querySelector('.success-title').textContent = '¡Cupido está trabajando!';
+                document.querySelector('.success-message').textContent = 'Tomamos nota de tus preferencias. Nuestro algoritmo buscará activamente en la red de agencias para encontrar tu match perfecto. Te avisaremos pronto.';
+
+                summaryBox.innerHTML = `
+                    <h3>📋 Tu búsqueda</h3>
+                    <div class="summary-row"><span class="label">Tipo</span><span class="value">${tipoLabels[formData.tipoVehiculo] || formData.tipoVehiculo}</span></div>
+                    ${formData.marcas.length ? `<div class="summary-row"><span class="label">Marcas</span><span class="value">${formData.marcas.join(', ')}</span></div>` : ''}
+                    <div class="summary-row"><span class="label">Modelo(s)</span><span class="value">${modelosStr}</span></div>
+                    <div class="summary-row"><span class="label">Año</span><span class="value">${formData.anioDesde} - ${formData.anioHasta}</span></div>
+                    <div class="summary-row"><span class="label">Presupuesto</span><span class="value">${presupuestoText}</span></div>
+                `;
+
+                msg = encodeURIComponent(
+                    `🔥 Hola, acabo de configurar mis preferencias en la Lista VIP de Alabol.\n\n` +
+                    `Busco hacer match con: ${tipoLabels[formData.tipoVehiculo] || formData.tipoVehiculo}\n` +
+                    `${formData.marcas.length ? 'Marcas: ' + formData.marcas.join(', ') + '\n' : ''}` +
+                    `Modelo(s): ${modelosStr}\n` +
+                    `Año: ${formData.anioDesde}-${formData.anioHasta}\n` +
+                    `Presupuesto: ${presupuestoText}\n\n` +
+                    `¡Quedo atento a mi media naranja con llantas! 🙌`
+                );
+            }
+
+            // ==========================================
+            // N8N / MAKE WEBHOOK PUSH (Lead Capture)
+            // ==========================================
+            const finalPayload = {
+                fecha: new Date().toISOString(),
+                nombre: formData.nombre,
+                whatsapp: formData.whatsapp,
+                ciudad: formData.ciudad,
+                presupuesto_str: presupuestoText,
+                presupuesto_min: formData.presupuestoMin,
+                presupuesto_max: formData.presupuestoMax,
+                marcas_interes: formData.marcas.join(', '),
+                modelos_interes: modelosStr,
+                tipo_vehiculo: formData.tipoVehiculo,
+                dinero_listo: formData.dineroListo,
+                prioridad: formData.prioridad,
+                autos_likeados: likedCars || [],
+                tiene_matches: likedCars && likedCars.length > 0
+            };
+
+            const N8N_WEBHOOK_URL = 'https://hook.us2.make.com/z9xj6uu5nfuj54ko2eepzox336fly4ib';
+            fetch(N8N_WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(finalPayload)
+            }).catch(err => console.warn('N8N Webhook connection failed:', err));
+
+            document.getElementById('ctaWhatsApp').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
+            successScreen.classList.add('active');
+
+            // Celebration Confetti!
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#d4af37', '#ffffff', '#004d2c']
+            });
+        }
+
+        // Generate Golden Bubbles Effect
+        function createBubbles() {
+            const container = document.getElementById('bubbles-container');
+            if (!container) return;
+            const bubbleCount = 40; // Number of bubbles
+
+            for (let i = 0; i < bubbleCount; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+
+                const size = Math.random() * 60 + 20;
+                const left = Math.random() * 100;
+                const duration = Math.random() * 15 + 10;
+                const delay = Math.random() * 20;
+                const maxOpacity = Math.random() * 0.5 + 0.2;
+                const sway = (Math.random() - 0.5) * 2;
+
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                bubble.style.left = `${left}%`;
+                bubble.style.animationDelay = `${delay}s`;
+                bubble.style.setProperty('--duration', `${duration}s`);
+                bubble.style.setProperty('--scale', Math.random() * 0.5 + 0.5);
+                bubble.style.setProperty('--max-opacity', maxOpacity);
+                bubble.style.setProperty('--sway', sway);
+
+                container.appendChild(bubble);
+            }
+        }
+
+        function updateSliders() {
+            let minVal = parseInt(document.getElementById('inputMin').value);
+            let maxVal = parseInt(document.getElementById('inputMax').value);
+
+            if (minVal > maxVal) {
+                // Prevent overlapping
+                const tmp = minVal;
+                minVal = maxVal;
+                maxVal = tmp;
+            }
+
+            document.getElementById('budgetMinDisplay').textContent = `$${minVal.toLocaleString('es-MX')}`;
+            document.getElementById('budgetMaxDisplay').textContent = `$${maxVal.toLocaleString('es-MX')}`;
+
+            // Calculate percentage for fill
+            const minPercent = ((minVal - 80000) / (1500000 - 80000)) * 100;
+            const maxPercent = ((maxVal - 80000) / (1500000 - 80000)) * 100;
+
+            const sliderFill = document.getElementById('sliderFill');
+            sliderFill.style.left = `${minPercent}%`;
+            sliderFill.style.width = `${maxPercent - minPercent}%`;
+        }
+
+        // Init
+        updateValidation();
+        updateSliders();
+        document.addEventListener('DOMContentLoaded', createBubbles);
+    </script>
+
+<footer class="alabol-footer" role="contentinfo">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <img src="../logo-circular.png" alt="Alabol">
+      <p>El Tinder de los Autos. Encontramos tu media naranja con llantas — garantizado.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Comprar</h4>
+      <a href="../inventario.html">Ver Inventario</a>
+      <a href="../formulario-match.html">Hacer Match</a>
+      <a href="../precalificacion/index.html">Precalificación</a>
+      <a href="../vip/index.html">Zona VIP</a>
+    </div>
+    <div class="footer-col">
+      <h4>Vender</h4>
+      <a href="../vendedor.html">Vender mi Auto</a>
+      <a href="../oportunidades/index.html">Oportunidades</a>
+      <a href="../portal-agencias.html">Portal Agencias</a>
+    </div>
+    <div class="footer-col">
+      <h4>Alabol</h4>
+      <a href="../links-alabol.html">Todos los Links</a>
+      <a href="../login.html">Acceso Equipo</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Alabol Car Broker · Todos los derechos reservados</p>
+    <a href="https://wa.me/52556867571?text=Hola%20Alabol%2C%20necesito%20ayuda"
+       class="footer-wa-btn" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+      </svg>
+      Contactar por WhatsApp
+    </a>
+  </div>
+</footer>
+
+<script>
+  // Navbar hamburger toggle
+  (function() {
+    const btn = document.getElementById('navHamburger');
+    const links = document.getElementById('navLinks');
+    if (!btn || !links) return;
+
+    btn.addEventListener('click', function() {
+      const isOpen = links.classList.toggle('open');
+      btn.classList.toggle('open', isOpen);
+      btn.setAttribute('aria-expanded', isOpen);
+    });
+
+    // Auto-marcar link activo según URL actual
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    document.querySelectorAll('.nav-links a:not(.nav-cta)').forEach(a => {
+      const href = a.getAttribute('href').split('/').pop();
+      if (href === currentPage) a.classList.add('active');
+    });
+
+    // Cerrar menú al hacer click en link
+    links.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        links.classList.remove('open');
+        btn.classList.remove('open');
+      });
+    });
+  })();
+</script>
+</body>
+
+</html>

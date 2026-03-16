@@ -595,6 +595,10 @@
             <a onclick="switchTab('hotleads')" id="nav-hotleads" class="nav-item">🎯 Hot Leads</a>
             <a onclick="switchTab('reports')" id="nav-reports" class="nav-item">📅 Reportes Mensuales</a>
             <a onclick="switchTab('trends')" id="nav-trends" class="nav-item">📈 Tendencias</a>
+            <a onclick="switchTab('inventario')" id="nav-inventario" class="nav-item">🚘 Inventario</a>
+            <a onclick="switchTab('agencies')" id="nav-agencies" class="nav-item">🏢 Agencias</a>
+            <a onclick="switchTab('agenda')" id="nav-agenda" class="nav-item">📋 Agenda</a>
+            <a onclick="switchTab('sellers')" id="nav-sellers" class="nav-item">👥 Vendedores</a>
             <a href="portal-agencias.html" class="nav-item">🏢 Portal B2B</a>
             <a href="transacciones.html" class="nav-item">💰 Transacciones</a>
             <a href="asignaciones.html" class="nav-item">👤 Asignaciones</a>
@@ -1015,6 +1019,247 @@
             </div>
         </div>
 
+        <!-- ============================================== -->
+        <!-- TAB 7: INVENTARIO MANAGER                      -->
+        <!-- ============================================== -->
+        <div id="tab-inventario" class="tab-content">
+            <div class="header">
+                <h1>Gestión de Inventario</h1>
+                <p>Control total de todos los vehículos en la plataforma</p>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-title">Total Vehículos</div>
+                    <div class="metric-value" id="invTotal">-</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">Disponibles</div>
+                    <div class="metric-value" id="invDisp">-</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">Vendidos</div>
+                    <div class="metric-value" id="invVend">-</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">Días Promedio</div>
+                    <div class="metric-value" id="invAvgDays">-</div>
+                </div>
+            </div>
+
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h2>Inventario de Vehículos</h2>
+                    <button class="btn-action" onclick="loadInventarioTab()">🔄 Actualizar</button>
+                </div>
+                <div style="display:flex;gap:10px;margin-bottom:15px;flex-wrap:wrap;">
+                    <input type="text" id="invSearch" oninput="filterInvTable()" placeholder="Buscar marca, modelo, ciudad..." style="background:var(--bg-dark);border:1px solid var(--glass-border);color:white;padding:8px 12px;border-radius:8px;font-size:13px;flex:1;min-width:200px;outline:none;">
+                    <select id="invStatusFilter" onchange="filterInvTable()" style="background:var(--bg-dark);border:1px solid var(--glass-border);color:white;padding:8px 12px;border-radius:8px;font-size:13px;cursor:pointer;outline:none;">
+                        <option value="all">Todos</option>
+                        <option value="disponible">Disponible</option>
+                        <option value="vendido">Vendido</option>
+                        <option value="reservado">Reservado</option>
+                        <option value="inactivo">Inactivo</option>
+                    </select>
+                    <select id="invAgencyFilter" onchange="filterInvTable()" style="background:var(--bg-dark);border:1px solid var(--glass-border);color:white;padding:8px 12px;border-radius:8px;font-size:13px;cursor:pointer;outline:none;">
+                        <option value="all">Todas las agencias</option>
+                    </select>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Foto</th>
+                                <th>Vehículo</th>
+                                <th>Precio</th>
+                                <th>KM</th>
+                                <th>Ciudad</th>
+                                <th>Agencia</th>
+                                <th>Estatus</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invTableBody">
+                            <tr><td colspan="9" style="text-align:center;padding:20px;">Selecciona esta pestaña para cargar datos</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- TAB 8: AGENCIAS MONITOR                        -->
+        <!-- ============================================== -->
+        <div id="tab-agencies" class="tab-content">
+            <div class="header">
+                <h1>Monitor de Agencias</h1>
+                <p>Rendimiento y capacidad de la red de agencias aliadas</p>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-title">Total Agencias</div>
+                    <div class="metric-value" id="agTotal">-</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">Autos en Red</div>
+                    <div class="metric-value" id="agAutos">-</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">Solicitudes Pendientes</div>
+                    <div class="metric-value" id="agPending">-</div>
+                </div>
+            </div>
+
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h2>Red de Agencias</h2>
+                    <button class="btn-action" onclick="loadAgenciesTab()">🔄 Actualizar</button>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Agencia</th>
+                                <th>Total Autos</th>
+                                <th>Disponibles</th>
+                                <th>Vendidos</th>
+                                <th>Días Promedio</th>
+                            </tr>
+                        </thead>
+                        <tbody id="agTableBody">
+                            <tr><td colspan="5" style="text-align:center;padding:20px;">Selecciona esta pestaña para cargar datos</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h2>Solicitudes Pendientes</h2>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Agencia</th>
+                                <th>Contacto</th>
+                                <th>Email</th>
+                                <th>Ciudad</th>
+                                <th>Vehículos</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="agAppsBody">
+                            <tr><td colspan="6" style="text-align:center;padding:20px;">Cargando solicitudes...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- TAB 9: AGENDA                                  -->
+        <!-- ============================================== -->
+        <div id="tab-agenda" class="tab-content">
+            <div class="header">
+                <h1>Agenda del Día</h1>
+                <p>Follow-ups programados y acciones pendientes</p>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-title">Pendientes Hoy</div>
+                    <div class="metric-value" id="agdPending">-</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">Urgentes</div>
+                    <div class="metric-value" id="agdUrgent" style="color:var(--danger);">-</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">Completados Hoy</div>
+                    <div class="metric-value" id="agdDone">-</div>
+                </div>
+            </div>
+
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h2>Follow-ups Pendientes</h2>
+                    <button class="btn-action" onclick="loadAgendaTab()">🔄 Actualizar</button>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Lead</th>
+                                <th>WhatsApp</th>
+                                <th>Auto Buscado</th>
+                                <th>Último Contacto</th>
+                                <th>Urgencia</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="agdTableBody">
+                            <tr><td colspan="6" style="text-align:center;padding:20px;">Selecciona esta pestaña para cargar datos</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- TAB 10: VENDEDORES                             -->
+        <!-- ============================================== -->
+        <div id="tab-sellers" class="tab-content">
+            <div class="header">
+                <h1>Equipo de Vendedores</h1>
+                <p>Rendimiento y asignaciones del equipo comercial</p>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-title">Total Leads</div>
+                    <div class="metric-value" id="slrTotal">-</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">Nuevos</div>
+                    <div class="metric-value" id="slrNew" style="color:var(--emerald);">-</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">En Proceso</div>
+                    <div class="metric-value" id="slrProcess" style="color:#3b82f6;">-</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">Cerrados</div>
+                    <div class="metric-value" id="slrClosed" style="color:var(--gold);">-</div>
+                </div>
+            </div>
+
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h2>Leads Recientes</h2>
+                    <button class="btn-action" onclick="loadSellersTab()">🔄 Actualizar</button>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Busca</th>
+                                <th>Presupuesto</th>
+                                <th>Estatus</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody id="slrTableBody">
+                            <tr><td colspan="5" style="text-align:center;padding:20px;">Selecciona esta pestaña para cargar datos</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <!-- Supabase JS -->
@@ -1081,6 +1326,14 @@
                 generateMonthlyReport();
             } else if (tabId === 'trends') {
                 renderTrends();
+            } else if (tabId === 'inventario') {
+                loadInventarioTab();
+            } else if (tabId === 'agencies') {
+                loadAgenciesTab();
+            } else if (tabId === 'agenda') {
+                loadAgendaTab();
+            } else if (tabId === 'sellers') {
+                loadSellersTab();
             }
 
             // Auto-hide sidebar on mobile after clicking
@@ -1907,6 +2160,251 @@
                 console.error('Trends error:', err);
                 document.getElementById('trendsInsights').innerHTML = '<div style="color:var(--danger);text-align:center;padding:20px;">Error cargando tendencias.</div>';
             }
+        }
+
+        // =====================
+        // TAB: INVENTARIO MANAGER
+        // =====================
+        async function loadInventarioTab() {
+            const container = document.getElementById('invTableBody');
+            container.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:20px;">Cargando inventario...</td></tr>';
+
+            try {
+                let query = supabaseClient.from('inventario').select('*').order('created_at', { ascending: false });
+                if (selectedAgency !== 'all') query = query.eq('agencia_id', selectedAgency);
+                const { data, error } = await query;
+                if (error) throw error;
+
+                const inv = data || [];
+
+                // KPIs
+                document.getElementById('invTotal').textContent = inv.length;
+                document.getElementById('invDisp').textContent = inv.filter(i => i.estatus === 'disponible').length;
+                document.getElementById('invVend').textContent = inv.filter(i => i.estatus === 'vendido').length;
+
+                const dispCars = inv.filter(i => i.estatus === 'disponible');
+                const avgDays = dispCars.length > 0
+                    ? Math.round(dispCars.reduce((sum, i) => sum + Math.floor((Date.now() - new Date(i.created_at).getTime()) / 86400000), 0) / dispCars.length)
+                    : 0;
+                document.getElementById('invAvgDays').textContent = avgDays;
+
+                // Populate agency filter
+                const agencies = [...new Set(inv.map(i => i.agencia_id).filter(Boolean))].sort();
+                const agSel = document.getElementById('invAgencyFilter');
+                agSel.innerHTML = '<option value="all">Todas las agencias</option>';
+                agencies.forEach(a => { const o = document.createElement('option'); o.value = a; o.textContent = a; agSel.appendChild(o); });
+
+                window._invData = inv;
+                renderInvTable(inv);
+            } catch(e) {
+                console.error('Inventario error:', e);
+                container.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--danger);">Error cargando inventario</td></tr>';
+            }
+        }
+
+        function renderInvTable(data) {
+            const search = (document.getElementById('invSearch').value || '').toLowerCase();
+            const statusFilter = document.getElementById('invStatusFilter').value;
+            const agFilter = document.getElementById('invAgencyFilter').value;
+
+            let filtered = data.filter(i => {
+                const matchSearch = !search || (i.marca + ' ' + i.modelo + ' ' + (i.ciudad || '')).toLowerCase().includes(search);
+                const matchStatus = statusFilter === 'all' || i.estatus === statusFilter;
+                const matchAg = agFilter === 'all' || i.agencia_id === agFilter;
+                return matchSearch && matchStatus && matchAg;
+            });
+
+            const fmt = n => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 }).format(n || 0);
+            const statusColors = { disponible: 'var(--emerald)', vendido: '#3b82f6', reservado: 'var(--gold)', inactivo: 'var(--danger)' };
+
+            const tbody = document.getElementById('invTableBody');
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--green-text);">Sin resultados</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(i => {
+                const img = (i.fotos && Array.isArray(i.fotos) && i.fotos[0]) ? i.fotos[0] : '';
+                const imgHtml = img ? `<img src="${img}" style="width:50px;height:35px;object-fit:cover;border-radius:6px;">` : '<span style="opacity:0.3;">📷</span>';
+                const sc = statusColors[i.estatus] || 'var(--green-text)';
+                const days = Math.floor((Date.now() - new Date(i.created_at).getTime()) / 86400000);
+
+                return `<tr>
+                    <td style="font-size:11px;opacity:0.5;">${(i.id_interno || i.id || '').toString().slice(0,8)}</td>
+                    <td>${imgHtml}</td>
+                    <td style="font-weight:600;color:white;">${i.marca || ''} ${i.modelo || ''} ${i.anio || ''}</td>
+                    <td style="color:var(--gold);font-weight:700;">${fmt(i.precio_venta)}</td>
+                    <td>${(i.kilometraje || 0).toLocaleString()} km</td>
+                    <td>${i.ciudad || '—'}</td>
+                    <td style="font-size:11px;">${i.agencia_id || 'particular'}</td>
+                    <td><span style="background:${sc}22;color:${sc};border:1px solid ${sc}44;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700;text-transform:uppercase;">${i.estatus || 'disponible'}</span></td>
+                    <td>
+                        <select onchange="changeInvStatus('${i.id}', this.value)" style="background:var(--bg-mid);border:1px solid var(--glass-border);color:var(--green-text);padding:4px 8px;border-radius:6px;font-size:11px;cursor:pointer;">
+                            <option value="disponible" ${i.estatus==='disponible'?'selected':''}>Disponible</option>
+                            <option value="vendido" ${i.estatus==='vendido'?'selected':''}>Vendido</option>
+                            <option value="reservado" ${i.estatus==='reservado'?'selected':''}>Reservado</option>
+                            <option value="inactivo" ${i.estatus==='inactivo'?'selected':''}>Inactivo</option>
+                        </select>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        async function changeInvStatus(id, newStatus) {
+            try {
+                await supabaseClient.from('inventario').update({ estatus: newStatus, updated_at: new Date().toISOString() }).eq('id', id);
+                loadInventarioTab();
+            } catch(e) { console.error('Status update error:', e); }
+        }
+
+        function filterInvTable() {
+            if (window._invData) renderInvTable(window._invData);
+        }
+
+        // =====================
+        // TAB: AGENCIAS MONITOR
+        // =====================
+        async function loadAgenciesTab() {
+            try {
+                const [invRes, appRes] = await Promise.all([
+                    supabaseClient.from('inventario').select('agencia_id, estatus, created_at'),
+                    supabaseClient.from('agency_applications').select('*').eq('status', 'pendiente').order('created_at', { ascending: false })
+                ]);
+
+                const inv = invRes.data || [];
+                const apps = appRes.data || [];
+
+                // Group by agency
+                const agencyMap = {};
+                inv.forEach(i => {
+                    const ag = i.agencia_id || 'particular';
+                    if (!agencyMap[ag]) agencyMap[ag] = { total: 0, disponible: 0, vendido: 0, days: [] };
+                    agencyMap[ag].total++;
+                    if (i.estatus === 'disponible') {
+                        agencyMap[ag].disponible++;
+                        agencyMap[ag].days.push(Math.floor((Date.now() - new Date(i.created_at).getTime()) / 86400000));
+                    }
+                    if (i.estatus === 'vendido') agencyMap[ag].vendido++;
+                });
+
+                // KPIs
+                document.getElementById('agTotal').textContent = Object.keys(agencyMap).length;
+                document.getElementById('agAutos').textContent = inv.length;
+                document.getElementById('agPending').textContent = apps.length;
+
+                // Agency table
+                const tbody = document.getElementById('agTableBody');
+                const entries = Object.entries(agencyMap).sort((a,b) => b[1].total - a[1].total);
+                tbody.innerHTML = entries.map(([name, d]) => {
+                    const avgDays = d.days.length > 0 ? Math.round(d.days.reduce((s,v) => s+v, 0) / d.days.length) : 0;
+                    return `<tr>
+                        <td style="font-weight:600;color:white;">${name}</td>
+                        <td>${d.total}</td>
+                        <td style="color:var(--emerald);">${d.disponible}</td>
+                        <td style="color:#3b82f6;">${d.vendido}</td>
+                        <td>${avgDays}d</td>
+                    </tr>`;
+                }).join('') || '<tr><td colspan="5" style="text-align:center;padding:20px;">Sin datos de agencias</td></tr>';
+
+                // Applications
+                const appBody = document.getElementById('agAppsBody');
+                appBody.innerHTML = apps.map(a => `<tr>
+                    <td style="font-weight:600;color:white;">${a.agency_name}</td>
+                    <td>${a.contact_name}</td>
+                    <td>${a.email}</td>
+                    <td>${a.city || '—'}</td>
+                    <td>${a.vehicle_count || '—'}</td>
+                    <td><button onclick="approveApp('${a.id}')" style="background:var(--emerald);color:var(--bg-dark);border:none;padding:4px 12px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;">Aprobar</button></td>
+                </tr>`).join('') || '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--green-text);">Sin solicitudes pendientes</td></tr>';
+
+            } catch(e) { console.error('Agencies error:', e); }
+        }
+
+        async function approveApp(id) {
+            try {
+                await supabaseClient.from('agency_applications').update({ status: 'aprobada' }).eq('id', id);
+                loadAgenciesTab();
+            } catch(e) { console.error('Approve error:', e); }
+        }
+
+        // =====================
+        // TAB: AGENDA
+        // =====================
+        async function loadAgendaTab() {
+            try {
+                const { data } = await supabaseClient.from('leads_matchmaker').select('*').not('last_notified_at', 'is', null).order('last_notified_at', { ascending: true });
+                const leads = data || [];
+
+                const now = Date.now();
+                const today = leads.filter(l => {
+                    const diff = (now - new Date(l.last_notified_at).getTime()) / 3600000;
+                    return diff < 72; // Last 3 days
+                });
+                const overdue = today.filter(l => (now - new Date(l.last_notified_at).getTime()) / 3600000 > 24);
+
+                document.getElementById('agdPending').textContent = today.length;
+                document.getElementById('agdUrgent').textContent = overdue.length;
+                document.getElementById('agdDone').textContent = '—';
+
+                const tbody = document.getElementById('agdTableBody');
+                tbody.innerHTML = today.map(l => {
+                    const hrs = Math.round((now - new Date(l.last_notified_at).getTime()) / 3600000);
+                    const urgClass = hrs > 24 ? 'color:var(--danger);font-weight:700;' : hrs > 12 ? 'color:var(--warning);' : 'color:var(--emerald);';
+                    const urgText = hrs > 24 ? '🔴 URGENTE' : hrs > 12 ? '🟡 Pendiente' : '🟢 Reciente';
+                    const marcas = Array.isArray(l.marcas) ? l.marcas.join(', ') : (l.marcas || '—');
+                    const wa = l.whatsapp || '';
+
+                    return `<tr>
+                        <td style="font-weight:600;color:white;">${l.nombre || '—'}</td>
+                        <td>${wa ? '<a href="https://wa.me/' + wa.replace(/\\D/g,'') + '" target="_blank" style="color:#25D366;text-decoration:none;">💬 ' + wa + '</a>' : '—'}</td>
+                        <td>${marcas}</td>
+                        <td style="font-size:11px;">${hrs}h atrás</td>
+                        <td style="${urgClass}">${urgText}</td>
+                        <td>
+                            <a href="${wa ? 'https://wa.me/' + wa.replace(/\\D/g,'') + '?text=' + encodeURIComponent('Hola ' + (l.nombre||'') + ', soy de Alabol Car Broker. Seguimiento sobre tu búsqueda de auto.') : '#'}"
+                               target="_blank" style="background:#25D366;color:white;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;text-decoration:none;margin-right:4px;">Contactar</a>
+                        </td>
+                    </tr>`;
+                }).join('') || '<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--green-text);">Sin follow-ups pendientes</td></tr>';
+
+            } catch(e) { console.error('Agenda error:', e); }
+        }
+
+        // =====================
+        // TAB: VENDEDORES
+        // =====================
+        async function loadSellersTab() {
+            try {
+                const { data } = await supabaseClient.from('leads_matchmaker').select('nombre, estatus, created_at, whatsapp, marcas, presupuesto_max');
+                const leads = data || [];
+
+                const statusMap = {};
+                leads.forEach(l => {
+                    const s = l.estatus || 'nuevo';
+                    if (!statusMap[s]) statusMap[s] = 0;
+                    statusMap[s]++;
+                });
+
+                document.getElementById('slrTotal').textContent = leads.length;
+                document.getElementById('slrNew').textContent = statusMap['nuevo'] || 0;
+                document.getElementById('slrProcess').textContent = (statusMap['contactado'] || 0) + (statusMap['en_proceso'] || 0);
+                document.getElementById('slrClosed').textContent = statusMap['cerrado'] || statusMap['vendido'] || 0;
+
+                const tbody = document.getElementById('slrTableBody');
+                const recent = leads.slice(0, 30);
+                tbody.innerHTML = recent.map(l => {
+                    const sc = { nuevo: 'var(--emerald)', contactado: 'var(--warning)', en_proceso: '#3b82f6', cerrado: 'var(--gold)' };
+                    const color = sc[l.estatus] || 'var(--green-text)';
+                    return `<tr>
+                        <td style="font-weight:600;color:white;">${l.nombre || '—'}</td>
+                        <td>${Array.isArray(l.marcas) ? l.marcas.join(', ') : (l.marcas || '—')}</td>
+                        <td style="color:var(--gold);">${l.presupuesto_max ? '$' + Number(l.presupuesto_max).toLocaleString() : '—'}</td>
+                        <td><span style="background:${color}22;color:${color};border:1px solid ${color}44;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700;text-transform:uppercase;">${l.estatus || 'nuevo'}</span></td>
+                        <td style="font-size:11px;opacity:0.5;">${new Date(l.created_at).toLocaleDateString('es-MX')}</td>
+                    </tr>`;
+                }).join('') || '<tr><td colspan="5" style="text-align:center;padding:20px;">Sin leads</td></tr>';
+
+            } catch(e) { console.error('Sellers error:', e); }
         }
 
         // Kick off

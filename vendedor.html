@@ -830,13 +830,35 @@ function ah(t) {
 // ── ARRANQUE ──
 function boot() {
   show('spin');
+
+  // 1. Verificar hash token (OAuth direct redirect)
   var h = location.hash;
   if (h && h.indexOf('access_token') >= 0) {
     var p = new URLSearchParams(h.replace(/^#/, ''));
     var t = p.get('access_token');
     if (t) { tok = t; history.replaceState(null, '', location.pathname); }
   }
+
+  // 2. Si no hay hash token, verificar sesión del SDK de Supabase
+  if (!tok && window.supabase) {
+    var sbClient = window.supabase.createClient(S, K);
+    sbClient.auth.getSession().then(function(res) {
+      var session = res.data && res.data.session;
+      if (session && session.access_token) {
+        tok = session.access_token;
+        bootWithToken();
+      } else {
+        show('login');
+      }
+    }).catch(function() { show('login'); });
+    return;
+  }
+
   if (!tok) { show('login'); return; }
+  bootWithToken();
+}
+
+function bootWithToken() {
   fetch(S + '/auth/v1/user', { headers: ah(tok) })
     .then(function(r) { if (!r.ok) throw new Error(); return r.json(); })
     .then(function(u) {

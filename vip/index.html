@@ -1060,13 +1060,21 @@
                 <div class="success-summary" id="summaryBox">
                     <h3>📋 Resumen de tu búsqueda</h3>
                 </div>
+                <!-- Liked cars with cita buttons -->
+                <div id="likedCarsCitas" style="margin-bottom: 16px;"></div>
+
                 <div class="vip-retention">
                     <p>🔔 Estás en nuestra lista VIP. Cuando lleguen autos nuevos que sean tu tipo, serás el/la primer@ en saberlo. Nada de sloppy seconds.</p>
                 </div>
-                <a class="cta-whatsapp" id="ctaWhatsApp" href="#" target="_blank">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
-                    Hablar con mi asesor ahora
-                </a>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <a class="cta-whatsapp" id="ctaWhatsApp" href="#" target="_blank">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+                        Hablar con mi asesor ahora
+                    </a>
+                    <a href="inventario.html" style="display:block;text-align:center;padding:14px;border-radius:14px;background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.25);color:var(--gold);font-weight:600;font-size:14px;text-decoration:none;transition:all 0.3s;">
+                        🔍 Seguir viendo perfiles
+                    </a>
+                </div>
             </div>
 
             <!-- Finding matches overlay -->
@@ -1741,6 +1749,22 @@
         }
 
         summaryBox.innerHTML = html;
+
+        // Render liked cars with cita buttons
+        const citasContainer = document.getElementById('likedCarsCitas');
+        if (likedCars.length > 0) {
+            citasContainer.innerHTML = '<p style="font-size:13px;color:var(--gold);font-weight:600;margin-bottom:10px;text-align:left;">📅 Agenda tu primera cita:</p>' +
+                likedCars.map(c => {
+                    const price = '$' + Number(c.precio_venta || 0).toLocaleString('es-MX');
+                    return `<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(212,175,55,0.06);border:1px solid rgba(212,175,55,0.15);border-radius:12px;padding:12px;margin-bottom:8px;">
+                        <div>
+                            <div style="font-size:13px;font-weight:700;color:white;">${c.marca} ${c.modelo} ${c.anio}</div>
+                            <div style="font-size:12px;color:var(--gold);">${price}</div>
+                        </div>
+                        <a href="agendar-cita.html?auto=${c.id}" style="padding:8px 14px;background:linear-gradient(135deg,#d4af37,#f4e5b0);color:#0a1f1a;border-radius:10px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap;">📅 Agendar</a>
+                    </div>`;
+                }).join('');
+        }
 
         // WhatsApp link
         const msg = encodeURIComponent(`Hola! Acabo de hacer match con ${numLikes} auto${numLikes > 1 ? 's' : ''} en Alabol y quiero la primera cita. Soy ${formData.nombre} de ${formData.ciudad}.`);

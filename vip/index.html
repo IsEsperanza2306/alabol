@@ -538,6 +538,13 @@
         }
         .t-card-details { display: flex; justify-content: space-between; font-size: 12px; color: var(--green-text); margin-top: auto; align-items: center; }
         .t-badge { background: rgba(212,175,55,0.15); border: 1px solid rgba(212,175,55,0.3); color: var(--gold); padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+        .t-card-cita {
+            display: block; text-align: center; margin-top: 10px; padding: 10px;
+            background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.25);
+            border-radius: 10px; color: var(--gold); font-size: 13px; font-weight: 600;
+            text-decoration: none; transition: all 0.3s; font-family: 'Poppins', sans-serif;
+        }
+        .t-card-cita:hover { background: rgba(212,175,55,0.15); border-color: var(--gold); }
 
         /* Action buttons */
         .tinder-actions { display: none; justify-content: center; align-items: center; gap: 30px; margin-top: 20px; width: 100%; }
@@ -1638,6 +1645,7 @@
                             <span>${km}</span>
                             <span class="t-badge">Match Alabol</span>
                         </div>
+                        <a href="agendar-cita.html?auto=${car.id}" class="t-card-cita" onclick="event.stopPropagation();">📅 Agendar primera cita</a>
                     </div>
                 </div>
             `;

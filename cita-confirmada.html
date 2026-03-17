@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="logo-circular.png" type="image/png">
+    <meta property="og:title" content="Cita Confirmada | Alabol Car Broker — El Tinder de los Autos">
+    <meta property="og:description" content="Tu cita ha sido agendada. Tu match te esta esperando.">
+    <meta property="og:image" content="https://alabol.netlify.app/logo-circular.png">
+    <meta property="og:url" content="https://alabol.netlify.app/cita-confirmada.html">
+    <meta property="og:type" content="website">
+    <meta name="description" content="Cita agendada exitosamente con Alabol Car Broker. Tu match sobre ruedas te esta esperando.">
+    <title>Cita Agendada | Alabol — El Tinder de los Autos</title>
+
+    <!-- Google Analytics 4 (GA4) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RMENV8G466"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-RMENV8G466');
+    </script>
+
+    <!-- Meta Pixel (Facebook/Instagram Ads) -->
+    <script>
+        !function (f, b, e, v, n, t, s) {
+            if (f.fbq) return; n = f.fbq = function () {
+                n.callMethod ?
+                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+            n.queue = []; t = b.createElement(e); t.async = !0;
+            t.src = v; s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+        }(window, document, 'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '1921374571843729');
+        fbq('track', 'PageView');
+    </script>
+
+    <!-- Supabase JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #0a1f1a;
+            --bg-mid: #0d2921;
+            --bg-light: #0f3329;
+            --gold: #d4af37;
+            --gold-light: #f4e5b0;
+            --gold-dim: rgba(212, 175, 55, 0.3);
+            --green-text: #a8c5b8;
+            --glass-bg: rgba(15, 51, 41, 0.5);
+            --glass-border: rgba(212, 175, 55, 0.25);
+            --premium-gradient: linear-gradient(135deg, #D4AF37 0%, #F4E5B0 50%, #D4AF37 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-dark);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated gradient background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg,
+                    #0a1f1a 0%, #0d2921 25%, #0f3329 50%, #0d2921 75%, #0a1f1a 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            z-index: -2;
+        }
+
+        /* Gold particles */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(2px 2px at 20% 30%, rgba(212, 175, 55, 0.3), transparent),
+                radial-gradient(2px 2px at 60% 70%, rgba(212, 175, 55, 0.2), transparent),
+                radial-gradient(1px 1px at 50% 50%, rgba(212, 175, 55, 0.2), transparent),
+                radial-gradient(1px 1px at 80% 10%, rgba(212, 175, 55, 0.3), transparent),
+                radial-gradient(1px 1px at 30% 80%, rgba(212, 175, 55, 0.2), transparent),
+                radial-gradient(1.5px 1.5px at 10% 60%, rgba(212, 175, 55, 0.25), transparent),
+                radial-gradient(1px 1px at 90% 40%, rgba(212, 175, 55, 0.2), transparent);
+            background-size: 200% 200%;
+            animation: floatParticles 20s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes floatParticles {
+            0%, 100% { transform: translate(0, 0); }
+            33% { transform: translate(30px, -30px); }
+            66% { transform: translate(-20px, 20px); }
+        }
+
+        /* Gold floating bubbles */
+        .gold-bubbles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .gold-bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(244, 229, 176, 0.4), rgba(212, 175, 55, 0.1));
+            animation: bubbleFloat linear infinite;
+        }
+
+        @keyframes bubbleFloat {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        .container {
+            max-width: 560px;
+            margin: 0 auto;
+            padding: 30px 20px 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Logo Row */
+        .logo-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        .logo-row img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid rgba(212, 175, 55, 0.5);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .logo-row span {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--gold);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.3); }
+            50% { opacity: 1; transform: scale(1.08); }
+            70% { transform: scale(0.95); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { text-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
+            50% { text-shadow: 0 0 25px rgba(212, 175, 55, 0.6), 0 0 50px rgba(212, 175, 55, 0.2); }
+        }
+
+        @keyframes shimmerText {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+
+        /* ========== Celebration Header ========== */
+        .celebration-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .success-icon {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d4af37, #f4e5b0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 42px;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.4), 0 0 60px rgba(212, 175, 55, 0.15);
+            animation: bounceIn 0.8s ease-out 0.3s both;
+        }
+
+        .celebration-header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #d4af37 0%, #f4e5b0 25%, #d4af37 50%, #c9a961 75%, #d4af37 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmerText 3s linear infinite;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+            margin-bottom: 8px;
+            opacity: 0;
+            animation: shimmerText 3s linear infinite, fadeInUp 0.6s ease-out 0.5s forwards;
+        }
+
+        .celebration-header .subtitle {
+            color: var(--green-text);
+            font-size: 15px;
+            font-weight: 400;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out 0.7s forwards;
+        }
+
+        /* ========== Glass Cards ========== */
+        .glass-card {
+            background: rgba(15, 51, 41, 0.5);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        /* ========== Reference Card ========== */
+        .ref-card {
+            text-align: center;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out 0.9s forwards;
+        }
+
+        .ref-card .label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--green-text);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+        }
+
+        .ref-card .ref-number {
+            font-size: 40px;
+            font-weight: 800;
+            color: var(--gold);
+            letter-spacing: 3px;
+            animation: pulseGlow 2s ease-in-out infinite;
+            margin-bottom: 6px;
+        }
+
+        .ref-card .ref-subtitle {
+            font-size: 12px;
+            color: var(--green-text);
+            opacity: 0.8;
+            margin-bottom: 16px;
+        }
+
+        .copy-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            border-radius: 8px;
+            padding: 8px 18px;
+            color: var(--gold-light);
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: rgba(212, 175, 55, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .copy-btn.copied {
+            background: rgba(212, 175, 55, 0.3);
+            border-color: var(--gold);
+        }
+
+        /* ========== Appointment Summary Card ========== */
+        .summary-card {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out 1.1s forwards;
+        }
+
+        .summary-card h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .auto-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.12);
+        }
+
+        .auto-row img {
+            width: 70px;
+            height: 52px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            flex-shrink: 0;
+        }
+
+        .auto-row .auto-info {
+            flex: 1;
+        }
+
+        .auto-row .auto-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .auto-row .auto-price {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .summary-detail {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+        }
+
+        .summary-detail + .summary-detail {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .summary-detail .icon {
+            font-size: 16px;
+            width: 24px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .summary-detail .detail-label {
+            font-size: 12px;
+            color: var(--green-text);
+            opacity: 0.7;
+        }
+
+        .summary-detail .detail-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: white;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(212, 175, 55, 0.12);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--gold-light);
+            margin-top: 12px;
+        }
+
+        .asesor-msg {
+            font-size: 12px;
+            color: var(--green-text);
+            opacity: 0.8;
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        /* ========== Timeline / What's Next ========== */
+        .timeline-section {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out 1.3s forwards;
+        }
+
+        .timeline-section h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 36px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 14px;
+            top: 8px;
+            bottom: 8px;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--gold), rgba(212, 175, 55, 0.15));
+            border-radius: 2px;
+        }
+
+        .timeline-step {
+            position: relative;
+            padding-bottom: 24px;
+            opacity: 0;
+        }
+
+        .timeline-step:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-step.animate {
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -36px;
+            top: 2px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .timeline-dot.completed {
+            background: linear-gradient(135deg, #d4af37, #f4e5b0);
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+        }
+
+        .timeline-dot.pending {
+            background: rgba(212, 175, 55, 0.2);
+            border: 2px solid var(--gold);
+        }
+
+        .timeline-dot.upcoming {
+            background: rgba(15, 51, 41, 0.6);
+            border: 2px solid rgba(212, 175, 55, 0.25);
+        }
+
+        .timeline-step .step-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: white;
+            margin-bottom: 2px;
+        }
+
+        .timeline-step .step-desc {
+            font-size: 12px;
+            color: var(--green-text);
+            opacity: 0.7;
+        }
+
+        .timeline-step.is-completed .step-label {
+            color: var(--gold-light);
+        }
+
+        .timeline-step.is-pending .step-label {
+            color: white;
+        }
+
+        .timeline-step.is-upcoming .step-label {
+            color: rgba(255, 255, 255, 0.45);
+        }
+
+        .timeline-step.is-upcoming .step-desc {
+            opacity: 0.4;
+        }
+
+        /* ========== Action Buttons ========== */
+        .actions-section {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out 1.7s forwards;
+        }
+
+        .btn-gold {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            background: linear-gradient(135deg, #d4af37, #f4e5b0, #d4af37);
+            background-size: 200% 200%;
+            color: #0a1f1a;
+            animation: shimmerText 3s linear infinite;
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
+            margin-bottom: 12px;
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(212, 175, 55, 0.45);
+        }
+
+        .btn-whatsapp {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            background: linear-gradient(135deg, #25d366, #128c7e);
+            color: white;
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.25);
+            margin-bottom: 12px;
+        }
+
+        .btn-whatsapp:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(37, 211, 102, 0.4);
+        }
+
+        .btn-secondary {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 14px 20px;
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            background: rgba(212, 175, 55, 0.08);
+            color: var(--gold-light);
+            margin-bottom: 12px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(212, 175, 55, 0.18);
+            transform: translateY(-2px);
+        }
+
+        /* ========== Tips Section ========== */
+        .tips-card {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out 1.9s forwards;
+        }
+
+        .tips-card h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .tip-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 0;
+        }
+
+        .tip-item + .tip-item {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .tip-item .tip-icon {
+            font-size: 16px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .tip-item .tip-text {
+            font-size: 13px;
+            color: var(--green-text);
+            line-height: 1.5;
+        }
+
+        /* ========== Footer ========== */
+        .footer {
+            text-align: center;
+            padding: 40px 20px 30px;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out 2.1s forwards;
+        }
+
+        .footer-divider {
+            width: 60px;
+            height: 2px;
+            background: var(--premium-gradient);
+            margin: 0 auto 20px;
+            border-radius: 2px;
+        }
+
+        .footer p {
+            font-size: 12px;
+            color: var(--green-text);
+            opacity: 0.6;
+            margin-bottom: 6px;
+        }
+
+        .footer-whatsapp {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--gold);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 10px;
+            transition: opacity 0.3s;
+        }
+
+        .footer-whatsapp:hover {
+            opacity: 0.8;
+        }
+
+        /* ========== No auto photo placeholder ========== */
+        .auto-photo-placeholder {
+            width: 70px;
+            height: 52px;
+            border-radius: 8px;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        /* ========== Responsive ========== */
+        @media (max-width: 560px) {
+            .container {
+                padding: 20px 16px 50px;
+            }
+
+            .celebration-header h1 {
+                font-size: 26px;
+            }
+
+            .ref-card .ref-number {
+                font-size: 32px;
+                letter-spacing: 2px;
+            }
+
+            .auto-row img,
+            .auto-photo-placeholder {
+                width: 60px;
+                height: 45px;
+            }
+
+            .btn-gold,
+            .btn-whatsapp,
+            .btn-secondary {
+                font-size: 14px;
+                padding: 12px 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Gold Bubbles Background -->
+    <div class="gold-bubbles" id="goldBubbles"></div>
+
+    <div class="container">
+
+        <!-- Logo -->
+        <div class="logo-row">
+            <img src="logo-circular.png" alt="Alabol">
+            <span>Alabol</span>
+        </div>
+
+        <!-- ========== Celebration Header ========== -->
+        <div class="celebration-header">
+            <div class="success-icon">💌</div>
+            <h1>¡Cita Agendada!</h1>
+            <p class="subtitle">Tu match te está esperando. No lo dejes plantado 😏</p>
+        </div>
+
+        <!-- ========== Reference Number Card ========== -->
+        <div class="glass-card ref-card">
+            <div class="label">Tu número de referencia</div>
+            <div class="ref-number" id="refNumber">---</div>
+            <div class="ref-subtitle">Guárdalo — lo necesitarás al llegar</div>
+            <button class="copy-btn" id="copyBtn" onclick="copyRef()">
+                📋 Copiar referencia
+            </button>
+        </div>
+
+        <!-- ========== Appointment Summary Card ========== -->
+        <div class="glass-card summary-card" id="summaryCard" style="display:none;">
+            <h3>📋 Resumen de tu cita</h3>
+
+            <div class="auto-row" id="autoRow">
+                <!-- filled by JS -->
+            </div>
+
+            <div id="summaryDetails">
+                <!-- filled by JS -->
+            </div>
+
+            <div style="text-align:center;">
+                <div class="status-badge">⏳ Pendiente de confirmación</div>
+                <div class="asesor-msg">Tu asesor confirmará en máx. 2 horas</div>
+            </div>
+        </div>
+
+        <!-- ========== What's Next Timeline ========== -->
+        <div class="glass-card timeline-section">
+            <h3>¿Qué sigue?</h3>
+            <div class="timeline">
+                <div class="timeline-step is-completed" data-delay="1500">
+                    <div class="timeline-dot completed">✓</div>
+                    <div class="step-label">📨 Solicitud enviada</div>
+                    <div class="step-desc">Tu cita fue registrada correctamente</div>
+                </div>
+                <div class="timeline-step is-pending" data-delay="1800">
+                    <div class="timeline-dot pending">2</div>
+                    <div class="step-label">👤 Asesor confirma tu cita</div>
+                    <div class="step-desc">Recibirás confirmación por WhatsApp</div>
+                </div>
+                <div class="timeline-step is-upcoming" data-delay="2100">
+                    <div class="timeline-dot upcoming">3</div>
+                    <div class="step-label">📅 Día de la cita</div>
+                    <div class="step-desc">Llega puntual y pregunta por tu asesor</div>
+                </div>
+                <div class="timeline-step is-upcoming" data-delay="2400">
+                    <div class="timeline-dot upcoming">4</div>
+                    <div class="step-label">💘 ¡Match perfecto!</div>
+                    <div class="step-desc">Encuentra tu auto ideal</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== Action Buttons ========== -->
+        <div class="actions-section">
+            <button class="btn-gold" id="btnCalendar" onclick="downloadICS()">
+                📅 Guardar en mi Calendario
+            </button>
+            <a class="btn-whatsapp" id="btnWhatsapp" href="#" target="_blank">
+                📱 Compartir por WhatsApp
+            </a>
+            <a class="btn-secondary" href="inventario.html">
+                🔍 Seguir viendo perfiles
+            </a>
+        </div>
+
+        <!-- ========== Tips Section ========== -->
+        <div class="glass-card tips-card">
+            <h3>💡 Tips para tu primera cita</h3>
+            <div class="tip-item">
+                <span class="tip-icon">📋</span>
+                <span class="tip-text">Lleva identificación oficial</span>
+            </div>
+            <div class="tip-item">
+                <span class="tip-icon">🔖</span>
+                <span class="tip-text">Menciona tu referencia Alabol al llegar</span>
+            </div>
+            <div class="tip-item">
+                <span class="tip-icon">⏰</span>
+                <span class="tip-text">La cita dura aprox. 30-45 minutos</span>
+            </div>
+            <div class="tip-item">
+                <span class="tip-icon">📸</span>
+                <span class="tip-text">Toma fotos y notas del auto</span>
+            </div>
+        </div>
+
+        <!-- ========== Footer ========== -->
+        <div class="footer">
+            <div class="footer-divider"></div>
+            <p>Alabol Car Broker — El Tinder de los Autos</p>
+            <p>Tu match sobre ruedas te espera</p>
+            <a class="footer-whatsapp" href="https://wa.me/528180101000" target="_blank">
+                💬 ¿Dudas? Escríbenos por WhatsApp
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        // =============================================
+        // Supabase
+        // =============================================
+        const SUPABASE_URL = 'https://rgnunjngtsgqgvplawfr.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // =============================================
+        // URL Params
+        // =============================================
+        const urlParams = new URLSearchParams(window.location.search);
+        const refParam = urlParams.get('ref') || '';
+        const autoParam = urlParams.get('auto') || '';
+
+        // =============================================
+        // Cita Data (from sessionStorage or fallback)
+        // =============================================
+        let citaData = null;
+
+        try {
+            const stored = sessionStorage.getItem('alabol_cita');
+            if (stored) {
+                citaData = JSON.parse(stored);
+                // Clean up after reading
+                sessionStorage.removeItem('alabol_cita');
+            }
+        } catch (e) {
+            console.warn('Could not read sessionStorage:', e);
+        }
+
+        // Use ref from URL param or from stored data
+        const referencia = refParam || (citaData && citaData.referencia) || '';
+
+        // =============================================
+        // Render Page
+        // =============================================
+        function renderPage() {
+            // Reference number
+            const refEl = document.getElementById('refNumber');
+            refEl.textContent = referencia || '---';
+
+            if (!citaData) {
+                // No detailed data — just show reference
+                return;
+            }
+
+            // Show summary card
+            const summaryCard = document.getElementById('summaryCard');
+            summaryCard.style.display = 'block';
+
+            // Auto row
+            const autoRow = document.getElementById('autoRow');
+            const autoName = `${citaData.auto_marca || ''} ${citaData.auto_modelo || ''} ${citaData.auto_anio || ''}`.trim();
+            const autoPrice = citaData.auto_precio ? `$${Number(citaData.auto_precio).toLocaleString('es-MX')}` : '';
+
+            let photoHTML = '';
+            if (citaData.auto_foto) {
+                photoHTML = `<img src="${citaData.auto_foto}" alt="${autoName}" onerror="this.outerHTML='<div class=\\'auto-photo-placeholder\\'>🚗</div>'">`;
+            } else {
+                photoHTML = '<div class="auto-photo-placeholder">🚗</div>';
+            }
+
+            autoRow.innerHTML = `
+                ${photoHTML}
+                <div class="auto-info">
+                    <div class="auto-name">${autoName || 'Auto seleccionado'}</div>
+                    ${autoPrice ? `<div class="auto-price">${autoPrice}</div>` : ''}
+                </div>
+            `;
+
+            // Summary details
+            const detailsEl = document.getElementById('summaryDetails');
+            let detailsHTML = '';
+
+            if (citaData.fecha) {
+                detailsHTML += `
+                    <div class="summary-detail">
+                        <span class="icon">📅</span>
+                        <div>
+                            <div class="detail-label">Fecha</div>
+                            <div class="detail-value">${formatFecha(citaData.fecha)}</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (citaData.hora) {
+                detailsHTML += `
+                    <div class="summary-detail">
+                        <span class="icon">🕐</span>
+                        <div>
+                            <div class="detail-label">Hora</div>
+                            <div class="detail-value">${formatHora(citaData.hora)}</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            detailsEl.innerHTML = detailsHTML;
+
+            // WhatsApp button
+            const waBtn = document.getElementById('btnWhatsapp');
+            const waText = `¡Tengo cita para ver un ${autoName} en Alabol! 🚗 Ref: ${referencia} — ${formatFecha(citaData.fecha)} a las ${formatHora(citaData.hora)}`;
+            waBtn.href = `https://wa.me/?text=${encodeURIComponent(waText)}`;
+        }
+
+        // =============================================
+        // Date Formatting
+        // =============================================
+        function formatFecha(fechaStr) {
+            if (!fechaStr) return '';
+            try {
+                const [year, month, day] = fechaStr.split('-').map(Number);
+                const date = new Date(year, month - 1, day);
+                const dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+                const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+                return `${dias[date.getDay()]} ${day} de ${meses[date.getMonth()]}, ${year}`;
+            } catch (e) {
+                return fechaStr;
+            }
+        }
+
+        function formatHora(horaStr) {
+            if (!horaStr) return '';
+            try {
+                const [h, m] = horaStr.split(':').map(Number);
+                const period = h >= 12 ? 'PM' : 'AM';
+                const hour12 = h % 12 || 12;
+                return `${hour12}:${String(m).padStart(2, '0')} ${period}`;
+            } catch (e) {
+                return horaStr;
+            }
+        }
+
+        // =============================================
+        // Copy Reference
+        // =============================================
+        function copyRef() {
+            if (!referencia) return;
+            navigator.clipboard.writeText(referencia).then(() => {
+                const btn = document.getElementById('copyBtn');
+                btn.innerHTML = '✅ Copiado';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.innerHTML = '📋 Copiar referencia';
+                    btn.classList.remove('copied');
+                }, 2500);
+            }).catch(() => {
+                // Fallback for older browsers
+                const ta = document.createElement('textarea');
+                ta.value = referencia;
+                ta.style.position = 'fixed';
+                ta.style.left = '-9999px';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                const btn = document.getElementById('copyBtn');
+                btn.innerHTML = '✅ Copiado';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.innerHTML = '📋 Copiar referencia';
+                    btn.classList.remove('copied');
+                }, 2500);
+            });
+        }
+
+        // =============================================
+        // Download ICS (Calendar)
+        // =============================================
+        function downloadICS() {
+            if (!citaData || !citaData.fecha || !citaData.hora) {
+                alert('No hay datos de fecha/hora para generar el evento.');
+                return;
+            }
+
+            const autoName = `${citaData.auto_marca || ''} ${citaData.auto_modelo || ''} ${citaData.auto_anio || ''}`.trim();
+            const agencia = citaData.agencia_nombre || 'Alabol';
+
+            // Parse date and time
+            const [year, month, day] = citaData.fecha.split('-').map(Number);
+            const [hour, minute] = citaData.hora.split(':').map(Number);
+
+            // Create start date (local time) — format as UTC offset
+            const startDate = new Date(year, month - 1, day, hour, minute, 0);
+            const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // +1 hour
+
+            function toICSDate(d) {
+                return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+            }
+
+            const icsContent = [
+                'BEGIN:VCALENDAR',
+                'VERSION:2.0',
+                'PRODID:-//Alabol//Cita//ES',
+                'CALSCALE:GREGORIAN',
+                'BEGIN:VEVENT',
+                `DTSTART:${toICSDate(startDate)}`,
+                `DTEND:${toICSDate(endDate)}`,
+                `SUMMARY:Cita Alabol — ${autoName}`,
+                `DESCRIPTION:Ref: ${referencia}\\nPregunta por tu asesor al llegar.\\nMenciona tu referencia Alabol.`,
+                `LOCATION:Agencia ${agencia}`,
+                'STATUS:CONFIRMED',
+                'END:VEVENT',
+                'END:VCALENDAR'
+            ].join('\r\n');
+
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `cita-alabol-${referencia || 'evento'}.ics`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // =============================================
+        // Confetti on Load
+        // =============================================
+        function fireConfetti() {
+            if (typeof confetti !== 'function') return;
+
+            // Initial burst
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#d4af37', '#f4e5b0', '#c9a961', '#ffffff', '#25d366']
+            });
+
+            // Second burst after 300ms
+            setTimeout(() => {
+                confetti({
+                    particleCount: 60,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0, y: 0.6 },
+                    colors: ['#d4af37', '#f4e5b0', '#c9a961']
+                });
+                confetti({
+                    particleCount: 60,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1, y: 0.6 },
+                    colors: ['#d4af37', '#f4e5b0', '#c9a961']
+                });
+            }, 300);
+        }
+
+        // =============================================
+        // Gold Bubbles
+        // =============================================
+        function createGoldBubbles() {
+            const container = document.getElementById('goldBubbles');
+            const bubbleCount = 12;
+            for (let i = 0; i < bubbleCount; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'gold-bubble';
+                const size = Math.random() * 6 + 2;
+                bubble.style.width = size + 'px';
+                bubble.style.height = size + 'px';
+                bubble.style.left = Math.random() * 100 + '%';
+                bubble.style.animationDuration = (Math.random() * 15 + 10) + 's';
+                bubble.style.animationDelay = (Math.random() * 10) + 's';
+                container.appendChild(bubble);
+            }
+        }
+
+        // =============================================
+        // Timeline Staggered Animation
+        // =============================================
+        function animateTimeline() {
+            const steps = document.querySelectorAll('.timeline-step');
+            steps.forEach((step) => {
+                const delay = parseInt(step.getAttribute('data-delay') || '1500');
+                setTimeout(() => {
+                    step.classList.add('animate');
+                }, delay);
+            });
+        }
+
+        // =============================================
+        // Init
+        // =============================================
+        createGoldBubbles();
+        renderPage();
+
+        window.addEventListener('load', () => {
+            fireConfetti();
+            animateTimeline();
+        });
+    </script>
+
+</body>
+
+</html>

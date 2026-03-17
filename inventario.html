@@ -1059,6 +1059,20 @@
             font-weight: 400;
         }
 
+        /* Agendar cita button */
+        .btn-cita {
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            width: 100%; padding: 10px; border-radius: 10px;
+            background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.25);
+            color: var(--gold); font-family: inherit; font-size: 13px; font-weight: 600;
+            text-decoration: none; cursor: pointer; transition: all 0.3s;
+            letter-spacing: 0.5px;
+        }
+        .btn-cita:hover {
+            background: rgba(212,175,55,0.15); border-color: var(--gold);
+            transform: translateY(-2px); box-shadow: 0 4px 15px rgba(212,175,55,0.2);
+        }
+
         /* Inventory live counter in subtitle */
         .inventory-live-count {
             display: inline-block;
@@ -1941,10 +1955,13 @@
                         ${matchIndicator}
                         ${viewsIndicator}
 
-                        <div class="actions">
+                        <div class="actions" style="flex-direction:column; gap:8px;">
                             <button class="btn btn-primary" style="width:100%; letter-spacing: 1px; font-weight: 800;">
                                 ${ctaText} <i class="fa-solid fa-arrow-right" style="font-size: 10px"></i>
                             </button>
+                            <a href="agendar-cita.html?auto=${auto.id}" class="btn-cita" onclick="event.stopPropagation();">
+                                📅 Agendar primera cita
+                            </a>
                         </div>
                     </div>
                 </div>

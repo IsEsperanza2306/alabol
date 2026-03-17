@@ -1183,8 +1183,57 @@
         <!-- ============================================== -->
         <div id="tab-agenda" class="tab-content">
             <div class="header">
-                <h1>Agenda del Día</h1>
-                <p>Follow-ups programados y acciones pendientes</p>
+                <h1>📅 Agenda de Citas</h1>
+                <p>Citas agendadas por clientes del Matchmaker e Inventario</p>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-title">Citas Pendientes</div>
+                    <div class="metric-value" id="citasPendientes">-</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">Confirmadas</div>
+                    <div class="metric-value" id="citasConfirmadas" style="color:var(--success);">-</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">Completadas</div>
+                    <div class="metric-value" id="citasCompletadas">-</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-title">Ventas</div>
+                    <div class="metric-value" id="citasVendidas" style="color:var(--gold);">-</div>
+                </div>
+            </div>
+
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h2>Citas Activas</h2>
+                    <button class="btn-action" onclick="loadCitasTab()">🔄 Actualizar</button>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ref</th>
+                                <th>Cliente</th>
+                                <th>Auto</th>
+                                <th>Fecha/Hora</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="citasTableBody">
+                            <tr><td colspan="6" style="text-align:center;padding:20px;">Cargando citas...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <hr style="border:none;border-top:1px solid var(--border);margin:30px 0;">
+            <div class="header" style="margin-bottom:20px;">
+                <h2>Follow-ups de Leads</h2>
+                <p>Seguimiento de leads del matchmaker</p>
             </div>
 
             <div class="metrics-grid">
@@ -1350,6 +1399,7 @@
             } else if (tabId === 'agencies') {
                 loadAgenciesTab();
             } else if (tabId === 'agenda') {
+                loadCitasTab();
                 loadAgendaTab();
             } else if (tabId === 'sellers') {
                 loadSellersTab();
@@ -2348,6 +2398,74 @@
 
         // =====================
         // TAB: AGENDA
+        // =====================
+        // CITAS MANAGEMENT
+        // =====================
+        async function loadCitasTab() {
+            try {
+                const { data: citas } = await supabaseClient.from('citas').select('*').order('fecha', { ascending: true });
+                const all = citas || [];
+
+                // Metrics
+                document.getElementById('citasPendientes').textContent = all.filter(c => c.estatus === 'solicitada').length;
+                document.getElementById('citasConfirmadas').textContent = all.filter(c => c.estatus === 'confirmada').length;
+                document.getElementById('citasCompletadas').textContent = all.filter(c => c.estatus === 'completada').length;
+                document.getElementById('citasVendidas').textContent = all.filter(c => c.vendido === 'si').length;
+
+                const tbody = document.getElementById('citasTableBody');
+                if (all.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text-muted);">No hay citas agendadas aún</td></tr>';
+                    return;
+                }
+
+                const statusColors = { solicitada: '#f59e0b', confirmada: '#10b981', completada: '#3b82f6', cancelada: '#ef4444', reprogramada: '#a78bfa', no_asistio: '#ef4444' };
+                const statusLabels = { solicitada: 'Pendiente', confirmada: 'Confirmada', completada: 'Completada', cancelada: 'Cancelada', reprogramada: 'Reprogramada', no_asistio: 'No asistió' };
+
+                tbody.innerHTML = all.map(c => {
+                    const color = statusColors[c.estatus] || '#888';
+                    const label = statusLabels[c.estatus] || c.estatus;
+                    const fechaStr = new Date(c.fecha + 'T12:00:00').toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric', month: 'short' });
+                    const waLink = `https://wa.me/${(c.whatsapp||'').replace(/[^0-9]/g, '')}`;
+
+                    return `<tr>
+                        <td><strong style="color:var(--gold);">${c.referencia}</strong></td>
+                        <td>
+                            <div>${c.nombre}</div>
+                            <div style="font-size:11px;"><a href="${waLink}" target="_blank" style="color:#25D366;">${c.whatsapp}</a></div>
+                            ${c.email ? `<div style="font-size:10px;color:var(--text-muted);">${c.email}</div>` : ''}
+                        </td>
+                        <td>${c.auto_marca || ''} ${c.auto_modelo || ''} ${c.auto_anio || ''}<br><span style="font-size:11px;color:var(--gold);">$${Number(c.auto_precio||0).toLocaleString('es-MX')}</span></td>
+                        <td>${fechaStr}<br><span style="font-size:12px;">${c.hora}</span></td>
+                        <td><span style="background:${color}22;color:${color};padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;">${label}</span></td>
+                        <td style="white-space:nowrap;">
+                            ${c.estatus === 'solicitada' ? `<button class="btn-action" onclick="updateCitaStatus('${c.id}','confirmada')" style="font-size:11px;">✅ Confirmar</button>` : ''}
+                            ${c.estatus === 'confirmada' ? `<button class="btn-action" onclick="updateCitaStatus('${c.id}','completada')" style="font-size:11px;">✔️ Completada</button>` : ''}
+                            ${c.estatus === 'completada' && c.vendido !== 'si' ? `<button class="btn-action" onclick="updateCitaVendido('${c.id}')" style="font-size:11px;background:var(--gold);color:var(--bg-dark);">💰 Vendido</button>` : ''}
+                            ${c.estatus === 'solicitada' || c.estatus === 'confirmada' ? `<button class="btn-action" onclick="updateCitaStatus('${c.id}','cancelada')" style="font-size:11px;color:var(--danger);">✕</button>` : ''}
+                            <a href="${waLink}?text=${encodeURIComponent('Hola '+c.nombre+', soy de Alabol. Respecto a tu cita '+c.referencia+'...')}" target="_blank" class="btn-action" style="font-size:11px;text-decoration:none;">💬</a>
+                        </td>
+                    </tr>`;
+                }).join('');
+
+            } catch (e) {
+                console.error('Error loading citas:', e);
+            }
+        }
+
+        async function updateCitaStatus(id, newStatus) {
+            const updates = { estatus: newStatus };
+            if (newStatus === 'confirmada') updates.confirmada_at = new Date().toISOString();
+            const { error } = await supabaseClient.from('citas').update(updates).eq('id', id);
+            if (error) { alert('Error: ' + error.message); return; }
+            loadCitasTab();
+        }
+
+        async function updateCitaVendido(id) {
+            const { error } = await supabaseClient.from('citas').update({ vendido: 'si' }).eq('id', id);
+            if (error) { alert('Error: ' + error.message); return; }
+            loadCitasTab();
+        }
+
         // =====================
         async function loadAgendaTab() {
             try {

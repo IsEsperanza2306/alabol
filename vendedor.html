@@ -866,10 +866,11 @@ function bootWithToken() {
       uid = u.id;
 
       // Check admin role — only admins can access vendor portal
-      var sbClient = window.supabase.createClient(S, K);
-      sbClient.from('perfiles').select('rol').eq('id', u.id).eq('activo', true).single()
-        .then(function(res) {
-          if (!res.data || res.data.rol !== 'admin') {
+      fetch(S + '/rest/v1/perfiles?id=eq.' + u.id + '&activo=eq.true&select=rol', {
+        headers: { 'apikey': K, 'Authorization': 'Bearer ' + tok }
+      }).then(function(r) { return r.json(); }).then(function(perfiles) {
+          var perfil = perfiles && perfiles[0];
+          if (!perfil || perfil.rol !== 'admin') {
             showComingSoon();
             return;
           }
@@ -884,7 +885,7 @@ function bootWithToken() {
           show('dash');
           loadCars();
         })
-        .catch(function() { showComingSoon(); });
+        }).catch(function() { showComingSoon(); });
     })
     .catch(function() { tok = null; show('login'); });
 }

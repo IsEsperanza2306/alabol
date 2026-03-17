@@ -45,6 +45,9 @@
     <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
+    <!-- QRCode.js -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
@@ -710,6 +713,15 @@
             flex-shrink: 0;
         }
 
+        /* ========== QR Code Section ========== */
+        .qr-section { text-align: center; margin: 20px 0; }
+        .qr-label { font-size: 13px; color: var(--gold); font-weight: 600; margin-bottom: 12px; }
+        .qr-container {
+            display: inline-block; padding: 16px; background: white; border-radius: 16px;
+            box-shadow: 0 0 30px rgba(212,175,55,0.3);
+        }
+        .qr-hint { font-size: 11px; color: var(--green-text); margin-top: 10px; opacity: 0.7; }
+
         /* ========== Responsive ========== */
         @media (max-width: 560px) {
             .container {
@@ -769,6 +781,13 @@
             <button class="copy-btn" id="copyBtn" onclick="copyRef()">
                 📋 Copiar referencia
             </button>
+        </div>
+
+        <!-- ========== QR Code Section ========== -->
+        <div class="qr-section" id="qrSection" style="display:none; opacity:0; animation: fadeInUp 0.6s ease-out 1.0s forwards;">
+            <p class="qr-label">Tu pase de entrada</p>
+            <div id="qrCode" class="qr-container"></div>
+            <p class="qr-hint">Muestra este QR al llegar a la agencia</p>
         </div>
 
         <!-- ========== Appointment Summary Card ========== -->
@@ -903,6 +922,18 @@
             // Reference number
             const refEl = document.getElementById('refNumber');
             refEl.textContent = referencia || '---';
+
+            // Generate QR code if we have a referencia
+            if (referencia && typeof QRCode !== 'undefined') {
+                var qrSection = document.getElementById('qrSection');
+                qrSection.style.display = 'block';
+                new QRCode(document.getElementById('qrCode'), {
+                    text: 'https://alabol.netlify.app/checkin.html?ref=' + referencia,
+                    width: 180, height: 180,
+                    colorDark: '#0a1f1a', colorLight: '#ffffff',
+                    correctLevel: QRCode.CorrectLevel.M
+                });
+            }
 
             if (!citaData) {
                 // No detailed data — just show reference

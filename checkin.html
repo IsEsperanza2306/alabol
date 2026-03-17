@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="logo-circular.png" type="image/png">
+    <meta property="og:title" content="Check-in de Cita | Alabol Car Broker">
+    <meta property="og:description" content="Check-in de cita para asesores de agencia. Alabol Car Broker.">
+    <meta property="og:image" content="https://alabol.netlify.app/logo-circular.png">
+    <meta property="og:url" content="https://alabol.netlify.app/checkin.html">
+    <meta property="og:type" content="website">
+    <meta name="description" content="Check-in de cita para asesores de agencia. Alabol Car Broker.">
+    <title>Check-in de Cita | Alabol Car Broker</title>
+
+    <!-- Supabase JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #0a1f1a;
+            --bg-mid: #0d2921;
+            --bg-light: #0f3329;
+            --gold: #d4af37;
+            --gold-light: #f4e5b0;
+            --gold-dim: rgba(212, 175, 55, 0.3);
+            --green-text: #a8c5b8;
+            --glass-bg: rgba(15, 51, 41, 0.5);
+            --glass-border: rgba(212, 175, 55, 0.25);
+            --premium-gradient: linear-gradient(135deg, #D4AF37 0%, #F4E5B0 50%, #D4AF37 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-dark);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated gradient background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg,
+                    #0a1f1a 0%, #0d2921 25%, #0f3329 50%, #0d2921 75%, #0a1f1a 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            z-index: -2;
+        }
+
+        /* Gold particles */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(2px 2px at 20% 30%, rgba(212, 175, 55, 0.3), transparent),
+                radial-gradient(2px 2px at 60% 70%, rgba(212, 175, 55, 0.2), transparent),
+                radial-gradient(1px 1px at 50% 50%, rgba(212, 175, 55, 0.2), transparent),
+                radial-gradient(1px 1px at 80% 10%, rgba(212, 175, 55, 0.3), transparent),
+                radial-gradient(1px 1px at 30% 80%, rgba(212, 175, 55, 0.2), transparent),
+                radial-gradient(1.5px 1.5px at 10% 60%, rgba(212, 175, 55, 0.25), transparent),
+                radial-gradient(1px 1px at 90% 40%, rgba(212, 175, 55, 0.2), transparent);
+            background-size: 200% 200%;
+            animation: floatParticles 20s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes floatParticles {
+            0%, 100% { transform: translate(0, 0); }
+            33% { transform: translate(30px, -30px); }
+            66% { transform: translate(-20px, 20px); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.3); }
+            50% { opacity: 1; transform: scale(1.08); }
+            70% { transform: scale(0.95); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { text-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
+            50% { text-shadow: 0 0 25px rgba(212, 175, 55, 0.6), 0 0 50px rgba(212, 175, 55, 0.2); }
+        }
+
+        @keyframes shimmerText {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+
+        /* Gold floating bubbles */
+        .gold-bubbles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .gold-bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(244, 229, 176, 0.4), rgba(212, 175, 55, 0.1));
+            animation: bubbleFloat linear infinite;
+        }
+
+        @keyframes bubbleFloat {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        .container {
+            max-width: 560px;
+            margin: 0 auto;
+            padding: 30px 20px 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Logo Row */
+        .logo-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        .logo-row img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid rgba(212, 175, 55, 0.5);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .logo-row span {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--gold);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        /* ========== Page Header ========== */
+        .page-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #d4af37 0%, #f4e5b0 25%, #d4af37 50%, #c9a961 75%, #d4af37 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmerText 3s linear infinite, fadeInUp 0.6s ease-out 0.3s forwards;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+            margin-bottom: 8px;
+            opacity: 0;
+        }
+
+        .page-header .ref-big {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--gold);
+            letter-spacing: 3px;
+            animation: pulseGlow 2s ease-in-out infinite;
+            margin-top: 8px;
+            opacity: 0;
+            animation: pulseGlow 2s ease-in-out infinite, fadeInUp 0.6s ease-out 0.5s forwards;
+        }
+
+        /* ========== Glass Cards ========== */
+        .glass-card {
+            background: rgba(15, 51, 41, 0.5);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ========== Info Rows ========== */
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+        }
+
+        .info-row + .info-row {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .info-row .icon {
+            font-size: 16px;
+            width: 24px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .info-row .info-label {
+            font-size: 12px;
+            color: var(--green-text);
+            opacity: 0.7;
+        }
+
+        .info-row .info-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: white;
+        }
+
+        .info-row .info-value a {
+            color: var(--gold-light);
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+
+        .info-row .info-value a:hover {
+            opacity: 0.8;
+        }
+
+        .info-row .info-value.gold {
+            color: var(--gold);
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        /* ========== Status Badge ========== */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .status-badge.yellow {
+            background: rgba(255, 193, 7, 0.15);
+            border: 1px solid rgba(255, 193, 7, 0.4);
+            color: #ffc107;
+        }
+
+        .status-badge.green {
+            background: rgba(37, 211, 102, 0.15);
+            border: 1px solid rgba(37, 211, 102, 0.4);
+            color: #25d366;
+        }
+
+        .status-badge.blue {
+            background: rgba(66, 133, 244, 0.15);
+            border: 1px solid rgba(66, 133, 244, 0.4);
+            color: #4285f4;
+        }
+
+        .status-section {
+            text-align: center;
+            margin-top: 12px;
+        }
+
+        /* ========== Check-in Button ========== */
+        .checkin-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 14px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #25d366, #128c7e);
+            color: white;
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.3);
+            margin-top: 24px;
+        }
+
+        .checkin-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(37, 211, 102, 0.45);
+        }
+
+        .checkin-btn:disabled {
+            opacity: 0.85;
+            cursor: default;
+            background: linear-gradient(135deg, #25d366, #128c7e);
+        }
+
+        .checkin-btn.completed {
+            background: linear-gradient(135deg, #4285f4, #1a73e8);
+            box-shadow: 0 4px 20px rgba(66, 133, 244, 0.3);
+        }
+
+        .checkin-msg {
+            font-size: 13px;
+            color: var(--green-text);
+            text-align: center;
+            margin-top: 12px;
+            opacity: 0.8;
+        }
+
+        /* ========== Already Completed ========== */
+        .already-done {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .already-done .done-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .already-done .done-text {
+            font-size: 15px;
+            font-weight: 600;
+            color: #4285f4;
+            margin-bottom: 6px;
+        }
+
+        .already-done .done-timestamp {
+            font-size: 12px;
+            color: var(--green-text);
+            opacity: 0.7;
+        }
+
+        /* ========== Notes Banner ========== */
+        .notes-banner {
+            background: rgba(212, 175, 55, 0.08);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            padding: 18px;
+            margin-top: 24px;
+        }
+
+        .notes-banner p {
+            font-size: 12px;
+            color: var(--green-text);
+            line-height: 1.7;
+            opacity: 0.85;
+        }
+
+        .notes-banner p + p {
+            margin-top: 4px;
+        }
+
+        .notes-banner a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        /* ========== Error Screen ========== */
+        .error-screen {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .error-screen .error-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .error-screen h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #ff6b6b;
+            margin-bottom: 10px;
+        }
+
+        .error-screen p {
+            font-size: 14px;
+            color: var(--green-text);
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        /* ========== Loading ========== */
+        .loading-screen {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .loading-screen .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid rgba(212, 175, 55, 0.2);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-screen p {
+            font-size: 14px;
+            color: var(--green-text);
+            opacity: 0.7;
+        }
+
+        /* ========== Success checkmark animation ========== */
+        .success-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 31, 26, 0.85);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .success-overlay.active {
+            display: flex;
+        }
+
+        .success-overlay .check-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #25d366, #128c7e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 52px;
+            animation: bounceIn 0.7s ease-out;
+            box-shadow: 0 0 40px rgba(37, 211, 102, 0.4);
+            margin-bottom: 20px;
+        }
+
+        .success-overlay .success-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            animation: fadeInUp 0.5s ease-out 0.3s both;
+        }
+
+        .success-overlay .success-sub {
+            font-size: 14px;
+            color: var(--green-text);
+            margin-top: 8px;
+            animation: fadeInUp 0.5s ease-out 0.5s both;
+        }
+
+        /* ========== Responsive ========== */
+        @media (max-width: 560px) {
+            .container {
+                padding: 20px 16px 50px;
+            }
+
+            .page-header h1 {
+                font-size: 24px;
+            }
+
+            .page-header .ref-big {
+                font-size: 28px;
+                letter-spacing: 2px;
+            }
+
+            .checkin-btn {
+                font-size: 15px;
+                padding: 14px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Gold Bubbles Background -->
+    <div class="gold-bubbles" id="goldBubbles"></div>
+
+    <!-- Success Overlay -->
+    <div class="success-overlay" id="successOverlay">
+        <div class="check-circle">&#10003;</div>
+        <div class="success-text">Asistencia Registrada</div>
+        <div class="success-sub">Gracias. Alabol ha sido notificado.</div>
+    </div>
+
+    <div class="container">
+
+        <!-- Logo -->
+        <div class="logo-row">
+            <img src="logo-circular.png" alt="Alabol">
+            <span>Alabol</span>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingScreen" class="loading-screen">
+            <div class="spinner"></div>
+            <p>Buscando cita...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="errorScreen" class="error-screen" style="display:none;">
+            <div class="error-icon">&#10060;</div>
+            <h2>Referencia no encontrada</h2>
+            <p>No pudimos encontrar una cita con esta referencia. Verifica el enlace o contacta a Alabol.</p>
+            <div class="notes-banner" style="margin-top:30px;">
+                <p>Para dudas: <a href="https://wa.me/525568667571" target="_blank">WhatsApp 525568667571</a></p>
+            </div>
+        </div>
+
+        <!-- Check-in Content (hidden until loaded) -->
+        <div id="checkinContent" style="display:none;">
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1>Check-in de Cita</h1>
+                <div class="ref-big" id="refBig">---</div>
+            </div>
+
+            <!-- Client Info -->
+            <div class="glass-card" style="opacity:0; animation: fadeInUp 0.6s ease-out 0.6s forwards;">
+                <div class="card-title">&#128100; Datos del Cliente</div>
+
+                <div class="info-row">
+                    <span class="icon">&#128100;</span>
+                    <div>
+                        <div class="info-label">Nombre</div>
+                        <div class="info-value" id="infoNombre">—</div>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <span class="icon">&#128241;</span>
+                    <div>
+                        <div class="info-label">WhatsApp</div>
+                        <div class="info-value" id="infoWhatsapp">—</div>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <span class="icon">&#128231;</span>
+                    <div>
+                        <div class="info-label">Email</div>
+                        <div class="info-value" id="infoEmail">—</div>
+                    </div>
+                </div>
+
+                <div class="info-row" id="infoCiudadRow" style="display:none;">
+                    <span class="icon">&#128205;</span>
+                    <div>
+                        <div class="info-label">Ciudad</div>
+                        <div class="info-value" id="infoCiudad">—</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- What They Want -->
+            <div class="glass-card" style="opacity:0; animation: fadeInUp 0.6s ease-out 0.8s forwards;">
+                <div class="card-title">&#128663; Auto de interes</div>
+
+                <div class="info-row">
+                    <span class="icon">&#128663;</span>
+                    <div>
+                        <div class="info-label">Auto de interes</div>
+                        <div class="info-value" id="infoAuto">—</div>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <span class="icon">&#128176;</span>
+                    <div>
+                        <div class="info-label">Precio</div>
+                        <div class="info-value gold" id="infoPrecio">—</div>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <span class="icon">&#128197;</span>
+                    <div>
+                        <div class="info-label">Cita agendada para</div>
+                        <div class="info-value" id="infoFechaHora">—</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status & Check-in -->
+            <div class="glass-card" style="opacity:0; animation: fadeInUp 0.6s ease-out 1.0s forwards;">
+                <div class="status-section" id="statusSection">
+                    <!-- Filled by JS -->
+                </div>
+
+                <div id="checkinArea">
+                    <!-- Filled by JS -->
+                </div>
+            </div>
+
+            <!-- Notes Banner -->
+            <div class="notes-banner" style="opacity:0; animation: fadeInUp 0.6s ease-out 1.2s forwards;">
+                <p>Este cliente llego a traves de <strong style="color:var(--gold);">Alabol Car Broker</strong></p>
+                <p>Referencia: <strong id="notesRef" style="color:var(--gold);">—</strong> — Periodo de proteccion activo</p>
+                <p>Para dudas: <a href="https://wa.me/525568667571" target="_blank">WhatsApp 525568667571</a></p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        // =============================================
+        // Supabase
+        // =============================================
+        const SUPABASE_URL = 'https://rgnunjngtsgqgvplawfr.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // =============================================
+        // Get reference from URL
+        // =============================================
+        const urlParams = new URLSearchParams(window.location.search);
+        const ref = urlParams.get('ref') || '';
+
+        // =============================================
+        // Date Formatting
+        // =============================================
+        function formatFecha(fechaStr) {
+            if (!fechaStr) return '';
+            try {
+                const [year, month, day] = fechaStr.split('-').map(Number);
+                const date = new Date(year, month - 1, day);
+                const dias = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
+                const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+                return `${dias[date.getDay()]} ${day} de ${meses[date.getMonth()]}, ${year}`;
+            } catch (e) {
+                return fechaStr;
+            }
+        }
+
+        function formatHora(horaStr) {
+            if (!horaStr) return '';
+            try {
+                const [h, m] = horaStr.split(':').map(Number);
+                const period = h >= 12 ? 'PM' : 'AM';
+                const hour12 = h % 12 || 12;
+                return `${hour12}:${String(m).padStart(2, '0')} ${period}`;
+            } catch (e) {
+                return horaStr;
+            }
+        }
+
+        // =============================================
+        // Gold Bubbles
+        // =============================================
+        function createGoldBubbles() {
+            const container = document.getElementById('goldBubbles');
+            const bubbleCount = 12;
+            for (let i = 0; i < bubbleCount; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'gold-bubble';
+                const size = Math.random() * 6 + 2;
+                bubble.style.width = size + 'px';
+                bubble.style.height = size + 'px';
+                bubble.style.left = Math.random() * 100 + '%';
+                bubble.style.animationDuration = (Math.random() * 15 + 10) + 's';
+                bubble.style.animationDelay = (Math.random() * 10) + 's';
+                container.appendChild(bubble);
+            }
+        }
+
+        // =============================================
+        // Confetti
+        // =============================================
+        function fireCheckinConfetti() {
+            if (typeof confetti !== 'function') return;
+
+            confetti({
+                particleCount: 120,
+                spread: 80,
+                origin: { y: 0.6 },
+                colors: ['#25d366', '#128c7e', '#d4af37', '#f4e5b0', '#ffffff']
+            });
+
+            setTimeout(function() {
+                confetti({
+                    particleCount: 60,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0, y: 0.6 },
+                    colors: ['#25d366', '#128c7e', '#d4af37']
+                });
+                confetti({
+                    particleCount: 60,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1, y: 0.6 },
+                    colors: ['#25d366', '#128c7e', '#d4af37']
+                });
+            }, 300);
+        }
+
+        // =============================================
+        // Render check-in card
+        // =============================================
+        function renderCheckin(cita) {
+            document.getElementById('loadingScreen').style.display = 'none';
+            document.getElementById('checkinContent').style.display = 'block';
+
+            // Reference
+            document.getElementById('refBig').textContent = cita.referencia || ref;
+            document.getElementById('notesRef').textContent = cita.referencia || ref;
+
+            // Client info
+            document.getElementById('infoNombre').textContent = cita.nombre || '—';
+
+            if (cita.whatsapp) {
+                const waLink = document.createElement('a');
+                waLink.href = 'https://wa.me/' + cita.whatsapp.replace(/\D/g, '');
+                waLink.target = '_blank';
+                waLink.textContent = cita.whatsapp;
+                document.getElementById('infoWhatsapp').innerHTML = '';
+                document.getElementById('infoWhatsapp').appendChild(waLink);
+            } else {
+                document.getElementById('infoWhatsapp').textContent = '—';
+            }
+
+            document.getElementById('infoEmail').textContent = cita.email || '—';
+
+            if (cita.ciudad) {
+                document.getElementById('infoCiudadRow').style.display = 'flex';
+                document.getElementById('infoCiudad').textContent = cita.ciudad;
+            }
+
+            // Auto info
+            var autoName = [cita.auto_marca, cita.auto_modelo, cita.auto_anio].filter(Boolean).join(' ');
+            document.getElementById('infoAuto').textContent = autoName || '—';
+
+            if (cita.auto_precio) {
+                document.getElementById('infoPrecio').textContent = '$' + Number(cita.auto_precio).toLocaleString('es-MX') + ' MXN';
+            } else {
+                document.getElementById('infoPrecio').textContent = '—';
+            }
+
+            var fechaText = formatFecha(cita.fecha);
+            var horaText = formatHora(cita.hora);
+            var fechaHoraStr = '';
+            if (fechaText && horaText) {
+                fechaHoraStr = fechaText + ' a las ' + horaText;
+            } else if (fechaText) {
+                fechaHoraStr = fechaText;
+            } else if (horaText) {
+                fechaHoraStr = horaText;
+            }
+            document.getElementById('infoFechaHora').textContent = fechaHoraStr || '—';
+
+            // Status
+            var statusSection = document.getElementById('statusSection');
+            var checkinArea = document.getElementById('checkinArea');
+
+            if (cita.estatus === 'completada') {
+                statusSection.innerHTML = '<div class="status-badge blue">&#10004;&#65039; Cliente ya asistio</div>';
+                checkinArea.innerHTML =
+                    '<div class="already-done">' +
+                        '<div class="done-icon">&#10004;&#65039;</div>' +
+                        '<div class="done-text">Este cliente ya hizo check-in</div>' +
+                        '<div class="done-timestamp">' + (cita.updated_at ? 'Registrado: ' + new Date(cita.updated_at).toLocaleString('es-MX') : '') + '</div>' +
+                    '</div>';
+            } else if (cita.estatus === 'confirmada') {
+                statusSection.innerHTML = '<div class="status-badge green">&#9989; Cita confirmada</div>';
+                checkinArea.innerHTML =
+                    '<button class="checkin-btn" id="checkinBtn" onclick="doCheckin(\'' + cita.id + '\')">' +
+                        '&#9989; Confirmar asistencia del cliente' +
+                    '</button>';
+            } else if (cita.estatus === 'solicitada') {
+                statusSection.innerHTML = '<div class="status-badge yellow">&#9203; Pendiente de confirmacion</div>';
+                checkinArea.innerHTML =
+                    '<button class="checkin-btn" id="checkinBtn" onclick="doCheckin(\'' + cita.id + '\')">' +
+                        '&#9989; Confirmar asistencia del cliente' +
+                    '</button>';
+            } else {
+                statusSection.innerHTML = '<div class="status-badge yellow">Estado: ' + (cita.estatus || 'desconocido') + '</div>';
+                checkinArea.innerHTML = '';
+            }
+        }
+
+        // =============================================
+        // Do Check-in
+        // =============================================
+        async function doCheckin(citaId) {
+            var btn = document.getElementById('checkinBtn');
+            if (!btn) return;
+
+            btn.disabled = true;
+            btn.innerHTML = '&#8987; Registrando...';
+
+            try {
+                var { error } = await supabaseClient
+                    .from('citas')
+                    .update({ estatus: 'completada' })
+                    .eq('id', citaId);
+
+                if (error) throw error;
+
+                // Show success overlay
+                var overlay = document.getElementById('successOverlay');
+                overlay.classList.add('active');
+
+                // Confetti
+                fireCheckinConfetti();
+
+                // Hide overlay after 2.5s
+                setTimeout(function() {
+                    overlay.classList.remove('active');
+                }, 2500);
+
+                // Update button
+                btn.classList.add('completed');
+                btn.innerHTML = '&#10004;&#65039; Asistencia registrada';
+                btn.disabled = true;
+
+                // Update status badge
+                document.getElementById('statusSection').innerHTML = '<div class="status-badge blue">&#10004;&#65039; Cliente ya asistio</div>';
+
+                // Show confirmation message
+                var msgEl = document.createElement('p');
+                msgEl.className = 'checkin-msg';
+                msgEl.textContent = 'Gracias. Alabol ha sido notificado.';
+                btn.parentNode.appendChild(msgEl);
+
+            } catch (err) {
+                console.error('Error updating cita:', err);
+                btn.disabled = false;
+                btn.innerHTML = '&#9989; Confirmar asistencia del cliente';
+                alert('Error al registrar la asistencia. Intenta de nuevo.');
+            }
+        }
+
+        // =============================================
+        // Show error
+        // =============================================
+        function showError() {
+            document.getElementById('loadingScreen').style.display = 'none';
+            document.getElementById('errorScreen').style.display = 'block';
+        }
+
+        // =============================================
+        // Init
+        // =============================================
+        createGoldBubbles();
+
+        (async function() {
+            if (!ref) {
+                showError();
+                return;
+            }
+
+            try {
+                var { data: cita, error } = await supabaseClient
+                    .from('citas')
+                    .select('*')
+                    .eq('referencia', ref)
+                    .single();
+
+                if (error || !cita) {
+                    showError();
+                    return;
+                }
+
+                renderCheckin(cita);
+
+            } catch (err) {
+                console.error('Error fetching cita:', err);
+                showError();
+            }
+        })();
+    </script>
+
+</body>
+
+</html>

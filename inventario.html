@@ -13,11 +13,17 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-RMENV8G466"></script>
     <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RMENV8G466');</script>
     <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1921374571843729');fbq('track','PageView');</script>
-    <title>Inventario Seminuevos VIP | Alabol</title>
+    <title>Perfiles Disponibles | Alabol — El Tinder de los Autos</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        @property --card-angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+
         :root {
             --bg-dark: #0a1f1a;
             --bg-mid: #0d2921;
@@ -377,6 +383,7 @@
             overflow: hidden;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
+            perspective: 1000px;
         }
 
         .card:hover {
@@ -389,21 +396,29 @@
         .card-img-container {
             width: 100%;
             height: 220px;
-            background: #000;
+            background: linear-gradient(90deg, rgba(15,51,41,0.8) 25%, rgba(212,175,55,0.08) 50%, rgba(15,51,41,0.8) 75%);
+            background-size: 200% 100%;
+            animation: imgShimmer 1.5s ease-in-out infinite;
             position: relative;
             overflow: hidden;
+            transition: transform 0.4s ease;
         }
+
+        .card-img-container:has(img[complete]) { animation: none; background: #000; }
+
+        .card:hover .card-img-container { transform: scale(1.03); }
 
         .card-img-placeholder {
             width: 100%;
             height: 100%;
             object-fit: cover;
             opacity: 0.7;
-            transition: opacity 0.3s;
+            transition: opacity 0.3s, transform 8s ease;
         }
 
         .card:hover .card-img-placeholder {
             opacity: 1;
+            transform: scale(1.08);
         }
 
         /* BADGES OVERLAY */
@@ -705,15 +720,9 @@
         }
 
         @keyframes cardIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            0% { opacity: 0; transform: translateY(40px) scale(0.92); }
+            60% { opacity: 1; transform: translateY(-8px) scale(1.02); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         @media (max-width: 768px) {
@@ -1058,6 +1067,99 @@
             font-size: 15px;
             margin-top: 4px;
         }
+
+        /* === VISUAL UPGRADES: Retention & Psychology === */
+
+        /* Scan line sweep on cards */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -100%; left: 0;
+            width: 100%; height: 50%;
+            background: linear-gradient(180deg, transparent 0%, rgba(212,175,55,0.02) 40%, rgba(212,175,55,0.04) 50%, rgba(212,175,55,0.02) 60%, transparent 100%);
+            animation: cardScanLine 8s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 10;
+        }
+        @keyframes cardScanLine { 0% { top: -50%; } 100% { top: 150%; } }
+
+        /* Price tag glow pulse */
+        .price-tag {
+            animation: priceGlow 3s ease-in-out infinite;
+        }
+        @keyframes priceGlow {
+            0%, 100% { text-shadow: 0 0 15px rgba(212,175,55,0.3); }
+            50% { text-shadow: 0 0 25px rgba(212,175,55,0.6), 0 0 40px rgba(212,175,55,0.2); }
+        }
+
+        /* Gradient border animation on card hover */
+        .card::after {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 21px;
+            background: conic-gradient(from var(--card-angle, 0deg), transparent, rgba(212,175,55,0.4), transparent, rgba(212,175,55,0.1), transparent);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .card:hover::after {
+            opacity: 1;
+            animation: cardBorderSpin 4s linear infinite;
+        }
+        @keyframes cardBorderSpin {
+            to { --card-angle: 360deg; }
+        }
+
+        /* Image loading shimmer */
+        @keyframes imgShimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Wishlist heart pop animation */
+        .wishlist-btn.active {
+            animation: heartPop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        @keyframes heartPop {
+            0% { transform: scale(1); }
+            30% { transform: scale(1.4); }
+            60% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+        /* Stats bar number pop animation */
+        .stat-value {
+            animation: statPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) both;
+        }
+        .stats-bar .stat-item:nth-child(1) .stat-value { animation-delay: 0.3s; }
+        .stats-bar .stat-item:nth-child(2) .stat-value { animation-delay: 0.5s; }
+        .stats-bar .stat-item:nth-child(3) .stat-value { animation-delay: 0.7s; }
+        @keyframes statPop {
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.15); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Modal backdrop blur intensifies */
+        .modal-overlay {
+            transition: backdrop-filter 0.5s ease, opacity 0.3s ease;
+        }
+        .modal-overlay.active {
+            backdrop-filter: blur(15px);
+        }
+
+        /* Scroll hint */
+        .scroll-hint {
+            text-align: center; padding: 20px; color: var(--gold-dim);
+            font-size: 12px; display: flex; flex-direction: column; align-items: center; gap: 4px;
+            animation: hintBounce 2s ease-in-out infinite;
+        }
+        .scroll-hint span:first-child { font-size: 18px; }
+        @keyframes hintBounce {
+            0%, 100% { transform: translateY(0); opacity: 0.5; }
+            50% { transform: translateY(-8px); opacity: 1; }
+        }
     </style>
 <style id="alabol-nav-styles">
   :root {
@@ -1333,8 +1435,8 @@
                     style="width: 100px; height: 100px; object-fit: contain; position: relative; z-index: 2; filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.4)); transition: transform 0.3s ease;"
                     onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
             </div>
-            <h1 class="title">Alabol | Inventario VIP</h1>
-            <p class="subtitle">Descubre tu próximo auto entre nuestra selección premium garantizada.</p>
+            <h1 class="title">Perfiles Disponibles</h1>
+            <p class="subtitle">Conoce a los solteros más codiciados del mercado. Todos verificados, sin red flags.</p>
             <p class="inventory-live-count" id="inventoryLiveCount"></p>
         </div>
 
@@ -1344,7 +1446,7 @@
                 <label>Buscador</label>
                 <div class="search-input-wrapper">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="invSearchText" class="glass-input" placeholder="Ej: Mini Cooper S..."
+                    <input type="text" id="invSearchText" class="glass-input" placeholder="Busca tu crush... (ej: Toyota RAV4)"
                         oninput="triggerInvFilter()">
                 </div>
             </div>
@@ -1389,11 +1491,11 @@
         <div class="stats-bar">
             <div class="stat-item">
                 <div class="stat-value" id="totalAutos">0</div>
-                <div class="stat-label">Unidades Mostradas</div>
+                <div class="stat-label">Solteros Disponibles</div>
             </div>
             <div class="stat-item">
                 <div class="stat-value">100%</div>
-                <div class="stat-label">Garantizados</div>
+                <div class="stat-label">Verificados</div>
             </div>
             <div class="stat-item clickable" id="favToggle" onclick="toggleFavoritesFilter()">
                 <div class="stat-value" id="favCount">0 <div class="fav-count-badge" id="favBadge"
@@ -1410,6 +1512,11 @@
 
         <!-- VEHICLES GRID -->
         <div class="grid" id="vehiculosGrid"></div>
+
+        <div class="scroll-hint" id="scrollHint">
+            <span>&#8593;</span>
+            <span>Hay más perfiles abajo</span>
+        </div>
 
     </div>
 
@@ -1736,7 +1843,7 @@
             const isAlabol = auto.agencia.toLowerCase() === 'alabol' || auto.agencia.trim() === '';
             const badgeClass = isAlabol ? 'badge-alabol' : 'badge-agency';
             const badgeIcon = isAlabol ? 'fa-check-circle' : 'fa-star';
-            const badgeText = isAlabol ? 'Venta Directa' : 'Verificado';
+            const badgeText = isAlabol ? 'Exclusivo Alabol' : 'Match verificado';
 
             let imgUrl = "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&w=800";
             if (auto.url_fotos) {
@@ -1753,9 +1860,9 @@
             // Semáforo de confianza
             const tl = auto.trustLevel || 'red';
             const trustConfig = {
-                green: { icon: 'fa-shield-halved', text: 'Validado', color: '#10b981', bg: 'rgba(16,185,129,0.15)', border: 'rgba(16,185,129,0.4)' },
+                green: { icon: 'fa-shield-halved', text: 'Perfil verificado', color: '#10b981', bg: 'rgba(16,185,129,0.15)', border: 'rgba(16,185,129,0.4)' },
                 yellow: { icon: 'fa-clock', text: 'En revisión', color: '#f59e0b', bg: 'rgba(245,158,11,0.15)', border: 'rgba(245,158,11,0.4)' },
-                red: { icon: 'fa-circle-exclamation', text: 'Sin validar', color: '#ef4444', bg: 'rgba(239,68,68,0.15)', border: 'rgba(239,68,68,0.4)' }
+                red: { icon: 'fa-circle-exclamation', text: 'Pendiente', color: '#ef4444', bg: 'rgba(239,68,68,0.15)', border: 'rgba(239,68,68,0.4)' }
             };
             const tc = trustConfig[tl];
 
@@ -1780,18 +1887,18 @@
 
             // Match count (from real total_matches)
             const matchIndicator = auto.matchCount > 0
-                ? `<div class="match-indicator">💘 ${auto.matchCount} persona${auto.matchCount !== 1 ? 's' : ''} hicieron match con este auto</div>`
+                ? `<div class="match-indicator">💘 ${auto.matchCount} persona${auto.matchCount !== 1 ? 's' : ''} ya le${auto.matchCount !== 1 ? 's' : ''} dio like</div>`
                 : '';
 
             // Views count (from real vistas)
             const viewsIndicator = auto.views > 0
-                ? `<div class="views-indicator">👁 ${auto.views} visita${auto.views !== 1 ? 's' : ''}</div>`
+                ? `<div class="views-indicator">👁 ${auto.views} persona${auto.views !== 1 ? 's' : ''} vieron este perfil</div>`
                 : '';
 
             // CTA text based on trust level (dating app language)
-            let ctaText = '🔍 Explorar este auto';
-            if (tl === 'green') ctaText = '💘 Conocer este auto';
-            else if (tl === 'yellow') ctaText = '👀 Ver más de este auto';
+            let ctaText = '🔍 Ver perfil completo';
+            if (tl === 'green') ctaText = '💘 Conocer a este candidato';
+            else if (tl === 'yellow') ctaText = '👀 Stalkearlo un poco';
 
             return `
                 <div class="card" onclick="openCarDetails('${auto.id}')" style="cursor:pointer;">
@@ -1975,7 +2082,7 @@
             // Update live inventory counter in header
             const liveCountEl = document.getElementById('inventoryLiveCount');
             if (liveCountEl && database_inventory.length > 0) {
-                liveCountEl.textContent = `${database_inventory.length} autos disponibles ahora`;
+                liveCountEl.textContent = `🔥 ${database_inventory.length} perfiles activos buscando dueñ@`;
             }
 
             if (dataToRender.length === 0) {
@@ -2154,6 +2261,12 @@
       });
     });
   })();
+</script>
+<script>
+window.addEventListener('scroll', function() {
+    var hint = document.getElementById('scrollHint');
+    if (hint && window.scrollY > 200) hint.style.display = 'none';
+}, { passive: true });
 </script>
 </body>
 

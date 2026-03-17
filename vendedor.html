@@ -864,18 +864,33 @@ function bootWithToken() {
     .then(function(u) {
       if (!u || !u.id) throw new Error();
       uid = u.id;
-      var m = u.user_metadata || {};
-      var nm = m.full_name || m.name || u.email || 'Vendedor';
-      var fn = nm.split(' ')[0];
-      g('gn').textContent = fn;
-      g('uname').textContent = fn;
-      var pic = m.avatar_url || m.picture;
-      if (pic) { var img = document.createElement('img'); img.src = pic; g('uav').appendChild(img); }
-      else g('uav').textContent = (nm[0] || '?').toUpperCase();
-      show('dash');
-      loadCars();
+
+      // Check admin role — only admins can access vendor portal
+      var sbClient = window.supabase.createClient(S, K);
+      sbClient.from('perfiles').select('rol').eq('id', u.id).eq('activo', true).single()
+        .then(function(res) {
+          if (!res.data || res.data.rol !== 'admin') {
+            showComingSoon();
+            return;
+          }
+          var m = u.user_metadata || {};
+          var nm = m.full_name || m.name || u.email || 'Vendedor';
+          var fn = nm.split(' ')[0];
+          g('gn').textContent = fn;
+          g('uname').textContent = fn;
+          var pic = m.avatar_url || m.picture;
+          if (pic) { var img = document.createElement('img'); img.src = pic; g('uav').appendChild(img); }
+          else g('uav').textContent = (nm[0] || '?').toUpperCase();
+          show('dash');
+          loadCars();
+        })
+        .catch(function() { showComingSoon(); });
     })
     .catch(function() { tok = null; show('login'); });
+}
+
+function showComingSoon() {
+  document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:Poppins,sans-serif;background:#0a1f1a;color:white;text-align:center;padding:40px;"><div style="max-width:480px;"><div style="width:100px;height:100px;margin:0 auto 24px;border-radius:50%;background:linear-gradient(135deg,rgba(212,175,55,0.2),rgba(212,175,55,0.05));border:2px solid rgba(212,175,55,0.3);display:flex;align-items:center;justify-content:center;font-size:48px;">🚀</div><h1 style="font-size:28px;font-weight:800;background:linear-gradient(135deg,#d4af37,#f4e5b0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px;">Próximamente</h1><p style="color:#a8c5b8;font-size:15px;line-height:1.6;margin-bottom:24px;">El portal de vendedores independientes está en desarrollo. Estamos enfocados en conectar agencias con compradores calificados.</p><div style="background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.2);border-radius:14px;padding:16px;margin-bottom:24px;"><p style="color:#d4af37;font-size:14px;font-weight:600;margin:0 0 4px;">¿Eres agencia y quieres mover tu inventario de seminuevos?</p><p style="color:#a8c5b8;font-size:12px;margin:0;">Te conectamos con compradores que ya están buscando exactamente lo que tienes.</p></div><a href="https://wa.me/525568667571?text=Hola%20Alabol!%20Soy%20agencia%20y%20me%20interesa%20mover%20mi%20inventario%20de%20seminuevos." style="display:inline-flex;align-items:center;gap:10px;background:#25D366;color:white;padding:14px 28px;border-radius:14px;text-decoration:none;font-weight:700;font-size:15px;box-shadow:0 0 25px rgba(37,211,102,0.3);">💬 Contactar a Alabol</a><br><a href="./index.html" style="display:inline-block;margin-top:16px;color:#d4af37;text-decoration:none;font-size:13px;font-weight:500;">← Volver al inicio</a></div></div>';
 }
 
 // ── AUTH ──

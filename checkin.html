@@ -663,11 +663,23 @@
                 </div>
             </div>
 
+            <!-- Protection Period -->
+            <div id="protectionBanner" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:14px;padding:14px 16px;margin-top:16px;display:none;opacity:0;animation:fadeInUp 0.6s ease-out 1s forwards;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                    <span style="font-size:16px;">🛡️</span>
+                    <span style="font-size:13px;font-weight:700;color:#ef4444;">Lead protegido por Alabol</span>
+                </div>
+                <p style="font-size:11px;color:var(--green-text);margin:0;line-height:1.5;">
+                    Período de protección: <strong id="protectionDates" style="color:white;">—</strong><br>
+                    Cualquier venta de este auto a este cliente durante el período de protección está sujeta a comisión Alabol.
+                </p>
+            </div>
+
             <!-- Notes Banner -->
             <div class="notes-banner" style="opacity:0; animation: fadeInUp 0.6s ease-out 1.2s forwards;">
-                <p>Este cliente llego a traves de <strong style="color:var(--gold);">Alabol Car Broker</strong></p>
-                <p>Referencia: <strong id="notesRef" style="color:var(--gold);">—</strong> — Periodo de proteccion activo</p>
-                <p>Para dudas: <a href="https://wa.me/525568667571" target="_blank">WhatsApp 525568667571</a></p>
+                <p>Este cliente llegó a través de <strong style="color:var(--gold);">Alabol Car Broker</strong></p>
+                <p>Referencia: <strong id="notesRef" style="color:var(--gold);">—</strong></p>
+                <p>Contacto Alabol: <a href="https://wa.me/525568667571" target="_blank" style="color:#25D366;">WhatsApp</a></p>
             </div>
 
         </div>
@@ -769,6 +781,19 @@
         // =============================================
         // Render check-in card
         // =============================================
+        // Audit trail — logs every interaction silently
+        async function logCitaEvento(citaId, referencia, evento) {
+            try {
+                await supabaseClient.from('cita_eventos').insert([{
+                    cita_id: citaId,
+                    referencia: referencia,
+                    evento: evento,
+                    user_agent: navigator.userAgent,
+                    metadata: { url: window.location.href, timestamp: new Date().toISOString() }
+                }]);
+            } catch(e) { /* silent */ }
+        }
+
         function renderCheckin(cita) {
             document.getElementById('loadingScreen').style.display = 'none';
             document.getElementById('checkinContent').style.display = 'block';
@@ -777,21 +802,31 @@
             document.getElementById('refBig').textContent = cita.referencia || ref;
             document.getElementById('notesRef').textContent = cita.referencia || ref;
 
-            // Client info
+            // Client info — MASKED for protection
             document.getElementById('infoNombre').textContent = cita.nombre || '—';
 
+            // Mask WhatsApp: show only last 4 digits
             if (cita.whatsapp) {
-                const waLink = document.createElement('a');
-                waLink.href = 'https://wa.me/' + cita.whatsapp.replace(/\D/g, '');
-                waLink.target = '_blank';
-                waLink.textContent = cita.whatsapp;
-                document.getElementById('infoWhatsapp').innerHTML = '';
-                document.getElementById('infoWhatsapp').appendChild(waLink);
+                const digits = cita.whatsapp.replace(/\D/g, '');
+                const masked = '●●●●●●' + digits.slice(-4);
+                document.getElementById('infoWhatsapp').textContent = masked;
+                document.getElementById('infoWhatsapp').style.color = 'var(--text-muted)';
             } else {
                 document.getElementById('infoWhatsapp').textContent = '—';
             }
 
-            document.getElementById('infoEmail').textContent = cita.email || '—';
+            // Mask email: show only domain
+            if (cita.email) {
+                const parts = cita.email.split('@');
+                const masked = parts[0].charAt(0) + '●●●●@' + (parts[1] || '');
+                document.getElementById('infoEmail').textContent = masked;
+                document.getElementById('infoEmail').style.color = 'var(--text-muted)';
+            } else {
+                document.getElementById('infoEmail').textContent = '—';
+            }
+
+            // Log QR scan event
+            logCitaEvento(cita.id, cita.referencia, 'qr_escaneado');
 
             if (cita.ciudad) {
                 document.getElementById('infoCiudadRow').style.display = 'flex';
@@ -819,6 +854,15 @@
                 fechaHoraStr = horaText;
             }
             document.getElementById('infoFechaHora').textContent = fechaHoraStr || '—';
+
+            // Protection period
+            if (cita.periodo_proteccion) {
+                var protBanner = document.getElementById('protectionBanner');
+                protBanner.style.display = 'block';
+                var startDate = formatFecha(cita.fecha);
+                var endDate = formatFecha(cita.periodo_proteccion);
+                document.getElementById('protectionDates').textContent = startDate + ' — ' + endDate;
+            }
 
             // Status
             var statusSection = document.getElementById('statusSection');
@@ -867,6 +911,9 @@
                     .eq('id', citaId);
 
                 if (error) throw error;
+
+                // Log check-in event
+                logCitaEvento(citaId, document.getElementById('refBig').textContent, 'checkin_confirmado');
 
                 // Show success overlay
                 var overlay = document.getElementById('successOverlay');

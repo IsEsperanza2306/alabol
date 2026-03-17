@@ -1824,7 +1824,7 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
                 <div style="font-size:11px;color:#a8c5b8;margin-top:4px;opacity:0.7;">Publica y conecta con compradores VIP</div>
             </a>
 
-            <a href="./formulario-match.html" style="text-decoration:none;background:rgba(13,38,28,0.7);border:1px solid rgba(212,175,55,0.2);border-radius:16px;padding:20px 16px;text-align:center;transition:all 0.3s;backdrop-filter:blur(8px);"
+            <a href="./vip/index.html" style="text-decoration:none;background:rgba(13,38,28,0.7);border:1px solid rgba(212,175,55,0.2);border-radius:16px;padding:20px 16px;text-align:center;transition:all 0.3s;backdrop-filter:blur(8px);"
                onmouseover="this.style.borderColor='rgba(212,175,55,0.5)';this.style.transform='translateY(-3px)'"
                onmouseout="this.style.borderColor='rgba(212,175,55,0.2)';this.style.transform='translateY(0)'">
                 <div style="font-size:28px;margin-bottom:8px;">🔍</div>
@@ -2187,7 +2187,7 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
         <h2 style="font-size:2.5rem; margin-bottom:1.5rem; text-transform:uppercase;">¡Match Perfecto Detectado! 💖</h2>
         <p style="font-size:1.2rem; color:#a8c5b8; max-width:500px; margin-bottom:2.5rem;">Hemos analizado tus gustos y
             tenemos 5 opciones similares en nuestra red privada. ¿Quieres verlas ahora?</p>
-        <a href="./formulario-match.html" class="btn-premium-gold" style="padding:18px 40px; font-size:1.2rem;">Sí,
+        <a href="./vip/index.html" class="btn-premium-gold" style="padding:18px 40px; font-size:1.2rem;">Sí,
             completar mi Matchmaker</a>
         <button onclick="document.getElementById('journeyOverlay').style.display='none'"
             style="margin-top:1.5rem; background:transparent; border:none; color:var(--gold); cursor:pointer; text-decoration:underline;">Seguir
@@ -2363,7 +2363,7 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
 
             // No need to grab data from active modal here, as heartInModal handles saving
 
-            window.location.href = './formulario-match.html';
+            window.location.href = './vip/index.html';
         }
 
         // New function for heart button inside modal
@@ -2686,7 +2686,7 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
                         <div style="text-align:center; padding:3rem; background:rgba(212,175,55,0.05); border-radius:30px; border:1px dashed var(--gold); display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%;">
                             <i class="fa-solid fa-heart-crack" style="font-size:3rem; color:var(--gold); margin-bottom:20px;"></i>
                             <h3 style="color:var(--gold); margin-bottom:15px;">¡Te quedaste sin candidatos!</h3>
-                            <a href="./formulario-match.html" class="btn-premium-gold" style="padding:12px 30px; font-size:1rem;">Abrir Matchmaker VIP</a>
+                            <a href="./vip/index.html" class="btn-premium-gold" style="padding:12px 30px; font-size:1rem;">Abrir Matchmaker VIP</a>
                         </div>
                     `;
                 }, 400);
@@ -2762,7 +2762,7 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
 
         function triggerMatch() {
             if (typeof trackFunnelStep === 'function') trackFunnelStep(4, 'solicitar_match_whatsapp_alabol');
-            window.location.href = './formulario-match.html';
+            window.location.href = './vip/index.html';
         }
 
         document.addEventListener('DOMContentLoaded', async () => {

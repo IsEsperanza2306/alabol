@@ -7,8 +7,8 @@
     <link rel="icon" href="logo-circular.png" type="image/png">
     <meta property="og:title" content="Cita Confirmada | Alabol Car Broker — El Tinder de los Autos">
     <meta property="og:description" content="Tu cita ha sido agendada. Tu match te esta esperando.">
-    <meta property="og:image" content="https://alabol.netlify.app/logo-circular.png">
-    <meta property="og:url" content="https://alabol.netlify.app/cita-confirmada.html">
+    <meta property="og:image" content="https://alabolcar.com.mx/logo-circular.png">
+    <meta property="og:url" content="https://alabolcar.com.mx/cita-confirmada.html">
     <meta property="og:type" content="website">
     <meta name="description" content="Cita agendada exitosamente con Alabol Car Broker. Tu match sobre ruedas te esta esperando.">
     <title>Cita Agendada | Alabol — El Tinder de los Autos</title>
@@ -932,7 +932,7 @@
                 var qrSection = document.getElementById('qrSection');
                 qrSection.style.display = 'block';
                 new QRCode(document.getElementById('qrCode'), {
-                    text: 'https://alabol.netlify.app/checkin.html?ref=' + referencia,
+                    text: 'https://alabolcar.com.mx/checkin.html?ref=' + referencia,
                     width: 180, height: 180,
                     colorDark: '#0a1f1a', colorLight: '#ffffff',
                     correctLevel: QRCode.CorrectLevel.M
@@ -1000,7 +1000,7 @@
 
             // WhatsApp button
             const waBtn = document.getElementById('btnWhatsapp');
-            const waText = `¡Tengo cita para ver un ${autoName} en Alabol!\n\n🚗 Auto: ${autoName}\n📅 Fecha: ${formatFecha(citaData.fecha)} a las ${formatHora(citaData.hora)}\n🔖 Ref: ${referencia}\n\nLink check-in: https://alabol.netlify.app/checkin.html?ref=${referencia}`;
+            const waText = `¡Tengo cita para ver un ${autoName} en Alabol!\n\n🚗 Auto: ${autoName}\n📅 Fecha: ${formatFecha(citaData.fecha)} a las ${formatHora(citaData.hora)}\n🔖 Ref: ${referencia}\n\nLink check-in: https://alabolcar.com.mx/checkin.html?ref=${referencia}`;
             waBtn.href = `https://wa.me/525568667571?text=${encodeURIComponent(waText)}`;
         }
 
@@ -1184,7 +1184,7 @@
             ctx.fillStyle = 'rgba(168,197,184,0.4)';
             ctx.font = '11px Poppins, Arial';
             ctx.fillText('Muestra este QR al asesor de la agencia al llegar', 300, 820);
-            ctx.fillText('alabol.netlify.app  •  alabolcar.com.mx', 300, 845);
+            ctx.fillText('alabolcar.com.mx  •  alabolcar.com.mx', 300, 845);
 
             // Download
             var link = document.createElement('a');
@@ -1203,7 +1203,7 @@
                 'Auto: ' + auto + '\n' +
                 'Fecha: ' + fecha + ' a las ' + hora + '\n' +
                 'Ref: ' + ref + '\n\n' +
-                'QR de check-in: https://alabol.netlify.app/checkin.html?ref=' + ref
+                'QR de check-in: https://alabolcar.com.mx/checkin.html?ref=' + ref
             );
             window.open('https://api.whatsapp.com/send?text=' + text, '_blank');
         }

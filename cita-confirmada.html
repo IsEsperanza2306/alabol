@@ -1000,8 +1000,8 @@
 
             // WhatsApp button
             const waBtn = document.getElementById('btnWhatsapp');
-            const waText = `¡Tengo cita para ver un ${autoName} en Alabol! 🚗 Ref: ${referencia} — ${formatFecha(citaData.fecha)} a las ${formatHora(citaData.hora)}`;
-            waBtn.href = `https://wa.me/?text=${encodeURIComponent(waText)}`;
+            const waText = `¡Tengo cita para ver un ${autoName} en Alabol!\n\n🚗 Auto: ${autoName}\n📅 Fecha: ${formatFecha(citaData.fecha)} a las ${formatHora(citaData.hora)}\n🔖 Ref: ${referencia}\n\nLink check-in: https://alabol.netlify.app/checkin.html?ref=${referencia}`;
+            waBtn.href = `https://wa.me/525568667571?text=${encodeURIComponent(waText)}`;
         }
 
         // =============================================
@@ -1071,9 +1071,125 @@
         function downloadQR() {
             var qrCanvas = document.querySelector('#qrCode canvas');
             if (!qrCanvas) { alert('QR no disponible'); return; }
+
+            // Create designed card
+            var card = document.createElement('canvas');
+            card.width = 600;
+            card.height = 900;
+            var ctx = card.getContext('2d');
+
+            // Background
+            var bg = ctx.createLinearGradient(0, 0, 600, 900);
+            bg.addColorStop(0, '#0a1f1a');
+            bg.addColorStop(0.5, '#0d2921');
+            bg.addColorStop(1, '#0a1f1a');
+            ctx.fillStyle = bg;
+            ctx.fillRect(0, 0, 600, 900);
+
+            // Gold border
+            ctx.strokeStyle = '#d4af37';
+            ctx.lineWidth = 3;
+            ctx.roundRect(15, 15, 570, 870, 20);
+            ctx.stroke();
+
+            // Inner subtle border
+            ctx.strokeStyle = 'rgba(212,175,55,0.2)';
+            ctx.lineWidth = 1;
+            ctx.roundRect(25, 25, 550, 850, 16);
+            ctx.stroke();
+
+            // Header gold bar
+            var goldBg = ctx.createLinearGradient(0, 60, 600, 60);
+            goldBg.addColorStop(0, '#d4af37');
+            goldBg.addColorStop(0.5, '#f4e5b0');
+            goldBg.addColorStop(1, '#d4af37');
+            ctx.fillStyle = goldBg;
+            ctx.roundRect(30, 30, 540, 80, [12, 12, 0, 0]);
+            ctx.fill();
+
+            // Header text
+            ctx.fillStyle = '#0a1f1a';
+            ctx.font = 'bold 22px Poppins, Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('ALABOL CAR BROKER', 300, 65);
+            ctx.font = '13px Poppins, Arial';
+            ctx.fillText('Tu pase de entrada', 300, 95);
+
+            // QR code
+            var qrSize = 240;
+            var qrX = (600 - qrSize) / 2;
+
+            // White background for QR
+            ctx.fillStyle = '#ffffff';
+            ctx.roundRect(qrX - 20, 130, qrSize + 40, qrSize + 40, 16);
+            ctx.fill();
+            ctx.drawImage(qrCanvas, qrX, 150, qrSize, qrSize);
+
+            // Reference number
+            ctx.fillStyle = '#d4af37';
+            ctx.font = 'bold 32px Poppins, Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(citaData?.referencia || referencia || 'AL-XXXXX', 300, 440);
+
+            // Divider
+            ctx.strokeStyle = 'rgba(212,175,55,0.3)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(80, 465);
+            ctx.lineTo(520, 465);
+            ctx.stroke();
+
+            // Auto info
+            var autoName = '';
+            if (citaData) autoName = [citaData.auto_marca, citaData.auto_modelo, citaData.auto_anio].filter(Boolean).join(' ');
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 20px Poppins, Arial';
+            ctx.fillText(autoName || 'Auto seleccionado', 300, 505);
+
+            if (citaData?.auto_precio) {
+                ctx.fillStyle = '#d4af37';
+                ctx.font = 'bold 24px Poppins, Arial';
+                ctx.fillText('$' + Number(citaData.auto_precio).toLocaleString('es-MX') + ' MXN', 300, 540);
+            }
+
+            // Date & time
+            ctx.fillStyle = 'rgba(168,197,184,0.8)';
+            ctx.font = '14px Poppins, Arial';
+            ctx.fillText('FECHA DE TU CITA', 300, 590);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 18px Poppins, Arial';
+            var fechaStr = citaData?.fecha ? formatFecha(citaData.fecha) : '';
+            var horaStr = citaData?.hora ? formatHora(citaData.hora) : '';
+            ctx.fillText(fechaStr + '  •  ' + horaStr, 300, 618);
+
+            // Tips box
+            ctx.fillStyle = 'rgba(212,175,55,0.08)';
+            ctx.roundRect(50, 655, 500, 120, 12);
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(212,175,55,0.2)';
+            ctx.roundRect(50, 655, 500, 120, 12);
+            ctx.stroke();
+
+            ctx.fillStyle = 'rgba(168,197,184,0.7)';
+            ctx.font = '12px Poppins, Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('📋 Lleva identificación oficial', 300, 690);
+            ctx.fillText('🔖 Menciona tu referencia Alabol al llegar', 300, 715);
+            ctx.fillText('⏰ La cita dura aprox. 30-45 minutos', 300, 740);
+            ctx.fillText('📸 Toma fotos y notas del auto', 300, 765);
+
+            // Footer
+            ctx.fillStyle = 'rgba(168,197,184,0.4)';
+            ctx.font = '11px Poppins, Arial';
+            ctx.fillText('Muestra este QR al asesor de la agencia al llegar', 300, 820);
+            ctx.fillText('alabol.netlify.app  •  alabolcar.com.mx', 300, 845);
+
+            // Download
             var link = document.createElement('a');
             link.download = 'alabol-cita-' + (citaData?.referencia || 'qr') + '.png';
-            link.href = qrCanvas.toDataURL('image/png');
+            link.href = card.toDataURL('image/png');
             link.click();
         }
 
@@ -1083,13 +1199,13 @@
             var fecha = citaData?.fecha || '';
             var hora = citaData?.hora || '';
             var text = encodeURIComponent(
-                '🚗 Mi cita en Alabol\\n\\n' +
-                'Auto: ' + auto + '\\n' +
-                'Fecha: ' + fecha + ' a las ' + hora + '\\n' +
-                'Ref: ' + ref + '\\n\\n' +
+                '🚗 Mi cita en Alabol\n\n' +
+                'Auto: ' + auto + '\n' +
+                'Fecha: ' + fecha + ' a las ' + hora + '\n' +
+                'Ref: ' + ref + '\n\n' +
                 'QR de check-in: https://alabol.netlify.app/checkin.html?ref=' + ref
             );
-            window.open('https://wa.me/?text=' + text, '_blank');
+            window.open('https://api.whatsapp.com/send?text=' + text, '_blank');
         }
 
         // =============================================

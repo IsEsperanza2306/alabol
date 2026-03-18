@@ -1653,7 +1653,7 @@
                             <span>${km}</span>
                             <span class="t-badge">Match Alabol</span>
                         </div>
-                        <a href="agendar-cita.html?auto=${car.id}" class="t-card-cita" onclick="event.stopPropagation();">📅 Agendar primera cita</a>
+                        <a href="../agendar-cita.html?auto=${car.id}" class="t-card-cita" onclick="event.stopPropagation();">📅 Agendar primera cita</a>
                     </div>
                 </div>
             `;
@@ -1761,13 +1761,18 @@
                             <div style="font-size:13px;font-weight:700;color:white;">${c.marca} ${c.modelo} ${c.anio}</div>
                             <div style="font-size:12px;color:var(--gold);">${price}</div>
                         </div>
-                        <a href="agendar-cita.html?auto=${c.id}" style="padding:8px 14px;background:linear-gradient(135deg,#d4af37,#f4e5b0);color:#0a1f1a;border-radius:10px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap;">📅 Agendar</a>
+                        <a href="../agendar-cita.html?auto=${c.id}" style="padding:8px 14px;background:linear-gradient(135deg,#d4af37,#f4e5b0);color:#0a1f1a;border-radius:10px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap;">📅 Agendar</a>
                     </div>`;
                 }).join('');
         }
 
-        // WhatsApp link
-        const msg = encodeURIComponent(`Hola! Acabo de hacer match con ${numLikes} auto${numLikes > 1 ? 's' : ''} en Alabol y quiero la primera cita. Soy ${formData.nombre} de ${formData.ciudad}.`);
+        // WhatsApp link with liked cars list
+        const likedList = likedCars.map(c => `- ${c.marca} ${c.modelo} ${c.anio} ($${Number(c.precio_venta||0).toLocaleString('es-MX')})`).join('\n');
+        const msg = encodeURIComponent(
+            `Hola! Soy ${formData.nombre} de ${formData.ciudad}.\n\n` +
+            `Acabo de hacer match en Alabol y me gustaron estos autos:\n${likedList}\n\n` +
+            `Quiero más información o agendar una cita para verlos.`
+        );
         document.getElementById('ctaWhatsApp').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
 
         successScreen.classList.add('active');
@@ -1904,12 +1909,14 @@
                     }])
                     .select('id')
                     .single();
-                if (!error && insertedLead) {
+                if (error) {
+                    console.error('Lead insert error:', error);
+                } else if (insertedLead) {
                     savedLeadId = insertedLead.id;
                     console.log('Lead saved with ID:', savedLeadId);
                 }
                 trackGA('lead_submitted', { presupuesto_max: formData.presupuestoMax, marcas: formData.marcas.join(', ') });
-            } catch (e) { console.warn('Lead save failed:', e); }
+            } catch (e) { console.error('Lead save failed:', e); }
 
             // Confetti celebration
             if (typeof confetti === 'function') {

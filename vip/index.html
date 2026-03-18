@@ -1766,6 +1766,15 @@
                 }).join('');
         }
 
+        // Save user data for agendar-cita pre-fill
+        sessionStorage.setItem('alabol_user', JSON.stringify({
+            nombre: formData.nombre,
+            whatsapp: formData.whatsapp,
+            email: formData.email,
+            ciudad: formData.ciudad,
+            lead_id: savedLeadId
+        }));
+
         // WhatsApp link with liked cars list
         const likedList = likedCars.map(c => `- ${c.marca} ${c.modelo} ${c.anio} ($${Number(c.precio_venta||0).toLocaleString('es-MX')})`).join('\n');
         const msg = encodeURIComponent(

@@ -915,6 +915,38 @@
         const autoId = urlParams.get('auto');
         const agenciaId = urlParams.get('agencia');
 
+        // Check if user came from matchmaker (data already collected)
+        let prefillUser = null;
+        try {
+            const raw = sessionStorage.getItem('alabol_user');
+            if (raw) prefillUser = JSON.parse(raw);
+        } catch(e) {}
+
+        // Pre-fill and hide personal data fields if coming from matchmaker
+        if (prefillUser && prefillUser.nombre && prefillUser.whatsapp) {
+            window.addEventListener('DOMContentLoaded', function() {
+                // Fill fields
+                const campos = { nombre: prefillUser.nombre, whatsapp: prefillUser.whatsapp, email: prefillUser.email || '', ciudad: prefillUser.ciudad || '' };
+                Object.keys(campos).forEach(function(k) {
+                    var el = document.getElementById(k);
+                    if (el) { el.value = campos[k]; }
+                });
+
+                // Hide personal data fields and show a summary instead
+                var personalFields = ['nombre', 'whatsapp', 'email'];
+                personalFields.forEach(function(k) {
+                    var group = document.getElementById(k)?.closest('.form-group');
+                    if (group) group.style.display = 'none';
+                });
+
+                // Update form title
+                var formTitle = document.querySelector('.form-title');
+                if (formTitle) formTitle.innerHTML = '<span class="emoji">💘</span> Hola ' + prefillUser.nombre.split(' ')[0] + ', elige fecha y hora';
+                var formSub = document.querySelector('.form-subtitle');
+                if (formSub) formSub.textContent = 'Ya tenemos tus datos del matchmaker. Solo falta elegir cuándo.';
+            });
+        }
+
         // =============================================
         // Gold Bubbles
         // =============================================

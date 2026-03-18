@@ -10,181 +10,342 @@
     <meta name="apple-mobile-web-app-title" content="Alabol HQ">
     <meta name="theme-color" content="#0a1f1a">
     <title>Alabol HQ | Panel de Control</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
+        @property --glow-angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+
         :root {
-            --bg: #0a1f1a; --bg2: #0d2921; --gold: #d4af37; --gold-light: #f4e5b0;
-            --green: #a8c5b8; --glass: rgba(15,51,41,0.6); --border: rgba(212,175,55,0.2);
+            --bg: #0a1f1a; --bg2: #0d2921; --bg3: #0f3329;
+            --gold: #d4af37; --gold-light: #f4e5b0; --gold-dim: rgba(212,175,55,0.15);
+            --green: #a8c5b8; --glass: rgba(13,41,33,0.7); --border: rgba(212,175,55,0.15);
+            --emerald: #34d399; --danger: #ef4444; --blue: #3b82f6;
         }
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
             font-family: 'Poppins', sans-serif; background: var(--bg);
-            min-height: 100vh; color: white; padding: 20px;
-            display: flex; align-items: flex-start; justify-content: center;
+            min-height: 100vh; min-height: 100dvh; color: white;
+            padding: 0; overflow-x: hidden;
         }
+
+        /* Animated mesh background */
         body::before {
-            content: ''; position: fixed; inset: 0;
-            background: linear-gradient(135deg, #0a1f1a 0%, #0d2921 25%, #0f3329 50%, #0d2921 75%, #0a1f1a 100%);
-            background-size: 400% 400%; animation: bg 15s ease infinite; z-index: -1;
+            content: ''; position: fixed; inset: 0; z-index: -2;
+            background:
+                linear-gradient(135deg, #0a1f1a 0%, #0d2921 25%, #0f3329 50%, #0d2921 75%, #0a1f1a 100%);
+            background-size: 400% 400%;
+            animation: bgShift 20s ease infinite;
         }
-        @keyframes bg { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+        body::after {
+            content: ''; position: fixed; inset: 0; z-index: -1;
+            background-image:
+                radial-gradient(1px 1px at 15% 25%, rgba(212,175,55,0.25), transparent),
+                radial-gradient(1px 1px at 65% 55%, rgba(212,175,55,0.15), transparent),
+                radial-gradient(1.5px 1.5px at 85% 15%, rgba(212,175,55,0.2), transparent),
+                radial-gradient(1px 1px at 35% 75%, rgba(212,175,55,0.15), transparent),
+                radial-gradient(1px 1px at 50% 90%, rgba(52,211,153,0.1), transparent);
+            background-size: 200% 200%;
+            animation: particleFloat 25s ease-in-out infinite;
+        }
+        @keyframes bgShift { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+        @keyframes particleFloat { 0%,100% { transform: translate(0,0); } 33% { transform: translate(20px,-15px); } 66% { transform: translate(-15px,10px); } }
 
-        .container { max-width: 440px; width: 100%; }
+        .page { max-width: 480px; width: 100%; margin: 0 auto; padding: 20px 16px 40px; }
 
-        /* Header */
+        /* ═══ HEADER ═══ */
         .header {
-            text-align: center; margin-bottom: 24px;
-            animation: fadeIn 0.5s ease;
+            text-align: center; padding: 24px 0 20px;
+            position: relative;
         }
-        .logo { width: 60px; height: 60px; margin: 0 auto 12px; }
-        .logo img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 0 12px rgba(212,175,55,0.4)); }
+        .logo-wrap {
+            position: relative; width: 80px; height: 80px; margin: 0 auto 16px;
+        }
+        .logo-glow {
+            position: absolute; inset: -15px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(212,175,55,0.35) 0%, transparent 70%);
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+        @keyframes glowPulse { 0%,100% { transform:scale(1); opacity:0.5; } 50% { transform:scale(1.2); opacity:0.9; } }
+        .logo-wrap img {
+            position: relative; z-index: 1; width: 80px; height: 80px; object-fit: contain;
+            filter: drop-shadow(0 0 20px rgba(212,175,55,0.5));
+        }
         .header h1 {
-            font-size: 20px; font-weight: 800;
-            background: linear-gradient(135deg, #d4af37, #f4e5b0, #d4af37);
-            background-size: 200% auto; -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent; animation: shimmer 3s linear infinite;
+            font-size: 26px; font-weight: 900; letter-spacing: 2px;
+            background: linear-gradient(135deg, #d4af37 0%, #f4e5b0 30%, #d4af37 60%, #c9a961 80%, #f4e5b0 100%);
+            background-size: 300% auto; -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent; animation: shimmer 4s linear infinite;
         }
-        .header p { font-size: 11px; color: var(--green); opacity: 0.6; margin-top: 2px; }
-        @keyframes shimmer { to { background-position: 200% center; } }
-        @keyframes fadeIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
+        .header .subtitle {
+            font-size: 11px; color: var(--green); opacity: 0.5;
+            letter-spacing: 3px; text-transform: uppercase; margin-top: 2px;
+        }
+        @keyframes shimmer { to { background-position: 300% center; } }
 
-        /* Section */
-        .section { margin-bottom: 20px; }
+        /* Status pill */
+        .status-bar {
+            display: flex; align-items: center; justify-content: center; gap: 16px;
+            margin: 16px 0 24px; flex-wrap: wrap;
+        }
+        .status-pill {
+            display: flex; align-items: center; gap: 6px;
+            padding: 5px 14px; border-radius: 20px;
+            background: rgba(212,175,55,0.06); border: 1px solid rgba(212,175,55,0.12);
+            font-size: 10px; color: var(--green);
+        }
+        .status-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            animation: dotPulse 2s ease-in-out infinite;
+        }
+        .status-dot.live { background: var(--emerald); box-shadow: 0 0 6px rgba(52,211,153,0.6); }
+        .status-dot.gold { background: var(--gold); box-shadow: 0 0 6px rgba(212,175,55,0.6); }
+        @keyframes dotPulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+
+        /* ═══ QUICK ACTIONS ═══ */
+        .quick-bar {
+            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;
+            margin-bottom: 24px;
+        }
+        .quick-btn {
+            padding: 14px 8px; border-radius: 14px; border: none;
+            font-family: inherit; font-size: 12px; font-weight: 700;
+            cursor: pointer; text-decoration: none; text-align: center;
+            transition: all 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+        }
+        .quick-btn span { font-size: 20px; }
+        .quick-btn:hover { transform: translateY(-3px); }
+        .quick-btn:active { transform: scale(0.95); }
+        .q-gold { background: linear-gradient(135deg, #d4af37, #f4e5b0); color: #0a1f1a; box-shadow: 0 4px 20px rgba(212,175,55,0.3); }
+        .q-green { background: linear-gradient(135deg, #25D366, #128C7E); color: white; box-shadow: 0 4px 20px rgba(37,211,102,0.2); }
+        .q-glass { background: var(--glass); color: var(--green); border: 1px solid var(--border); backdrop-filter: blur(10px); }
+
+        /* ═══ SECTIONS ═══ */
+        .section { margin-bottom: 24px; }
+        .section-header {
+            display: flex; align-items: center; gap: 8px;
+            margin-bottom: 12px; padding-left: 2px;
+        }
+        .section-icon {
+            width: 28px; height: 28px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px;
+            background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(212,175,55,0.05));
+            border: 1px solid rgba(212,175,55,0.15);
+        }
         .section-title {
-            font-size: 10px; font-weight: 700; color: var(--gold);
-            text-transform: uppercase; letter-spacing: 2px;
-            margin-bottom: 10px; padding-left: 4px;
+            font-size: 13px; font-weight: 700; color: white; letter-spacing: 0.5px;
+        }
+        .section-count {
+            margin-left: auto; font-size: 10px; color: var(--gold); opacity: 0.6;
         }
 
-        /* Grid */
+        /* ═══ CARDS ═══ */
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
 
-        /* Card link */
         .card {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 8px; padding: 20px 12px;
-            background: var(--glass); backdrop-filter: blur(15px);
-            border: 1px solid var(--border); border-radius: 16px;
+            gap: 10px; padding: 22px 12px 18px;
+            background: var(--glass); backdrop-filter: blur(20px);
+            border: 1px solid var(--border); border-radius: 18px;
             text-decoration: none; color: white;
-            transition: all 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
+            transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
             position: relative; overflow: hidden;
         }
+
+        /* Rotating border glow on hover */
         .card::before {
-            content: ''; position: absolute; inset: 0; border-radius: 15px;
-            background: radial-gradient(circle at 50% 30%, rgba(212,175,55,0.06), transparent 70%);
+            content: ''; position: absolute; inset: -1px; border-radius: 19px;
+            background: conic-gradient(from var(--glow-angle), transparent 0%, rgba(212,175,55,0.4) 10%, transparent 20%);
+            z-index: -1; opacity: 0; transition: opacity 0.4s;
+        }
+        .card:hover::before { opacity: 1; animation: borderSpin 3s linear infinite; }
+        @keyframes borderSpin { to { --glow-angle: 360deg; } }
+
+        /* Inner glow */
+        .card::after {
+            content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 80%; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(212,175,55,0.3), transparent);
             opacity: 0; transition: opacity 0.3s;
         }
-        .card:hover { transform: translateY(-4px); border-color: var(--gold); }
-        .card:hover::before { opacity: 1; }
-        .card:active { transform: scale(0.96); }
+        .card:hover::after { opacity: 1; }
+
+        .card:hover {
+            transform: translateY(-6px) scale(1.02);
+            border-color: rgba(212,175,55,0.4);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 20px rgba(212,175,55,0.08);
+        }
+        .card:active { transform: scale(0.97); }
 
         .card-icon {
-            width: 44px; height: 44px; border-radius: 12px;
+            width: 50px; height: 50px; border-radius: 14px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 22px;
-            background: linear-gradient(135deg, rgba(212,175,55,0.12), rgba(212,175,55,0.04));
-            border: 1px solid rgba(212,175,55,0.15);
+            font-size: 24px; position: relative;
+            background: linear-gradient(145deg, rgba(212,175,55,0.12), rgba(212,175,55,0.03));
+            border: 1px solid rgba(212,175,55,0.12);
+            transition: all 0.3s;
         }
-        .card-label { font-size: 11px; font-weight: 600; text-align: center; line-height: 1.3; }
-        .card-sub { font-size: 9px; color: var(--green); opacity: 0.5; }
+        .card:hover .card-icon {
+            background: linear-gradient(145deg, rgba(212,175,55,0.25), rgba(212,175,55,0.08));
+            border-color: rgba(212,175,55,0.3);
+            box-shadow: 0 0 20px rgba(212,175,55,0.15);
+            transform: scale(1.1);
+        }
 
-        /* Badge */
-        .badge {
-            position: absolute; top: 6px; right: 6px;
+        .card-label { font-size: 12px; font-weight: 700; text-align: center; line-height: 1.3; }
+        .card-sub { font-size: 9px; color: var(--green); opacity: 0.45; text-align: center; }
+
+        /* Badge indicators */
+        .badge-live {
+            position: absolute; top: 8px; right: 8px;
             width: 8px; height: 8px; border-radius: 50%;
-            background: #10b981; box-shadow: 0 0 6px rgba(16,185,129,0.5);
+            background: var(--emerald);
+            box-shadow: 0 0 8px rgba(52,211,153,0.6);
+            animation: dotPulse 2s ease-in-out infinite;
         }
-        .badge.gold { background: var(--gold); box-shadow: 0 0 6px rgba(212,175,55,0.5); }
+        .badge-hot {
+            position: absolute; top: 8px; right: 8px;
+            padding: 2px 7px; border-radius: 6px;
+            background: rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.3);
+            color: #ef4444; font-size: 8px; font-weight: 700;
+        }
+        .badge-gold {
+            position: absolute; top: 8px; right: 8px;
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--gold);
+            box-shadow: 0 0 8px rgba(212,175,55,0.6);
+            animation: dotPulse 2s ease-in-out infinite;
+        }
 
-        /* Quick actions */
-        .quick-row { display: flex; gap: 8px; margin-bottom: 20px; }
-        .quick-btn {
-            flex: 1; padding: 12px 8px;
-            border-radius: 12px; border: none;
-            font-family: inherit; font-size: 11px; font-weight: 600;
-            cursor: pointer; text-decoration: none; text-align: center;
-            transition: all 0.3s; display: flex; align-items: center;
-            justify-content: center; gap: 6px;
+        /* ═══ EXTERNAL ROW ═══ */
+        .ext-row {
+            display: flex; gap: 8px; margin-bottom: 16px;
         }
-        .quick-gold {
-            background: linear-gradient(135deg, #d4af37, #f4e5b0);
-            color: #0a1f1a;
+        .ext-btn {
+            flex: 1; padding: 10px 6px; border-radius: 10px;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+            text-decoration: none; text-align: center;
+            font-size: 10px; font-weight: 500; color: var(--green);
+            transition: all 0.3s; display: flex; flex-direction: column; align-items: center; gap: 3px;
         }
-        .quick-green { background: #25D366; color: white; }
-        .quick-dark {
-            background: rgba(255,255,255,0.05); color: var(--green);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .quick-btn:hover { transform: translateY(-2px); }
+        .ext-btn span { font-size: 16px; }
+        .ext-btn:hover { background: rgba(212,175,55,0.06); border-color: var(--border); }
 
-        /* Footer */
-        .footer { text-align: center; padding: 16px 0; }
-        .footer p { font-size: 10px; color: var(--green); opacity: 0.3; }
+        /* ═══ FOOTER ═══ */
+        .footer {
+            text-align: center; padding: 20px 0 0;
+            border-top: 1px solid rgba(212,175,55,0.08);
+        }
+        .footer p { font-size: 9px; color: var(--green); opacity: 0.25; letter-spacing: 1px; }
 
-        /* Staggered animation */
-        .card { opacity: 0; animation: cardIn 0.4s ease forwards; }
-        @keyframes cardIn { from { opacity:0; transform:translateY(15px); } to { opacity:1; transform:translateY(0); } }
-        .card:nth-child(1) { animation-delay: 0.05s; }
-        .card:nth-child(2) { animation-delay: 0.1s; }
-        .card:nth-child(3) { animation-delay: 0.15s; }
-        .card:nth-child(4) { animation-delay: 0.2s; }
-        .card:nth-child(5) { animation-delay: 0.25s; }
-        .card:nth-child(6) { animation-delay: 0.3s; }
+        /* ═══ TIME DISPLAY ═══ */
+        .time-display {
+            text-align: center; margin-bottom: 20px;
+            font-size: 32px; font-weight: 300; color: rgba(255,255,255,0.15);
+            letter-spacing: 4px; font-variant-numeric: tabular-nums;
+        }
+
+        /* Animations */
+        .card, .quick-btn, .ext-btn { opacity: 0; animation: itemIn 0.5s ease forwards; }
+        @keyframes itemIn { from { opacity:0; transform:translateY(20px) scale(0.95); } to { opacity:1; transform:translateY(0) scale(1); } }
+        .quick-bar > *:nth-child(1) { animation-delay: 0.05s; }
+        .quick-bar > *:nth-child(2) { animation-delay: 0.1s; }
+        .quick-bar > *:nth-child(3) { animation-delay: 0.15s; }
+        .grid > *:nth-child(1) { animation-delay: 0.1s; }
+        .grid > *:nth-child(2) { animation-delay: 0.15s; }
+        .grid > *:nth-child(3) { animation-delay: 0.2s; }
+        .grid > *:nth-child(4) { animation-delay: 0.25s; }
+        .grid > *:nth-child(5) { animation-delay: 0.3s; }
+        .grid > *:nth-child(6) { animation-delay: 0.35s; }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="page">
+        <!-- Header -->
         <div class="header">
-            <div class="logo"><img src="logo-circular.png" alt="Alabol"></div>
+            <div class="logo-wrap">
+                <div class="logo-glow"></div>
+                <img src="logo-circular.png" alt="Alabol">
+            </div>
             <h1>ALABOL HQ</h1>
-            <p>Panel de Control</p>
+            <div class="subtitle">Mission Control</div>
+        </div>
+
+        <!-- Live time -->
+        <div class="time-display" id="clock">--:--</div>
+
+        <!-- Status -->
+        <div class="status-bar">
+            <div class="status-pill"><div class="status-dot live"></div> Plataforma online</div>
+            <div class="status-pill"><div class="status-dot gold"></div> Matchmaker activo</div>
         </div>
 
         <!-- Quick Actions -->
-        <div class="quick-row">
-            <a href="./radar-interno.html" class="quick-btn quick-gold">📊 Radar</a>
-            <a href="https://wa.me/525568667571" class="quick-btn quick-green" target="_blank">💬 WhatsApp</a>
-            <a href="./login.html" class="quick-btn quick-dark">🔑 Login</a>
+        <div class="quick-bar">
+            <a href="./login.html?redirect=radar-interno.html" class="quick-btn q-gold">
+                <span>📊</span> Radar
+            </a>
+            <a href="https://wa.me/525568667571" class="quick-btn q-green" target="_blank">
+                <span>💬</span> WhatsApp
+            </a>
+            <a href="./login.html" class="quick-btn q-glass">
+                <span>🔑</span> Login
+            </a>
         </div>
 
-        <!-- Admin -->
+        <!-- Admin Section -->
         <div class="section">
-            <div class="section-title">🔒 Administración</div>
+            <div class="section-header">
+                <div class="section-icon">🔒</div>
+                <div class="section-title">Comando Central</div>
+                <div class="section-count">ADMIN</div>
+            </div>
             <div class="grid">
-                <a href="./radar-interno.html" class="card">
-                    <div class="badge gold"></div>
+                <a href="./login.html?redirect=radar-interno.html" class="card">
+                    <div class="badge-hot">LIVE</div>
                     <div class="card-icon">📊</div>
                     <div class="card-label">Radar Interno</div>
-                    <div class="card-sub">Analíticas y leads</div>
+                    <div class="card-sub">Analíticas · Leads · Demanda</div>
                 </a>
                 <a href="./vendedor.html" class="card">
                     <div class="card-icon">🏷️</div>
                     <div class="card-label">Portal Vendedor</div>
-                    <div class="card-sub">Gestión inventario</div>
+                    <div class="card-sub">Gestión de inventario</div>
                 </a>
                 <a href="./portal-agencias.html" class="card">
+                    <div class="badge-gold"></div>
                     <div class="card-icon">🏢</div>
                     <div class="card-label">Portal Agencias</div>
-                    <div class="card-sub">Red de agencias</div>
+                    <div class="card-sub">Red de agencias aliadas</div>
                 </a>
                 <a href="https://supabase.com/dashboard/project/rgnunjngtsgqgvplawfr" class="card" target="_blank">
                     <div class="card-icon">🗄️</div>
-                    <div class="card-label">Supabase</div>
-                    <div class="card-sub">Base de datos</div>
+                    <div class="card-label">Base de Datos</div>
+                    <div class="card-sub">Supabase Dashboard</div>
                 </a>
             </div>
         </div>
 
-        <!-- Plataforma -->
+        <!-- Platform Section -->
         <div class="section">
-            <div class="section-title">🚗 Plataforma</div>
+            <div class="section-header">
+                <div class="section-icon">💘</div>
+                <div class="section-title">Plataforma</div>
+                <div class="section-count">PÚBLICO</div>
+            </div>
             <div class="grid">
+                <a href="./" class="card">
+                    <div class="badge-live"></div>
+                    <div class="card-icon">🏠</div>
+                    <div class="card-label">Landing Page</div>
+                    <div class="card-sub">Página principal</div>
+                </a>
                 <a href="./vip/" class="card">
-                    <div class="badge"></div>
+                    <div class="badge-live"></div>
                     <div class="card-icon">💘</div>
                     <div class="card-label">Matchmaker</div>
-                    <div class="card-sub">El Tinder de los autos</div>
+                    <div class="card-sub">El Tinder de los Autos</div>
                 </a>
                 <a href="./inventario.html" class="card">
                     <div class="card-icon">🚙</div>
@@ -201,41 +362,65 @@
                     <div class="card-label">Agendar Cita</div>
                     <div class="card-sub">Primera cita</div>
                 </a>
+                <a href="./links-alabol.html" class="card">
+                    <div class="card-icon">🔗</div>
+                    <div class="card-label">Links Bio</div>
+                    <div class="card-sub">Redes sociales</div>
+                </a>
             </div>
         </div>
 
-        <!-- Herramientas -->
+        <!-- Tools Section -->
         <div class="section">
-            <div class="section-title">🔧 Herramientas</div>
+            <div class="section-header">
+                <div class="section-icon">🔧</div>
+                <div class="section-title">Herramientas</div>
+            </div>
             <div class="grid grid-3">
                 <a href="./precalificacion/" class="card">
                     <div class="card-icon">💳</div>
                     <div class="card-label">Precalifi-<br>cación</div>
                 </a>
-                <a href="./links-alabol.html" class="card">
-                    <div class="card-icon">🔗</div>
-                    <div class="card-label">Links<br>Bio</div>
-                </a>
                 <a href="./ficha-confianza.html" class="card">
                     <div class="card-icon">🛡️</div>
-                    <div class="card-label">Ficha<br>Confianza</div>
+                    <div class="card-label">Ficha de<br>Confianza</div>
+                </a>
+                <a href="./checkin.html" class="card">
+                    <div class="card-icon">📱</div>
+                    <div class="card-label">Check-in<br>QR</div>
                 </a>
             </div>
         </div>
 
-        <!-- External -->
+        <!-- External Services -->
         <div class="section">
-            <div class="section-title">🌐 Externo</div>
-            <div class="quick-row">
-                <a href="https://resend.com/emails" class="quick-btn quick-dark" target="_blank">📧 Resend</a>
-                <a href="https://dash.cloudflare.com" class="quick-btn quick-dark" target="_blank">☁️ Cloudflare</a>
-                <a href="https://app.netlify.com" class="quick-btn quick-dark" target="_blank">🚀 Netlify</a>
+            <div class="section-header">
+                <div class="section-icon">🌐</div>
+                <div class="section-title">Servicios Externos</div>
+            </div>
+            <div class="ext-row">
+                <a href="https://resend.com/emails" class="ext-btn" target="_blank"><span>📧</span>Resend</a>
+                <a href="https://dash.cloudflare.com" class="ext-btn" target="_blank"><span>☁️</span>Cloudflare</a>
+                <a href="https://app.netlify.com" class="ext-btn" target="_blank"><span>🚀</span>Netlify</a>
+                <a href="https://github.com/IsEsperanza2306/alabol" class="ext-btn" target="_blank"><span>💻</span>GitHub</a>
             </div>
         </div>
 
         <div class="footer">
-            <p>alabolcar.com.mx — Alabol HQ</p>
+            <p>ALABOL CAR BROKER · alabolcar.com.mx</p>
         </div>
     </div>
+
+    <script>
+        // Live clock
+        function updateClock() {
+            const now = new Date();
+            const h = now.getHours().toString().padStart(2,'0');
+            const m = now.getMinutes().toString().padStart(2,'0');
+            document.getElementById('clock').textContent = h + ':' + m;
+        }
+        updateClock();
+        setInterval(updateClock, 30000);
+    </script>
 </body>
 </html>

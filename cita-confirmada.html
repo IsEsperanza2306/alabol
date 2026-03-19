@@ -751,9 +751,39 @@
             }
         }
     </style>
+<style id="alabol-nav-styles">
+  .alabol-nav { position:fixed;top:0;left:0;right:0;z-index:999;background:rgba(10,31,26,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(212,175,55,0.2);height:64px;display:flex;align-items:center;padding:0 24px; }
+  .nav-logo { display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0; }
+  .nav-logo img { width:38px;height:38px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(212,175,55,0.5));transition:transform 0.3s; }
+  .nav-logo:hover img { transform:scale(1.08) rotate(5deg); }
+  .nav-logo-text { font-family:'Poppins',sans-serif;font-weight:800;font-size:18px;color:#d4af37;letter-spacing:-0.5px; }
+  .nav-links { display:flex;align-items:center;gap:4px;margin-left:auto;list-style:none;padding:0; }
+  .nav-links a { font-family:'Poppins',sans-serif;font-size:13px;font-weight:500;color:#a8c5b8;text-decoration:none;padding:7px 14px;border-radius:20px;transition:all 0.25s;white-space:nowrap;border:1px solid transparent; }
+  .nav-links a:hover { color:#d4af37;background:rgba(212,175,55,0.08);border-color:rgba(212,175,55,0.2); }
+  .nav-cta { font-size:13px;font-weight:700;color:#0a1f1a !important;background:linear-gradient(135deg,#d4af37,#f4e5b0) !important;padding:8px 18px !important;border-radius:20px !important;border:none !important;margin-left:8px;box-shadow:0 4px 12px rgba(212,175,55,0.35); }
+  .nav-hamburger { display:none;flex-direction:column;gap:5px;cursor:pointer;margin-left:auto;padding:8px;background:none;border:none; }
+  .nav-hamburger span { display:block;width:22px;height:2px;background:#d4af37;border-radius:2px;transition:all 0.3s; }
+  .nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}.nav-hamburger.open span:nth-child(2){opacity:0}.nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+  @media(max-width:768px){.nav-links{display:none;flex-direction:column;position:absolute;top:64px;left:0;right:0;background:rgba(10,31,26,0.98);border-bottom:1px solid rgba(212,175,55,0.2);padding:16px 24px 24px;gap:8px}.nav-links.open{display:flex}.nav-hamburger{display:flex}.nav-links a{padding:10px 16px;border-radius:12px;border:1px solid rgba(212,175,55,0.1)}.nav-cta{margin-left:0}}
+  body { padding-top:64px; }
+</style>
 </head>
 
 <body>
+<nav class="alabol-nav" role="navigation" aria-label="Navegación principal">
+  <a href="/" class="nav-logo"><img src="logo-circular.png" alt="Alabol"><span class="nav-logo-text">Alabol</span></a>
+  <button class="nav-hamburger" id="navHamburger" aria-label="Menú"><span></span><span></span><span></span></button>
+  <ul class="nav-links" id="navLinks" role="list">
+    <li><a href="/inventario.html">🚗 Inventario</a></li>
+    <li><a href="/vip/">💘 Matchmaker</a></li>
+    <li><a href="/vendedor.html">🏷️ Vender Auto</a></li>
+    <li><a href="/oportunidades/">🔥 Subastas</a></li>
+    <li><a href="/portal-agencias.html">🏢 Agencias</a></li>
+    <li><a href="/vip/" class="nav-cta">Buscar mi Auto →</a></li>
+  </ul>
+</nav>
+<!-- Floating WhatsApp Button -->
+<a href="https://api.whatsapp.com/send?phone=525568667571&text=Hola%20Alabol!" target="_blank" style="position:fixed;bottom:20px;right:20px;width:56px;height:56px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 15px rgba(37,211,102,0.4);z-index:998;text-decoration:none;font-size:28px;transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'"><svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg></a>
 
     <!-- Gold Bubbles Background -->
     <div class="gold-bubbles" id="goldBubbles"></div>
@@ -1335,6 +1365,7 @@
             animateTimeline();
         });
     </script>
+<script>(function(){var b=document.getElementById('navHamburger'),l=document.getElementById('navLinks');if(!b||!l)return;b.addEventListener('click',function(){var o=l.classList.toggle('open');b.classList.toggle('open',o);});l.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){l.classList.remove('open');b.classList.remove('open');});});})();</script>
 
 </body>
 

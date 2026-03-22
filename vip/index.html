@@ -1904,13 +1904,26 @@
             lead_id: savedLeadId
         }));
 
-        // WhatsApp link with liked cars list
-        const likedList = likedCars.map(c => `- ${c.marca} ${c.modelo} ${c.anio} ($${Number(c.precio_venta||0).toLocaleString('es-MX')})`).join('\n');
-        const msg = encodeURIComponent(
-            `Hola! Soy ${formData.nombre} de ${formData.ciudad}.\n\n` +
-            `Acabo de hacer match en Alabol y me gustaron estos autos:\n${likedList}\n\n` +
-            `Quiero más información o agendar una cita para verlos.`
-        );
+        // WhatsApp link — different message if no matches
+        let msg;
+        if (likedCars.length > 0) {
+            const likedList = likedCars.map(c => `- ${c.marca} ${c.modelo} ${c.anio} ($${Number(c.precio_venta||0).toLocaleString('es-MX')})`).join('\n');
+            msg = encodeURIComponent(
+                `Hola! Soy ${formData.nombre} de ${formData.ciudad}.\n\n` +
+                `Me gustaron estos autos en Alabol:\n${likedList}\n\n` +
+                `Quiero más información o agendar una cita.`
+            );
+        } else {
+            const marcasStr = (formData.marcas || []).join(', ') || 'Cualquiera';
+            const tipoStr = formData.carroceria || 'Cualquier tipo';
+            const budgetStr = '$' + (formData.presupuestoMin||0).toLocaleString('es-MX') + ' - $' + (formData.presupuestoMax||0).toLocaleString('es-MX');
+            msg = encodeURIComponent(
+                `Hola! Soy ${formData.nombre} de ${formData.ciudad}.\n\n` +
+                `Usé el Matchmaker pero no encontré mi auto ideal.\n\n` +
+                `🚗 Busco: ${tipoStr}\n💛 Marcas: ${marcasStr}\n📅 Año: ${formData.anioDesde||'?'}-${formData.anioHasta||'?'}\n💰 Presupuesto: ${budgetStr}\n\n` +
+                `¿Me pueden buscar opciones personalizadas?`
+            );
+        }
         document.getElementById('ctaWhatsApp').href = `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${msg}`;
 
         successScreen.classList.add('active');

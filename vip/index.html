@@ -2027,26 +2027,69 @@
             matchStack = matches;
             findingScreen.classList.remove('active');
 
-            // Render blurred reveal cards
-            renderRevealCards(matchStack);
-
-            // Update reveal header based on real results
-            const revealTitle = document.getElementById('revealTitle');
-            const revealSubtitle = document.getElementById('revealSubtitle');
             if (matchStack.length === 0) {
-                revealTitle.innerHTML = 'Tu búsqueda está registrada';
-                revealSubtitle.textContent = 'Te contactamos por WhatsApp en menos de 24h con opciones personalizadas.';
+                // NO MATCHES — skip reveal + swipe, go straight to data capture
+                // Show a special "no match" step instead of reveal
+                document.querySelector('.progress-bar').style.display = 'flex';
+                personalityHook.style.display = 'block';
+                navButtons.style.display = 'flex';
+
+                // Update reveal step to show "no match found" with dating language
+                const revealTitle = document.getElementById('revealTitle');
+                const revealSubtitle = document.getElementById('revealSubtitle');
+                const revealContainer = document.getElementById('revealCardsContainer');
+                const compatScore = document.getElementById('compatScore');
+                const unlockBanner = document.querySelector('.unlock-banner');
+
+                if (document.querySelector('[data-step="3"] > div:first-child > div:first-child')) {
+                    document.querySelector('[data-step="3"] > div:first-child > div:first-child').textContent = '💔';
+                }
+                if (revealTitle) revealTitle.innerHTML = 'Aún no llega tu match ideal';
+                if (revealSubtitle) revealSubtitle.textContent = 'No te preocupes, a veces el amor tarda. Déjanos tus datos y nosotros lo buscamos por ti.';
+                if (compatScore) compatScore.style.display = 'none';
+                if (unlockBanner) {
+                    unlockBanner.innerHTML = `
+                        <p class="ub-title">🔍 Tenemos acceso a inventario exclusivo</p>
+                        <p class="ub-sub">Autos de agencias, subastas y importaciones que no están publicados. Déjanos tus datos y te buscamos opciones personalizadas.</p>
+                    `;
+                }
+                if (revealContainer) {
+                    var marcasResumen = (formData.marcas || []).join(', ') || 'Cualquiera';
+                    var tipoResumen = formData.carroceria || 'Cualquier tipo';
+                    var budgetResumen = '$' + (formData.presupuestoMin || 0).toLocaleString('es-MX') + ' - $' + (formData.presupuestoMax || 0).toLocaleString('es-MX');
+                    revealContainer.innerHTML = `
+                        <div style="background:rgba(212,175,55,0.06);border:1px solid rgba(212,175,55,0.15);border-radius:14px;padding:16px;margin-bottom:12px;">
+                            <div style="font-size:12px;color:var(--gold);font-weight:600;margin-bottom:10px;">Tu perfil de búsqueda:</div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                                <div><div style="font-size:10px;color:var(--green-text);opacity:0.6;">Tipo</div><div style="font-size:13px;color:white;font-weight:600;">${tipoResumen}</div></div>
+                                <div><div style="font-size:10px;color:var(--green-text);opacity:0.6;">Marcas</div><div style="font-size:13px;color:white;font-weight:600;">${marcasResumen}</div></div>
+                                <div><div style="font-size:10px;color:var(--green-text);opacity:0.6;">Año</div><div style="font-size:13px;color:white;font-weight:600;">${formData.anioDesde || '?'} - ${formData.anioHasta || '?'}</div></div>
+                                <div><div style="font-size:10px;color:var(--green-text);opacity:0.6;">Presupuesto</div><div style="font-size:13px;color:var(--gold);font-weight:700;">${budgetResumen}</div></div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Change the next button to "Déjame tus datos"
+                currentStep = 3;
+                renderStep();
+                nextBtn.textContent = '📝 Déjame tus datos para buscártelo';
+
             } else {
+                // HAS MATCHES — normal flow: show reveal cards
+                renderRevealCards(matchStack);
+
+                const revealTitle = document.getElementById('revealTitle');
+                const revealSubtitle = document.getElementById('revealSubtitle');
                 revealTitle.innerHTML = `Alguien te hizo match... (<span id="matchCountReveal">${matchStack.length > 3 ? 3 : matchStack.length}</span> veces)`;
                 revealSubtitle.textContent = 'Les gustó tu perfil. ¿Quieres ver quiénes son?';
-            }
 
-            // Go to step 4 (reveal)
-            currentStep = 3;
-            document.querySelector('.progress-bar').style.display = 'flex';
-            personalityHook.style.display = 'block';
-            navButtons.style.display = 'flex';
-            renderStep();
+                currentStep = 3;
+                document.querySelector('.progress-bar').style.display = 'flex';
+                personalityHook.style.display = 'block';
+                navButtons.style.display = 'flex';
+                renderStep();
+            }
 
         } else if (currentStep === 4) {
             // After personal data → save lead NOW, then unlock with confetti → go to swipe

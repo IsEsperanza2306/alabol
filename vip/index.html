@@ -1559,9 +1559,22 @@
             const maxBudget = formData.presupuestoMax * 1.1;
             const preferredBrands = formData.marcas.map(m => m.toLowerCase());
 
+            const selectedType = (formData.carroceria || '').toLowerCase();
+
             const matches = invData.filter(car => {
+                // TIPO — strict: must match selected body type
+                if (selectedType) {
+                    const carType = (car.tipo_vehiculo || '').toLowerCase();
+                    if (selectedType === 'suv' && !['suv','crossover'].includes(carType)) return false;
+                    else if (selectedType === 'sedan' && !['sedan','hatchback'].includes(carType)) return false;
+                    else if (selectedType === 'pickup' && carType !== 'pickup') return false;
+                    else if (selectedType === 'deportivo' && carType !== 'deportivo') return false;
+                }
+                // PRECIO
                 if (car.precio_venta < minBudget || car.precio_venta > maxBudget) return false;
+                // AÑO
                 if (car.anio < minYear || car.anio > maxYear) return false;
+                // MARCA — strict: must match selected brands
                 if (preferredBrands.length > 0) {
                     const carBrand = (car.marca || '').toLowerCase();
                     const brandMatch = preferredBrands.some(pb => pb.includes(carBrand) || carBrand.includes(pb));

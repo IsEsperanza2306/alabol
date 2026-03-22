@@ -2210,6 +2210,12 @@
         document.addEventListener('DOMContentLoaded', async () => {
             updateFavCounter();
             await initFiltersFromURL();
+
+            // Deep link: if ?auto=ID, open that car's detail modal
+            const autoParam = new URLSearchParams(window.location.search).get('auto');
+            if (autoParam) {
+                setTimeout(() => { openCarDetails(autoParam); }, 500);
+            }
         });
     </script>
 <!-- Floating WhatsApp Button -->

@@ -1119,6 +1119,18 @@
                     <a href="inventario.html" style="display:block;text-align:center;padding:14px;border-radius:14px;background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.25);color:var(--gold);font-weight:600;font-size:14px;text-decoration:none;transition:all 0.3s;">
                         🔍 Seguir viendo perfiles
                     </a>
+                    <a href="#" onclick="var t=encodeURIComponent('Encontré esta herramienta para buscar autos seminuevos y de subasta. Es como Tinder pero para autos 😂 Pruébalo: https://alabolcar.com.mx/vip/');window.open('https://api.whatsapp.com/send?text='+t,'_blank');return false;" style="display:block;text-align:center;padding:12px;border-radius:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--green-text);font-size:13px;font-weight:500;text-decoration:none;margin-top:10px;">🔗 Compartir Matchmaker con un amigo</a>
+                </div>
+                <div id="noMatchSection" style="display:none; margin-top:20px; background:rgba(212,175,55,0.06); border:1px solid rgba(212,175,55,0.15); border-radius:16px; padding:20px; text-align:center;">
+                    <div style="font-size:28px; margin-bottom:8px;">💔</div>
+                    <div style="font-size:16px; font-weight:700; color:white; margin-bottom:4px;">¿No llegó el amor?</div>
+                    <div style="font-size:12px; color:var(--green-text); margin-bottom:16px;">Cuéntanos qué buscas y lo encontramos. Tenemos acceso a inventario que no está publicado.</div>
+                    <div style="display:flex;flex-direction:column;gap:10px;max-width:320px;margin:0 auto;">
+                        <input type="text" id="noMatchAuto" placeholder="¿Qué auto buscas? (ej: Toyota RAV4 2022)" style="padding:12px;border:2px solid rgba(212,175,55,0.2);border-radius:12px;background:rgba(10,31,26,0.6);color:white;font-family:inherit;font-size:13px;">
+                        <input type="text" id="noMatchPresupuesto" placeholder="Presupuesto máximo" style="padding:12px;border:2px solid rgba(212,175,55,0.2);border-radius:12px;background:rgba(10,31,26,0.6);color:white;font-family:inherit;font-size:13px;">
+                        <button onclick="enviarBusquedaPersonalizada()" style="padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#d4af37,#f4e5b0);color:#0a1f1a;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;">🔍 Buscar mi auto ideal</button>
+                    </div>
+                    <div style="font-size:11px;color:var(--green-text);margin-top:10px;opacity:0.6;">Tu auto ideal está ahí afuera. Déjanos buscarlo.</div>
                 </div>
             </div>
 
@@ -1692,16 +1704,31 @@
             if (car.ciudad) tags.push(car.ciudad);
             if (car.traccion) tags.push(car.traccion);
 
+            const origenBadge = car.origen === 'subasta_mx'
+                ? '<div style="position:absolute;top:12px;left:12px;background:rgba(230,81,0,0.9);color:white;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:700;backdrop-filter:blur(8px);z-index:3;">🔥 Subasta MX</div>'
+                : car.origen === 'subasta_usa'
+                ? '<div style="position:absolute;top:12px;left:12px;background:rgba(26,35,126,0.9);color:white;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:700;backdrop-filter:blur(8px);z-index:3;">🇺🇸 Subasta USA</div>'
+                : '<div style="position:absolute;top:12px;left:12px;background:rgba(46,125,50,0.9);color:white;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:700;backdrop-filter:blur(8px);z-index:3;">🏢 Agencia</div>';
+
+            const priceDisplay = car.origen === 'subasta_mx'
+                ? `<div class="t-card-price" style="color:#F57C00;">Desde ${price} MXN<div style="font-size:11px;color:#a8c5b8;font-weight:400;">Precio base de subasta</div></div>`
+                : car.origen === 'subasta_usa'
+                ? `<div class="t-card-price" style="color:#5C6BC0;">~${price} USD<div style="font-size:11px;color:#a8c5b8;font-weight:400;">Precio base + importación</div></div>`
+                : `<div class="t-card-price">${price} MXN</div>`;
+
             deck.innerHTML += `
                 <div class="tinder-card" data-index="${i}" data-car-id="${car.id || 'fb' + i}">
+                    <div style="position:relative;">
                     ${hasImage
                         ? `<img class="t-card-img" src="${imgSrc}" alt="${car.marca} ${car.modelo}" loading="lazy">`
                         : `<div class="t-card-img" style="background: linear-gradient(135deg, var(--bg-mid), var(--bg-light)); display:flex; align-items:center; justify-content:center; font-size:60px;">🚗</div>`
                     }
+                    ${origenBadge}
+                    </div>
                     <div class="t-card-info">
                         <div>
                             <div class="t-card-title">${car.marca} ${car.modelo} <span class="t-card-year">${car.anio}</span></div>
-                            <div class="t-card-price">${price} MXN</div>
+                            ${priceDisplay}
                             <div class="t-card-tags">${tags.map(t => `<span class="t-card-tag">${t}</span>`).join('')}</div>
                         </div>
                         <div class="t-card-details">
@@ -1805,20 +1832,58 @@
 
         summaryBox.innerHTML = html;
 
-        // Render liked cars with cita buttons
+        // Render liked cars with cita buttons — grouped by origen
         const citasContainer = document.getElementById('likedCarsCitas');
         if (likedCars.length > 0) {
-            citasContainer.innerHTML = '<p style="font-size:13px;color:var(--gold);font-weight:600;margin-bottom:10px;text-align:left;">📅 Agenda tu primera cita:</p>' +
-                likedCars.map(c => {
+            const agenciaLikes = likedCars.filter(c => !c.origen || c.origen === 'agencia' || c.origen === 'local');
+            const subastaMxLikes = likedCars.filter(c => c.origen === 'subasta_mx');
+            const subastaUsaLikes = likedCars.filter(c => c.origen === 'subasta_usa');
+
+            let citasHtml = '';
+
+            if (agenciaLikes.length > 0) {
+                citasHtml += '<p style="font-size:12px;color:var(--gold);font-weight:600;margin:12px 0 8px;text-align:left;">🏢 Tus matches de Agencia</p>';
+                citasHtml += agenciaLikes.map(c => {
                     const price = '$' + Number(c.precio_venta || 0).toLocaleString('es-MX');
-                    return `<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(212,175,55,0.06);border:1px solid rgba(212,175,55,0.15);border-radius:12px;padding:12px;margin-bottom:8px;">
-                        <div>
-                            <div style="font-size:13px;font-weight:700;color:white;">${c.marca} ${c.modelo} ${c.anio}</div>
-                            <div style="font-size:12px;color:var(--gold);">${price}</div>
-                        </div>
+                    return `<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(46,125,50,0.08);border:1px solid rgba(46,125,50,0.2);border-radius:12px;padding:12px;margin-bottom:8px;">
+                        <div><div style="font-size:13px;font-weight:700;color:white;">${c.marca} ${c.modelo} ${c.anio}</div><div style="font-size:12px;color:var(--gold);">${price}</div></div>
                         <a href="../agendar-cita.html?auto=${c.id}" style="padding:8px 14px;background:linear-gradient(135deg,#d4af37,#f4e5b0);color:#0a1f1a;border-radius:10px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap;">📅 Agendar</a>
                     </div>`;
                 }).join('');
+            }
+
+            if (subastaMxLikes.length > 0) {
+                citasHtml += '<p style="font-size:12px;color:#F57C00;font-weight:600;margin:12px 0 8px;text-align:left;">🔥 Tus matches de Subasta MX</p>';
+                citasHtml += subastaMxLikes.map(c => {
+                    const price = '$' + Number(c.precio_venta || 0).toLocaleString('es-MX');
+                    const waMsg = encodeURIComponent(`Hola Alabol! Me interesa este auto de subasta:\n🚗 ${c.marca} ${c.modelo} ${c.anio}\n📍 Subasta México\nVi este auto en el Matchmaker y quiero más información.`);
+                    return `<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(230,81,0,0.08);border:1px solid rgba(230,81,0,0.2);border-radius:12px;padding:12px;margin-bottom:8px;">
+                        <div><div style="font-size:13px;font-weight:700;color:white;">${c.marca} ${c.modelo} ${c.anio}</div><div style="font-size:12px;color:#F57C00;">Desde ${price}</div></div>
+                        <a href="https://api.whatsapp.com/send?phone=525568667571&text=${waMsg}" target="_blank" style="padding:8px 14px;background:#E65100;color:white;border-radius:10px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap;">🔥 Me interesa</a>
+                    </div>`;
+                }).join('');
+            }
+
+            if (subastaUsaLikes.length > 0) {
+                citasHtml += '<p style="font-size:12px;color:#5C6BC0;font-weight:600;margin:12px 0 8px;text-align:left;">🇺🇸 Tus matches de Subasta USA</p>';
+                citasHtml += subastaUsaLikes.map(c => {
+                    const price = '$' + Number(c.precio_venta || 0).toLocaleString('es-MX');
+                    const waMsg = encodeURIComponent(`Hola Alabol! Me interesa este auto de subasta USA:\n🚗 ${c.marca} ${c.modelo} ${c.anio}\n🇺🇸 Subasta USA\nQuiero saber sobre el proceso de importación.`);
+                    return `<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(26,35,126,0.08);border:1px solid rgba(26,35,126,0.2);border-radius:12px;padding:12px;margin-bottom:8px;">
+                        <div><div style="font-size:13px;font-weight:700;color:white;">${c.marca} ${c.modelo} ${c.anio}</div><div style="font-size:12px;color:#5C6BC0;">~${price} USD</div></div>
+                        <div style="display:flex;gap:6px;">
+                            <a href="https://alabolcar-hwh56g8k.manus.space/calculators" target="_blank" style="padding:8px 10px;background:#1A237E;color:white;border-radius:10px;font-size:10px;font-weight:700;text-decoration:none;white-space:nowrap;">🧮 Calcular</a>
+                            <a href="https://api.whatsapp.com/send?phone=525568667571&text=${waMsg}" target="_blank" style="padding:8px 10px;background:#25D366;color:white;border-radius:10px;font-size:10px;font-weight:700;text-decoration:none;white-space:nowrap;">💬 Info</a>
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+
+            if (subastaMxLikes.length > 0 || subastaUsaLikes.length > 0) {
+                citasHtml += '<p style="font-size:11px;color:#a8c5b8;margin-top:12px;text-align:left;font-style:italic;">💡 Los autos de subasta tienen precios variables. Tu asesor te explicará el proceso y te ayudará a calcular el costo final.</p>';
+            }
+
+            citasContainer.innerHTML = citasHtml;
         }
 
         // Save user data for agendar-cita pre-fill
@@ -1837,7 +1902,7 @@
             `Acabo de hacer match en Alabol y me gustaron estos autos:\n${likedList}\n\n` +
             `Quiero más información o agendar una cita para verlos.`
         );
-        document.getElementById('ctaWhatsApp').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
+        document.getElementById('ctaWhatsApp').href = `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${msg}`;
 
         successScreen.classList.add('active');
 
@@ -1884,8 +1949,19 @@
         fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(finalPayload) })
             .catch(err => console.warn('Sheets save failed:', err));
 
+        // Show noMatchSection
+        document.getElementById('noMatchSection').style.display = 'block';
+
         // Clear saved progress
         localStorage.removeItem(STORAGE_KEY);
+    }
+
+    function enviarBusquedaPersonalizada() {
+        var auto = document.getElementById('noMatchAuto').value;
+        var presupuesto = document.getElementById('noMatchPresupuesto').value;
+        if (!auto) { alert('Dinos qué auto buscas'); return; }
+        var msg = encodeURIComponent('Hola Alabol! No encontré mi match ideal en el Matchmaker.\n\n🚗 Busco: ' + auto + '\n💰 Presupuesto: ' + (presupuesto || 'Flexible') + '\n👤 Soy: ' + (formData.nombre || '') + '\n📍 Ciudad: ' + (formData.ciudad || '') + '\n\n¿Me pueden ayudar a encontrarlo?');
+        window.open('https://api.whatsapp.com/send?phone=525568667571&text=' + msg, '_blank');
     }
 
     // =====================

@@ -1715,7 +1715,8 @@
                             daysOnMarket: daysOnMarket,
                             matchCount: car.total_matches || 0,
                             views: car.vistas || 0,
-                            featured: car.destacado === true
+                            featured: car.destacado === true,
+                            origen: car.origen || 'agencia'
                         };
                     });
                 }
@@ -1890,6 +1891,13 @@
             // Scarcity badge (only when truly unique)
             const uniqueBadge = auto.modelCount === 1 ? '<div class="badge-unique">Único en inventario</div>' : '';
 
+            // Origen badge
+            const origenBadge = auto.origen === 'subasta_mx'
+                ? '<div style="position:absolute;bottom:8px;right:55px;background:rgba(230,81,0,0.9);color:white;padding:3px 8px;border-radius:8px;font-size:10px;font-weight:700;backdrop-filter:blur(8px);z-index:3;">🔥 Subasta MX</div>'
+                : auto.origen === 'subasta_usa'
+                ? '<div style="position:absolute;bottom:8px;right:55px;background:rgba(26,35,126,0.9);color:white;padding:3px 8px;border-radius:8px;font-size:10px;font-weight:700;backdrop-filter:blur(8px);z-index:3;">🇺🇸 USA</div>'
+                : '';
+
             // Featured badge (from real destacado field)
             const featuredBadge = auto.featured === true ? '<div class="badge-featured">⭐ Destacado</div>' : '';
 
@@ -1931,15 +1939,19 @@
                             <i class="fa-solid ${tc.icon}"></i> ${tc.text}
                         </div>
                         ${uniqueBadge}
+                        ${origenBadge}
                     </div>
 
                     <div class="card-body">
                         <div class="car-title">${auto.vehicle}</div>
                         <div class="car-version" style="height: 40px; overflow: hidden; opacity: 0.7;">${auto.version}</div>
 
-                        <div class="price-tag">
-                            ${formatCurrency(auto.priceMXN)} <span style="font-size: 10px; opacity: 0.6">MXN</span>
-                        </div>
+                        ${auto.origen === 'subasta_mx'
+                            ? `<div class="price-tag" style="color:#F57C00;">Desde ${formatCurrency(auto.priceMXN)} <span style="font-size:10px;opacity:0.6">MXN</span><div style="font-size:10px;color:#a8c5b8;font-weight:400;">Precio base de subasta</div></div>`
+                            : auto.origen === 'subasta_usa'
+                            ? `<div class="price-tag" style="color:#5C6BC0;">~${formatCurrency(auto.priceMXN)} <span style="font-size:10px;opacity:0.6">USD</span><div style="font-size:10px;color:#a8c5b8;font-weight:400;">+ costos de importación</div></div>`
+                            : `<div class="price-tag">${formatCurrency(auto.priceMXN)} <span style="font-size:10px;opacity:0.6">MXN</span></div>`
+                        }
 
                         <div class="specs">
                             <div class="spec-item">

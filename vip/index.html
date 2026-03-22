@@ -1123,14 +1123,10 @@
                 </div>
                 <div id="noMatchSection" style="display:none; margin-top:20px; background:rgba(212,175,55,0.06); border:1px solid rgba(212,175,55,0.15); border-radius:16px; padding:20px; text-align:center;">
                     <div style="font-size:28px; margin-bottom:8px;">💔</div>
-                    <div style="font-size:16px; font-weight:700; color:white; margin-bottom:4px;">¿No llegó el amor?</div>
-                    <div style="font-size:12px; color:var(--green-text); margin-bottom:16px;">Cuéntanos qué buscas y lo encontramos. Tenemos acceso a inventario que no está publicado.</div>
-                    <div style="display:flex;flex-direction:column;gap:10px;max-width:320px;margin:0 auto;">
-                        <input type="text" id="noMatchAuto" placeholder="¿Qué auto buscas? (ej: Toyota RAV4 2022)" style="padding:12px;border:2px solid rgba(212,175,55,0.2);border-radius:12px;background:rgba(10,31,26,0.6);color:white;font-family:inherit;font-size:13px;">
-                        <input type="text" id="noMatchPresupuesto" placeholder="Presupuesto máximo" style="padding:12px;border:2px solid rgba(212,175,55,0.2);border-radius:12px;background:rgba(10,31,26,0.6);color:white;font-family:inherit;font-size:13px;">
-                        <button onclick="enviarBusquedaPersonalizada()" style="padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#d4af37,#f4e5b0);color:#0a1f1a;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;">🔍 Buscar mi auto ideal</button>
-                    </div>
-                    <div style="font-size:11px;color:var(--green-text);margin-top:10px;opacity:0.6;">Tu auto ideal está ahí afuera. Déjanos buscarlo.</div>
+                    <div style="font-size:16px; font-weight:700; color:white; margin-bottom:6px;">¿No llegó el amor?</div>
+                    <div style="font-size:13px; color:var(--green-text); margin-bottom:16px; line-height:1.5;">Tenemos acceso a autos que no están publicados.<br>Un asesor te busca opciones personalizadas.</div>
+                    <a id="noMatchWhatsApp" href="#" target="_blank" style="display:block;text-align:center;background:#25D366;color:white;padding:16px;border-radius:14px;text-decoration:none;font-weight:700;font-size:15px;box-shadow:0 4px 15px rgba(37,211,102,0.3);">💬 Que me busquen mi auto ideal</a>
+                    <div style="font-size:11px;color:var(--green-text);margin-top:12px;opacity:0.5;">Un tap. Sin formularios. Ya tenemos tus datos.</div>
                 </div>
             </div>
 
@@ -1949,19 +1945,29 @@
         fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(finalPayload) })
             .catch(err => console.warn('Sheets save failed:', err));
 
-        // Show noMatchSection
+        // Show "no match?" section with pre-filled WhatsApp
         document.getElementById('noMatchSection').style.display = 'block';
+        prepararNoMatchWhatsApp();
 
         // Clear saved progress
         localStorage.removeItem(STORAGE_KEY);
     }
 
-    function enviarBusquedaPersonalizada() {
-        var auto = document.getElementById('noMatchAuto').value;
-        var presupuesto = document.getElementById('noMatchPresupuesto').value;
-        if (!auto) { alert('Dinos qué auto buscas'); return; }
-        var msg = encodeURIComponent('Hola Alabol! No encontré mi match ideal en el Matchmaker.\n\n🚗 Busco: ' + auto + '\n💰 Presupuesto: ' + (presupuesto || 'Flexible') + '\n👤 Soy: ' + (formData.nombre || '') + '\n📍 Ciudad: ' + (formData.ciudad || '') + '\n\n¿Me pueden ayudar a encontrarlo?');
-        window.open('https://api.whatsapp.com/send?phone=525568667571&text=' + msg, '_blank');
+    function prepararNoMatchWhatsApp() {
+        var marcas = (formData.marcas || []).join(', ') || 'Cualquiera';
+        var tipo = formData.carroceria || 'Cualquier tipo';
+        var budget = '$' + (formData.presupuestoMin || 0).toLocaleString('es-MX') + ' - $' + (formData.presupuestoMax || 0).toLocaleString('es-MX');
+        var msg = encodeURIComponent(
+            'Hola Alabol! Soy ' + (formData.nombre || '') + ' de ' + (formData.ciudad || '') + '.\n\n' +
+            'Usé el Matchmaker pero no encontré exactamente lo que busco.\n\n' +
+            '🚗 Tipo: ' + tipo + '\n' +
+            '💛 Marcas: ' + marcas + '\n' +
+            '📅 Año: ' + (formData.anioDesde || '') + '-' + (formData.anioHasta || '') + '\n' +
+            '💰 Presupuesto: ' + budget + '\n\n' +
+            '¿Me pueden buscar opciones personalizadas?'
+        );
+        var btn = document.getElementById('noMatchWhatsApp');
+        if (btn) btn.href = 'https://api.whatsapp.com/send?phone=525568667571&text=' + msg;
     }
 
     // =====================

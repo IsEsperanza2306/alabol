@@ -1342,6 +1342,10 @@
                 <div style="display:flex;flex-direction:column;gap:12px;max-width:600px;">
                     <input type="text" id="syncAgenciaName" placeholder="Nombre de la agencia (ej: Kavak Sur)" style="padding:12px 16px;border:1px solid var(--border);border-radius:10px;background:rgba(0,0,0,0.3);color:white;font-family:inherit;font-size:14px;outline:none;">
                     <input type="text" id="syncCsvUrl" placeholder="URL del CSV publicado (https://docs.google.com/spreadsheets/d/e/...)" style="padding:12px 16px;border:1px solid var(--border);border-radius:10px;background:rgba(0,0,0,0.3);color:white;font-family:inherit;font-size:14px;outline:none;">
+                    <label style="display:flex;align-items:center;gap:8px;color:var(--green-text);font-size:13px;cursor:pointer;">
+                        <input type="checkbox" id="syncAutoCheck" style="width:18px;height:18px;accent-color:var(--gold);">
+                        Activar sincronización automática cada 4 horas
+                    </label>
                     <button class="btn-action" onclick="fetchAndPreviewCSV()" style="padding:12px 20px;font-size:14px;">📥 Cargar y previsualizar</button>
                 </div>
                 <div id="syncStatus" style="margin-top:12px;font-size:13px;color:var(--green-text);"></div>
@@ -2852,6 +2856,20 @@
 
                 btn.textContent = '✅ Completado';
 
+                // Save CSV URL to agencias for auto-sync
+                const autoSync = document.getElementById('syncAutoCheck').checked;
+                const csvUrl = document.getElementById('syncCsvUrl').value.trim();
+                if (autoSync && csvUrl && syncAgenciaName) {
+                    // Check if agency exists
+                    const { data: existingAgency } = await supabaseClient.from('agencias').select('id').eq('nombre', syncAgenciaName).maybeSingle();
+                    if (existingAgency) {
+                        await supabaseClient.from('agencias').update({ csv_url: csvUrl, sync_activa: true, ultima_sync: new Date().toISOString() }).eq('id', existingAgency.id);
+                    } else {
+                        await supabaseClient.from('agencias').insert({ nombre: syncAgenciaName, ciudad: 'Por definir', estado: 'Por definir', csv_url: csvUrl, sync_activa: true, ultima_sync: new Date().toISOString(), activa: true });
+                    }
+                    document.getElementById('syncResultText').innerHTML += '<br><span style="color:var(--gold);">🔄 Sync automático activado cada 4 horas</span>';
+                }
+
             } catch (err) {
                 btn.textContent = '❌ Error: ' + err.message;
                 btn.disabled = false;
@@ -2860,28 +2878,47 @@
 
         async function loadSyncHistory() {
             try {
-                const { data } = await supabaseClient
+                // Get agencies with sync info
+                const { data: agencias } = await supabaseClient
+                    .from('agencias')
+                    .select('nombre, csv_url, sync_activa, ultima_sync, activa')
+                    .order('nombre');
+
+                // Get car counts per agency
+                const { data: cars } = await supabaseClient
                     .from('inventario')
                     .select('agencia_id, estatus')
                     .not('agencia_id', 'is', null);
 
-                if (!data || data.length === 0) {
+                const carCounts = {};
+                (cars || []).forEach(car => {
+                    if (!car.agencia_id) return;
+                    if (!carCounts[car.agencia_id]) carCounts[car.agencia_id] = { total: 0, disponible: 0 };
+                    carCounts[car.agencia_id].total++;
+                    if (car.estatus === 'disponible') carCounts[car.agencia_id].disponible++;
+                });
+
+                if ((!agencias || agencias.length === 0) && Object.keys(carCounts).length === 0) {
                     document.getElementById('syncHistory').textContent = 'No hay agencias sincronizadas aún';
                     return;
                 }
 
-                const agencies = {};
-                data.forEach(car => {
-                    if (!car.agencia_id) return;
-                    if (!agencies[car.agencia_id]) agencies[car.agencia_id] = { total: 0, disponible: 0 };
-                    agencies[car.agencia_id].total++;
-                    if (car.estatus === 'disponible') agencies[car.agencia_id].disponible++;
+                let html = '<table><thead><tr><th>Agencia</th><th>Autos</th><th>Disponibles</th><th>Auto-sync</th><th>Última sync</th></tr></thead><tbody>';
+
+                // Show agencies from agencias table
+                (agencias || []).forEach(ag => {
+                    const counts = carCounts[ag.nombre] || { total: 0, disponible: 0 };
+                    const syncBadge = ag.sync_activa ? '<span style="color:var(--success);">🟢 Activo</span>' : '<span style="color:#666;">⚪ Inactivo</span>';
+                    const lastSync = ag.ultima_sync ? new Date(ag.ultima_sync).toLocaleString('es-MX', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—';
+                    html += `<tr><td style="font-weight:600;">${ag.nombre}</td><td>${counts.total}</td><td style="color:var(--success);">${counts.disponible}</td><td>${syncBadge}</td><td style="font-size:11px;">${lastSync}</td></tr>`;
+                    delete carCounts[ag.nombre];
                 });
 
-                let html = '<table><thead><tr><th>Agencia</th><th>Total</th><th>Disponibles</th></tr></thead><tbody>';
-                Object.keys(agencies).sort().forEach(name => {
-                    html += `<tr><td>${name}</td><td>${agencies[name].total}</td><td style="color:var(--success);">${agencies[name].disponible}</td></tr>`;
+                // Show remaining agencies not in agencias table
+                Object.keys(carCounts).sort().forEach(name => {
+                    html += `<tr><td>${name}</td><td>${carCounts[name].total}</td><td style="color:var(--success);">${carCounts[name].disponible}</td><td><span style="color:#666;">⚪ Manual</span></td><td>—</td></tr>`;
                 });
+
                 html += '</tbody></table>';
                 document.getElementById('syncHistory').innerHTML = html;
             } catch (e) {

@@ -1174,6 +1174,28 @@
             0%, 100% { transform: translateY(0); opacity: 0.5; }
             50% { transform: translateY(-8px); opacity: 1; }
         }
+
+        .inv-tabs {
+            display: flex; gap: 4px; margin-bottom: 20px;
+            background: rgba(15,51,41,0.6); backdrop-filter: blur(10px);
+            padding: 5px; border-radius: 14px;
+            border: 1px solid var(--glass-border);
+        }
+        .inv-tab {
+            flex: 1; padding: 12px 16px; border: none; border-radius: 10px;
+            font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 600;
+            cursor: pointer; transition: all 0.3s; color: var(--green-text);
+            background: transparent; letter-spacing: 0.5px;
+        }
+        .inv-tab.active {
+            background: linear-gradient(135deg, var(--gold) 0%, #c9a961 100%);
+            color: var(--bg-dark);
+            box-shadow: 0 4px 15px rgba(212,175,55,0.3);
+        }
+        .inv-tab:not(.active):hover {
+            background: rgba(212,175,55,0.1);
+            color: var(--gold);
+        }
     </style>
 <style id="alabol-nav-styles">
   :root {
@@ -1523,6 +1545,15 @@
             </div>
         </div>
 
+        <div class="inv-tabs" id="invTabs">
+            <button class="inv-tab active" data-tab="seminuevos" onclick="switchInvTab('seminuevos')">
+                🏢 Seminuevos
+            </button>
+            <button class="inv-tab" data-tab="subastas" onclick="switchInvTab('subastas')">
+                🔥 Subastas
+            </button>
+        </div>
+
         <!-- VEHICLES GRID -->
         <div class="grid" id="vehiculosGrid"></div>
 
@@ -1698,7 +1729,7 @@
                         return {
                             id: car.id_interno || car.id,
                             agencia: car.agencia || 'Alabol',
-                            ubicacion: getGenericLocation(car.agencia),
+                            ubicacion: car.ciudad || getGenericLocation(car.agencia),
                             vehicle: `${car.marca || car.brand || ''} ${car.modelo || car.model || ''} ${car.año || car.year || ''}`.trim().toUpperCase(),
                             version: car.version || 'Equipado',
                             priceMXN: car.precio_venta || car.precio || 0,
@@ -1716,7 +1747,8 @@
                             matchCount: car.total_matches || 0,
                             views: car.vistas || 0,
                             featured: car.destacado === true,
-                            origen: car.origen || 'agencia'
+                            origen: car.origen || 'agencia',
+                            ciudad: car.ciudad || 'México'
                         };
                     });
                 }
@@ -1979,6 +2011,68 @@
             `;
         }
 
+        function createSubastaCard(auto) {
+            let imgUrl = "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&w=800";
+            if (auto.url_fotos) {
+                if (Array.isArray(auto.url_fotos)) imgUrl = auto.url_fotos[0];
+                else if (typeof auto.url_fotos === 'string' && auto.url_fotos.trim() !== '') imgUrl = auto.url_fotos;
+            }
+
+            // Origin badge
+            const origenBadge = auto.origen === 'subasta_usa'
+                ? '<div style="position:absolute;top:15px;left:15px;background:rgba(26,35,126,0.9);color:white;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:700;backdrop-filter:blur(8px);z-index:3;">🇺🇸 Subasta USA</div>'
+                : '<div style="position:absolute;top:15px;left:15px;background:rgba(230,81,0,0.9);color:white;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:700;backdrop-filter:blur(8px);z-index:3;">🔥 Subasta MX</div>';
+
+            // Condition badge
+            const condicion = auto.descripcion || auto.version || 'Por evaluar';
+
+            // WhatsApp message
+            const waMsg = encodeURIComponent(
+                'Hola Alabol! Me interesa este auto de subasta:\n' +
+                '🚗 ' + auto.vehicle + '\n' +
+                '📍 ' + (auto.ubicacion || 'México') + '\n' +
+                'Vi este auto en el inventario y quiero más información.'
+            );
+
+            return `
+                <div class="card">
+                    <div class="card-img-container" style="position:relative;">
+                        <img src="${imgUrl}" alt="${auto.vehicle}" class="card-img-placeholder">
+                        ${origenBadge}
+                    </div>
+                    <div class="card-body">
+                        <div class="car-title">${auto.vehicle}</div>
+                        <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;">
+                            <span style="font-size:12px;color:var(--green-text);">🔧 ${condicion}</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+                            <span style="font-size:11px;color:var(--green-text);opacity:0.6;">📍 ${auto.ubicacion || auto.color || 'México'}</span>
+                        </div>
+                        <div style="background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.2);border-radius:10px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+                            <span style="font-size:16px;">🏛️</span>
+                            <span style="font-size:12px;color:var(--gold-light);font-weight:500;">Precio bajo consulta · Subasta ${auto.origen === 'subasta_usa' ? 'internacional' : 'nacional'}</span>
+                        </div>
+                        <div class="actions" style="flex-direction:column;gap:8px;">
+                            <a href="https://api.whatsapp.com/send?phone=525568667571&text=${waMsg}" target="_blank" class="btn btn-primary" style="width:100%;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;background:#E65100;">
+                                🔥 Me interesa <i class="fa-solid fa-arrow-right" style="font-size:10px"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        let currentInvTab = 'seminuevos';
+
+        function switchInvTab(tab) {
+            currentInvTab = tab;
+            // Update tab UI
+            document.querySelectorAll('.inv-tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.inv-tab[data-tab="${tab}"]`).classList.add('active');
+            // Re-render
+            triggerInvFilter();
+        }
+
         function populateInvBrands() {
             const exhaustiveBrands = ["Acura", "Audi", "BMW", "Chevrolet", "Chrysler", "Dodge", "Fiat", "Ford", "GMC", "Honda", "Hyundai", "Jeep", "Kia", "Mazda", "Mercedes-Benz", "MG", "Mini", "Mitsubishi", "Nissan", "Peugeot", "RAM", "Renault", "Seat", "Subaru", "Suzuki", "Toyota", "Volkswagen", "Volvo"];
 
@@ -2041,6 +2135,13 @@
 
             // Filter data
             const filtered = database_inventory.filter(car => {
+                // Tab filter
+                if (currentInvTab === 'seminuevos') {
+                    if (car.origen === 'subasta_mx' || car.origen === 'subasta_usa') return false;
+                } else if (currentInvTab === 'subastas') {
+                    if (car.origen !== 'subasta_mx' && car.origen !== 'subasta_usa') return false;
+                }
+
                 let matchSearch = car.vehicle.toLowerCase().includes(searchText) || car.version.toLowerCase().includes(searchText);
                 let matchBrand = brand === 'all' || car.vehicle.toLowerCase().includes(brand.toLowerCase());
                 let matchModel = model === 'all' || car.vehicle.toLowerCase().includes(model.toLowerCase());
@@ -2129,7 +2230,20 @@
                 return;
             }
 
-            grid.innerHTML = dataToRender.map(auto => createCard(auto)).join('');
+            grid.innerHTML = dataToRender.map(auto => {
+                if (auto.origen === 'subasta_mx' || auto.origen === 'subasta_usa') {
+                    return createSubastaCard(auto);
+                }
+                return createCard(auto);
+            }).join('');
+
+            // Update tab counts
+            const seminuevosCount = database_inventory.filter(c => c.origen !== 'subasta_mx' && c.origen !== 'subasta_usa').length;
+            const subastasCount = database_inventory.filter(c => c.origen === 'subasta_mx' || c.origen === 'subasta_usa').length;
+            const semTab = document.querySelector('.inv-tab[data-tab="seminuevos"]');
+            const subTab = document.querySelector('.inv-tab[data-tab="subastas"]');
+            if (semTab) semTab.textContent = '🏢 Seminuevos (' + seminuevosCount + ')';
+            if (subTab) subTab.textContent = '🔥 Subastas (' + subastasCount + ')';
         }
 
         // --- MODAL LOGIC ---
@@ -2222,6 +2336,12 @@
         document.addEventListener('DOMContentLoaded', async () => {
             updateFavCounter();
             await initFiltersFromURL();
+
+            // Handle tab from URL
+            const tabParam = new URLSearchParams(window.location.search).get('tab');
+            if (tabParam === 'subastas') {
+                switchInvTab('subastas');
+            }
 
             // Deep link: if ?auto=ID, open that car's detail modal
             const autoParam = new URLSearchParams(window.location.search).get('auto');

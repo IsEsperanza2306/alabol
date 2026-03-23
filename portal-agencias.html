@@ -914,6 +914,9 @@ textarea.fi { resize: vertical; min-height: 80px; }
       <button class="sidebar-nav-item" onclick="switchView('pubView')" data-view="pubView">
         <i class="fa-solid fa-circle-plus"></i> Publicar Auto
       </button>
+      <button class="sidebar-nav-item" onclick="switchView('syncView')" data-view="syncView">
+        <i class="fa-solid fa-cloud-arrow-up"></i> Sincronizar Inventario
+      </button>
       <button class="sidebar-nav-item" onclick="switchView('profileView')" data-view="profileView">
         <i class="fa-solid fa-user-tie"></i> Mi Perfil
       </button>
@@ -1002,6 +1005,77 @@ textarea.fi { resize: vertical; min-height: 80px; }
         <div style="font-size:20px;font-weight:700;color:white;margin-bottom:8px;">Publica un nuevo auto</div>
         <p style="font-size:13px;opacity:0.7;margin-bottom:24px;line-height:1.6;">Cada auto publicado entra al radar de nuestro algoritmo.<br>Conecta tu inventario con compradores verificados.</p>
         <button class="bnew" style="margin:0 auto;" onclick="openForm(null)"><i class="fa-solid fa-plus"></i> Iniciar Publicacion</button>
+      </div>
+    </div>
+
+    <!-- SYNC VIEW -->
+    <div class="view" id="syncView">
+      <div style="margin-bottom:24px;">
+        <div style="font-size:20px;font-weight:800;color:white;"><i class="fa-solid fa-cloud-arrow-up" style="color:var(--gold);margin-right:8px;"></i>Sincronizar Inventario</div>
+        <div style="font-size:13px;color:var(--green-text);margin-top:4px;">Conecta tu Google Sheet para mantener tu inventario actualizado automáticamente</div>
+      </div>
+
+      <!-- Instructions -->
+      <div style="background:var(--bg-card);border:1px solid var(--glass-border);border-radius:16px;padding:20px;margin-bottom:20px;">
+        <div style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:12px;">📋 ¿Cómo funciona?</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;align-items:flex-start;gap:10px;">
+            <span style="background:var(--gold);color:var(--bg-primary);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;">1</span>
+            <div><div style="color:white;font-size:13px;font-weight:600;">Llena tu inventario en Google Sheets</div><div style="color:var(--green-text);font-size:11px;">Usa nuestro template con las columnas: Marca, Modelo, Año, Precio, Tipo, Km, etc.</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;">
+            <span style="background:var(--gold);color:var(--bg-primary);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;">2</span>
+            <div><div style="color:white;font-size:13px;font-weight:600;">Publica como CSV</div><div style="color:var(--green-text);font-size:11px;">Archivo → Compartir → Publicar en la web → CSV</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;">
+            <span style="background:var(--gold);color:var(--bg-primary);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;">3</span>
+            <div><div style="color:white;font-size:13px;font-weight:600;">Pega la URL aquí y sincroniza</div><div style="color:var(--green-text);font-size:11px;">Tu inventario se actualiza en segundos</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sync Form -->
+      <div style="background:var(--bg-card);border:1px solid var(--glass-border);border-radius:16px;padding:20px;margin-bottom:20px;">
+        <div style="font-size:14px;font-weight:700;color:white;margin-bottom:14px;">📥 Sincronizar ahora</div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <input type="text" id="agSyncUrl" placeholder="URL del CSV publicado (https://docs.google.com/spreadsheets/d/e/...)" style="padding:12px 16px;border:1px solid var(--glass-border);border-radius:10px;background:rgba(0,0,0,0.3);color:white;font-family:inherit;font-size:13px;outline:none;">
+          <button onclick="agFetchCSV()" style="padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--bg-primary);font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;">📥 Cargar y previsualizar</button>
+        </div>
+        <div id="agSyncStatus" style="margin-top:10px;font-size:13px;color:var(--green-text);"></div>
+      </div>
+
+      <!-- Preview -->
+      <div id="agSyncPreview" style="display:none;background:var(--bg-card);border:1px solid var(--glass-border);border-radius:16px;padding:20px;margin-bottom:20px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <div style="font-size:14px;font-weight:700;color:white;">Previsualización</div>
+          <button onclick="agApplySync()" id="agApplyBtn" style="padding:10px 20px;border:none;border-radius:10px;background:var(--emerald);color:white;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;">✅ Aplicar cambios</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;">
+          <div style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:10px;text-align:center;">
+            <div style="font-size:20px;font-weight:800;color:var(--emerald);" id="agNewCount">0</div>
+            <div style="font-size:10px;color:var(--green-text);">Nuevos</div>
+          </div>
+          <div style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:10px;text-align:center;">
+            <div style="font-size:20px;font-weight:800;color:#f59e0b;" id="agUpdateCount">0</div>
+            <div style="font-size:10px;color:var(--green-text);">Actualizar</div>
+          </div>
+          <div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:10px;text-align:center;">
+            <div style="font-size:20px;font-weight:800;color:#ef4444;" id="agRemoveCount">0</div>
+            <div style="font-size:10px;color:var(--green-text);">Eliminar</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:10px;text-align:center;">
+            <div style="font-size:20px;font-weight:800;color:var(--green-text);" id="agSameCount">0</div>
+            <div style="font-size:10px;color:var(--green-text);">Sin cambios</div>
+          </div>
+        </div>
+        <div style="overflow-x:auto;" id="agPreviewTable"></div>
+      </div>
+
+      <!-- Result -->
+      <div id="agSyncResult" style="display:none;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:16px;padding:20px;text-align:center;">
+        <div style="font-size:28px;margin-bottom:8px;">✅</div>
+        <div style="font-size:16px;font-weight:700;color:white;margin-bottom:4px;">Inventario sincronizado</div>
+        <div id="agResultText" style="font-size:13px;color:var(--green-text);"></div>
       </div>
     </div>
 
@@ -1904,6 +1978,146 @@ function doDelete() {
 
 // Close modals on click outside
 g('mC').addEventListener('click', function(e) { if (e.target === e.currentTarget) closeConfirm(); });
+
+// ══════════════════════════════════════════
+// CSV SYNC FOR AGENCY
+// ══════════════════════════════════════════
+var agSyncData = [];
+var agExisting = [];
+
+function agParseCSV(text) {
+    var lines = text.split('\n').filter(function(l) { return l.trim(); });
+    if (lines.length < 2) return [];
+    var headers = lines[0].split(',').map(function(h) { return h.trim().replace(/"/g, ''); });
+    return lines.slice(1).map(function(line) {
+        var values = []; var current = ''; var inQ = false;
+        for (var i = 0; i < line.length; i++) {
+            if (line[i] === '"') inQ = !inQ;
+            else if (line[i] === ',' && !inQ) { values.push(current.trim()); current = ''; }
+            else current += line[i];
+        }
+        values.push(current.trim());
+        var obj = {};
+        headers.forEach(function(h, idx) { obj[h] = values[idx] || ''; });
+        return obj;
+    }).filter(function(r) { return r['Marca'] && r['Modelo']; });
+}
+
+function agFetchCSV() {
+    var url = g('agSyncUrl').value.trim();
+    var status = g('agSyncStatus');
+    if (!url) { status.textContent = '❌ Pega la URL del CSV publicado'; return; }
+    status.textContent = '⏳ Cargando CSV...';
+
+    fetch(url).then(function(r) {
+        if (!r.ok) throw new Error('No se pudo cargar');
+        return r.text();
+    }).then(function(text) {
+        agSyncData = agParseCSV(text);
+        if (agSyncData.length === 0) { status.textContent = '❌ CSV vacío o formato incorrecto'; return; }
+        status.textContent = '✅ ' + agSyncData.length + ' autos encontrados';
+
+        var agName = agencyName || currentUser || 'agencia';
+        sb.from('inventario').select('id,marca,modelo,anio,precio_venta,estatus,agencia_id')
+          .eq('agencia_id', agName).then(function(res) {
+            agExisting = res.data || [];
+            agBuildPreview(agName);
+        });
+    }).catch(function(err) {
+        status.textContent = '❌ Error: ' + err.message;
+    });
+}
+
+function agBuildPreview(agName) {
+    var newC = 0, updC = 0, remC = 0, sameC = 0;
+    var html = '<table style="width:100%;border-collapse:collapse;"><thead><tr><th style="text-align:left;padding:6px;font-size:11px;color:var(--gold);">Acción</th><th style="text-align:left;padding:6px;font-size:11px;color:var(--gold);">Auto</th><th style="text-align:left;padding:6px;font-size:11px;color:var(--gold);">Precio</th><th style="text-align:left;padding:6px;font-size:11px;color:var(--gold);">Estatus</th></tr></thead><tbody>';
+
+    agSyncData.forEach(function(row) {
+        var marca = row['Marca'] || '';
+        var modelo = row['Modelo'] || '';
+        var anio = parseInt(row['Año'] || row['Anio'] || '0');
+        var precio = parseFloat((row['Precio'] || '0').replace(/[^0-9.]/g, ''));
+        var estatus = (row['Estatus'] || 'disponible').toLowerCase();
+        var existing = agExisting.find(function(e) {
+            return e.marca && e.marca.toLowerCase() === marca.toLowerCase() && e.modelo && e.modelo.toLowerCase() === modelo.toLowerCase() && e.anio === anio;
+        });
+        var action, color;
+        if (existing) {
+            if (existing.precio_venta != precio || existing.estatus !== estatus) { action = '🔄 Actualizar'; color = '#f59e0b'; updC++; }
+            else { action = '✓ OK'; color = '#666'; sameC++; }
+        } else { action = '🆕 Nuevo'; color = '#10b981'; newC++; }
+        html += '<tr><td style="padding:6px;color:'+color+';font-weight:600;font-size:12px;">'+action+'</td><td style="padding:6px;color:white;font-size:12px;">'+marca+' '+modelo+' '+anio+'</td><td style="padding:6px;color:var(--gold);font-size:12px;">$'+precio.toLocaleString('es-MX')+'</td><td style="padding:6px;font-size:12px;color:var(--green-text);">'+estatus+'</td></tr>';
+    });
+
+    agExisting.forEach(function(ex) {
+        if (ex.estatus !== 'disponible') return;
+        var inCSV = agSyncData.find(function(r) {
+            return (r['Marca']||'').toLowerCase() === (ex.marca||'').toLowerCase() && (r['Modelo']||'').toLowerCase() === (ex.modelo||'').toLowerCase() && parseInt(r['Año']||r['Anio']||'0') === ex.anio;
+        });
+        if (!inCSV) {
+            remC++;
+            html += '<tr><td style="padding:6px;color:#ef4444;font-weight:600;font-size:12px;">🗑️ Eliminar</td><td style="padding:6px;color:white;font-size:12px;">'+ex.marca+' '+ex.modelo+' '+ex.anio+'</td><td style="padding:6px;font-size:12px;">-</td><td style="padding:6px;font-size:12px;color:#ef4444;">No está en CSV</td></tr>';
+        }
+    });
+
+    html += '</tbody></table>';
+    g('agNewCount').textContent = newC;
+    g('agUpdateCount').textContent = updC;
+    g('agRemoveCount').textContent = remC;
+    g('agSameCount').textContent = sameC;
+    g('agPreviewTable').innerHTML = html;
+    g('agSyncPreview').style.display = 'block';
+}
+
+function agApplySync() {
+    var btn = g('agApplyBtn');
+    btn.disabled = true; btn.textContent = '⏳ Sincronizando...';
+    var agName = agencyName || currentUser || 'agencia';
+    var inserted = 0, updated = 0, removed = 0;
+    var promises = [];
+
+    agSyncData.forEach(function(row) {
+        var marca = row['Marca']||''; var modelo = row['Modelo']||'';
+        var anio = parseInt(row['Año']||row['Anio']||'0');
+        var precio = parseFloat((row['Precio']||'0').replace(/[^0-9.]/g,''));
+        var tipo = (row['Tipo']||'sedan').toLowerCase();
+        var km = parseInt((row['Kilometraje']||'0').replace(/[^0-9]/g,''));
+        var transmision = row['Transmision']||row['Transmisión']||'N/A';
+        var color = row['Color']||''; var ciudad = row['Ciudad']||'';
+        var estatus = (row['Estatus']||'disponible').toLowerCase();
+        var descripcion = row['Descripcion']||row['Descripción']||'';
+        var fotos = [row['Foto1'],row['Foto2'],row['Foto3'],row['Foto4']].filter(function(f){return f&&f.startsWith('http');});
+        if (!marca||!modelo||!anio) return;
+
+        var existing = agExisting.find(function(e) {
+            return e.marca&&e.marca.toLowerCase()===marca.toLowerCase()&&e.modelo&&e.modelo.toLowerCase()===modelo.toLowerCase()&&e.anio===anio;
+        });
+
+        if (existing) {
+            promises.push(sb.from('inventario').update({precio_venta:precio,kilometraje:km,transmision:transmision,color:color,ciudad:ciudad,estatus:estatus,tipo_vehiculo:tipo,descripcion:descripcion,fotos:fotos.length>0?fotos:undefined,updated_at:new Date().toISOString()}).eq('id',existing.id).then(function(){updated++;}));
+        } else {
+            promises.push(sb.from('inventario').insert({agencia_id:agName,marca:marca,modelo:modelo,anio:anio,precio_venta:precio,kilometraje:km,transmision:transmision,color:color,ciudad:ciudad,estatus:estatus,tipo_vehiculo:tipo,descripcion:descripcion,origen:'agencia',fotos:fotos.length>0?fotos:[]}).then(function(){inserted++;}));
+        }
+    });
+
+    agExisting.forEach(function(ex) {
+        if (ex.estatus !== 'disponible') return;
+        var inCSV = agSyncData.find(function(r) {
+            return (r['Marca']||'').toLowerCase()===(ex.marca||'').toLowerCase()&&(r['Modelo']||'').toLowerCase()===(ex.modelo||'').toLowerCase()&&parseInt(r['Año']||r['Anio']||'0')===ex.anio;
+        });
+        if (!inCSV) {
+            promises.push(sb.from('inventario').update({estatus:'vendido'}).eq('id',ex.id).then(function(){removed++;}));
+        }
+    });
+
+    Promise.all(promises).then(function() {
+        g('agSyncResult').style.display = 'block';
+        g('agResultText').textContent = inserted + ' nuevos · ' + updated + ' actualizados · ' + removed + ' eliminados';
+        btn.textContent = '✅ Completado';
+    }).catch(function(err) {
+        btn.textContent = '❌ Error'; btn.disabled = false;
+    });
+}
 
 // ══════════════════════════════════════════
 // BOOT

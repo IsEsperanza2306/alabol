@@ -618,6 +618,7 @@
             <a onclick="switchTab('agencies')" id="nav-agencies" class="nav-item">🏢 Agencias</a>
             <a onclick="switchTab('agenda')" id="nav-agenda" class="nav-item">📋 Agenda</a>
             <a onclick="switchTab('sellers')" id="nav-sellers" class="nav-item">👥 Vendedores</a>
+            <a onclick="switchTab('sync')" id="nav-sync" class="nav-item">📥 Sincronizar</a>
             <a href="portal-agencias.html" class="nav-item">🏢 Portal B2B</a>
             <a href="transacciones.html" class="nav-item">💰 Transacciones</a>
             <a href="asignaciones.html" class="nav-item">👤 Asignaciones</a>
@@ -1328,6 +1329,82 @@
             </div>
         </div>
 
+        <div id="tab-sync" class="tab-content">
+            <div class="header">
+                <h1>📥 Sincronizar Inventario</h1>
+                <p>Importa inventario desde Google Sheets de agencias</p>
+            </div>
+
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h2>Paso 1: URL del Google Sheet (CSV)</h2>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:12px;max-width:600px;">
+                    <input type="text" id="syncAgenciaName" placeholder="Nombre de la agencia (ej: Kavak Sur)" style="padding:12px 16px;border:1px solid var(--border);border-radius:10px;background:rgba(0,0,0,0.3);color:white;font-family:inherit;font-size:14px;outline:none;">
+                    <input type="text" id="syncCsvUrl" placeholder="URL del CSV publicado (https://docs.google.com/spreadsheets/d/e/...)" style="padding:12px 16px;border:1px solid var(--border);border-radius:10px;background:rgba(0,0,0,0.3);color:white;font-family:inherit;font-size:14px;outline:none;">
+                    <button class="btn-action" onclick="fetchAndPreviewCSV()" style="padding:12px 20px;font-size:14px;">📥 Cargar y previsualizar</button>
+                </div>
+                <div id="syncStatus" style="margin-top:12px;font-size:13px;color:var(--green-text);"></div>
+            </div>
+
+            <div class="dashboard-section" id="syncPreviewSection" style="display:none;">
+                <div class="section-header">
+                    <h2>Paso 2: Previsualización</h2>
+                    <button class="btn-action" onclick="applySyncChanges()" id="syncApplyBtn" style="background:var(--gold);color:var(--bg-dark);font-weight:700;">✅ Aplicar cambios</button>
+                </div>
+                <div class="metrics-grid" id="syncMetrics">
+                    <div class="metric-card">
+                        <div class="metric-title">Nuevos</div>
+                        <div class="metric-value" id="syncNew" style="color:var(--success);">0</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">Actualizar</div>
+                        <div class="metric-value" id="syncUpdate" style="color:var(--warning);">0</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">Eliminar</div>
+                        <div class="metric-value" id="syncRemove" style="color:var(--danger);">0</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">Sin cambios</div>
+                        <div class="metric-value" id="syncSame">0</div>
+                    </div>
+                </div>
+                <div style="overflow-x:auto;margin-top:16px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Acción</th>
+                                <th>Marca</th>
+                                <th>Modelo</th>
+                                <th>Año</th>
+                                <th>Precio</th>
+                                <th>Tipo</th>
+                                <th>Ciudad</th>
+                                <th>Estatus</th>
+                                <th>Fotos</th>
+                            </tr>
+                        </thead>
+                        <tbody id="syncTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="dashboard-section" id="syncResultSection" style="display:none;">
+                <div class="section-header">
+                    <h2>✅ Sincronización completada</h2>
+                </div>
+                <div id="syncResultText" style="color:var(--success);font-size:14px;"></div>
+            </div>
+
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h2>Agencias sincronizadas</h2>
+                </div>
+                <div id="syncHistory" style="color:var(--green-text);font-size:13px;">Cargando...</div>
+            </div>
+        </div>
+
     </main>
 
     <!-- Supabase JS -->
@@ -1403,6 +1480,8 @@
                 loadAgendaTab();
             } else if (tabId === 'sellers') {
                 loadSellersTab();
+            } else if (tabId === 'sync') {
+                loadSyncHistory();
             }
 
             // Auto-hide sidebar on mobile after clicking
@@ -2542,6 +2621,272 @@
                 }).join('') || '<tr><td colspan="5" style="text-align:center;padding:20px;">Sin leads</td></tr>';
 
             } catch(e) { console.error('Sellers error:', e); }
+        }
+
+        // =====================
+        // CSV SYNC TOOL
+        // =====================
+        let syncParsedData = [];
+        let syncAgenciaName = '';
+        let syncExistingCars = [];
+
+        function parseCSV(text) {
+            const lines = text.split('\n').filter(l => l.trim());
+            if (lines.length < 2) return [];
+            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+            return lines.slice(1).map(line => {
+                // Handle commas inside quotes
+                const values = [];
+                let current = '';
+                let inQuotes = false;
+                for (let i = 0; i < line.length; i++) {
+                    if (line[i] === '"') { inQuotes = !inQuotes; }
+                    else if (line[i] === ',' && !inQuotes) { values.push(current.trim()); current = ''; }
+                    else { current += line[i]; }
+                }
+                values.push(current.trim());
+
+                const obj = {};
+                headers.forEach((h, i) => { obj[h] = values[i] || ''; });
+                return obj;
+            }).filter(row => row['Marca'] && row['Modelo']); // Skip empty rows
+        }
+
+        async function fetchAndPreviewCSV() {
+            const url = document.getElementById('syncCsvUrl').value.trim();
+            syncAgenciaName = document.getElementById('syncAgenciaName').value.trim();
+            const statusEl = document.getElementById('syncStatus');
+
+            if (!url) { statusEl.textContent = '❌ Pega la URL del CSV'; return; }
+            if (!syncAgenciaName) { statusEl.textContent = '❌ Escribe el nombre de la agencia'; return; }
+
+            statusEl.textContent = '⏳ Cargando CSV...';
+
+            try {
+                const res = await fetch(url);
+                if (!res.ok) throw new Error('No se pudo cargar el CSV. Verifica que esté publicado.');
+                const text = await res.text();
+                syncParsedData = parseCSV(text);
+
+                if (syncParsedData.length === 0) {
+                    statusEl.textContent = '❌ El CSV está vacío o el formato no es correcto';
+                    return;
+                }
+
+                statusEl.textContent = `✅ ${syncParsedData.length} autos encontrados en el CSV`;
+
+                // Get existing cars from this agency
+                const { data: existing } = await supabaseClient
+                    .from('inventario')
+                    .select('id, marca, modelo, anio, precio_venta, estatus, agencia_id')
+                    .eq('agencia_id', syncAgenciaName);
+                syncExistingCars = existing || [];
+
+                // Compare and build preview
+                buildSyncPreview();
+
+            } catch (err) {
+                statusEl.textContent = '❌ Error: ' + err.message;
+            }
+        }
+
+        function buildSyncPreview() {
+            const tbody = document.getElementById('syncTableBody');
+            let newCount = 0, updateCount = 0, removeCount = 0, sameCount = 0;
+            let rows = '';
+
+            // Check each CSV row against existing
+            syncParsedData.forEach(row => {
+                const marca = row['Marca'] || '';
+                const modelo = row['Modelo'] || '';
+                const anio = parseInt(row['Año'] || row['Anio'] || '0');
+                const precio = parseFloat((row['Precio'] || '0').replace(/[^0-9.]/g, ''));
+                const tipo = (row['Tipo'] || 'sedan').toLowerCase();
+                const km = parseInt((row['Kilometraje'] || '0').replace(/[^0-9]/g, ''));
+                const ciudad = row['Ciudad'] || '';
+                const estatus = (row['Estatus'] || 'disponible').toLowerCase();
+                const fotos = [row['Foto1'], row['Foto2'], row['Foto3'], row['Foto4']].filter(f => f && f.startsWith('http'));
+
+                // Find match in existing
+                const existing = syncExistingCars.find(e =>
+                    e.marca && e.marca.toLowerCase() === marca.toLowerCase() &&
+                    e.modelo && e.modelo.toLowerCase() === modelo.toLowerCase() &&
+                    e.anio === anio
+                );
+
+                let action, actionColor;
+                if (existing) {
+                    if (existing.precio_venta != precio || existing.estatus !== estatus) {
+                        action = '🔄 Actualizar'; actionColor = '#f59e0b'; updateCount++;
+                    } else {
+                        action = '✓ Sin cambios'; actionColor = '#666'; sameCount++;
+                    }
+                } else {
+                    action = '🆕 Nuevo'; actionColor = '#10b981'; newCount++;
+                }
+
+                rows += `<tr>
+                    <td style="color:${actionColor};font-weight:600;">${action}</td>
+                    <td>${marca}</td>
+                    <td>${modelo}</td>
+                    <td>${anio}</td>
+                    <td>$${precio.toLocaleString('es-MX')}</td>
+                    <td>${tipo}</td>
+                    <td>${ciudad}</td>
+                    <td>${estatus}</td>
+                    <td>${fotos.length} foto${fotos.length !== 1 ? 's' : ''}</td>
+                </tr>`;
+            });
+
+            // Check for cars to remove (in DB but not in CSV)
+            syncExistingCars.forEach(existing => {
+                const inCSV = syncParsedData.find(row => {
+                    const marca = row['Marca'] || '';
+                    const modelo = row['Modelo'] || '';
+                    const anio = parseInt(row['Año'] || row['Anio'] || '0');
+                    return marca.toLowerCase() === (existing.marca||'').toLowerCase() &&
+                           modelo.toLowerCase() === (existing.modelo||'').toLowerCase() &&
+                           anio === existing.anio;
+                });
+                if (!inCSV && existing.estatus === 'disponible') {
+                    removeCount++;
+                    rows += `<tr>
+                        <td style="color:#ef4444;font-weight:600;">🗑️ Eliminar</td>
+                        <td>${existing.marca||''}</td>
+                        <td>${existing.modelo||''}</td>
+                        <td>${existing.anio||''}</td>
+                        <td>-</td><td>-</td><td>-</td>
+                        <td>Ya no está en CSV</td>
+                        <td>-</td>
+                    </tr>`;
+                }
+            });
+
+            document.getElementById('syncNew').textContent = newCount;
+            document.getElementById('syncUpdate').textContent = updateCount;
+            document.getElementById('syncRemove').textContent = removeCount;
+            document.getElementById('syncSame').textContent = sameCount;
+            tbody.innerHTML = rows;
+            document.getElementById('syncPreviewSection').style.display = 'block';
+        }
+
+        async function applySyncChanges() {
+            const btn = document.getElementById('syncApplyBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Sincronizando...';
+
+            let inserted = 0, updated = 0, removed = 0, errors = 0;
+
+            try {
+                for (const row of syncParsedData) {
+                    const marca = row['Marca'] || '';
+                    const modelo = row['Modelo'] || '';
+                    const anio = parseInt(row['Año'] || row['Anio'] || '0');
+                    const precio = parseFloat((row['Precio'] || '0').replace(/[^0-9.]/g, ''));
+                    const tipo = (row['Tipo'] || 'sedan').toLowerCase();
+                    const km = parseInt((row['Kilometraje'] || '0').replace(/[^0-9]/g, ''));
+                    const transmision = row['Transmision'] || row['Transmisión'] || 'N/A';
+                    const color = row['Color'] || '';
+                    const ciudad = row['Ciudad'] || '';
+                    const estatus = (row['Estatus'] || 'disponible').toLowerCase();
+                    const descripcion = row['Descripcion'] || row['Descripción'] || '';
+                    const fotos = [row['Foto1'], row['Foto2'], row['Foto3'], row['Foto4']].filter(f => f && f.startsWith('http'));
+
+                    if (!marca || !modelo || !anio) continue;
+
+                    const existing = syncExistingCars.find(e =>
+                        e.marca && e.marca.toLowerCase() === marca.toLowerCase() &&
+                        e.modelo && e.modelo.toLowerCase() === modelo.toLowerCase() &&
+                        e.anio === anio
+                    );
+
+                    if (existing) {
+                        // Update
+                        const { error } = await supabaseClient.from('inventario').update({
+                            precio_venta: precio, kilometraje: km, transmision, color, ciudad,
+                            estatus, tipo_vehiculo: tipo, descripcion,
+                            fotos: fotos.length > 0 ? fotos : undefined,
+                            updated_at: new Date().toISOString()
+                        }).eq('id', existing.id);
+                        if (error) { console.error('Update error:', error); errors++; }
+                        else updated++;
+                    } else {
+                        // Insert new
+                        const { error } = await supabaseClient.from('inventario').insert({
+                            agencia_id: syncAgenciaName,
+                            marca, modelo, anio, precio_venta: precio,
+                            kilometraje: km, transmision, color, ciudad, estatus,
+                            tipo_vehiculo: tipo, descripcion, origen: 'agencia',
+                            fotos: fotos.length > 0 ? fotos : []
+                        });
+                        if (error) { console.error('Insert error:', error); errors++; }
+                        else inserted++;
+                    }
+                }
+
+                // Remove cars not in CSV (mark as vendido)
+                for (const existing of syncExistingCars) {
+                    if (existing.estatus !== 'disponible') continue;
+                    const inCSV = syncParsedData.find(row => {
+                        const marca = row['Marca'] || '';
+                        const modelo = row['Modelo'] || '';
+                        const anio = parseInt(row['Año'] || row['Anio'] || '0');
+                        return marca.toLowerCase() === (existing.marca||'').toLowerCase() &&
+                               modelo.toLowerCase() === (existing.modelo||'').toLowerCase() &&
+                               anio === existing.anio;
+                    });
+                    if (!inCSV) {
+                        await supabaseClient.from('inventario').update({ estatus: 'vendido' }).eq('id', existing.id);
+                        removed++;
+                    }
+                }
+
+                document.getElementById('syncResultSection').style.display = 'block';
+                document.getElementById('syncResultText').innerHTML =
+                    `<div style="display:flex;gap:20px;flex-wrap:wrap;">` +
+                    `<span style="color:#10b981;">✅ ${inserted} nuevos</span>` +
+                    `<span style="color:#f59e0b;">🔄 ${updated} actualizados</span>` +
+                    `<span style="color:#ef4444;">🗑️ ${removed} eliminados</span>` +
+                    (errors > 0 ? `<span style="color:#ef4444;">⚠️ ${errors} errores</span>` : '') +
+                    `</div>`;
+
+                btn.textContent = '✅ Completado';
+
+            } catch (err) {
+                btn.textContent = '❌ Error: ' + err.message;
+                btn.disabled = false;
+            }
+        }
+
+        async function loadSyncHistory() {
+            try {
+                const { data } = await supabaseClient
+                    .from('inventario')
+                    .select('agencia_id, estatus')
+                    .not('agencia_id', 'is', null);
+
+                if (!data || data.length === 0) {
+                    document.getElementById('syncHistory').textContent = 'No hay agencias sincronizadas aún';
+                    return;
+                }
+
+                const agencies = {};
+                data.forEach(car => {
+                    if (!car.agencia_id) return;
+                    if (!agencies[car.agencia_id]) agencies[car.agencia_id] = { total: 0, disponible: 0 };
+                    agencies[car.agencia_id].total++;
+                    if (car.estatus === 'disponible') agencies[car.agencia_id].disponible++;
+                });
+
+                let html = '<table><thead><tr><th>Agencia</th><th>Total</th><th>Disponibles</th></tr></thead><tbody>';
+                Object.keys(agencies).sort().forEach(name => {
+                    html += `<tr><td>${name}</td><td>${agencies[name].total}</td><td style="color:var(--success);">${agencies[name].disponible}</td></tr>`;
+                });
+                html += '</tbody></table>';
+                document.getElementById('syncHistory').innerHTML = html;
+            } catch (e) {
+                document.getElementById('syncHistory').textContent = 'Error cargando historial';
+            }
         }
 
         // Kick off

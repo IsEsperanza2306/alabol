@@ -1403,6 +1403,24 @@
 
             <div class="dashboard-section">
                 <div class="section-header">
+                    <h2>📸 Subir Fotos de Autos</h2>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:12px;max-width:600px;">
+                    <input type="text" id="photoAgencia" placeholder="Nombre de agencia (ej: Kavak Sur)" style="padding:12px 16px;border:1px solid var(--border);border-radius:10px;background:rgba(0,0,0,0.3);color:white;font-family:inherit;font-size:14px;outline:none;">
+                    <input type="text" id="photoAuto" placeholder="Identificador del auto (ej: Toyota Corolla 2023)" style="padding:12px 16px;border:1px solid var(--border);border-radius:10px;background:rgba(0,0,0,0.3);color:white;font-family:inherit;font-size:14px;outline:none;">
+                    <input type="file" id="photoFiles" accept="image/*" multiple style="padding:12px;border:1px dashed var(--border);border-radius:10px;background:rgba(0,0,0,0.2);color:var(--green-text);font-family:inherit;cursor:pointer;">
+                    <button class="btn-action" onclick="uploadPhotos()" id="uploadBtn" style="padding:12px 20px;font-size:14px;">📤 Subir fotos y generar links</button>
+                </div>
+                <div id="photoStatus" style="margin-top:12px;font-size:13px;color:var(--green-text);"></div>
+                <div id="photoLinks" style="margin-top:12px;display:none;">
+                    <div style="font-size:12px;color:var(--gold);font-weight:600;margin-bottom:8px;">Links generados (copia y pega en el Google Sheet):</div>
+                    <div id="photoLinksList" style="display:flex;flex-direction:column;gap:6px;"></div>
+                    <button onclick="copyAllPhotoLinks()" class="btn-action" style="margin-top:10px;font-size:12px;">📋 Copiar todos los links</button>
+                </div>
+            </div>
+
+            <div class="dashboard-section">
+                <div class="section-header">
                     <h2>Agencias sincronizadas</h2>
                 </div>
                 <div id="syncHistory" style="color:var(--green-text);font-size:13px;">Cargando...</div>
@@ -2874,6 +2892,71 @@
                 btn.textContent = '❌ Error: ' + err.message;
                 btn.disabled = false;
             }
+        }
+
+        // Photo upload to Supabase Storage
+        let uploadedPhotoUrls = [];
+
+        async function uploadPhotos() {
+            const agencia = document.getElementById('photoAgencia').value.trim();
+            const auto = document.getElementById('photoAuto').value.trim();
+            const files = document.getElementById('photoFiles').files;
+            const status = document.getElementById('photoStatus');
+            const btn = document.getElementById('uploadBtn');
+
+            if (!agencia) { status.textContent = '❌ Escribe el nombre de la agencia'; return; }
+            if (!auto) { status.textContent = '❌ Escribe el identificador del auto'; return; }
+            if (!files || files.length === 0) { status.textContent = '❌ Selecciona al menos una foto'; return; }
+
+            btn.disabled = true;
+            btn.textContent = '⏳ Subiendo...';
+            uploadedPhotoUrls = [];
+            const slug = (agencia + '/' + auto).toLowerCase().replace(/[^a-z0-9\/]/g, '-').replace(/-+/g, '-');
+
+            let success = 0, errors = 0;
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const ext = file.name.split('.').pop() || 'jpg';
+                const path = `${slug}/${Date.now()}-${i}.${ext}`;
+                status.textContent = `⏳ Subiendo foto ${i + 1} de ${files.length}...`;
+
+                try {
+                    const { data, error } = await supabaseClient.storage
+                        .from('autos')
+                        .upload(path, file, { cacheControl: '3600', upsert: false });
+
+                    if (error) { console.error('Upload error:', error); errors++; continue; }
+
+                    const { data: urlData } = supabaseClient.storage.from('autos').getPublicUrl(path);
+                    uploadedPhotoUrls.push(urlData.publicUrl);
+                    success++;
+                } catch (e) { console.error('Upload failed:', e); errors++; }
+            }
+
+            btn.textContent = '📤 Subir fotos y generar links';
+            btn.disabled = false;
+
+            if (success > 0) {
+                status.textContent = `✅ ${success} fotos subidas${errors > 0 ? ` (${errors} errores)` : ''}`;
+                document.getElementById('photoLinks').style.display = 'block';
+                document.getElementById('photoLinksList').innerHTML = uploadedPhotoUrls.map((url, i) =>
+                    `<div style="display:flex;align-items:center;gap:8px;">` +
+                    `<span style="font-size:11px;color:var(--gold);font-weight:600;">Foto${i+1}:</span>` +
+                    `<input type="text" value="${url}" readonly onclick="this.select()" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:8px;background:rgba(0,0,0,0.3);color:white;font-size:11px;font-family:monospace;">` +
+                    `</div>`
+                ).join('');
+            } else {
+                status.textContent = '❌ No se pudieron subir las fotos';
+            }
+        }
+
+        function copyAllPhotoLinks() {
+            const text = uploadedPhotoUrls.join('\n');
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.querySelector('#photoLinks .btn-action');
+                if (btn) { btn.textContent = '✅ Links copiados'; setTimeout(() => { btn.textContent = '📋 Copiar todos los links'; }, 2000); }
+            });
         }
 
         async function loadSyncHistory() {

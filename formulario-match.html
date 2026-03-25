@@ -2597,7 +2597,7 @@
         body: JSON.stringify(payload)
       })
       .then(response => response.json())
-      .then(result => {
+      .then(async (result) => {
         if (loader) loader.style.display = 'none';
 
         if (result.success) {
@@ -2620,16 +2620,21 @@
 
           // Use backend matches if available, otherwise run local findMatches
           if (result.top_matches && result.top_matches.length > 0) {
-            const backendMatches = result.top_matches.map(m => ({
-              score: m.score,
-              auto: m.auto || {}
-            }));
-            window._backendMatches = backendMatches;
-            showSuccess(result);
+            matchStack = result.top_matches.map(m => m.auto || m).filter(Boolean);
+            window._backendMatches = result.top_matches;
+            if (matchStack.length > 0) {
+              initTinderDeck();
+            } else {
+              showSuccess(result);
+            }
           } else {
-            // Fallback to local matching (legacy)
-            findMatches(allData);
-            new Promise(r => setTimeout(r, 2000)).then(() => showSuccess(result));
+            // Fallback to local matching
+            matchStack = await findMatches(allData);
+            if (matchStack.length > 0) {
+              initTinderDeck();
+            } else {
+              showSuccess(result);
+            }
           }
 
           showCustomAlert('success', 'Match Perfecto', result.message || 'Encontramos ' + (result.total_matches || 0) + ' opciones para ti.');
@@ -2637,7 +2642,7 @@
           showCustomAlert('error', 'Error', result.error || 'Intenta de nuevo.');
         }
       })
-      .catch(err => {
+      .catch(async (err) => {
         console.warn('Edge Function failed, using direct Supabase:', err);
 
         // Fallback: direct Supabase insert (triggers still fire)
@@ -2664,10 +2669,12 @@
               console.error('Supabase insert error:', error);
               showCustomAlert('error', 'Error', 'No pudimos guardar. Escr\u00edbenos por WhatsApp.');
             } else {
-              findMatches(allData);
-              new Promise(r => setTimeout(r, 2000)).then(() => {
+              matchStack = await findMatches(allData);
+              if (matchStack.length > 0) {
+                initTinderDeck();
+              } else {
                 showSuccess({ success: true, total_matches: 0, message: 'Recibimos tu b\u00fasqueda. Te contactaremos pronto.' });
-              });
+              }
               showCustomAlert('success', 'Recibido', 'Tu b\u00fasqueda est\u00e1 activa. Te avisaremos.');
             }
           });

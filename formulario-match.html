@@ -2620,7 +2620,25 @@
 
           // Use backend matches if available, otherwise run local findMatches
           if (result.top_matches && result.top_matches.length > 0) {
-            matchStack = result.top_matches.map(m => m.auto || m).filter(Boolean);
+            matchStack = result.top_matches.map(m => {
+              const a = m.auto || m;
+              if (!a) return null;
+              // Normalizar campos del backend al formato que espera initTinderDeck
+              const titulo = a.titulo || '';
+              const partes = titulo.match(/^(.+?)\s+(.+?)\s+(\d{4})$/) || [];
+              return {
+                id: a.id,
+                marca: a.marca || partes[1] || titulo,
+                modelo: a.modelo || partes[2] || '',
+                anio: a.anio || parseInt(partes[3]) || 0,
+                precio_venta: a.precio_venta || a.precio || 0,
+                kilometraje: a.kilometraje || 0,
+                transmision: a.transmision || null,
+                ciudad: a.ciudad || null,
+                fotos: a.fotos || (a.foto ? [a.foto] : []),
+                agencia_id: a.agencia_id || null,
+              };
+            }).filter(Boolean);
             window._backendMatches = result.top_matches;
             if (matchStack.length > 0) {
               initTinderDeck();

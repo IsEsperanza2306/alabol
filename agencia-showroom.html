@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="/logo-circular.png" type="image/png">
+<meta property="og:title" content="Showroom | Alabol Car Broker">
+<meta property="og:description" content="Inventario verificado de autos seminuevos. Powered by Alabol - El Tinder de los Autos.">
+<meta property="og:image" content="https://alabol.netlify.app/logo-circular.png">
+<title>Showroom | Alabol Car Broker</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --bg-primary: #0a1f1a;
+  --bg-secondary: #0d2921;
+  --gold: #d4af37;
+  --gold-light: #f4e5b0;
+  --gold-dim: rgba(212,175,55,0.25);
+  --emerald: #34d399;
+  --green-text: #a8c5b8;
+  --glass-bg: rgba(13,38,28,0.65);
+  --glass-border: rgba(212,175,55,0.18);
+  --danger: #ef4444;
+  --success: #10b981;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;font-family:'Poppins',sans-serif;background:var(--bg-primary);color:var(--green-text)}
+body{background-image:linear-gradient(rgba(13,148,136,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(13,148,136,0.05) 1px,transparent 1px);background-size:40px 40px}
+a{color:var(--gold);text-decoration:none}
+
+/* Header */
+.showroom-header{padding:30px 20px;text-align:center;border-bottom:1px solid var(--glass-border);position:relative}
+.showroom-header::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:200px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.agency-logo{width:80px;height:80px;border-radius:50%;border:3px solid var(--gold);object-fit:cover;margin-bottom:12px;background:var(--bg-secondary)}
+.agency-name{font-size:1.8rem;font-weight:800;color:white;margin-bottom:4px}
+.agency-location{font-size:0.9rem;color:var(--green-text);margin-bottom:8px}
+.agency-location i{color:var(--gold);margin-right:4px}
+.agency-desc{font-size:0.85rem;color:var(--green-text);max-width:600px;margin:0 auto 15px}
+.agency-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:15px}
+.badge{padding:4px 12px;border-radius:20px;font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em}
+.badge-verified{background:rgba(16,185,129,0.15);color:var(--emerald);border:1px solid rgba(16,185,129,0.3)}
+.badge-count{background:var(--gold-dim);color:var(--gold);border:1px solid var(--glass-border)}
+.powered-by{font-size:0.7rem;color:var(--green-text);opacity:0.6;margin-top:10px}
+.powered-by img{height:16px;vertical-align:middle;margin-left:4px}
+
+/* Contact bar */
+.contact-bar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;padding:15px 20px;background:var(--glass-bg);border-bottom:1px solid var(--glass-border)}
+.contact-btn{padding:8px 20px;border-radius:25px;font-size:0.8rem;font-weight:600;border:none;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;gap:6px}
+.btn-whatsapp{background:#25D366;color:white}
+.btn-whatsapp:hover{background:#1da851;transform:translateY(-1px)}
+.btn-call{background:var(--glass-bg);color:var(--gold);border:1px solid var(--glass-border)}
+.btn-call:hover{background:var(--gold-dim)}
+.btn-location{background:var(--glass-bg);color:var(--green-text);border:1px solid var(--glass-border)}
+.btn-location:hover{background:rgba(52,211,153,0.1)}
+
+/* Filters */
+.filters-bar{padding:15px 20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;max-width:1200px;margin:0 auto}
+.filter-input{background:var(--bg-secondary);border:1px solid var(--glass-border);color:white;padding:8px 14px;border-radius:8px;font-size:0.8rem;font-family:inherit;outline:none;transition:border-color 0.3s}
+.filter-input:focus{border-color:var(--gold)}
+.filter-input::placeholder{color:rgba(168,197,184,0.5)}
+.filter-select{background:var(--bg-secondary);border:1px solid var(--glass-border);color:white;padding:8px 14px;border-radius:8px;font-size:0.8rem;font-family:inherit;outline:none;cursor:pointer}
+.results-count{font-size:0.8rem;color:var(--green-text);margin-left:auto}
+
+/* Grid */
+.cars-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;padding:20px;max-width:1200px;margin:0 auto}
+.car-card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:14px;overflow:hidden;transition:all 0.3s;cursor:pointer}
+.car-card:hover{transform:translateY(-4px);border-color:var(--gold);box-shadow:0 12px 40px rgba(212,175,55,0.1)}
+.car-img{width:100%;height:200px;object-fit:cover;background:var(--bg-secondary)}
+.car-info{padding:15px}
+.car-title{font-size:0.95rem;font-weight:700;color:white;margin-bottom:4px;line-height:1.3}
+.car-year{color:var(--gold);font-weight:600}
+.car-price{font-size:1.2rem;font-weight:800;color:var(--gold);margin:8px 0}
+.car-specs{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.car-spec{font-size:0.75rem;color:var(--green-text);display:flex;align-items:center;gap:4px}
+.car-spec i{color:var(--gold);font-size:0.7rem}
+.car-actions{display:flex;gap:8px;margin-top:12px}
+.car-btn{flex:1;padding:8px;border-radius:8px;font-size:0.75rem;font-weight:600;border:none;cursor:pointer;transition:all 0.3s;text-align:center}
+.car-btn-primary{background:linear-gradient(135deg,var(--gold),#b8962e);color:#0a1f1a}
+.car-btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 15px rgba(212,175,55,0.3)}
+.car-btn-secondary{background:var(--bg-secondary);color:var(--green-text);border:1px solid var(--glass-border)}
+.car-btn-secondary:hover{border-color:var(--gold);color:var(--gold)}
+
+/* Empty state */
+.empty-state{text-align:center;padding:60px 20px;color:var(--green-text)}
+.empty-state i{font-size:3rem;color:var(--gold-dim);margin-bottom:15px}
+.empty-state h3{color:white;margin-bottom:8px}
+
+/* Loading */
+.loading{text-align:center;padding:60px 20px}
+.spinner{width:40px;height:40px;border:3px solid var(--glass-border);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 15px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Footer */
+.showroom-footer{text-align:center;padding:30px 20px;border-top:1px solid var(--glass-border);margin-top:40px}
+.showroom-footer p{font-size:0.75rem;color:var(--green-text);opacity:0.6}
+.showroom-footer a{color:var(--gold)}
+
+/* 404 */
+.not-found{text-align:center;padding:100px 20px}
+.not-found h1{font-size:3rem;color:var(--gold);margin-bottom:10px}
+.not-found p{color:var(--green-text);margin-bottom:20px}
+.not-found a{display:inline-block;padding:10px 30px;background:linear-gradient(135deg,var(--gold),#b8962e);color:#0a1f1a;border-radius:25px;font-weight:600}
+
+/* Modal ficha */
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:1000;overflow-y:auto;padding:20px}
+.modal-overlay.active{display:flex;justify-content:center;align-items:flex-start}
+.modal-content{background:var(--bg-primary);border:1px solid var(--glass-border);border-radius:16px;max-width:700px;width:100%;margin:40px auto;overflow:hidden;position:relative}
+.modal-close{position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.6);border:none;color:white;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1.1rem;z-index:10;display:flex;align-items:center;justify-content:center}
+.modal-gallery{position:relative;width:100%;height:350px;overflow:hidden}
+.modal-gallery img{width:100%;height:100%;object-fit:cover}
+.gallery-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);border:none;color:white;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center}
+.gallery-prev{left:10px}
+.gallery-next{right:10px}
+.gallery-counter{position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,0.6);color:white;padding:4px 10px;border-radius:12px;font-size:0.7rem}
+.modal-body{padding:20px}
+.modal-title{font-size:1.3rem;font-weight:800;color:white;margin-bottom:4px}
+.modal-price{font-size:1.5rem;font-weight:800;color:var(--gold);margin:10px 0}
+.modal-specs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin:15px 0}
+.modal-spec{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:10px;padding:10px;text-align:center}
+.modal-spec .label{font-size:0.65rem;color:var(--green-text);text-transform:uppercase;letter-spacing:0.05em}
+.modal-spec .value{font-size:0.9rem;font-weight:600;color:white;margin-top:2px}
+.modal-cta{display:flex;gap:10px;margin-top:20px}
+.modal-cta button{flex:1;padding:12px;border-radius:10px;font-size:0.85rem;font-weight:600;border:none;cursor:pointer}
+
+@media(max-width:600px){
+  .agency-name{font-size:1.3rem}
+  .cars-grid{grid-template-columns:1fr;padding:15px}
+  .filters-bar{flex-direction:column}
+  .filter-input,.filter-select{width:100%}
+  .results-count{margin-left:0;text-align:center;width:100%}
+  .modal-gallery{height:250px}
+  .modal-specs-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="loading" id="loadingState">
+    <div class="spinner"></div>
+    <p style="color:var(--green-text)">Cargando showroom...</p>
+  </div>
+</div>
+
+<!-- Modal ficha detalle -->
+<div class="modal-overlay" id="carModal">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+    <div class="modal-gallery">
+      <img id="modalImg" src="" alt="auto">
+      <button class="gallery-nav gallery-prev" onclick="prevPhoto()"><i class="fas fa-chevron-left"></i></button>
+      <button class="gallery-nav gallery-next" onclick="nextPhoto()"><i class="fas fa-chevron-right"></i></button>
+      <span class="gallery-counter" id="galleryCounter">1/1</span>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://rgnunjngtsgqgvplawfr.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let agencia = null;
+let allCars = [];
+let filteredCars = [];
+let modalCar = null;
+let modalPhotoIdx = 0;
+
+// Get slug from URL
+function getSlug() {
+  const path = window.location.pathname;
+  const parts = path.split('/').filter(Boolean);
+  // /agencia/slug-name
+  if (parts[0] === 'agencia' && parts[1]) return parts[1];
+  // ?agencia=slug-name (fallback for testing)
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('agencia')) return params.get('agencia');
+  return null;
+}
+
+async function init() {
+  const slug = getSlug();
+  if (!slug) { show404(); return; }
+
+  // Fetch agency info
+  const { data: ag, error: agErr } = await sb
+    .from('agencias')
+    .select('*')
+    .eq('slug', slug)
+    .eq('activa', true)
+    .maybeSingle();
+
+  if (agErr || !ag) { show404(); return; }
+  agencia = ag;
+
+  // Update page title
+  document.title = agencia.nombre + ' | Powered by Alabol';
+
+  // Fetch inventory
+  const { data: cars, error: carsErr } = await sb
+    .from('inventario')
+    .select('*')
+    .eq('agencia_id', slug)
+    .eq('estatus', 'disponible')
+    .order('created_at', { ascending: false });
+
+  allCars = cars || [];
+  filteredCars = [...allCars];
+
+  renderShowroom();
+}
+
+function show404() {
+  document.getElementById('app').innerHTML = `
+    <div class="not-found">
+      <h1>404</h1>
+      <p>Esta agencia no existe o no tiene showroom activo.</p>
+      <a href="https://alabol.netlify.app">Ir a Alabol</a>
+    </div>
+  `;
+}
+
+function renderShowroom() {
+  const whatsappNum = agencia.whatsapp || '525568667571';
+  const whatsappMsg = encodeURIComponent('Hola, vi su inventario en Alabol y me interesa un auto.');
+  const placeholderLogo = `https://ui-avatars.com/api/?name=${encodeURIComponent(agencia.nombre)}&background=0d2921&color=d4af37&size=80&font-size=0.35&bold=true`;
+
+  document.getElementById('app').innerHTML = `
+    <div class="showroom-header">
+      <img class="agency-logo" src="${agencia.logo_url || placeholderLogo}" alt="${agencia.nombre}" onerror="this.src='${placeholderLogo}'">
+      <div class="agency-name">${agencia.nombre}</div>
+      <div class="agency-location"><i class="fas fa-map-marker-alt"></i>${agencia.ciudad}${agencia.estado && agencia.estado !== agencia.ciudad ? ', ' + agencia.estado : ''}</div>
+      ${agencia.descripcion ? `<div class="agency-desc">${agencia.descripcion}</div>` : ''}
+      <div class="agency-badges">
+        ${agencia.verificada ? '<span class="badge badge-verified"><i class="fas fa-shield-alt"></i> Verificada por Alabol</span>' : ''}
+        <span class="badge badge-count"><i class="fas fa-car"></i> ${allCars.length} autos disponibles</span>
+      </div>
+      <div class="powered-by">Powered by <a href="https://alabol.netlify.app" target="_blank"><strong style="color:var(--gold)">Alabol</strong> Car Broker</a></div>
+    </div>
+
+    <div class="contact-bar">
+      <a href="https://wa.me/${whatsappNum}?text=${whatsappMsg}" target="_blank" class="contact-btn btn-whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+      ${agencia.telefono ? `<a href="tel:${agencia.telefono}" class="contact-btn btn-call"><i class="fas fa-phone"></i> Llamar</a>` : ''}
+      ${agencia.direccion ? `<a href="https://maps.google.com/?q=${encodeURIComponent(agencia.direccion + ' ' + agencia.ciudad)}" target="_blank" class="contact-btn btn-location"><i class="fas fa-directions"></i> Ubicacion</a>` : ''}
+    </div>
+
+    <div class="filters-bar">
+      <input type="text" class="filter-input" id="searchInput" placeholder="Buscar marca, modelo..." oninput="applyFilters()" style="flex:1;min-width:180px">
+      <select class="filter-select" id="filterType" onchange="applyFilters()">
+        <option value="all">Todos los tipos</option>
+        <option value="suv">SUV</option>
+        <option value="sedan">Sedan</option>
+        <option value="pickup">Pickup</option>
+        <option value="hatchback">Hatchback</option>
+        <option value="coupe">Coupe</option>
+        <option value="van">Van</option>
+      </select>
+      <select class="filter-select" id="filterSort" onchange="applyFilters()">
+        <option value="reciente">Mas recientes</option>
+        <option value="precio_asc">Menor precio</option>
+        <option value="precio_desc">Mayor precio</option>
+        <option value="km_asc">Menor km</option>
+        <option value="anio_desc">Mas nuevo</option>
+      </select>
+      <span class="results-count" id="resultsCount">${allCars.length} resultados</span>
+    </div>
+
+    <div class="cars-grid" id="carsGrid"></div>
+
+    <div class="showroom-footer">
+      <p>Inventario actualizado por <a href="https://alabol.netlify.app" target="_blank">Alabol Car Broker</a> &mdash; El Tinder de los Autos</p>
+      <p style="margin-top:8px"><a href="https://alabol.netlify.app/portal-agencias.html" style="font-size:0.8rem">Quiero mi propio showroom</a></p>
+    </div>
+  `;
+
+  renderCars();
+}
+
+function renderCars() {
+  const grid = document.getElementById('carsGrid');
+  if (filteredCars.length === 0) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-search"></i><h3>Sin resultados</h3><p>Intenta con otros filtros.</p></div>`;
+    return;
+  }
+
+  const whatsappNum = agencia.whatsapp || '525568667571';
+
+  grid.innerHTML = filteredCars.map((car, i) => {
+    const foto = (car.fotos && car.fotos.length > 0) ? car.fotos[0] : 'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&w=400&q=60';
+    const precio = car.precio_venta ? '$' + car.precio_venta.toLocaleString('es-MX') : 'Consultar';
+    const km = car.kilometraje ? car.kilometraje.toLocaleString('es-MX') + ' km' : 'N/A';
+    const msg = encodeURIComponent(`Hola, me interesa el ${car.marca} ${car.modelo} ${car.anio} que vi en su showroom de Alabol.`);
+
+    return `
+      <div class="car-card" onclick="openModal(${i})">
+        <img class="car-img" src="${foto}" alt="${car.marca} ${car.modelo}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&w=400&q=60'">
+        <div class="car-info">
+          <div class="car-title">${car.marca} ${car.modelo} <span class="car-year">${car.anio}</span></div>
+          <div class="car-price">${precio} MXN</div>
+          <div class="car-specs">
+            <span class="car-spec"><i class="fas fa-road"></i> ${km}</span>
+            ${car.transmision ? `<span class="car-spec"><i class="fas fa-cog"></i> ${car.transmision}</span>` : ''}
+            ${car.tipo_vehiculo ? `<span class="car-spec"><i class="fas fa-car"></i> ${car.tipo_vehiculo.toUpperCase()}</span>` : ''}
+            ${car.combustible ? `<span class="car-spec"><i class="fas fa-gas-pump"></i> ${car.combustible}</span>` : ''}
+          </div>
+          <div class="car-actions" onclick="event.stopPropagation()">
+            <a href="https://wa.me/${whatsappNum}?text=${msg}" target="_blank" class="car-btn car-btn-primary" style="text-decoration:none"><i class="fab fa-whatsapp"></i> Me interesa</a>
+            <button class="car-btn car-btn-secondary" onclick="event.stopPropagation();openModal(${i})"><i class="fas fa-expand"></i> Ver ficha</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function applyFilters() {
+  const search = (document.getElementById('searchInput')?.value || '').toLowerCase();
+  const type = document.getElementById('filterType')?.value || 'all';
+  const sort = document.getElementById('filterSort')?.value || 'reciente';
+
+  filteredCars = allCars.filter(car => {
+    const text = `${car.marca} ${car.modelo} ${car.anio} ${car.ciudad || ''} ${car.transmision || ''}`.toLowerCase();
+    if (search && !text.includes(search)) return false;
+    if (type !== 'all' && car.tipo_vehiculo !== type) return false;
+    return true;
+  });
+
+  // Sort
+  filteredCars.sort((a, b) => {
+    if (sort === 'precio_asc') return (a.precio_venta || 0) - (b.precio_venta || 0);
+    if (sort === 'precio_desc') return (b.precio_venta || 0) - (a.precio_venta || 0);
+    if (sort === 'km_asc') return (a.kilometraje || 0) - (b.kilometraje || 0);
+    if (sort === 'anio_desc') return (b.anio || 0) - (a.anio || 0);
+    return new Date(b.created_at) - new Date(a.created_at);
+  });
+
+  document.getElementById('resultsCount').textContent = filteredCars.length + ' resultados';
+  renderCars();
+}
+
+// Modal
+function openModal(idx) {
+  modalCar = filteredCars[idx];
+  if (!modalCar) return;
+  modalPhotoIdx = 0;
+  updateModalPhoto();
+
+  const whatsappNum = agencia.whatsapp || '525568667571';
+  const msg = encodeURIComponent(`Hola, me interesa el ${modalCar.marca} ${modalCar.modelo} ${modalCar.anio} (${modalCar.vin || 'sin VIN'}) que vi en su showroom de Alabol. Quiero mas informacion.`);
+  const precio = modalCar.precio_venta ? '$' + modalCar.precio_venta.toLocaleString('es-MX') : 'Consultar';
+
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-title">${modalCar.marca} ${modalCar.modelo} <span style="color:var(--gold)">${modalCar.anio}</span></div>
+    <div class="modal-price">${precio} MXN</div>
+    <div class="modal-specs-grid">
+      <div class="modal-spec"><div class="label">Kilometraje</div><div class="value">${modalCar.kilometraje ? modalCar.kilometraje.toLocaleString('es-MX') + ' km' : 'N/A'}</div></div>
+      <div class="modal-spec"><div class="label">Transmision</div><div class="value">${modalCar.transmision || 'N/A'}</div></div>
+      <div class="modal-spec"><div class="label">Combustible</div><div class="value">${modalCar.combustible || 'N/A'}</div></div>
+      <div class="modal-spec"><div class="label">Tipo</div><div class="value">${(modalCar.tipo_vehiculo || 'N/A').toUpperCase()}</div></div>
+      <div class="modal-spec"><div class="label">Traccion</div><div class="value">${modalCar.traccion || 'N/A'}</div></div>
+      <div class="modal-spec"><div class="label">Motor</div><div class="value">${modalCar.motor || 'N/A'}</div></div>
+      ${modalCar.vin ? `<div class="modal-spec"><div class="label">VIN</div><div class="value" style="font-size:0.7rem">${modalCar.vin}</div></div>` : ''}
+      <div class="modal-spec"><div class="label">Ciudad</div><div class="value">${modalCar.ciudad || 'N/A'}</div></div>
+    </div>
+    ${modalCar.descripcion ? `<p style="font-size:0.8rem;color:var(--green-text);margin-top:10px;line-height:1.5">${modalCar.descripcion}</p>` : ''}
+    <div class="modal-cta">
+      <a href="https://wa.me/${whatsappNum}?text=${msg}" target="_blank" style="flex:1;padding:12px;border-radius:10px;font-size:0.85rem;font-weight:600;text-align:center;text-decoration:none;background:#25D366;color:white"><i class="fab fa-whatsapp"></i> Preguntar por este auto</a>
+      <button onclick="closeModal()" style="flex:0.5;padding:12px;border-radius:10px;font-size:0.85rem;font-weight:600;background:var(--bg-secondary);color:var(--green-text);border:1px solid var(--glass-border);cursor:pointer">Cerrar</button>
+    </div>
+  `;
+
+  document.getElementById('carModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('carModal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function updateModalPhoto() {
+  if (!modalCar || !modalCar.fotos || modalCar.fotos.length === 0) {
+    document.getElementById('modalImg').src = 'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&w=700&q=60';
+    document.getElementById('galleryCounter').textContent = '0/0';
+    return;
+  }
+  document.getElementById('modalImg').src = modalCar.fotos[modalPhotoIdx];
+  document.getElementById('galleryCounter').textContent = (modalPhotoIdx + 1) + '/' + modalCar.fotos.length;
+}
+
+function nextPhoto() {
+  if (!modalCar?.fotos?.length) return;
+  modalPhotoIdx = (modalPhotoIdx + 1) % modalCar.fotos.length;
+  updateModalPhoto();
+}
+function prevPhoto() {
+  if (!modalCar?.fotos?.length) return;
+  modalPhotoIdx = (modalPhotoIdx - 1 + modalCar.fotos.length) % modalCar.fotos.length;
+  updateModalPhoto();
+}
+
+// Close modal on overlay click
+document.getElementById('carModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// Close modal on Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+  if (e.key === 'ArrowRight') nextPhoto();
+  if (e.key === 'ArrowLeft') prevPhoto();
+});
+
+// Init
+init();
+</script>
+</body>
+</html>

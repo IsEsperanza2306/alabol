@@ -1,0 +1,2 @@
+# Showroom de agencias - redirige /agencia/slug a la página showroom
+/agencia/*  /agencia-showroom.html  200

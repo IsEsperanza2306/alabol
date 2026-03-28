@@ -1775,17 +1775,25 @@
             trackGA('matchmaker_swipe_pass', { car_id: car ? car.id : '' });
         }
 
-        // Save match decision to Supabase in real-time
+        // Save match decision to Supabase — update existing or insert new
         if (savedLeadId && car && car.id) {
-            supabaseClient.from('matches').insert([{
-                lead_id: savedLeadId,
-                vehiculo_id: car.id,
-                estatus: isLike ? 'liked' : 'passed',
-                score_match: isLike ? 100 : 0
-            }]).then(({ error }) => {
-                if (error) console.warn('Match save error:', error);
-                else console.log(`Match saved: ${car.marca} ${car.modelo} → ${isLike ? 'LIKED' : 'PASSED'}`);
-            });
+            supabaseClient.from('matches')
+                .update({ estatus: isLike ? 'liked' : 'passed', updated_at: new Date().toISOString() })
+                .eq('lead_id', savedLeadId)
+                .eq('vehiculo_id', car.id)
+                .then(({ data, error }) => {
+                    if (error) {
+                        // If no existing match, insert new one
+                        supabaseClient.from('matches').insert([{
+                            lead_id: savedLeadId,
+                            vehiculo_id: car.id,
+                            estatus: isLike ? 'liked' : 'passed',
+                            score_match: isLike ? 100 : 0
+                        }]).then(({ error: e2 }) => {
+                            if (e2) console.warn('Match save error:', e2);
+                        });
+                    }
+                });
         }
 
         currentCardIndex++;

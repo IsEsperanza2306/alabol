@@ -1562,29 +1562,47 @@
 
             const selectedType = (formData.carroceria || '').toLowerCase();
 
-            const matches = invData.filter(car => {
-                // TIPO — strict: must match selected body type
+            // Score each car instead of strict filtering
+            const scored = invData.map(car => {
+                let score = 0;
+                const carType = (car.tipo_vehiculo || '').toLowerCase();
+                const carBrand = (car.marca || '').toLowerCase();
+
+                // TIPO (30 pts) — flexible
                 if (selectedType) {
-                    const carType = (car.tipo_vehiculo || '').toLowerCase();
-                    if (selectedType === 'suv' && !['suv','crossover'].includes(carType)) return false;
-                    else if (selectedType === 'sedan' && !['sedan','hatchback'].includes(carType)) return false;
-                    else if (selectedType === 'pickup' && carType !== 'pickup') return false;
-                    else if (selectedType === 'deportivo' && carType !== 'deportivo') return false;
+                    if (selectedType === 'suv' && ['suv','crossover'].includes(carType)) score += 30;
+                    else if (selectedType === 'sedan' && ['sedan','hatchback'].includes(carType)) score += 30;
+                    else if (selectedType === 'pickup' && ['pickup','van'].includes(carType)) score += 30;
+                    else if (selectedType === 'deportivo' && ['deportivo','coupe','convertible'].includes(carType)) score += 30;
+                    else score += 5; // Different type but don't exclude
+                } else {
+                    score += 15;
                 }
-                // PRECIO
-                if (car.precio_venta < minBudget || car.precio_venta > maxBudget) return false;
-                // AÑO
-                if (car.anio < minYear || car.anio > maxYear) return false;
-                // MARCA — strict: must match selected brands
+
+                // PRECIO (25 pts)
+                if (car.precio_venta >= minBudget && car.precio_venta <= maxBudget) score += 25;
+                else if (car.precio_venta >= minBudget * 0.85 && car.precio_venta <= maxBudget * 1.15) score += 15;
+                else if (car.precio_venta < minBudget) score += 8;
+                else score += 0;
+
+                // AÑO (20 pts)
+                if (car.anio >= minYear && car.anio <= maxYear) score += 20;
+                else if (car.anio >= minYear - 2 && car.anio <= maxYear + 1) score += 10;
+                else score += 0;
+
+                // MARCA (25 pts) — case insensitive
                 if (preferredBrands.length > 0) {
-                    const carBrand = (car.marca || '').toLowerCase();
                     const brandMatch = preferredBrands.some(pb => pb.includes(carBrand) || carBrand.includes(pb));
-                    if (!brandMatch) return false;
+                    if (brandMatch) score += 25;
+                } else {
+                    score += 12;
                 }
-                return true;
+
+                return { ...car, _score: score };
             });
 
-            return matches.sort((a, b) => b.precio_venta - a.precio_venta).slice(0, 10);
+            // Return top 10 with score >= 40
+            return scored.filter(c => c._score >= 40).sort((a, b) => b._score - a._score).slice(0, 10);
         } catch (err) {
             console.error("Error fetching matches:", err);
             return [];

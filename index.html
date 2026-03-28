@@ -295,16 +295,18 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
 
         /* Header NavBar & Logo */
         header {
-            padding: 1.2rem 5%;
+            padding: 0.6rem 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(5, 16, 13, 0.95);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(10, 31, 26, 0.45);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
             position: sticky;
             top: 0;
             z-index: 1000;
+            transition: background 0.3s;
         }
 
         .logo-wrapper {
@@ -318,14 +320,14 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
         .logo-glow {
             position: absolute;
             top: 50%;
-            left: 30px;
-            width: 70px;
-            height: 70px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
             transform: translate(-50%, -50%);
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.85) 0%, rgba(212, 175, 55, 0.3) 40%, transparent 70%);
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.6) 0%, rgba(212, 175, 55, 0.2) 40%, transparent 70%);
             border-radius: 50%;
             z-index: 0;
-            animation: logoGlowPulse 2s ease-in-out infinite;
+            animation: logoGlowPulse 3s ease-in-out infinite;
             pointer-events: none;
         }
 
@@ -347,12 +349,12 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
         }
 
         .logo-img {
-            height: 60px;
+            height: 40px;
             width: auto;
             object-fit: contain;
             z-index: 1;
             position: relative;
-            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.5));
+            filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.4));
             transition: transform 0.3s;
         }
 
@@ -362,14 +364,14 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
 
         .nav-links {
             display: flex;
-            gap: 1.5rem;
+            gap: 1.2rem;
             align-items: center;
         }
 
         .nav-links a:not(.btn-premium-gold):not(.btn-premium-teal) {
             color: #a8c5b8;
             text-decoration: none;
-            font-size: 0.85rem;
+            font-size: 0.78rem;
             font-weight: 500;
             transition: color 0.3s;
         }

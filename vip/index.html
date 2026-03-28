@@ -1767,22 +1767,25 @@
             trackGA('matchmaker_swipe_pass', { car_id: car ? car.id : '' });
         }
 
-        // Save match decision to Supabase — update existing or insert new
+        // Save match decision to Supabase
         if (savedLeadId && car && car.id) {
+            // First try update (match already exists as 'sugerido' from trigger)
             supabaseClient.from('matches')
                 .update({ estatus: isLike ? 'liked' : 'passed', updated_at: new Date().toISOString() })
                 .eq('lead_id', savedLeadId)
                 .eq('vehiculo_id', car.id)
+                .select()
                 .then(({ data, error }) => {
-                    if (error) {
-                        // If no existing match, insert new one
+                    console.log('Swipe update:', car.marca, car.modelo, '→', isLike ? 'LIKED' : 'PASSED', 'result:', data?.length || 0, 'rows', error || '');
+                    // If update didn't affect any rows, insert new
+                    if (!data || data.length === 0) {
                         supabaseClient.from('matches').insert([{
                             lead_id: savedLeadId,
                             vehiculo_id: car.id,
                             estatus: isLike ? 'liked' : 'passed',
                             score_match: isLike ? 100 : 0
-                        }]).then(({ error: e2 }) => {
-                            if (e2) console.warn('Match save error:', e2);
+                        }]).select().then(({ data: d2, error: e2 }) => {
+                            console.log('Swipe insert fallback:', d2?.length || 0, 'rows', e2 || '');
                         });
                     }
                 });
@@ -1942,13 +1945,15 @@
             } catch (e) { console.warn('Lead update failed:', e); }
         }
 
-        // Notify owner via Edge Function (sends email with lead details + liked cars)
+        // Notify owner via Edge Function — wait 2s for swipe updates to finish writing to DB
         if (savedLeadId) {
-            fetch(`${SUPABASE_URL}/functions/v1/notify-new-lead`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ lead_id: savedLeadId })
-            }).then(r => r.json()).then(r => console.log('Notification:', r)).catch(err => console.warn('Notify failed:', err));
+            setTimeout(() => {
+                fetch(`${SUPABASE_URL}/functions/v1/notify-new-lead`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ lead_id: savedLeadId })
+                }).then(r => r.json()).then(r => console.log('Notification result:', r)).catch(err => console.warn('Notify failed:', err));
+            }, 2000);
         }
 
         // Webhook (Make.com)

@@ -388,11 +388,11 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
         /* ----- HERO SECTION (B2C Matchmaker Focus) ----- */
         .hero {
             position: relative;
-            padding: 6rem 5% 4rem;
+            padding: 3rem 5% 1.5rem;
             text-align: center;
             max-width: 900px;
             margin: 0 auto;
-            min-height: 80vh;
+            min-height: auto;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -414,10 +414,10 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
         }
 
         .hero h1 {
-            font-size: 4rem;
+            font-size: 2.8rem;
             font-weight: 800;
             line-height: 1.1;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             text-transform: uppercase;
         }
 
@@ -427,9 +427,9 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
         }
 
         .hero p {
-            font-size: 1.2rem;
+            font-size: 1rem;
             color: #a8c5b8;
-            margin-bottom: 3rem;
+            margin-bottom: 1.5rem;
             font-weight: 300;
             max-width: 600px;
         }
@@ -1780,114 +1780,24 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
         </div>
     </header>
 
-    <!-- HERO SECTION (Matchmaker B2C Focus) -->
+    <!-- HERO SECTION (Compact - leads to swipe) -->
     <section class="hero">
-        <div class="hero-badge">Tecnología de Búsqueda VIP</div>
-        <h1>Encuentra tu <span class="highlight">Media Naranja</span> con Llantas 🍊🚗</h1>
-        <p>Basta de "citas a ciegas" con autos poco confiables. Deja que nuestro Cupido Automotriz te presente a tu
-            compañero ideal de las mejores agencias del país.</p>
+        <div class="hero-badge">El Tinder de los Autos</div>
+        <h1>Encuentra tu <span class="highlight">Media Naranja</span> con Llantas</h1>
+        <p>Desliza, haz match y agenda tu cita. Autos verificados de las mejores agencias.</p>
         <div class="hero-cta-container">
-            <a href="./vip/" class="btn-premium-gold" style="padding: 18px 36px; font-size: 1.1rem;">
+            <a href="./formulario-match.html" class="btn-premium-gold" style="padding: 14px 28px; font-size: 1rem;">
                 <i class="fa-solid fa-heart-circle-check"></i>
-                <span>Buscar mi Auto Ideal</span>
+                <span>Buscar mi Match</span>
             </a>
-            <a href="./vendedor.html" class="btn-premium-teal" style="padding: 18px 36px; font-size: 1.1rem;">
-                Vender mi Auto
+            <a href="#inventario" class="btn-premium-teal" style="padding: 14px 28px; font-size: 1rem;">
+                <i class="fa-solid fa-fire"></i> Ver Autos
             </a>
-        </div>
-
-        <!-- Scroll indicator -->
-        <div style="margin-top:32px;animation:bounce 2s infinite;text-align:center;opacity:0.5;">
-            <i class="fa-solid fa-chevron-down" style="font-size:1.2rem;color:var(--gold);"></i>
         </div>
         <style>@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}</style>
     </section>
 
-    <!-- ¿CÓMO FUNCIONA? -->
-    <section class="how-it-works" id="como-funciona">
-        <div class="section-header">
-            <h2>Encontrar tu auto nunca fue tan <span style="color:var(--gold)">atractivo</span></h2>
-            <p>Un embudo invisible de tres pasos para que solo hables con tu auto ideal.</p>
-        </div>
-
-        <div class="steps-container">
-            <div class="step-card">
-                <div class="step-number">1</div>
-                <div class="step-icon"><i class="fa-solid fa-sliders"></i></div>
-                <h3>Crea tu Perfil</h3>
-                <p>Déjanos saber qué buscas: presupuesto, año, estilo (SUV, Sedán). Nuestro formulario inteligente mapea
-                    tus preferencias reales en 2 minutos.</p>
-            </div>
-            <div class="step-card">
-                <div class="step-number">2</div>
-                <div class="step-icon"><i class="fa-solid fa-bolt"></i></div>
-                <h3>El Algoritmo hace Match</h3>
-                <p>Nuestra tecnología escanea el inventario oculto de Alabol y las agencias afiliadas aplicando
-                    tolerancias exactas, filtrando la paja por ti.</p>
-            </div>
-            <div class="step-card">
-                <div class="step-number">3</div>
-                <div class="step-icon"><i class="fa-solid fa-handshake"></i></div>
-                <h3>Cita a Ciegas Segura</h3>
-                <p>Te enviamos una pre-selección (Blind Match). Si te enamoras, agendamos una cita formal, protegida por
-                    nuestros sellos de verificación.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- SERVICIOS RÁPIDOS -->
-    <section style="max-width:900px;margin:-20px auto 30px;padding:0 20px;position:relative;z-index:5;">
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;">
-
-            <a href="#inventario" style="text-decoration:none;background:rgba(13,38,28,0.7);border:1px solid rgba(212,175,55,0.2);border-radius:16px;padding:20px 16px;text-align:center;transition:all 0.3s;backdrop-filter:blur(8px);"
-               onmouseover="this.style.borderColor='rgba(212,175,55,0.5)';this.style.transform='translateY(-3px)'"
-               onmouseout="this.style.borderColor='rgba(212,175,55,0.2)';this.style.transform='translateY(0)'">
-                <div style="font-size:28px;margin-bottom:8px;">💘</div>
-                <div style="font-size:13px;font-weight:700;color:#d4af37;">Swipe & Match</div>
-                <div style="font-size:11px;color:#a8c5b8;margin-top:4px;opacity:0.7;">Desliza para encontrar tu auto ideal</div>
-            </a>
-
-            <a href="./vendedor.html" style="text-decoration:none;background:rgba(13,38,28,0.7);border:1px solid rgba(212,175,55,0.2);border-radius:16px;padding:20px 16px;text-align:center;transition:all 0.3s;backdrop-filter:blur(8px);"
-               onmouseover="this.style.borderColor='rgba(212,175,55,0.5)';this.style.transform='translateY(-3px)'"
-               onmouseout="this.style.borderColor='rgba(212,175,55,0.2)';this.style.transform='translateY(0)'">
-                <div style="font-size:28px;margin-bottom:8px;">🏷️</div>
-                <div style="font-size:13px;font-weight:700;color:#d4af37;">Vende tu Auto</div>
-                <div style="font-size:11px;color:#a8c5b8;margin-top:4px;opacity:0.7;">Publica y conecta con compradores VIP</div>
-            </a>
-
-            <a href="./vip/index.html" style="text-decoration:none;background:rgba(13,38,28,0.7);border:1px solid rgba(212,175,55,0.2);border-radius:16px;padding:20px 16px;text-align:center;transition:all 0.3s;backdrop-filter:blur(8px);"
-               onmouseover="this.style.borderColor='rgba(212,175,55,0.5)';this.style.transform='translateY(-3px)'"
-               onmouseout="this.style.borderColor='rgba(212,175,55,0.2)';this.style.transform='translateY(0)'">
-                <div style="font-size:28px;margin-bottom:8px;">🔍</div>
-                <div style="font-size:13px;font-weight:700;color:#d4af37;">Matchmaker VIP</div>
-                <div style="font-size:11px;color:#a8c5b8;margin-top:4px;opacity:0.7;">Cuéntanos qué buscas y te encontramos</div>
-            </a>
-
-            <a href="./oportunidades/index.html" style="text-decoration:none;background:rgba(13,38,28,0.7);border:1px solid rgba(212,175,55,0.2);border-radius:16px;padding:20px 16px;text-align:center;transition:all 0.3s;backdrop-filter:blur(8px);"
-               onmouseover="this.style.borderColor='rgba(212,175,55,0.5)';this.style.transform='translateY(-3px)'"
-               onmouseout="this.style.borderColor='rgba(212,175,55,0.2)';this.style.transform='translateY(0)'">
-                <div style="font-size:28px;margin-bottom:8px;">🔥</div>
-                <div style="font-size:13px;font-weight:700;color:#d4af37;">Oportunidades</div>
-                <div style="font-size:11px;color:#a8c5b8;margin-top:4px;opacity:0.7;">Subastas con hasta 50% de ahorro</div>
-            </a>
-
-        </div>
-
-        <!-- CTA Vendedor destacado -->
-        <div style="margin-top:16px;background:linear-gradient(135deg,rgba(212,175,55,0.08),rgba(212,175,55,0.03));border:1px solid rgba(212,175,55,0.25);border-radius:16px;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
-            <div>
-                <div style="font-size:15px;font-weight:700;color:white;">🛡️ ¿Tienes un auto que quieres vender?</div>
-                <div style="font-size:12px;color:#a8c5b8;margin-top:2px;">Publica gratis en nuestro Garage VIP y conecta con compradores verificados.</div>
-            </div>
-            <a href="./vendedor.html" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#d4af37,#c9a961);color:#0a1f1a;padding:12px 24px;border-radius:24px;text-decoration:none;font-weight:800;font-size:13px;white-space:nowrap;box-shadow:0 4px 15px rgba(212,175,55,0.35);transition:all 0.25s;"
-               onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(212,175,55,0.5)'"
-               onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 15px rgba(212,175,55,0.35)'">
-                <i class="fa-solid fa-plus"></i> Publicar mi Auto
-            </a>
-        </div>
-    </section>
-
-    <!-- INVENTARIO DESTACADO B2C -->
+    <!-- INVENTARIO DESTACADO B2C (moved up - first interactive element) -->
     <section class="featured-section" id="inventario">
         <div class="section-header">
             <h2>Nuestros <span>Solteros</span> Más Cotizados 🔥</h2>
@@ -2073,6 +1983,95 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
                 <i class="fa-solid fa-money-bill-wave"></i>
                 <span>Precios Transparentes</span>
             </div>
+        </div>
+    </section>
+
+    <!-- CTA MATCHMAKER (after swipe experience) -->
+    <section style="max-width:700px;margin:20px auto 40px;padding:0 20px;position:relative;z-index:5;">
+        <div style="background:linear-gradient(135deg,rgba(212,175,55,0.12),rgba(212,175,55,0.04));border:1px solid rgba(212,175,55,0.3);border-radius:20px;padding:30px;text-align:center;">
+            <div style="font-size:2rem;margin-bottom:10px;">💘</div>
+            <h2 style="color:white;font-size:1.4rem;font-weight:800;margin-bottom:8px;">No encontraste tu match?</h2>
+            <p style="color:#a8c5b8;font-size:0.9rem;margin-bottom:20px;">Dinos exactamente lo que buscas y nuestro algoritmo te encuentra opciones personalizadas de todo nuestro inventario oculto.</p>
+            <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+                <a href="./formulario-match.html" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#d4af37,#c9a961);color:#0a1f1a;padding:14px 28px;border-radius:25px;text-decoration:none;font-weight:800;font-size:0.9rem;box-shadow:0 4px 20px rgba(212,175,55,0.4);transition:all 0.25s;">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Usar el Matchmaker
+                </a>
+                <a href="./inventario.html" style="display:inline-flex;align-items:center;gap:8px;background:rgba(13,38,28,0.7);color:var(--gold);padding:14px 28px;border-radius:25px;text-decoration:none;font-weight:600;font-size:0.9rem;border:1px solid rgba(212,175,55,0.3);">
+                    <i class="fa-solid fa-th-large"></i> Ver Inventario Completo
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMO FUNCIONA (moved down) -->
+    <section class="how-it-works" id="como-funciona">
+        <div class="section-header">
+            <h2>Encontrar tu auto nunca fue tan <span style="color:var(--gold)">atractivo</span></h2>
+            <p>Un embudo invisible de tres pasos para que solo hables con tu auto ideal.</p>
+        </div>
+        <div class="steps-container">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <div class="step-icon"><i class="fa-solid fa-sliders"></i></div>
+                <h3>Crea tu Perfil</h3>
+                <p>Presupuesto, tipo de auto, marcas favoritas. Nuestro formulario inteligente mapea tus preferencias en 2 minutos.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <div class="step-icon"><i class="fa-solid fa-bolt"></i></div>
+                <h3>El Algoritmo hace Match</h3>
+                <p>Nuestra tecnologia escanea el inventario de Alabol y las agencias afiliadas, filtrando por ti.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <div class="step-icon"><i class="fa-solid fa-handshake"></i></div>
+                <h3>Agenda tu Cita</h3>
+                <p>Te enviamos tus matches. Si te enamoras, agendamos una cita protegida por nuestros sellos de verificacion.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICIOS RAPIDOS -->
+    <section style="max-width:900px;margin:-20px auto 30px;padding:0 20px;position:relative;z-index:5;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;">
+            <a href="./formulario-match.html" style="text-decoration:none;background:rgba(13,38,28,0.7);border:1px solid rgba(212,175,55,0.2);border-radius:16px;padding:20px 16px;text-align:center;transition:all 0.3s;backdrop-filter:blur(8px);"
+               onmouseover="this.style.borderColor='rgba(212,175,55,0.5)';this.style.transform='translateY(-3px)'"
+               onmouseout="this.style.borderColor='rgba(212,175,55,0.2)';this.style.transform='translateY(0)'">
+                <div style="font-size:28px;margin-bottom:8px;">💘</div>
+                <div style="font-size:13px;font-weight:700;color:#d4af37;">Matchmaker VIP</div>
+                <div style="font-size:11px;color:#a8c5b8;margin-top:4px;opacity:0.7;">Dinos que buscas y te encontramos</div>
+            </a>
+            <a href="./vendedor.html" style="text-decoration:none;background:rgba(13,38,28,0.7);border:1px solid rgba(212,175,55,0.2);border-radius:16px;padding:20px 16px;text-align:center;transition:all 0.3s;backdrop-filter:blur(8px);"
+               onmouseover="this.style.borderColor='rgba(212,175,55,0.5)';this.style.transform='translateY(-3px)'"
+               onmouseout="this.style.borderColor='rgba(212,175,55,0.2)';this.style.transform='translateY(0)'">
+                <div style="font-size:28px;margin-bottom:8px;">🏷️</div>
+                <div style="font-size:13px;font-weight:700;color:#d4af37;">Vende tu Auto</div>
+                <div style="font-size:11px;color:#a8c5b8;margin-top:4px;opacity:0.7;">Publica y conecta con compradores VIP</div>
+            </a>
+            <a href="./inventario.html" style="text-decoration:none;background:rgba(13,38,28,0.7);border:1px solid rgba(212,175,55,0.2);border-radius:16px;padding:20px 16px;text-align:center;transition:all 0.3s;backdrop-filter:blur(8px);"
+               onmouseover="this.style.borderColor='rgba(212,175,55,0.5)';this.style.transform='translateY(-3px)'"
+               onmouseout="this.style.borderColor='rgba(212,175,55,0.2)';this.style.transform='translateY(0)'">
+                <div style="font-size:28px;margin-bottom:8px;">🚗</div>
+                <div style="font-size:13px;font-weight:700;color:#d4af37;">Inventario</div>
+                <div style="font-size:11px;color:#a8c5b8;margin-top:4px;opacity:0.7;">Explora todos los autos disponibles</div>
+            </a>
+            <a href="./oportunidades/index.html" style="text-decoration:none;background:rgba(13,38,28,0.7);border:1px solid rgba(212,175,55,0.2);border-radius:16px;padding:20px 16px;text-align:center;transition:all 0.3s;backdrop-filter:blur(8px);"
+               onmouseover="this.style.borderColor='rgba(212,175,55,0.5)';this.style.transform='translateY(-3px)'"
+               onmouseout="this.style.borderColor='rgba(212,175,55,0.2)';this.style.transform='translateY(0)'">
+                <div style="font-size:28px;margin-bottom:8px;">🔥</div>
+                <div style="font-size:13px;font-weight:700;color:#d4af37;">Oportunidades</div>
+                <div style="font-size:11px;color:#a8c5b8;margin-top:4px;opacity:0.7;">Subastas con hasta 50% de ahorro</div>
+            </a>
+        </div>
+        <!-- CTA Vendedor -->
+        <div style="margin-top:16px;background:linear-gradient(135deg,rgba(212,175,55,0.08),rgba(212,175,55,0.03));border:1px solid rgba(212,175,55,0.25);border-radius:16px;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+            <div>
+                <div style="font-size:15px;font-weight:700;color:white;">🛡️ Tienes un auto que quieres vender?</div>
+                <div style="font-size:12px;color:#a8c5b8;margin-top:2px;">Publica gratis en nuestro Garage VIP y conecta con compradores verificados.</div>
+            </div>
+            <a href="./vendedor.html" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#d4af37,#c9a961);color:#0a1f1a;padding:12px 24px;border-radius:24px;text-decoration:none;font-weight:800;font-size:13px;white-space:nowrap;box-shadow:0 4px 15px rgba(212,175,55,0.35);transition:all 0.25s;">
+                <i class="fa-solid fa-plus"></i> Publicar mi Auto
+            </a>
         </div>
     </section>
 

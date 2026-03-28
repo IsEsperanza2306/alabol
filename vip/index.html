@@ -1207,17 +1207,9 @@
     }
 
     function loadProgress() {
-        try {
-            const raw = localStorage.getItem(STORAGE_KEY);
-            if (!raw) return false;
-            const saved = JSON.parse(raw);
-            if (Date.now() - saved.ts > STORAGE_EXPIRY) { localStorage.removeItem(STORAGE_KEY); return false; }
-            // Only restore up to step 3 (don't skip reveal/data/swipe)
-            if (saved.step > 3) return false;
-            Object.assign(formData, saved.data);
-            currentStep = saved.step;
-            return true;
-        } catch (e) { return false; }
+        // Always start fresh — never restore previous session
+        try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+        return false;
     }
 
     // =====================

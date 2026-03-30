@@ -1449,6 +1449,7 @@ textarea.fi { resize: vertical; min-height: 80px; }
         <i class="fa-solid fa-check-double"></i> Publicar todo al inventario
       </button>
       <div style="text-align:center;margin-top:8px;font-size:11px;color:var(--green-muted);">Las fotos son opcionales — puedes agregarlas despues desde Mi Inventario</div>
+      <button onclick="bulkForceUnstick()" style="display:block;margin:8px auto 0;background:none;border:none;color:var(--green-muted);font-size:11px;cursor:pointer;text-decoration:underline;font-family:inherit;">Foto atorada? Toca aqui para desbloquear</button>
     </div>
   </div>
 </div>
@@ -2412,41 +2413,60 @@ function handleBulkPhotos(idx, files) {
     if (!file.type.startsWith('image/')) return;
     item.uploading++;
     renderBulkList();
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      var img = new Image();
-      img.onload = function() {
-        var canvas = document.createElement('canvas');
-        var maxDim = 1200;
-        var w = img.width, h = img.height;
-        if (w > maxDim || h > maxDim) {
-          if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
-          else { w = Math.round(w * maxDim / h); h = maxDim; }
-        }
-        canvas.width = w; canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        canvas.toBlob(function(blob) {
-          var folder = (uid || 'anon').substring(0, 8);
-          var fileName = folder + '/' + Date.now() + '-' + Math.random().toString(36).substring(2, 6) + '.webp';
-          fetch(S + '/storage/v1/object/vehicle_photos/' + fileName, {
-            method: 'POST',
-            headers: { 'apikey': K, 'Authorization': 'Bearer ' + (tok || K), 'Content-Type': 'image/webp', 'x-upsert': 'true' },
-            body: blob
-          }).then(function(r) {
-            if (!r.ok) throw new Error('Upload failed');
-            item.photos.push(S + '/storage/v1/object/public/vehicle_photos/' + fileName);
-            item.uploading--;
-            renderBulkList();
-          }).catch(function() {
-            item.uploading--;
-            renderBulkList();
-          });
-        }, 'image/webp', 0.75);
+    // Timeout safety: if upload hangs for 20s, force decrement
+    var done = false;
+    var timer = setTimeout(function() {
+      if (!done) { done = true; item.uploading = Math.max(0, item.uploading - 1); renderBulkList(); }
+    }, 20000);
+    function finish(url) {
+      if (done) return;
+      done = true; clearTimeout(timer);
+      if (url) item.photos.push(url);
+      item.uploading = Math.max(0, item.uploading - 1);
+      renderBulkList();
+    }
+    try {
+      var reader = new FileReader();
+      reader.onerror = function() { finish(); };
+      reader.onload = function(e) {
+        var img = new Image();
+        img.onerror = function() { finish(); };
+        img.onload = function() {
+          try {
+            var canvas = document.createElement('canvas');
+            var maxDim = 1200;
+            var w = img.width, h = img.height;
+            if (w > maxDim || h > maxDim) {
+              if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
+              else { w = Math.round(w * maxDim / h); h = maxDim; }
+            }
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            canvas.toBlob(function(blob) {
+              if (!blob) { finish(); return; }
+              var folder = (uid || 'anon').substring(0, 8);
+              var fileName = folder + '/' + Date.now() + '-' + Math.random().toString(36).substring(2, 6) + '.webp';
+              fetch(S + '/storage/v1/object/vehicle_photos/' + fileName, {
+                method: 'POST',
+                headers: { 'apikey': K, 'Authorization': 'Bearer ' + (tok || K), 'Content-Type': 'image/webp', 'x-upsert': 'true' },
+                body: blob
+              }).then(function(r) {
+                if (!r.ok) { finish(); return; }
+                finish(S + '/storage/v1/object/public/vehicle_photos/' + fileName);
+              }).catch(function() { finish(); });
+            }, 'image/webp', 0.75);
+          } catch(ex) { finish(); }
+        };
+        img.src = e.target.result;
       };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
+      reader.readAsDataURL(file);
+    } catch(ex) { finish(); }
   });
+}
+
+function bulkForceUnstick() {
+  bulkItems.forEach(function(item) { item.uploading = 0; });
+  renderBulkList();
 }
 
 function removeBulkPhoto(itemIdx, photoIdx) {

@@ -1,0 +1,23 @@
+# Security headers - anti-scraping + protection
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(self), microphone=(), geolocation=()"
+    X-Robots-Tag = "noai, noimageai"
+
+# Block common scraping paths
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow, noai"
+
+# Cache control for inventory pages (prevent mass caching)
+[[headers]]
+  for = "/inventario*"
+  [headers.values]
+    Cache-Control = "no-store, no-cache, must-revalidate"
+    X-Robots-Tag = "noai, noimageai"

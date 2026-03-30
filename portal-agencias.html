@@ -585,6 +585,82 @@ textarea.fi { resize: vertical; min-height: 80px; }
 .trust-bar-wrap { height: 6px; background: var(--bg-secondary); border-radius: 3px; margin-top: 12px; overflow: hidden; }
 .trust-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--emerald), var(--gold)); transition: width 0.6s ease; }
 
+/* Bulk Accordion */
+.bulk-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 200;
+  display: none; align-items: flex-end; justify-content: center;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.bulk-overlay.open { display: flex; }
+.bulk-panel {
+  background: var(--bg-primary); border: 1px solid var(--glass-border);
+  border-radius: 20px 20px 0 0; width: 100%; max-width: 540px;
+  max-height: 92vh; overflow-y: auto; padding: 0;
+}
+.bulk-header {
+  position: sticky; top: 0; z-index: 1; background: var(--bg-primary);
+  border-bottom: 1px solid var(--glass-border); padding: 16px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.bulk-progress-bar { height: 4px; background: var(--bg-secondary); border-radius: 2px; margin: 0 20px 12px; }
+.bulk-progress-fill { height: 100%; background: linear-gradient(90deg, var(--emerald), var(--gold)); border-radius: 2px; transition: width 0.4s; }
+.bulk-list { padding: 0 12px 12px; }
+.bulk-item {
+  background: var(--glass-bg); border: 1px solid var(--glass-border);
+  border-radius: 14px; margin-bottom: 8px; overflow: hidden; transition: all 0.3s;
+}
+.bulk-item.has-photos { border-color: rgba(16,185,129,0.3); }
+.bulk-item-header {
+  display: flex; align-items: center; padding: 12px 14px; cursor: pointer; gap: 12px;
+}
+.bulk-item-header:hover { background: rgba(212,175,55,0.04); }
+.bulk-item-status {
+  width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-size: 12px; flex-shrink: 0; font-weight: 800;
+}
+.bulk-item-status.pending { background: rgba(148,184,167,0.1); color: var(--green-muted); border: 1px solid rgba(148,184,167,0.15); }
+.bulk-item-status.done { background: rgba(16,185,129,0.15); color: var(--emerald); border: 1px solid rgba(16,185,129,0.3); }
+.bulk-item-info { flex: 1; min-width: 0; }
+.bulk-item-name { font-size: 13px; font-weight: 700; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bulk-item-meta { font-size: 11px; color: var(--green-text); opacity: 0.7; }
+.bulk-item-arrow { color: var(--green-muted); font-size: 12px; transition: transform 0.3s; }
+.bulk-item.expanded .bulk-item-arrow { transform: rotate(180deg); }
+.bulk-item-body { display: none; padding: 0 14px 14px; }
+.bulk-item.expanded .bulk-item-body { display: block; }
+.bulk-photo-zone {
+  border: 2px dashed var(--glass-border); border-radius: 10px; padding: 16px;
+  text-align: center; cursor: pointer; transition: all 0.3s; margin-bottom: 8px;
+}
+.bulk-photo-zone:hover { border-color: var(--gold); background: rgba(212,175,55,0.04); }
+.bulk-photo-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 8px;
+}
+.bulk-photo-thumb {
+  position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden;
+  background: var(--bg-secondary); border: 1px solid var(--glass-border);
+}
+.bulk-photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.bulk-photo-num {
+  position: absolute; top: 3px; left: 3px; background: rgba(0,0,0,0.7);
+  color: var(--gold); font-size: 10px; font-weight: 800; width: 18px; height: 18px;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+}
+.bulk-photo-del {
+  position: absolute; top: 3px; right: 3px; background: rgba(239,68,68,0.85);
+  color: white; border: none; width: 18px; height: 18px; border-radius: 50%;
+  font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.2s;
+}
+.bulk-photo-thumb:hover .bulk-photo-del { opacity: 1; }
+.bulk-footer {
+  position: sticky; bottom: 0; background: var(--bg-primary);
+  border-top: 1px solid var(--glass-border); padding: 14px 20px;
+}
+@media(min-width:500px) {
+  .bulk-overlay { align-items: center; }
+  .bulk-panel { border-radius: 20px; max-height: 85vh; }
+}
+
 /* Wizard Footer */
 .wiz-footer {
   position: absolute; bottom: 0; left: 0; right: 0; z-index: 3;
@@ -881,6 +957,7 @@ textarea.fi { resize: vertical; min-height: 80px; }
         <button class="bgold" onclick="doLogin()">Entrar al Portal</button>
       </div>
       <div id="fr" class="dn">
+        <input class="inp" id="rcode" placeholder="Codigo de invitacion" style="text-transform:uppercase;letter-spacing:0.1em;text-align:center;border-color:var(--gold-dim);">
         <input class="inp" id="rn" placeholder="Nombre de la agencia">
         <input class="inp" id="re" type="email" placeholder="tu@email.com">
         <input class="inp" id="rp" type="password" placeholder="Contrasena (min 6)">
@@ -1060,7 +1137,7 @@ textarea.fi { resize: vertical; min-height: 80px; }
       <div id="agSyncPreview" style="display:none;background:var(--bg-card);border:1px solid var(--glass-border);border-radius:16px;padding:20px;margin-bottom:20px;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
           <div style="font-size:14px;font-weight:700;color:white;">Previsualización</div>
-          <button onclick="agApplySync()" id="agApplyBtn" style="padding:10px 20px;border:none;border-radius:10px;background:var(--emerald);color:white;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;">✅ Aplicar cambios</button>
+          <button onclick="agOpenBulkWithPhotos()" id="agApplyBtn" style="padding:10px 20px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--bg-primary);font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;"><i class="fa-solid fa-images"></i> Continuar — agregar fotos y publicar</button>
         </div>
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;">
           <div style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:10px;text-align:center;">
@@ -1346,6 +1423,28 @@ textarea.fi { resize: vertical; min-height: 80px; }
 </div>
 
 <!-- ── MODAL CONFIRMAR ELIMINAR ── -->
+<!-- BULK UPLOAD ACCORDION -->
+<div class="bulk-overlay" id="bulkOverlay">
+  <div class="bulk-panel">
+    <div class="bulk-header">
+      <div>
+        <div style="font-size:16px;font-weight:800;color:white;"><i class="fa-solid fa-boxes-stacked" style="color:var(--gold);margin-right:6px;"></i>Carga Masiva</div>
+        <div style="font-size:11px;color:var(--green-text);" id="bulkSubtitle">0 autos detectados</div>
+      </div>
+      <button style="background:none;border:none;color:var(--green-muted);font-size:22px;cursor:pointer;" onclick="closeBulk()">&times;</button>
+    </div>
+    <div class="bulk-progress-bar"><div class="bulk-progress-fill" id="bulkProgressFill" style="width:0%"></div></div>
+    <div style="padding:0 20px 8px;font-size:12px;color:var(--green-text);" id="bulkProgressText">0 de 0 con fotos</div>
+    <div class="bulk-list" id="bulkList"></div>
+    <div class="bulk-footer">
+      <button id="bulkConfirmBtn" onclick="bulkConfirmAll()" style="width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--bg-primary);font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;">
+        <i class="fa-solid fa-check-double"></i> Publicar todo al inventario
+      </button>
+      <div style="text-align:center;margin-top:8px;font-size:11px;color:var(--green-muted);">Las fotos son opcionales — puedes agregarlas despues desde Mi Inventario</div>
+    </div>
+  </div>
+</div>
+
 <div class="mbg" id="mC">
   <div class="modal-confirm">
     <div class="mtit"><i class="fa-solid fa-triangle-exclamation" style="margin-right:6px;color:var(--danger);"></i> Eliminar Auto</div>
@@ -1455,9 +1554,13 @@ function doLogin() {
     .catch(function() { g('lerr').textContent = 'Error de conexion.'; });
 }
 
+var INVITE_CODES = ['ALABOL-2026', 'EMBAJADOR-VIP'];
+
 function doReg() {
+  var code = (g('rcode').value || '').trim().toUpperCase();
   var n = g('rn').value.trim(), e = g('re').value.trim(), p = g('rp').value;
   g('rerr').textContent = '';
+  if (!code || INVITE_CODES.indexOf(code) < 0) { g('rerr').textContent = 'Codigo de invitacion invalido. Solicita uno a tu contacto Alabol.'; return; }
   if (!n || !e || !p) { g('rerr').textContent = 'Completa todos los campos.'; return; }
   if (p.length < 6) { g('rerr').textContent = 'Minimo 6 caracteres.'; return; }
   fetch(S + '/auth/v1/signup', {
@@ -2182,6 +2285,219 @@ function agApplySync() {
     }).catch(function(err) {
         btn.textContent = '❌ Error: ' + err.message; btn.disabled = false;
     });
+}
+
+// ══════════════════════════════════════════
+// BULK ACCORDION
+// ══════════════════════════════════════════
+var bulkItems = []; // [{tempId, marca, modelo, anio, precio, ..., photos: [url, url]}]
+
+function openBulkAccordion(items) {
+  bulkItems = items.map(function(row, i) {
+    return {
+      tempId: 'bulk-' + i,
+      marca: row['Marca'] || row['marca'] || '',
+      modelo: row['Modelo'] || row['modelo'] || '',
+      anio: parseInt(row['Año'] || row['Anio'] || row['anio'] || row['ano'] || '0'),
+      precio: parseFloat((row['Precio'] || row['precio_venta'] || row['precio'] || '0').toString().replace(/[^0-9.]/g, '')),
+      tipo: (row['Tipo'] || row['tipo_vehiculo'] || 'sedan').toLowerCase(),
+      km: parseInt((row['Kilometraje'] || row['kilometraje'] || row['km'] || '0').toString().replace(/[^0-9]/g, '')),
+      transmision: row['Transmision'] || row['Transmisión'] || row['transmision'] || 'Automatico',
+      color: row['Color'] || row['color'] || '',
+      ciudad: row['Ciudad'] || row['ciudad'] || '',
+      combustible: row['Combustible'] || row['combustible'] || 'gasolina',
+      traccion: row['Traccion'] || row['traccion'] || '4x2',
+      motor: row['Motor'] || row['motor'] || '',
+      vin: row['VIN'] || row['vin'] || '',
+      descripcion: row['Descripcion'] || row['Descripción'] || row['descripcion'] || '',
+      photos: [],
+      uploading: 0,
+      expanded: false
+    };
+  });
+  g('bulkSubtitle').textContent = bulkItems.length + ' autos detectados';
+  renderBulkList();
+  g('bulkOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeBulk() {
+  g('bulkOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function renderBulkList() {
+  var withPhotos = bulkItems.filter(function(b) { return b.photos.length > 0; }).length;
+  var pct = bulkItems.length > 0 ? Math.round(withPhotos / bulkItems.length * 100) : 0;
+  g('bulkProgressFill').style.width = pct + '%';
+  g('bulkProgressText').textContent = withPhotos + ' de ' + bulkItems.length + ' con fotos';
+
+  g('bulkList').innerHTML = bulkItems.map(function(item, idx) {
+    var hasPhotos = item.photos.length > 0;
+    var isExp = item.expanded;
+    var statusClass = hasPhotos ? 'done' : 'pending';
+    var statusIcon = hasPhotos ? '<i class="fa-solid fa-check"></i>' : (idx + 1);
+    var photoCount = item.photos.length > 0 ? ' · ' + item.photos.length + ' fotos' : '';
+
+    var html = '<div class="bulk-item' + (isExp ? ' expanded' : '') + (hasPhotos ? ' has-photos' : '') + '" id="bi-' + idx + '">'
+      + '<div class="bulk-item-header" onclick="toggleBulkItem(' + idx + ')">'
+        + '<div class="bulk-item-status ' + statusClass + '">' + statusIcon + '</div>'
+        + '<div class="bulk-item-info">'
+          + '<div class="bulk-item-name">' + item.marca + ' ' + item.modelo + ' ' + item.anio + '</div>'
+          + '<div class="bulk-item-meta">' + fmt(item.precio) + ' · ' + new Intl.NumberFormat('es-MX').format(item.km) + ' km' + (item.ciudad ? ' · ' + item.ciudad : '') + photoCount + '</div>'
+        + '</div>'
+        + '<div class="bulk-item-arrow"><i class="fa-solid fa-chevron-down"></i></div>'
+      + '</div>';
+
+    if (isExp) {
+      html += '<div class="bulk-item-body">'
+        + '<div class="bulk-photo-zone" onclick="triggerBulkPhoto(' + idx + ')">'
+          + '<i class="fa-solid fa-camera" style="font-size:20px;color:var(--gold);margin-bottom:4px;"></i><br>'
+          + '<span style="font-size:13px;color:white;font-weight:600;">Toca para subir fotos</span><br>'
+          + '<span style="font-size:11px;color:var(--green-muted);">Seleccion multiple · max 8 fotos · la #1 es portada</span>'
+        + '</div>'
+        + '<input type="file" id="bulkFileInput-' + idx + '" accept="image/*" multiple style="display:none" onchange="handleBulkPhotos(' + idx + ', this.files)">';
+
+      if (item.photos.length > 0 || item.uploading > 0) {
+        html += '<div class="bulk-photo-grid">';
+        item.photos.forEach(function(url, pi) {
+          html += '<div class="bulk-photo-thumb">'
+            + '<img src="' + url + '" alt="">'
+            + '<div class="bulk-photo-num">' + (pi + 1) + '</div>'
+            + '<button class="bulk-photo-del" onclick="removeBulkPhoto(' + idx + ',' + pi + ')">&times;</button>'
+          + '</div>';
+        });
+        for (var u = 0; u < item.uploading; u++) {
+          html += '<div class="bulk-photo-thumb" style="display:flex;align-items:center;justify-content:center;"><div class="sp" style="width:20px;height:20px;"></div></div>';
+        }
+        html += '</div>';
+      }
+      html += '</div>';
+    }
+    html += '</div>';
+    return html;
+  }).join('');
+}
+
+function toggleBulkItem(idx) {
+  bulkItems[idx].expanded = !bulkItems[idx].expanded;
+  renderBulkList();
+}
+
+function triggerBulkPhoto(idx) {
+  g('bulkFileInput-' + idx).click();
+}
+
+function handleBulkPhotos(idx, files) {
+  if (!files || !files.length) return;
+  var item = bulkItems[idx];
+  var remaining = 8 - item.photos.length;
+  if (remaining <= 0) return;
+  var toProcess = Array.from(files).slice(0, remaining);
+  toProcess.forEach(function(file) {
+    if (!file.type.startsWith('image/')) return;
+    item.uploading++;
+    renderBulkList();
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var img = new Image();
+      img.onload = function() {
+        var canvas = document.createElement('canvas');
+        var maxDim = 1200;
+        var w = img.width, h = img.height;
+        if (w > maxDim || h > maxDim) {
+          if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
+          else { w = Math.round(w * maxDim / h); h = maxDim; }
+        }
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        canvas.toBlob(function(blob) {
+          var folder = (uid || 'anon').substring(0, 8);
+          var fileName = folder + '/' + Date.now() + '-' + Math.random().toString(36).substring(2, 6) + '.webp';
+          fetch(S + '/storage/v1/object/vehicle_photos/' + fileName, {
+            method: 'POST',
+            headers: { 'apikey': K, 'Authorization': 'Bearer ' + (tok || K), 'Content-Type': 'image/webp', 'x-upsert': 'true' },
+            body: blob
+          }).then(function(r) {
+            if (!r.ok) throw new Error('Upload failed');
+            item.photos.push(S + '/storage/v1/object/public/vehicle_photos/' + fileName);
+            item.uploading--;
+            renderBulkList();
+          }).catch(function() {
+            item.uploading--;
+            renderBulkList();
+          });
+        }, 'image/webp', 0.75);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function removeBulkPhoto(itemIdx, photoIdx) {
+  bulkItems[itemIdx].photos.splice(photoIdx, 1);
+  renderBulkList();
+}
+
+function bulkConfirmAll() {
+  var btn = g('bulkConfirmBtn');
+  btn.disabled = true;
+  var uploading = bulkItems.filter(function(b) { return b.uploading > 0; }).length;
+  if (uploading > 0) { btn.textContent = 'Espera a que terminen las fotos...'; btn.disabled = false; return; }
+
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Publicando ' + bulkItems.length + ' autos...';
+  var agName = userName || userEmail || 'agencia';
+  var hdrs = Object.assign({}, ah(tok), { 'Prefer': 'return=minimal' });
+  var inserted = 0, errors = 0;
+  var total = bulkItems.length;
+  var idx = 0;
+
+  function insertNext() {
+    if (idx >= total) {
+      btn.innerHTML = '<i class="fa-solid fa-check-double"></i> ' + inserted + ' publicados' + (errors > 0 ? ', ' + errors + ' errores' : '');
+      btn.style.background = 'var(--emerald)'; btn.style.color = 'white';
+      setTimeout(function() { closeBulk(); loadCars(); switchView('invView'); }, 2000);
+      return;
+    }
+    var item = bulkItems[idx];
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Publicando ' + (idx + 1) + ' de ' + total + '...';
+    var body = {
+      user_id: uid, agencia_id: agName, marca: item.marca, modelo: item.modelo,
+      anio: item.anio, precio_venta: item.precio, kilometraje: item.km,
+      transmision: item.transmision, tipo_vehiculo: item.tipo, color: item.color,
+      ciudad: item.ciudad, combustible: item.combustible, traccion: item.traccion,
+      motor: item.motor || null, vin: item.vin || null, descripcion: item.descripcion,
+      fotos: item.photos, origen: 'agencia', estatus: 'disponible',
+      created_at: new Date().toISOString(), updated_at: new Date().toISOString()
+    };
+    fetch(S + '/rest/v1/inventario', { method: 'POST', headers: hdrs, body: JSON.stringify(body) })
+      .then(function(r) { if (r.ok || r.status === 201) inserted++; else errors++; })
+      .catch(function() { errors++; })
+      .finally(function() { idx++; insertNext(); });
+  }
+  insertNext();
+}
+
+g('bulkOverlay').addEventListener('click', function(e) { if (e.target === e.currentTarget) closeBulk(); });
+
+function agOpenBulkWithPhotos() {
+  // Filter only new items (not updates/removes)
+  var newItems = agSyncData.filter(function(row) {
+    var marca = (row['Marca'] || row['marca'] || '').toLowerCase();
+    var modelo = (row['Modelo'] || row['modelo'] || '').toLowerCase();
+    var anio = parseInt(row['Año'] || row['Anio'] || row['anio'] || row['ano'] || '0');
+    var isExisting = agExisting.find(function(e) {
+      return e.marca && e.marca.toLowerCase() === marca && e.modelo && e.modelo.toLowerCase() === modelo && e.anio === anio;
+    });
+    return !isExisting;
+  });
+  if (newItems.length === 0) {
+    // No new items, just apply updates directly
+    agApplySync();
+    return;
+  }
+  openBulkAccordion(agSyncData);
 }
 
 // ══════════════════════════════════════════

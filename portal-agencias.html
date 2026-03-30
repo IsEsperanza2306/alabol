@@ -1824,6 +1824,7 @@ function wizNext() {
   } else if (wizStep === 1) {
     wizStep = 2; showWizStep(); updateTrustSummary();
   } else if (wizStep === 2) {
+    if (photoUploading > 0) { g('ferr').textContent = 'Espera a que terminen de subir las fotos...'; return; }
     submitForm();
   }
 }
@@ -1876,21 +1877,21 @@ if (dropZone) {
   });
 }
 
+var photoUploading = 0;
+
 function handlePhotos(files) {
   var remaining = 8 - uploadedPhotos.length;
   if (remaining <= 0) return;
   var toProcess = Array.from(files).slice(0, remaining);
   toProcess.forEach(function(file) {
     if (!file.type.startsWith('image/')) return;
-    compressImage(file, function(base64) {
-      uploadedPhotos.push(base64);
-      renderPhotoGrid();
-      updateTrustSummary();
-    });
+    compressAndUpload(file);
   });
 }
 
-function compressImage(file, cb) {
+function compressAndUpload(file) {
+  photoUploading++;
+  renderPhotoGrid();
   var reader = new FileReader();
   reader.onload = function(e) {
     var img = new Image();
@@ -1903,9 +1904,34 @@ function compressImage(file, cb) {
         else { w = Math.round(w * maxDim / h); h = maxDim; }
       }
       canvas.width = w; canvas.height = h;
-      var ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, w, h);
-      cb(canvas.toDataURL('image/jpeg', 0.7));
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      canvas.toBlob(function(blob) {
+        var folder = (uid || 'anon').substring(0, 8);
+        var fileName = folder + '/' + Date.now() + '-' + Math.random().toString(36).substring(2, 6) + '.webp';
+        fetch(S + '/storage/v1/object/vehicle_photos/' + fileName, {
+          method: 'POST',
+          headers: {
+            'apikey': K,
+            'Authorization': 'Bearer ' + (tok || K),
+            'Content-Type': 'image/webp',
+            'x-upsert': 'true'
+          },
+          body: blob
+        })
+        .then(function(r) {
+          if (!r.ok) throw new Error('Upload failed: ' + r.status);
+          var publicUrl = S + '/storage/v1/object/public/vehicle_photos/' + fileName;
+          uploadedPhotos.push(publicUrl);
+          photoUploading--;
+          renderPhotoGrid();
+          updateTrustSummary();
+        })
+        .catch(function(err) {
+          console.error('Photo upload error:', err);
+          photoUploading--;
+          renderPhotoGrid();
+        });
+      }, 'image/webp', 0.75);
     };
     img.src = e.target.result;
   };
@@ -1919,6 +1945,10 @@ function renderPhotoGrid() {
       + '<button class="photo-remove" onclick="removePhoto(' + i + ')">&times;</button>'
       + '</div>';
   }).join('');
+  // Show uploading spinners
+  for (var u = 0; u < photoUploading; u++) {
+    html += '<div class="photo-thumb" style="display:flex;align-items:center;justify-content:center;background:rgba(212,175,55,0.08);"><div class="sp" style="width:24px;height:24px;"></div></div>';
+  }
   g('photoGrid').innerHTML = html;
 }
 

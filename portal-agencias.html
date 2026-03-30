@@ -1486,6 +1486,12 @@ function showScreen(s) {
   g('landing').style.display = 'none';
   g('dashboard').style.display = 'none';
   g('dashboard').classList.remove('active');
+  // Hide/show global site nav
+  var globalNav = document.querySelector('.alabol-nav');
+  if (globalNav) {
+    globalNav.style.display = (s === 'dashboard') ? 'none' : '';
+    document.body.style.paddingTop = (s === 'dashboard') ? '0' : '';
+  }
   if (s === 'spin') g('spin').style.display = 'flex';
   else if (s === 'landing') g('landing').style.display = 'block';
   else if (s === 'dashboard') { g('dashboard').style.display = 'flex'; g('dashboard').classList.add('active'); }

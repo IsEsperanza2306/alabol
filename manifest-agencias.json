@@ -1,0 +1,27 @@
+{
+  "name": "Alabol Car Broker — Portal Agencias",
+  "short_name": "Alabol Agencias",
+  "description": "Publica y gestiona tu inventario de autos en Alabol Car Broker",
+  "start_url": "/portal-agencias.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a1f1a",
+  "theme_color": "#0a1f1a",
+  "icons": [
+    {
+      "src": "/logo-circular.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo-circular.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "lang": "es-MX"
+}

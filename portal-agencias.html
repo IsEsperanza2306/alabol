@@ -16,6 +16,7 @@
 <meta name="description" content="Programa de Agencias Aliadas — conecta tu inventario con compradores verificados. Tu showroom digital en el Tinder de los Autos.">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <style>
 :root {
   --bg-primary: #0a1f1a;
@@ -1021,27 +1022,38 @@ textarea.fi { resize: vertical; min-height: 80px; }
         <div style="display:flex;flex-direction:column;gap:10px;">
           <div style="display:flex;align-items:flex-start;gap:10px;">
             <span style="background:var(--gold);color:var(--bg-primary);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;">1</span>
-            <div><div style="color:white;font-size:13px;font-weight:600;">Llena tu inventario en Google Sheets</div><div style="color:var(--green-text);font-size:11px;">Usa nuestro template con las columnas: Marca, Modelo, Año, Precio, Tipo, Km, etc.</div></div>
+            <div><div style="color:white;font-size:13px;font-weight:600;">Llena tu inventario en Excel o Google Sheets</div><div style="color:var(--green-text);font-size:11px;">Columnas: Marca, Modelo, Año, Precio, Tipo, Km, Transmision, Color, Ciudad, etc.</div></div>
           </div>
           <div style="display:flex;align-items:flex-start;gap:10px;">
             <span style="background:var(--gold);color:var(--bg-primary);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;">2</span>
-            <div><div style="color:white;font-size:13px;font-weight:600;">Publica como CSV</div><div style="color:var(--green-text);font-size:11px;">Archivo → Compartir → Publicar en la web → CSV</div></div>
+            <div><div style="color:white;font-size:13px;font-weight:600;">Sube el archivo directamente</div><div style="color:var(--green-text);font-size:11px;">Acepta .xlsx, .xls o .csv — arrastra o haz clic para seleccionar</div></div>
           </div>
           <div style="display:flex;align-items:flex-start;gap:10px;">
             <span style="background:var(--gold);color:var(--bg-primary);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;">3</span>
-            <div><div style="color:white;font-size:13px;font-weight:600;">Pega la URL aquí y sincroniza</div><div style="color:var(--green-text);font-size:11px;">Tu inventario se actualiza en segundos</div></div>
+            <div><div style="color:white;font-size:13px;font-weight:600;">Revisa la preview y aplica</div><div style="color:var(--green-text);font-size:11px;">Veras cuantos autos son nuevos, cuales se actualizan y cuales ya no estan</div></div>
           </div>
         </div>
       </div>
 
-      <!-- Sync Form -->
+      <!-- File Upload (Excel/CSV) -->
       <div style="background:var(--bg-card);border:1px solid var(--glass-border);border-radius:16px;padding:20px;margin-bottom:20px;">
-        <div style="font-size:14px;font-weight:700;color:white;margin-bottom:14px;">📥 Sincronizar ahora</div>
-        <div style="display:flex;flex-direction:column;gap:12px;">
-          <input type="text" id="agSyncUrl" placeholder="URL del CSV publicado (https://docs.google.com/spreadsheets/d/e/...)" style="padding:12px 16px;border:1px solid var(--glass-border);border-radius:10px;background:rgba(0,0,0,0.3);color:white;font-family:inherit;font-size:13px;outline:none;">
-          <button onclick="agFetchCSV()" style="padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--bg-primary);font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;">📥 Cargar y previsualizar</button>
+        <div style="font-size:14px;font-weight:700;color:white;margin-bottom:14px;"><i class="fa-solid fa-file-excel" style="color:var(--emerald);margin-right:6px;"></i>Subir archivo Excel o CSV</div>
+        <div id="fileDropZone" style="border:2px dashed var(--glass-border);border-radius:12px;padding:32px 20px;text-align:center;cursor:pointer;transition:all 0.3s;" onclick="g('fileInput').click()">
+          <div style="font-size:32px;margin-bottom:8px;opacity:0.5;"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+          <div style="color:white;font-size:14px;font-weight:600;margin-bottom:4px;">Arrastra tu archivo aqui o haz clic</div>
+          <div style="color:var(--green-text);font-size:12px;">.xlsx, .xls o .csv — hasta 500 autos</div>
         </div>
+        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none;" onchange="handleFileUpload(this.files[0])">
         <div id="agSyncStatus" style="margin-top:10px;font-size:13px;color:var(--green-text);"></div>
+      </div>
+
+      <!-- OR: URL CSV -->
+      <div style="background:var(--bg-card);border:1px solid var(--glass-border);border-radius:16px;padding:20px;margin-bottom:20px;">
+        <div style="font-size:14px;font-weight:700;color:white;margin-bottom:14px;"><i class="fa-solid fa-link" style="color:var(--gold);margin-right:6px;"></i>O pega URL de Google Sheets (CSV)</div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <input type="text" id="agSyncUrl" placeholder="https://docs.google.com/spreadsheets/d/e/..." style="padding:12px 16px;border:1px solid var(--glass-border);border-radius:10px;background:rgba(0,0,0,0.3);color:white;font-family:inherit;font-size:13px;outline:none;">
+          <button onclick="agFetchCSV()" style="padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--bg-primary);font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;"><i class="fa-solid fa-download"></i> Cargar desde URL</button>
+        </div>
       </div>
 
       <!-- Preview -->
@@ -1352,7 +1364,8 @@ textarea.fi { resize: vertical; min-height: 80px; }
 var S = 'https://rgnunjngtsgqgvplawfr.supabase.co';
 var K = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8';
 
-var tok = null, uid = null, userEmail = '', userName = '', userPic = '';
+var tok = localStorage.getItem('alabol_token') || null;
+var uid = null, userEmail = '', userName = '', userPic = '';
 var cars = [], eid = null, did = null;
 var currentView = 'dashView';
 
@@ -1384,7 +1397,7 @@ function boot() {
   if (h && h.indexOf('access_token') >= 0) {
     var p = new URLSearchParams(h.replace(/^#/, ''));
     var t = p.get('access_token');
-    if (t) { tok = t; history.replaceState(null, '', location.pathname); }
+    if (t) { tok = t; localStorage.setItem('alabol_token', t); history.replaceState(null, '', location.pathname); }
   }
   if (!tok) { showScreen('landing'); return; }
   fetch(S + '/auth/v1/user', { headers: ah(tok) })
@@ -1400,7 +1413,7 @@ function boot() {
       showScreen('dashboard');
       loadCars();
     })
-    .catch(function() { tok = null; showScreen('landing'); });
+    .catch(function() { tok = null; localStorage.removeItem('alabol_token'); showScreen('landing'); });
 }
 
 function setupDashboard() {
@@ -1436,7 +1449,7 @@ function doLogin() {
   })
     .then(function(r) { return r.json(); })
     .then(function(d) {
-      if (d.access_token) { tok = d.access_token; closeLogin(); boot(); }
+      if (d.access_token) { tok = d.access_token; localStorage.setItem('alabol_token', tok); closeLogin(); boot(); }
       else g('lerr').textContent = 'Email o contrasena incorrectos.';
     })
     .catch(function() { g('lerr').textContent = 'Error de conexion.'; });
@@ -1462,6 +1475,7 @@ function doReg() {
 function signOut() {
   if (tok) fetch(S + '/auth/v1/logout', { method: 'POST', headers: ah(tok) }).catch(function() {});
   tok = null; uid = null; cars = [];
+  localStorage.removeItem('alabol_token');
   showScreen('landing');
 }
 
@@ -2017,12 +2031,13 @@ function agFetchCSV() {
         if (agSyncData.length === 0) { status.textContent = '❌ CSV vacío o formato incorrecto'; return; }
         status.textContent = '✅ ' + agSyncData.length + ' autos encontrados';
 
-        var agName = agencyName || currentUser || 'agencia';
-        sb.from('inventario').select('id,marca,modelo,anio,precio_venta,estatus,agencia_id')
-          .eq('agencia_id', agName).then(function(res) {
-            agExisting = res.data || [];
+        var agName = userName || userEmail || 'agencia';
+        fetch(S + '/rest/v1/inventario?user_id=eq.' + uid + '&select=id,marca,modelo,anio,precio_venta,estatus,agencia_id', { headers: ah(tok) })
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            agExisting = data || [];
             agBuildPreview(agName);
-        });
+          });
     }).catch(function(err) {
         status.textContent = '❌ Error: ' + err.message;
     });
@@ -2072,21 +2087,28 @@ function agBuildPreview(agName) {
 function agApplySync() {
     var btn = g('agApplyBtn');
     btn.disabled = true; btn.textContent = '⏳ Sincronizando...';
-    var agName = agencyName || currentUser || 'agencia';
+    var agName = userName || userEmail || 'agencia';
     var inserted = 0, updated = 0, removed = 0;
     var promises = [];
+    var hdrs = Object.assign({}, ah(tok), { 'Prefer': 'return=minimal' });
 
     agSyncData.forEach(function(row) {
-        var marca = row['Marca']||''; var modelo = row['Modelo']||'';
-        var anio = parseInt(row['Año']||row['Anio']||'0');
-        var precio = parseFloat((row['Precio']||'0').replace(/[^0-9.]/g,''));
-        var tipo = (row['Tipo']||'sedan').toLowerCase();
-        var km = parseInt((row['Kilometraje']||'0').replace(/[^0-9]/g,''));
-        var transmision = row['Transmision']||row['Transmisión']||'N/A';
-        var color = row['Color']||''; var ciudad = row['Ciudad']||'';
-        var estatus = (row['Estatus']||'disponible').toLowerCase();
-        var descripcion = row['Descripcion']||row['Descripción']||'';
-        var fotos = [row['Foto1'],row['Foto2'],row['Foto3'],row['Foto4']].filter(function(f){return f&&f.startsWith('http');});
+        var marca = row['Marca']||row['marca']||'';
+        var modelo = row['Modelo']||row['modelo']||'';
+        var anio = parseInt(row['Año']||row['Anio']||row['anio']||row['ano']||'0');
+        var precio = parseFloat((row['Precio']||row['precio_venta']||row['precio']||'0').toString().replace(/[^0-9.]/g,''));
+        var tipo = (row['Tipo']||row['tipo_vehiculo']||'sedan').toLowerCase();
+        var km = parseInt((row['Kilometraje']||row['kilometraje']||row['km']||'0').toString().replace(/[^0-9]/g,''));
+        var transmision = row['Transmision']||row['Transmisión']||row['transmision']||'Automatico';
+        var color = row['Color']||row['color']||'';
+        var ciudad = row['Ciudad']||row['ciudad']||'';
+        var estatus = (row['Estatus']||row['estatus']||'disponible').toLowerCase();
+        var descripcion = row['Descripcion']||row['Descripción']||row['descripcion']||'';
+        var combustible = row['Combustible']||row['combustible']||'gasolina';
+        var traccion = row['Traccion']||row['traccion']||'4x2';
+        var motor = row['Motor']||row['motor']||'';
+        var vin = row['VIN']||row['vin']||'';
+        var fotos = [row['Foto1'],row['Foto2'],row['Foto3'],row['Foto4'],row['fotos']].filter(function(f){return f&&f.toString().startsWith('http');});
         if (!marca||!modelo||!anio) return;
 
         var existing = agExisting.find(function(e) {
@@ -2094,19 +2116,31 @@ function agApplySync() {
         });
 
         if (existing) {
-            promises.push(sb.from('inventario').update({precio_venta:precio,kilometraje:km,transmision:transmision,color:color,ciudad:ciudad,estatus:estatus,tipo_vehiculo:tipo,descripcion:descripcion,fotos:fotos.length>0?fotos:undefined,updated_at:new Date().toISOString()}).eq('id',existing.id).then(function(){updated++;}));
+            var updateBody = {precio_venta:precio,kilometraje:km,transmision:transmision,color:color,ciudad:ciudad,estatus:estatus,tipo_vehiculo:tipo,combustible:combustible,traccion:traccion,motor:motor||undefined,descripcion:descripcion,updated_at:new Date().toISOString()};
+            if (fotos.length>0) updateBody.fotos = fotos;
+            promises.push(
+              fetch(S+'/rest/v1/inventario?id=eq.'+existing.id, {method:'PATCH',headers:hdrs,body:JSON.stringify(updateBody)})
+              .then(function(r){if(r.ok)updated++;})
+            );
         } else {
-            promises.push(sb.from('inventario').insert({agencia_id:agName,marca:marca,modelo:modelo,anio:anio,precio_venta:precio,kilometraje:km,transmision:transmision,color:color,ciudad:ciudad,estatus:estatus,tipo_vehiculo:tipo,descripcion:descripcion,origen:'agencia',fotos:fotos.length>0?fotos:[]}).then(function(){inserted++;}));
+            var insertBody = {user_id:uid,agencia_id:agName,marca:marca,modelo:modelo,anio:anio,precio_venta:precio,kilometraje:km,transmision:transmision,color:color,ciudad:ciudad,estatus:estatus,tipo_vehiculo:tipo,combustible:combustible,traccion:traccion,motor:motor||null,descripcion:descripcion,vin:vin||null,origen:'agencia',fotos:fotos.length>0?fotos:[],created_at:new Date().toISOString(),updated_at:new Date().toISOString()};
+            promises.push(
+              fetch(S+'/rest/v1/inventario', {method:'POST',headers:hdrs,body:JSON.stringify(insertBody)})
+              .then(function(r){if(r.ok||r.status===201)inserted++;})
+            );
         }
     });
 
     agExisting.forEach(function(ex) {
         if (ex.estatus !== 'disponible') return;
         var inCSV = agSyncData.find(function(r) {
-            return (r['Marca']||'').toLowerCase()===(ex.marca||'').toLowerCase()&&(r['Modelo']||'').toLowerCase()===(ex.modelo||'').toLowerCase()&&parseInt(r['Año']||r['Anio']||'0')===ex.anio;
+            return ((r['Marca']||r['marca']||'').toLowerCase()===(ex.marca||'').toLowerCase())&&((r['Modelo']||r['modelo']||'').toLowerCase()===(ex.modelo||'').toLowerCase())&&(parseInt(r['Año']||r['Anio']||r['anio']||r['ano']||'0')===ex.anio);
         });
         if (!inCSV) {
-            promises.push(sb.from('inventario').update({estatus:'vendido'}).eq('id',ex.id).then(function(){removed++;}));
+            promises.push(
+              fetch(S+'/rest/v1/inventario?id=eq.'+ex.id, {method:'PATCH',headers:hdrs,body:JSON.stringify({estatus:'vendido',updated_at:new Date().toISOString()})})
+              .then(function(r){if(r.ok)removed++;})
+            );
         }
     });
 
@@ -2114,8 +2148,103 @@ function agApplySync() {
         g('agSyncResult').style.display = 'block';
         g('agResultText').textContent = inserted + ' nuevos · ' + updated + ' actualizados · ' + removed + ' eliminados';
         btn.textContent = '✅ Completado';
+        loadCars();
     }).catch(function(err) {
-        btn.textContent = '❌ Error'; btn.disabled = false;
+        btn.textContent = '❌ Error: ' + err.message; btn.disabled = false;
+    });
+}
+
+// ══════════════════════════════════════════
+// FILE UPLOAD (EXCEL / CSV)
+// ══════════════════════════════════════════
+(function() {
+  var dz = g('fileDropZone');
+  if (!dz) return;
+  dz.addEventListener('dragover', function(e) { e.preventDefault(); dz.style.borderColor = 'var(--gold)'; dz.style.background = 'rgba(212,175,55,0.05)'; });
+  dz.addEventListener('dragleave', function() { dz.style.borderColor = 'var(--glass-border)'; dz.style.background = 'transparent'; });
+  dz.addEventListener('drop', function(e) {
+    e.preventDefault(); dz.style.borderColor = 'var(--glass-border)'; dz.style.background = 'transparent';
+    if (e.dataTransfer.files.length) handleFileUpload(e.dataTransfer.files[0]);
+  });
+})();
+
+function handleFileUpload(file) {
+  if (!file) return;
+  var status = g('agSyncStatus');
+  var name = file.name.toLowerCase();
+  status.textContent = '⏳ Procesando ' + file.name + '...';
+
+  if (name.endsWith('.csv')) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      agSyncData = agParseCSV(e.target.result);
+      if (agSyncData.length === 0) { status.textContent = '❌ CSV vacio o formato incorrecto'; return; }
+      status.textContent = '✅ ' + agSyncData.length + ' autos encontrados en ' + file.name;
+      agFetchExisting();
+    };
+    reader.readAsText(file);
+  } else if (name.endsWith('.xlsx') || name.endsWith('.xls')) {
+    if (typeof XLSX === 'undefined') { status.textContent = '❌ Error: libreria de Excel no cargada. Recarga la pagina.'; return; }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        var wb = XLSX.read(e.target.result, { type: 'array' });
+        // Use first sheet, or sheet named 'Captura' if exists
+        var wsName = wb.SheetNames.indexOf('Captura') >= 0 ? 'Captura' : wb.SheetNames[0];
+        var ws = wb.Sheets[wsName];
+        var jsonData = XLSX.utils.sheet_to_json(ws, { defval: '' });
+        // Normalize headers: try to find DB-style headers in row 1 (hidden) or use display headers
+        agSyncData = jsonData.filter(function(row) {
+          var marca = row['marca'] || row['Marca'] || row['MARCA'] || '';
+          var modelo = row['modelo'] || row['Modelo'] || row['MODELO'] || '';
+          return marca && modelo;
+        }).map(function(row) {
+          // Map both Excel display headers and DB headers
+          return {
+            'Marca': row['marca'] || row['Marca'] || row['MARCA'] || '',
+            'Modelo': row['modelo'] || row['Modelo'] || row['MODELO'] || '',
+            'Año': row['anio'] || row['Anio'] || row['Año'] || row['ano'] || row['AÑO'] || '',
+            'Precio': (row['precio_venta'] || row['Precio'] || row['precio'] || row['PRECIO'] || '').toString(),
+            'Tipo': row['tipo_vehiculo'] || row['Tipo'] || row['tipo'] || 'sedan',
+            'Kilometraje': (row['kilometraje'] || row['Kilometraje'] || row['km'] || row['KM'] || '0').toString(),
+            'Transmision': row['transmision'] || row['Transmision'] || row['Transmisión'] || 'Automatico',
+            'Color': row['color'] || row['Color'] || '',
+            'Ciudad': row['ciudad'] || row['Ciudad'] || '',
+            'Estatus': row['estatus'] || row['Estatus'] || 'disponible',
+            'Descripcion': row['descripcion'] || row['Descripcion'] || row['Descripción'] || '',
+            'Combustible': row['combustible'] || row['Combustible'] || 'gasolina',
+            'Traccion': row['traccion'] || row['Traccion'] || '4x2',
+            'Motor': row['motor'] || row['Motor'] || '',
+            'VIN': row['vin'] || row['VIN'] || '',
+            'Foto1': row['fotos'] || row['Foto1'] || '',
+            'Foto2': row['Foto2'] || '',
+            'Foto3': row['Foto3'] || '',
+            'Foto4': row['Foto4'] || ''
+          };
+        });
+        if (agSyncData.length === 0) { status.textContent = '❌ No se encontraron autos validos en el archivo'; return; }
+        status.textContent = '✅ ' + agSyncData.length + ' autos encontrados en ' + file.name + ' (hoja: ' + wsName + ')';
+        agFetchExisting();
+      } catch(err) {
+        status.textContent = '❌ Error al leer Excel: ' + err.message;
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  } else {
+    status.textContent = '❌ Formato no soportado. Usa .xlsx, .xls o .csv';
+  }
+}
+
+function agFetchExisting() {
+  var agName = userName || userEmail || 'agencia';
+  fetch(S + '/rest/v1/inventario?user_id=eq.' + uid + '&select=id,marca,modelo,anio,precio_venta,estatus,agencia_id', { headers: ah(tok) })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      agExisting = data || [];
+      agBuildPreview(agName);
+    })
+    .catch(function(err) {
+      g('agSyncStatus').textContent = '❌ Error al cargar inventario existente: ' + err.message;
     });
 }
 

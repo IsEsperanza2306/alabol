@@ -1671,10 +1671,16 @@
         async function fetchLiveInventory() {
             try {
                 // Fetch ONLY available cars from Supabase 'inventario' table
-                const { data, error } = await supabaseClient.from('inventario')
+                const { data: rawData, error } = await supabaseClient.from('inventario')
                     .select('*')
                     .eq('estatus', 'disponible')
+                    .neq('origen', 'canario')
                     .order('created_at', { ascending: false });
+
+                // Only show cars that have at least one photo
+                const data = (rawData || []).filter(function(car) {
+                    return car.fotos && car.fotos.length > 0 && car.fotos[0] && car.fotos[0].startsWith('http');
+                });
 
                 if (error) {
                     console.error("Error fetching live inventory from Supabase:", error);

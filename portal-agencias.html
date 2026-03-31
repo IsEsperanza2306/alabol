@@ -1948,7 +1948,7 @@ function wizNext() {
   } else if (wizStep === 1) {
     wizStep = 2; showWizStep(); updateTrustSummary();
   } else if (wizStep === 2) {
-    if (photoUploading > 0) { g('ferr').textContent = 'Espera a que terminen de subir las fotos...'; return; }
+    photoUploading = 0; // Force unstick any hanging uploads
     submitForm();
   }
 }
@@ -2483,8 +2483,8 @@ function removeBulkPhoto(itemIdx, photoIdx) {
 function bulkConfirmAll() {
   var btn = g('bulkConfirmBtn');
   btn.disabled = true;
-  var uploading = bulkItems.filter(function(b) { return b.uploading > 0; }).length;
-  if (uploading > 0) { btn.textContent = 'Espera a que terminen las fotos...'; btn.disabled = false; return; }
+  // Force unstick any hanging uploads
+  bulkItems.forEach(function(b) { b.uploading = 0; });
 
   btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Publicando ' + bulkItems.length + ' autos...';
   var agName = userName || userEmail || 'agencia';

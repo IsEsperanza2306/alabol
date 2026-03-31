@@ -655,9 +655,18 @@ textarea.fi { resize: vertical; min-height: 80px; }
   position: absolute; top: 3px; right: 3px; background: rgba(239,68,68,0.85);
   color: white; border: none; width: 18px; height: 18px; border-radius: 50%;
   font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center;
-  opacity: 0; transition: opacity 0.2s;
 }
-.bulk-photo-thumb:hover .bulk-photo-del { opacity: 1; }
+.bulk-photo-num.portada { background: var(--gold); color: var(--bg-primary); }
+.bulk-photo-arrows {
+  position: absolute; bottom: 2px; left: 0; right: 0;
+  display: flex; justify-content: center; gap: 4px;
+}
+.bulk-arrow {
+  background: rgba(0,0,0,0.7); color: white; border: none;
+  width: 20px; height: 18px; border-radius: 4px; font-size: 9px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.bulk-arrow:hover { background: var(--gold); color: var(--bg-primary); }
 .bulk-footer {
   position: sticky; bottom: 0; background: var(--bg-primary);
   border-top: 1px solid var(--glass-border); padding: 14px 20px;
@@ -2064,16 +2073,34 @@ function compressAndUpload(file) {
 
 function renderPhotoGrid() {
   var html = uploadedPhotos.map(function(src, i) {
-    return '<div class="photo-thumb">'
+    var isFirst = i === 0;
+    var isLast = i === uploadedPhotos.length - 1;
+    return '<div class="photo-thumb" style="position:relative;">'
       + '<img src="' + src + '" alt="Foto ' + (i+1) + '">'
+      + '<div style="position:absolute;top:3px;left:3px;background:' + (isFirst ? 'var(--gold)' : 'rgba(0,0,0,0.7)') + ';color:' + (isFirst ? 'var(--bg-primary)' : 'var(--gold)') + ';font-size:10px;font-weight:800;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;">' + (isFirst ? '★' : (i+1)) + '</div>'
       + '<button class="photo-remove" onclick="removePhoto(' + i + ')">&times;</button>'
+      + '<div style="position:absolute;bottom:2px;left:0;right:0;display:flex;justify-content:center;gap:4px;">'
+        + (isFirst ? '' : '<button onclick="movePhoto(' + i + ',-1)" class="bulk-arrow">◀</button>')
+        + (isLast ? '' : '<button onclick="movePhoto(' + i + ',1)" class="bulk-arrow">▶</button>')
+      + '</div>'
       + '</div>';
   }).join('');
-  // Show uploading spinners
   for (var u = 0; u < photoUploading; u++) {
     html += '<div class="photo-thumb" style="display:flex;align-items:center;justify-content:center;background:rgba(212,175,55,0.08);"><div class="sp" style="width:24px;height:24px;"></div></div>';
   }
+  if (uploadedPhotos.length > 1) {
+    html += '<div style="font-size:10px;color:var(--green-muted);margin-top:4px;text-align:center;grid-column:1/-1;">★ = portada · usa las flechas para reordenar</div>';
+  }
   g('photoGrid').innerHTML = html;
+}
+
+function movePhoto(idx, direction) {
+  var newIdx = idx + direction;
+  if (newIdx < 0 || newIdx >= uploadedPhotos.length) return;
+  var temp = uploadedPhotos[idx];
+  uploadedPhotos[idx] = uploadedPhotos[newIdx];
+  uploadedPhotos[newIdx] = temp;
+  renderPhotoGrid();
 }
 
 function removePhoto(i) {
@@ -2382,16 +2409,25 @@ function renderBulkList() {
       if (item.photos.length > 0 || item.uploading > 0) {
         html += '<div class="bulk-photo-grid">';
         item.photos.forEach(function(url, pi) {
+          var isFirst = pi === 0;
+          var isLast = pi === item.photos.length - 1;
           html += '<div class="bulk-photo-thumb">'
             + '<img src="' + url + '" alt="">'
-            + '<div class="bulk-photo-num">' + (pi + 1) + '</div>'
+            + '<div class="bulk-photo-num' + (isFirst ? ' portada' : '') + '">' + (isFirst ? '★' : (pi + 1)) + '</div>'
             + '<button class="bulk-photo-del" onclick="removeBulkPhoto(' + idx + ',' + pi + ')">&times;</button>'
+            + '<div class="bulk-photo-arrows">'
+              + (isFirst ? '' : '<button onclick="moveBulkPhoto(' + idx + ',' + pi + ',-1)" class="bulk-arrow">◀</button>')
+              + (isLast ? '' : '<button onclick="moveBulkPhoto(' + idx + ',' + pi + ',1)" class="bulk-arrow">▶</button>')
+            + '</div>'
           + '</div>';
         });
         for (var u = 0; u < item.uploading; u++) {
           html += '<div class="bulk-photo-thumb" style="display:flex;align-items:center;justify-content:center;"><div class="sp" style="width:20px;height:20px;"></div></div>';
         }
         html += '</div>';
+        if (item.photos.length > 1) {
+          html += '<div style="font-size:10px;color:var(--green-muted);margin-top:4px;text-align:center;">★ = portada · usa las flechas para reordenar</div>';
+        }
       }
       html += '</div>';
     }
@@ -2477,6 +2513,16 @@ function bulkForceUnstick() {
 
 function removeBulkPhoto(itemIdx, photoIdx) {
   bulkItems[itemIdx].photos.splice(photoIdx, 1);
+  renderBulkList();
+}
+
+function moveBulkPhoto(itemIdx, photoIdx, direction) {
+  var photos = bulkItems[itemIdx].photos;
+  var newIdx = photoIdx + direction;
+  if (newIdx < 0 || newIdx >= photos.length) return;
+  var temp = photos[photoIdx];
+  photos[photoIdx] = photos[newIdx];
+  photos[newIdx] = temp;
   renderBulkList();
 }
 

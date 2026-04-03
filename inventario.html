@@ -829,12 +829,14 @@
         .modal-gallery {
             position: relative;
             background: #000;
-            height: 500px;
+            height: 400px;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            cursor: pointer;
         }
+        @media(min-width:768px) { .modal-gallery { height: 500px; } }
 
         .gallery-main-img {
             width: 100%;
@@ -843,24 +845,83 @@
             transition: opacity 0.2s ease;
         }
 
-        .gallery-nav.gallery-prev {
-            left: 10px;
-        }
+        .gallery-nav { display: none; }
 
-        .gallery-nav.gallery-next {
-            right: 10px;
+        .gallery-dots {
+            position: absolute;
+            bottom: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+            z-index: 10;
+        }
+        .gallery-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: rgba(255,255,255,0.4);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .gallery-dot.active {
+            background: var(--gold);
+            width: 20px; border-radius: 4px;
         }
 
         .image-counter {
             position: absolute;
-            bottom: 20px;
+            top: 14px;
+            right: 14px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            color: white;
+            backdrop-filter: blur(8px);
+        }
+
+        .gallery-zoom-hint {
+            position: absolute;
+            bottom: 36px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.6);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-            color: white;
+            background: rgba(0,0,0,0.5);
+            color: rgba(255,255,255,0.7);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            backdrop-filter: blur(6px);
+            pointer-events: none;
+            opacity: 1;
+            transition: opacity 1s;
+        }
+
+        /* Fullscreen photo viewer */
+        .photo-fullscreen {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0,0,0,0.95);
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-out;
+        }
+        .photo-fullscreen.open { display: flex; }
+        .photo-fullscreen img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            touch-action: pinch-zoom;
+        }
+        .photo-fullscreen .fs-close {
+            position: absolute; top: 16px; right: 16px;
+            background: rgba(255,255,255,0.15); border: none;
+            color: white; width: 40px; height: 40px; border-radius: 50%;
+            font-size: 20px; cursor: pointer; backdrop-filter: blur(8px);
+        }
+        .photo-fullscreen .fs-counter {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            color: rgba(255,255,255,0.7); font-size: 13px;
         }
 
         .modal-info {
@@ -1565,21 +1626,24 @@
     </div>
 
     <!-- MODAL OVERLAY -->
+    <!-- Fullscreen Photo Viewer -->
+    <div class="photo-fullscreen" id="photoFS" onclick="closeFullscreen(event)">
+        <button class="fs-close" onclick="closeFullscreen(event)">&times;</button>
+        <img src="" id="fsImg" alt="Foto completa">
+        <div class="fs-counter" id="fsCounter"></div>
+    </div>
+
     <div class="modal-overlay" id="carModal">
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal()">
                 <i class="fa-solid fa-xmark"></i>
             </button>
 
-            <div class="modal-gallery">
-                <button class="gallery-nav gallery-prev" onclick="changeImage(-1)">
-                    <i class="fa-solid fa-chevron-left"></i>
-                </button>
+            <div class="modal-gallery" onclick="openFullscreen()">
                 <img src="" alt="Auto" class="gallery-main-img" id="modalMainImg">
-                <button class="gallery-nav gallery-next" onclick="changeImage(1)">
-                    <i class="fa-solid fa-chevron-right"></i>
-                </button>
                 <div class="image-counter" id="imageCounter">1 / 1</div>
+                <div class="gallery-dots" id="galleryDots"></div>
+                <div class="gallery-zoom-hint" id="zoomHint">Toca para ver en grande</div>
             </div>
             <div id="galleryThumbs" style="display:none;padding:8px 12px;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;"></div>
 
@@ -2326,7 +2390,17 @@
                 document.getElementById('imageCounter').textContent = `${currentImgIdx + 1} / ${carPhotos.length}`;
             }, 200);
 
-            // Render thumbnails
+            // Dots
+            const dotsEl = document.getElementById('galleryDots');
+            if (carPhotos.length > 1) {
+                dotsEl.innerHTML = carPhotos.map((_, i) =>
+                    `<div class="gallery-dot${i === currentImgIdx ? ' active' : ''}" onclick="event.stopPropagation();currentImgIdx=${i};updateGalleryUI();"></div>`
+                ).join('');
+            } else {
+                dotsEl.innerHTML = '';
+            }
+
+            // Thumbnails
             const thumbsEl = document.getElementById('galleryThumbs');
             if (carPhotos.length > 1) {
                 thumbsEl.style.display = 'block';
@@ -2336,29 +2410,52 @@
             } else {
                 thumbsEl.style.display = 'none';
             }
+
+            // Hide zoom hint after 3s
+            var hint = document.getElementById('zoomHint');
+            if (hint) { hint.style.opacity = '1'; setTimeout(function(){ hint.style.opacity = '0'; }, 3000); }
+
+            // Update fullscreen if open
+            if (document.getElementById('photoFS').classList.contains('open')) {
+                document.getElementById('fsImg').src = carPhotos[currentImgIdx];
+                document.getElementById('fsCounter').textContent = (currentImgIdx + 1) + ' / ' + carPhotos.length;
+            }
         }
 
-        // Swipe support for gallery
-        (function() {
-            var galleryEl = document.querySelector('.gallery-container');
-            if (!galleryEl) return;
+        // Fullscreen viewer
+        function openFullscreen() {
+            if (!carPhotos || carPhotos.length === 0) return;
+            document.getElementById('fsImg').src = carPhotos[currentImgIdx];
+            document.getElementById('fsCounter').textContent = (currentImgIdx + 1) + ' / ' + carPhotos.length;
+            document.getElementById('photoFS').classList.add('open');
+        }
+
+        function closeFullscreen(e) {
+            if (e && e.target.tagName === 'IMG') return; // Don't close when tapping image
+            document.getElementById('photoFS').classList.remove('open');
+        }
+
+        // Swipe support — modal gallery + fullscreen
+        function addSwipe(el) {
             var startX = 0, startY = 0, tracking = false;
-            galleryEl.addEventListener('touchstart', function(e) {
+            el.addEventListener('touchstart', function(e) {
                 if (carPhotos.length <= 1) return;
                 startX = e.touches[0].clientX;
                 startY = e.touches[0].clientY;
                 tracking = true;
             }, { passive: true });
-            galleryEl.addEventListener('touchend', function(e) {
+            el.addEventListener('touchend', function(e) {
                 if (!tracking) return;
                 tracking = false;
                 var dx = e.changedTouches[0].clientX - startX;
                 var dy = e.changedTouches[0].clientY - startY;
-                if (Math.abs(dx) < 40 || Math.abs(dy) > Math.abs(dx)) return; // too short or vertical scroll
-                if (dx < 0) changeImage(1);  // swipe left = next
-                else changeImage(-1);         // swipe right = prev
+                if (Math.abs(dx) < 40 || Math.abs(dy) > Math.abs(dx)) return;
+                if (dx < 0) changeImage(1);
+                else changeImage(-1);
             }, { passive: true });
-        })();
+        }
+        addSwipe(document.querySelector('.modal-gallery'));
+        addSwipe(document.getElementById('photoFS'));
 
         // Close on backdrop click
         document.getElementById('carModal').addEventListener('click', (e) => {

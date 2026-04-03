@@ -2338,6 +2338,28 @@
             }
         }
 
+        // Swipe support for gallery
+        (function() {
+            var galleryEl = document.querySelector('.gallery-container');
+            if (!galleryEl) return;
+            var startX = 0, startY = 0, tracking = false;
+            galleryEl.addEventListener('touchstart', function(e) {
+                if (carPhotos.length <= 1) return;
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                tracking = true;
+            }, { passive: true });
+            galleryEl.addEventListener('touchend', function(e) {
+                if (!tracking) return;
+                tracking = false;
+                var dx = e.changedTouches[0].clientX - startX;
+                var dy = e.changedTouches[0].clientY - startY;
+                if (Math.abs(dx) < 40 || Math.abs(dy) > Math.abs(dx)) return; // too short or vertical scroll
+                if (dx < 0) changeImage(1);  // swipe left = next
+                else changeImage(-1);         // swipe right = prev
+            }, { passive: true });
+        })();
+
         // Close on backdrop click
         document.getElementById('carModal').addEventListener('click', (e) => {
             if (e.target.id === 'carModal') closeModal();

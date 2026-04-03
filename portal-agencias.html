@@ -657,16 +657,8 @@ textarea.fi { resize: vertical; min-height: 80px; }
   font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center;
 }
 .bulk-photo-num.portada { background: var(--gold); color: var(--bg-primary); }
-.bulk-photo-arrows {
-  position: absolute; bottom: 2px; left: 0; right: 0;
-  display: flex; justify-content: center; gap: 4px;
-}
-.bulk-arrow {
-  background: rgba(0,0,0,0.7); color: white; border: none;
-  width: 20px; height: 18px; border-radius: 4px; font-size: 9px;
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-}
-.bulk-arrow:hover { background: var(--gold); color: var(--bg-primary); }
+.bulk-photo-thumb.selected { border: 2px solid var(--gold); box-shadow: 0 0 12px rgba(212,175,55,0.5); transform: scale(1.05); }
+.bulk-photo-thumb { transition: all 0.2s; cursor: pointer; }
 .bulk-footer {
   position: sticky; bottom: 0; background: var(--bg-primary);
   border-top: 1px solid var(--glass-border); padding: 14px 20px;
@@ -2071,35 +2063,38 @@ function compressAndUpload(file) {
   reader.readAsDataURL(file);
 }
 
+var wizSelectedPhoto = -1;
+
 function renderPhotoGrid() {
   var html = uploadedPhotos.map(function(src, i) {
     var isFirst = i === 0;
-    var isLast = i === uploadedPhotos.length - 1;
-    return '<div class="photo-thumb" style="position:relative;">'
+    var isSelected = i === wizSelectedPhoto;
+    return '<div class="photo-thumb' + (isSelected ? ' selected' : '') + '" style="position:relative;cursor:pointer;transition:all 0.2s;' + (isSelected ? 'border:2px solid var(--gold);box-shadow:0 0 12px rgba(212,175,55,0.5);transform:scale(1.05);' : '') + '" onclick="tapWizPhoto(' + i + ')">'
       + '<img src="' + src + '" alt="Foto ' + (i+1) + '">'
       + '<div style="position:absolute;top:3px;left:3px;background:' + (isFirst ? 'var(--gold)' : 'rgba(0,0,0,0.7)') + ';color:' + (isFirst ? 'var(--bg-primary)' : 'var(--gold)') + ';font-size:10px;font-weight:800;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;">' + (isFirst ? '★' : (i+1)) + '</div>'
-      + '<button class="photo-remove" onclick="removePhoto(' + i + ')">&times;</button>'
-      + '<div style="position:absolute;bottom:2px;left:0;right:0;display:flex;justify-content:center;gap:4px;">'
-        + (isFirst ? '' : '<button onclick="movePhoto(' + i + ',-1)" class="bulk-arrow">◀</button>')
-        + (isLast ? '' : '<button onclick="movePhoto(' + i + ',1)" class="bulk-arrow">▶</button>')
-      + '</div>'
+      + '<button class="photo-remove" onclick="event.stopPropagation();removePhoto(' + i + ')">&times;</button>'
       + '</div>';
   }).join('');
   for (var u = 0; u < photoUploading; u++) {
     html += '<div class="photo-thumb" style="display:flex;align-items:center;justify-content:center;background:rgba(212,175,55,0.08);"><div class="sp" style="width:24px;height:24px;"></div></div>';
   }
   if (uploadedPhotos.length > 1) {
-    html += '<div style="font-size:10px;color:var(--green-muted);margin-top:4px;text-align:center;grid-column:1/-1;">★ = portada · usa las flechas para reordenar</div>';
+    html += '<div style="font-size:10px;color:var(--green-muted);margin-top:4px;text-align:center;grid-column:1/-1;">' + (wizSelectedPhoto >= 0 ? '👆 Toca otra foto para intercambiar posicion' : '★ = portada · toca una foto y luego otra para cambiar orden') + '</div>';
   }
   g('photoGrid').innerHTML = html;
 }
 
-function movePhoto(idx, direction) {
-  var newIdx = idx + direction;
-  if (newIdx < 0 || newIdx >= uploadedPhotos.length) return;
-  var temp = uploadedPhotos[idx];
-  uploadedPhotos[idx] = uploadedPhotos[newIdx];
-  uploadedPhotos[newIdx] = temp;
+function tapWizPhoto(idx) {
+  if (wizSelectedPhoto < 0) {
+    wizSelectedPhoto = idx;
+  } else if (wizSelectedPhoto === idx) {
+    wizSelectedPhoto = -1;
+  } else {
+    var temp = uploadedPhotos[wizSelectedPhoto];
+    uploadedPhotos[wizSelectedPhoto] = uploadedPhotos[idx];
+    uploadedPhotos[idx] = temp;
+    wizSelectedPhoto = -1;
+  }
   renderPhotoGrid();
 }
 
@@ -2407,18 +2402,15 @@ function renderBulkList() {
         + '<input type="file" id="bulkFileInput-' + idx + '" accept="image/*" multiple style="display:none" onchange="handleBulkPhotos(' + idx + ', this.files)">';
 
       if (item.photos.length > 0 || item.uploading > 0) {
+        var selIdx = (typeof bulkSelectedPhoto !== 'undefined' && bulkSelectedPhoto && bulkSelectedPhoto.item === idx) ? bulkSelectedPhoto.photo : -1;
         html += '<div class="bulk-photo-grid">';
         item.photos.forEach(function(url, pi) {
           var isFirst = pi === 0;
-          var isLast = pi === item.photos.length - 1;
-          html += '<div class="bulk-photo-thumb">'
+          var isSelected = pi === selIdx;
+          html += '<div class="bulk-photo-thumb' + (isSelected ? ' selected' : '') + '" onclick="tapBulkPhoto(' + idx + ',' + pi + ')">'
             + '<img src="' + url + '" alt="">'
             + '<div class="bulk-photo-num' + (isFirst ? ' portada' : '') + '">' + (isFirst ? '★' : (pi + 1)) + '</div>'
-            + '<button class="bulk-photo-del" onclick="removeBulkPhoto(' + idx + ',' + pi + ')">&times;</button>'
-            + '<div class="bulk-photo-arrows">'
-              + (isFirst ? '' : '<button onclick="moveBulkPhoto(' + idx + ',' + pi + ',-1)" class="bulk-arrow">◀</button>')
-              + (isLast ? '' : '<button onclick="moveBulkPhoto(' + idx + ',' + pi + ',1)" class="bulk-arrow">▶</button>')
-            + '</div>'
+            + '<button class="bulk-photo-del" onclick="event.stopPropagation();removeBulkPhoto(' + idx + ',' + pi + ')">&times;</button>'
           + '</div>';
         });
         for (var u = 0; u < item.uploading; u++) {
@@ -2426,7 +2418,7 @@ function renderBulkList() {
         }
         html += '</div>';
         if (item.photos.length > 1) {
-          html += '<div style="font-size:10px;color:var(--green-muted);margin-top:4px;text-align:center;">★ = portada · usa las flechas para reordenar</div>';
+          html += '<div style="font-size:10px;color:var(--green-muted);margin-top:4px;text-align:center;">' + (selIdx >= 0 ? '👆 Ahora toca otra foto para intercambiar posicion' : '★ = portada · toca una foto y luego otra para cambiar orden') + '</div>';
         }
       }
       html += '</div>';
@@ -2513,16 +2505,27 @@ function bulkForceUnstick() {
 
 function removeBulkPhoto(itemIdx, photoIdx) {
   bulkItems[itemIdx].photos.splice(photoIdx, 1);
+  if (bulkSelectedPhoto && bulkSelectedPhoto.item === itemIdx) bulkSelectedPhoto = null;
   renderBulkList();
 }
 
-function moveBulkPhoto(itemIdx, photoIdx, direction) {
-  var photos = bulkItems[itemIdx].photos;
-  var newIdx = photoIdx + direction;
-  if (newIdx < 0 || newIdx >= photos.length) return;
-  var temp = photos[photoIdx];
-  photos[photoIdx] = photos[newIdx];
-  photos[newIdx] = temp;
+var bulkSelectedPhoto = null;
+
+function tapBulkPhoto(itemIdx, photoIdx) {
+  if (!bulkSelectedPhoto || bulkSelectedPhoto.item !== itemIdx) {
+    // First tap: select this photo
+    bulkSelectedPhoto = { item: itemIdx, photo: photoIdx };
+  } else if (bulkSelectedPhoto.photo === photoIdx) {
+    // Tap same photo: deselect
+    bulkSelectedPhoto = null;
+  } else {
+    // Second tap on different photo: swap
+    var photos = bulkItems[itemIdx].photos;
+    var temp = photos[bulkSelectedPhoto.photo];
+    photos[bulkSelectedPhoto.photo] = photos[photoIdx];
+    photos[photoIdx] = temp;
+    bulkSelectedPhoto = null;
+  }
   renderBulkList();
 }
 

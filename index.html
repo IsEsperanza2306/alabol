@@ -2509,13 +2509,17 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
                 const { data, error } = await sb.from('inventario')
                     .select('*')
                     .eq('estatus', 'disponible')
+                    .neq('origen', 'canario')
                     .order('created_at', { ascending: false });
 
                 if (error) {
                     console.error("Error fetching live inventory:", error);
                     return [];
                 }
-                return data || [];
+                // Only return cars with valid photos
+                return (data || []).filter(function(car) {
+                    return car.fotos && car.fotos.length > 0 && car.fotos[0] && car.fotos[0].startsWith('http');
+                });
             } catch (err) {
                 console.error("Unexpected error fetching inventory:", err);
                 return [];

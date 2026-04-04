@@ -3,437 +3,413 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Alabol Car Broker | Encuentra el auto que realmente te conviene</title>
-<meta name="description" content="Consultor automotriz certificado. Accede al inventario oculto de agencias, sin riesgos ni sobreprecios. Asesoría experta, no presión de venta.">
+<title>Alabol Car Broker | Tu Consultor Automotriz</title>
+<meta name="description" content="Consultor automotriz certificado. Accede al inventario oculto de agencias, sin riesgos ni sobreprecios.">
 <link rel="icon" href="logo-circular.png" type="image/png">
-<meta property="og:title" content="Alabol Car Broker | Tu Consultor Automotriz">
-<meta property="og:description" content="Encuentra el auto seminuevo que realmente te conviene. Sin riesgos, sin sobreprecios, directo del inventario de agencias.">
+<meta property="og:title" content="Alabol Car Broker | Encuentra el auto que realmente te conviene">
+<meta property="og:description" content="Sin riesgos, sin sobreprecios, directo del inventario de agencias. Asesoria experta, no presion de venta.">
 <meta property="og:image" content="https://alabolcar.com.mx/logo-circular.png">
 <meta property="og:url" content="https://alabolcar.com.mx/landing">
 <meta property="og:type" content="website">
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-tailwind.config = {
-  theme: {
-    extend: {
-      colors: {
-        brand: { dark: '#070B0F', mid: '#0C1117', card: '#111820', border: '#1A2332', gold: '#D4AF37', 'gold-light': '#F4E5B0', emerald: '#10B981' },
-      },
-      fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
-    }
-  }
-}
-</script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<!-- Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-RMENV8G466"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RMENV8G466');</script>
 <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1921374571843729');fbq('track','PageView');</script>
 <style>
-  * { scroll-behavior: smooth; }
-  body { background: #070B0F; }
+:root {
+  --dark-green: #0a1f1a;
+  --dark-mid: #0d2921;
+  --darker-green: #05100d;
+  --gold: #D4AF37;
+  --gold-bright: #F4E5B0;
+  --gold-dim: rgba(212,175,55,0.25);
+  --glass-bg: rgba(13,38,28,0.65);
+  --glass-border: rgba(212,175,55,0.18);
+  --emerald: #34d399;
+  --teal: #0D9488;
+  --green-text: #a8c5b8;
+}
 
-  /* Ambient glow */
-  .glow-top { position: fixed; top: -20%; left: -10%; width: 60%; height: 60%; background: radial-gradient(circle, rgba(212,175,55,0.04) 0%, transparent 60%); pointer-events: none; z-index: 0; }
-  .glow-bot { position: fixed; bottom: -20%; right: -10%; width: 50%; height: 50%; background: radial-gradient(circle, rgba(16,185,129,0.03) 0%, transparent 60%); pointer-events: none; z-index: 0; }
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; scroll-behavior:smooth; }
 
-  /* CTA pulse */
-  @keyframes pulse-gold { 0%, 100% { box-shadow: 0 0 0 0 rgba(212,175,55,0.4); } 70% { box-shadow: 0 0 0 14px rgba(212,175,55,0); } }
-  .cta-pulse { animation: pulse-gold 2.5s infinite; }
+body {
+  background: var(--dark-green); color: white; min-height:100vh; overflow-x:hidden;
+  background-image:
+    linear-gradient(rgba(13,148,136,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(13,148,136,0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
 
-  /* Fade in on scroll */
-  .fade-up { opacity: 0; transform: translateY(30px); transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
-  .fade-up.visible { opacity: 1; transform: translateY(0); }
+/* Ambient Glows */
+.ambient-1 { position:fixed; top:-10%; left:-10%; width:50vw; height:50vw; background:radial-gradient(circle,rgba(13,148,136,0.25) 0%,transparent 60%); border-radius:50%; z-index:0; filter:blur(90px); pointer-events:none; animation:amb 12s ease-in-out infinite alternate; }
+.ambient-2 { position:fixed; bottom:-10%; right:-10%; width:50vw; height:50vw; background:radial-gradient(circle,rgba(212,175,55,0.15) 0%,transparent 60%); border-radius:50%; z-index:0; filter:blur(90px); pointer-events:none; animation:amb 10s ease-in-out infinite alternate-reverse; }
+@keyframes amb { 0%{transform:translate(0,0) scale(1)} 100%{transform:translate(40px,40px) scale(1.1)} }
 
-  /* Video container glow */
-  .video-glow { box-shadow: 0 0 60px rgba(212,175,55,0.08), 0 20px 60px rgba(0,0,0,0.5); }
+/* Bubbles */
+.bubbles { position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+.bubble { position:absolute; bottom:-100px; background:radial-gradient(circle at 30% 30%, rgba(212,175,55,0.4) 0%, rgba(212,175,55,0.1) 60%, transparent 100%); border-radius:50%; filter:blur(2px); animation:rise var(--dur) ease-in infinite; opacity:0; }
+@keyframes rise { 0%{bottom:-100px;transform:translateX(0) scale(var(--sc));opacity:0} 10%{opacity:var(--op)} 90%{opacity:var(--op)} 100%{bottom:110vh;transform:translateX(calc(100px * var(--sw))) scale(var(--sc));opacity:0} }
 
-  /* Trust badge hover */
-  .trust-card { transition: all 0.3s; border: 1px solid #1A2332; }
-  .trust-card:hover { border-color: rgba(212,175,55,0.3); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+/* Fade in */
+.fade-up { opacity:0; transform:translateY(30px); transition:all 0.7s cubic-bezier(0.16,1,0.3,1); }
+.fade-up.vis { opacity:1; transform:translateY(0); }
 
-  /* Sticky CTA bar */
-  .sticky-cta { transform: translateY(100%); transition: transform 0.4s ease; }
-  .sticky-cta.show { transform: translateY(0); }
+/* Glass card */
+.glass { background:var(--glass-bg); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid var(--glass-border); border-radius:24px; }
 
-  /* Social proof ticker */
-  @keyframes ticker { 0% { opacity: 0; transform: translateY(8px); } 15% { opacity: 1; transform: translateY(0); } 85% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-8px); } }
-  .ticker-item { animation: ticker 4s ease-in-out; }
+/* Gold gradient text */
+.gold-text { background:linear-gradient(135deg,#D4AF37 0%,#F4E5B0 50%,#D4AF37 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
 
-  /* Micro-interaction on buttons */
-  .btn-hover { transition: all 0.3s; }
-  .btn-hover:hover { transform: translateY(-2px); }
-  .btn-hover:active { transform: translateY(0) scale(0.98); }
+/* CTA pulse */
+@keyframes pulse-gold { 0%,100%{box-shadow:0 0 0 0 rgba(212,175,55,0.45)} 70%{box-shadow:0 0 0 16px rgba(212,175,55,0)} }
+.cta-pulse { animation:pulse-gold 2.5s infinite; }
 
-  /* Number counter */
-  @keyframes countUp { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
-  .count-animate { animation: countUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+/* Gold border sweep */
+@keyframes bsweep { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+.gold-border-sweep {
+  background: linear-gradient(90deg, var(--gold), var(--gold-bright), var(--gold), var(--gold-bright), var(--gold));
+  background-size: 300% 100%; animation: bsweep 4s linear infinite;
+  border-radius:24px; padding:2px;
+}
+
+/* Trust card */
+.trust-card { transition:all 0.4s cubic-bezier(0.16,1,0.3,1); }
+.trust-card:hover { transform:translateY(-6px); border-color:var(--gold-dim); box-shadow:0 20px 50px rgba(0,0,0,0.3), 0 0 30px rgba(212,175,55,0.05); }
+
+/* Sticky CTA */
+.sticky-bar { transform:translateY(100%); transition:transform 0.4s ease; }
+.sticky-bar.show { transform:translateY(0); }
+
+/* Ticker */
+@keyframes tick { 0%{opacity:0;transform:translateY(8px)} 12%{opacity:1;transform:translateY(0)} 88%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(-8px)} }
+.tick-anim { animation:tick 4s ease-in-out; }
+
+/* Button hover */
+.btn-fx { transition:all 0.3s; }
+.btn-fx:hover { transform:translateY(-3px); box-shadow:0 12px 30px rgba(212,175,55,0.25); }
+.btn-fx:active { transform:translateY(0) scale(0.98); }
+
+/* Responsive */
+@media(max-width:640px) {
+  .hero-title { font-size:24px !important; }
+  .hero-sub { font-size:14px !important; }
+  .trust-grid { grid-template-columns:1fr !important; }
+}
 </style>
 </head>
-<body class="font-sans text-gray-300 antialiased overflow-x-hidden">
+<body>
 
-<div class="glow-top"></div>
-<div class="glow-bot"></div>
+<div class="ambient-1"></div>
+<div class="ambient-2"></div>
+<div class="bubbles" id="bubbles"></div>
 
-<!-- ══════════════════════════════════════════ -->
-<!-- MICRO NAV — minimal, no distraction -->
-<!-- ══════════════════════════════════════════ -->
-<nav class="fixed top-0 w-full z-50 bg-brand-dark/80 backdrop-blur-xl border-b border-brand-border/50">
-  <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <img src="logo-circular.png" alt="Alabol" class="w-8 h-8 rounded-full" style="filter: drop-shadow(0 0 8px rgba(212,175,55,0.4));">
-      <span class="text-brand-gold font-bold text-sm tracking-wide">ALABOL</span>
+<!-- ══════════════ NAV ══════════════ -->
+<nav style="position:fixed;top:0;width:100%;z-index:99;background:rgba(10,31,26,0.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--glass-border);">
+  <div style="max-width:900px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <img src="logo-circular.png" alt="Alabol" style="width:36px;height:36px;filter:drop-shadow(0 0 10px rgba(212,175,55,0.5));">
+      <div>
+        <div style="font-size:16px;font-weight:800;color:var(--gold);text-shadow:0 0 14px rgba(212,175,55,0.3);">ALABOL</div>
+        <div style="font-size:9px;color:var(--green-text);text-transform:uppercase;letter-spacing:0.12em;opacity:0.6;">Car Broker</div>
+      </div>
     </div>
-    <a href="https://api.whatsapp.com/send?phone=525568667571&text=Hola%20Israel,%20vi%20tu%20video%20y%20quiero%20saber%20m%C3%A1s%20sobre%20Alabol" target="_blank" class="text-xs text-gray-400 hover:text-brand-gold transition-colors flex items-center gap-1.5">
-      <i class="fa-brands fa-whatsapp text-emerald-400"></i>
-      <span class="hidden sm:inline">Hablar con Israel</span>
+    <a href="https://api.whatsapp.com/send?phone=525568667571&text=Hola%20Israel,%20vi%20tu%20video%20y%20quiero%20saber%20m%C3%A1s" target="_blank" style="display:flex;align-items:center;gap:6px;padding:8px 16px;border:1px solid var(--glass-border);border-radius:20px;color:var(--green-text);font-size:12px;font-weight:500;text-decoration:none;transition:all 0.3s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--glass-border)';this.style.color='var(--green-text)'">
+      <i class="fa-brands fa-whatsapp" style="color:var(--emerald);"></i>
+      <span style="display:none;" class="nav-txt">Hablar con Israel</span>
+      <span class="nav-txt-short">Contacto</span>
     </a>
   </div>
 </nav>
+<style>@media(min-width:500px){.nav-txt{display:inline !important}.nav-txt-short{display:none}}</style>
 
-<!-- ══════════════════════════════════════════ -->
-<!-- HERO -->
-<!-- ══════════════════════════════════════════ -->
-<section class="relative z-10 pt-24 pb-8 px-4 sm:pt-32 sm:pb-12">
-  <div class="max-w-3xl mx-auto text-center">
+<!-- ══════════════ HERO ══════════════ -->
+<section style="position:relative;z-index:1;padding:100px 20px 30px;text-align:center;">
+  <div style="max-width:720px;margin:0 auto;">
 
-    <!-- Authority micro-badge -->
-    <div class="inline-flex items-center gap-2 bg-brand-card border border-brand-border rounded-full px-4 py-1.5 mb-6 fade-up">
-      <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-      <span class="text-xs text-gray-400 font-medium">Consultor Automotriz Certificado</span>
+    <!-- Authority badge -->
+    <div class="fade-up" style="display:inline-flex;align-items:center;gap:8px;background:var(--glass-bg);backdrop-filter:blur(12px);border:1px solid var(--glass-border);border-radius:50px;padding:6px 16px;margin-bottom:24px;">
+      <div style="width:8px;height:8px;background:var(--emerald);border-radius:50%;box-shadow:0 0 8px var(--emerald);"></div>
+      <span style="font-size:11px;color:var(--green-text);font-weight:500;letter-spacing:0.05em;">Consultor Automotriz Certificado</span>
     </div>
 
-    <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black text-white leading-tight mb-6 fade-up" style="text-shadow: 0 0 40px rgba(212,175,55,0.08);">
-      Encuentra el auto seminuevo que <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-gold to-brand-gold-light">realmente te conviene:</span><br class="hidden sm:block"> Sin riesgos, sin sobreprecios y directo del inventario de agencias.
+    <h1 class="fade-up hero-title" style="font-size:32px;font-weight:900;line-height:1.25;margin-bottom:20px;text-shadow:0 0 40px rgba(212,175,55,0.08);">
+      Encuentra el auto seminuevo que <span class="gold-text">realmente te conviene:</span><br>Sin riesgos, sin sobreprecios y directo del inventario de agencias.
     </h1>
 
-    <p class="text-base sm:text-lg text-gray-400 leading-relaxed max-w-2xl mx-auto mb-8 fade-up" style="line-height:1.8;">
-      Comprar un auto es una decision importante. En Alabol <strong class="text-gray-200">no te presionamos para vender</strong>; te damos las herramientas y la asesoria de un experto para que tomes la decision <strong class="text-gray-200">cuando tu estes listo.</strong>
+    <p class="fade-up hero-sub" style="font-size:16px;color:var(--green-text);line-height:1.8;max-width:600px;margin:0 auto 32px;">
+      Comprar un auto es una decision importante. En Alabol <strong style="color:white;">no te presionamos para vender</strong>; te damos las herramientas y la asesoria de un experto para que tomes la decision <strong style="color:white;">cuando tu estes listo.</strong>
     </p>
 
-    <!-- Social proof numbers -->
-    <div class="flex justify-center gap-6 sm:gap-10 mb-10 fade-up">
-      <div class="text-center">
-        <div class="text-xl sm:text-2xl font-black text-brand-gold" data-count="98">0</div>
-        <div class="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wider mt-0.5">Autos verificados</div>
+    <!-- Stats -->
+    <div class="fade-up" style="display:flex;justify-content:center;gap:0;margin-bottom:40px;">
+      <div style="text-align:center;padding:0 20px;">
+        <div class="gold-text" style="font-size:28px;font-weight:900;" data-count="98">0</div>
+        <div style="font-size:10px;color:var(--green-text);opacity:0.5;text-transform:uppercase;letter-spacing:0.1em;margin-top:2px;">Autos verificados</div>
       </div>
-      <div class="w-px bg-brand-border"></div>
-      <div class="text-center">
-        <div class="text-xl sm:text-2xl font-black text-brand-gold" data-count="47">0</div>
-        <div class="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wider mt-0.5">Compradores activos</div>
+      <div style="width:1px;background:var(--glass-border);"></div>
+      <div style="text-align:center;padding:0 20px;">
+        <div class="gold-text" style="font-size:28px;font-weight:900;" data-count="47">0</div>
+        <div style="font-size:10px;color:var(--green-text);opacity:0.5;text-transform:uppercase;letter-spacing:0.1em;margin-top:2px;">Compradores activos</div>
       </div>
-      <div class="w-px bg-brand-border"></div>
-      <div class="text-center">
-        <div class="text-xl sm:text-2xl font-black text-brand-gold" data-count="1320">0</div>
-        <div class="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wider mt-0.5">Matches generados</div>
+      <div style="width:1px;background:var(--glass-border);"></div>
+      <div style="text-align:center;padding:0 20px;">
+        <div class="gold-text" style="font-size:28px;font-weight:900;" data-count="1320">0</div>
+        <div style="font-size:10px;color:var(--green-text);opacity:0.5;text-transform:uppercase;letter-spacing:0.1em;margin-top:2px;">Matches generados</div>
       </div>
     </div>
+
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════ -->
-<!-- VSL VIDEO -->
-<!-- ══════════════════════════════════════════ -->
-<section class="relative z-10 px-4 pb-10 fade-up">
-  <div class="max-w-3xl mx-auto">
+<!-- ══════════════ VSL VIDEO ══════════════ -->
+<section style="position:relative;z-index:1;padding:0 20px 40px;" class="fade-up">
+  <div style="max-width:720px;margin:0 auto;">
 
-    <p class="text-center text-sm text-gray-400 mb-4 font-medium">
-      <span class="text-lg">👇</span> Mira este breve video antes de buscar tu proximo auto <span class="text-lg">👇</span>
+    <p style="text-align:center;font-size:13px;color:var(--green-text);margin-bottom:14px;font-weight:500;">
+      <span style="font-size:18px;">👇</span> Mira este breve video antes de buscar tu proximo auto <span style="font-size:18px;">👇</span>
     </p>
 
-    <div class="relative rounded-2xl overflow-hidden video-glow border border-brand-border/50">
-      <!-- Video aspect ratio container -->
-      <div class="relative w-full" style="padding-bottom:56.25%;">
-        <iframe
-          id="vslVideo"
-          src="https://player.vimeo.com/video/76979871?badge=0&autopause=0&player_id=0&app_id=58479&title=0&byline=0&portrait=0"
-          class="absolute inset-0 w-full h-full"
-          frameborder="0"
-          allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
-          allowfullscreen>
-        </iframe>
+    <div class="gold-border-sweep">
+      <div style="border-radius:22px;overflow:hidden;background:#000;">
+        <div style="position:relative;width:100%;padding-bottom:56.25%;">
+          <iframe
+            src="https://player.vimeo.com/video/76979871?badge=0&autopause=0&title=0&byline=0&portrait=0&autoplay=1&muted=1"
+            style="position:absolute;inset:0;width:100%;height:100%;"
+            frameborder="0" allow="autoplay;fullscreen;picture-in-picture;clipboard-write;encrypted-media" allowfullscreen></iframe>
+        </div>
       </div>
-
-      <!-- Progress bar fake (disappears after 3s) -->
-      <div id="videoProgress" class="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-brand-gold to-brand-gold-light transition-all duration-[3000ms] ease-linear" style="width:0%"></div>
     </div>
 
-    <!-- Micro-trust below video -->
-    <div class="flex items-center justify-center gap-4 mt-4 text-[11px] text-gray-500">
-      <span><i class="fa-solid fa-lock text-emerald-500 mr-1"></i>100% confidencial</span>
-      <span><i class="fa-solid fa-clock text-brand-gold mr-1"></i>90 segundos</span>
-      <span><i class="fa-solid fa-volume-high text-gray-500 mr-1"></i>Con audio</span>
+    <div style="text-align:center;margin-top:10px;">
+      <button onclick="activateSound()" id="soundBtn" style="background:rgba(212,175,55,0.1);border:1px solid var(--gold-dim);color:var(--gold);padding:8px 20px;border-radius:30px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.3s;display:inline-flex;align-items:center;gap:6px;" onmouseover="this.style.background='rgba(212,175,55,0.2)'" onmouseout="this.style.background='rgba(212,175,55,0.1)'">
+        <i class="fa-solid fa-volume-xmark"></i> Activar sonido
+      </button>
     </div>
+    <div style="display:flex;justify-content:center;gap:16px;margin-top:10px;">
+      <span style="font-size:10px;color:var(--green-text);opacity:0.5;"><i class="fa-solid fa-lock" style="color:var(--emerald);margin-right:4px;"></i>100% confidencial</span>
+      <span style="font-size:10px;color:var(--green-text);opacity:0.5;"><i class="fa-solid fa-clock" style="color:var(--gold);margin-right:4px;"></i>90 segundos</span>
+    </div>
+
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════ -->
-<!-- 3 PUERTAS (CTAs) -->
-<!-- ══════════════════════════════════════════ -->
-<section class="relative z-10 px-4 pb-16 fade-up" id="puertas">
-  <div class="max-w-2xl mx-auto">
+<!-- ══════════════ 3 PUERTAS ══════════════ -->
+<section style="position:relative;z-index:1;padding:0 20px 50px;" class="fade-up" id="puertas">
+  <div style="max-width:560px;margin:0 auto;">
 
-    <div class="text-center mb-8">
-      <h2 class="text-lg sm:text-xl font-bold text-white mb-2">Elige tu camino</h2>
-      <p class="text-sm text-gray-500">Sin compromiso. Sin presion. A tu ritmo.</p>
+    <div style="text-align:center;margin-bottom:24px;">
+      <h2 style="font-size:20px;font-weight:800;color:white;margin-bottom:6px;">Elige tu camino</h2>
+      <p style="font-size:12px;color:var(--green-text);opacity:0.6;">Sin compromiso. Sin presion. A tu ritmo.</p>
     </div>
 
-    <div class="flex flex-col gap-4">
+    <div style="display:flex;flex-direction:column;gap:14px;">
 
-      <!-- PUERTA 1: Matchmaker (Principal) -->
-      <a href="https://alabolcar.com.mx/vip/" onclick="fbq('track','Lead');gtag('event','click_matchmaker');" class="group block w-full bg-gradient-to-r from-brand-gold to-yellow-500 rounded-2xl p-[2px] btn-hover cta-pulse">
-        <div class="bg-brand-dark rounded-2xl px-6 py-5 flex items-center gap-4 group-hover:bg-brand-dark/80 transition-colors">
-          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-gold to-yellow-500 flex items-center justify-center flex-shrink-0">
-            <i class="fa-solid fa-crosshairs text-brand-dark text-lg"></i>
+      <!-- PUERTA 1: Matchmaker -->
+      <a href="https://alabolcar.com.mx/vip/" onclick="fbq('track','Lead');gtag('event','click_matchmaker');" class="btn-fx cta-pulse" style="display:block;text-decoration:none;background:linear-gradient(135deg,var(--gold),var(--gold-bright));border-radius:20px;padding:2px;">
+        <div style="background:var(--dark-green);border-radius:18px;padding:18px 20px;display:flex;align-items:center;gap:14px;">
+          <div style="width:50px;height:50px;border-radius:16px;background:linear-gradient(135deg,var(--gold),var(--gold-bright));display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="fa-solid fa-crosshairs" style="color:var(--dark-green);font-size:20px;"></i>
           </div>
-          <div class="flex-1 min-w-0">
-            <div class="text-white font-bold text-sm sm:text-base">Descubrir mi auto ideal</div>
-            <div class="text-gray-400 text-xs mt-0.5">Nuestro algoritmo cruza tus preferencias con el inventario real</div>
+          <div style="flex:1;min-width:0;">
+            <div style="color:white;font-weight:700;font-size:15px;">Descubrir mi auto ideal</div>
+            <div style="color:var(--green-text);font-size:11px;margin-top:2px;opacity:0.7;">Nuestro algoritmo cruza tus preferencias con el inventario real</div>
           </div>
-          <i class="fa-solid fa-arrow-right text-brand-gold group-hover:translate-x-1 transition-transform"></i>
+          <i class="fa-solid fa-arrow-right" style="color:var(--gold);font-size:14px;"></i>
         </div>
       </a>
 
       <!-- PUERTA 2: Inventario -->
-      <a href="https://alabolcar.com.mx/inventario.html" onclick="gtag('event','click_inventario');" class="group block w-full bg-brand-card border border-brand-border hover:border-brand-gold/30 rounded-2xl px-6 py-5 flex items-center gap-4 btn-hover">
-        <div class="flex items-center gap-4 w-full">
-          <div class="w-12 h-12 rounded-xl bg-brand-mid border border-brand-border flex items-center justify-center flex-shrink-0 group-hover:border-brand-gold/30 transition-colors">
-            <i class="fa-solid fa-car text-brand-gold text-lg"></i>
+      <a href="https://alabolcar.com.mx/inventario.html" onclick="gtag('event','click_inventario');" class="glass btn-fx" style="display:block;text-decoration:none;padding:18px 20px;display:flex;align-items:center;gap:14px;">
+        <div style="display:flex;align-items:center;gap:14px;width:100%;">
+          <div style="width:50px;height:50px;border-radius:16px;background:rgba(13,148,136,0.15);border:1px solid rgba(13,148,136,0.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="fa-solid fa-car" style="color:var(--teal);font-size:18px;"></i>
           </div>
-          <div class="flex-1 min-w-0">
-            <div class="text-white font-bold text-sm sm:text-base">Ver inventario de agencias</div>
-            <div class="text-gray-400 text-xs mt-0.5">Explora los autos disponibles ahora mismo</div>
+          <div style="flex:1;min-width:0;">
+            <div style="color:white;font-weight:700;font-size:15px;">Ver inventario de agencias</div>
+            <div style="color:var(--green-text);font-size:11px;margin-top:2px;opacity:0.7;">Explora los autos disponibles ahora mismo</div>
           </div>
-          <i class="fa-solid fa-arrow-right text-gray-600 group-hover:text-brand-gold group-hover:translate-x-1 transition-all"></i>
+          <i class="fa-solid fa-arrow-right" style="color:var(--green-text);font-size:14px;opacity:0.4;"></i>
         </div>
       </a>
 
       <!-- PUERTA 3: WhatsApp -->
-      <a href="https://api.whatsapp.com/send?phone=525568667571&text=Hola%20Israel!%20Vi%20tu%20video%20y%20me%20interesa%20saber%20mas%20sobre%20como%20funciona%20Alabol%20para%20encontrar%20mi%20auto." target="_blank" onclick="fbq('track','Contact');gtag('event','click_whatsapp');" class="group block w-full bg-brand-card border border-brand-border hover:border-emerald-500/30 rounded-2xl px-6 py-5 flex items-center gap-4 btn-hover">
-        <div class="flex items-center gap-4 w-full">
-          <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
-            <i class="fa-brands fa-whatsapp text-emerald-400 text-xl"></i>
+      <a href="https://api.whatsapp.com/send?phone=525568667571&text=Hola%20Israel!%20Vi%20tu%20video%20y%20me%20interesa%20saber%20mas%20sobre%20como%20funciona%20Alabol." target="_blank" onclick="fbq('track','Contact');gtag('event','click_whatsapp');" class="glass btn-fx" style="display:block;text-decoration:none;padding:18px 20px;border-color:rgba(52,211,153,0.15);">
+        <div style="display:flex;align-items:center;gap:14px;width:100%;">
+          <div style="width:50px;height:50px;border-radius:16px;background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="fa-brands fa-whatsapp" style="color:var(--emerald);font-size:22px;"></i>
           </div>
-          <div class="flex-1 min-w-0">
-            <div class="text-white font-bold text-sm sm:text-base">Platicar con Israel por WhatsApp</div>
-            <div class="text-gray-400 text-xs mt-0.5">Sin bots. Respuesta personal en menos de 2 horas.</div>
+          <div style="flex:1;min-width:0;">
+            <div style="color:white;font-weight:700;font-size:15px;">Platicar con Israel por WhatsApp</div>
+            <div style="color:var(--green-text);font-size:11px;margin-top:2px;opacity:0.7;">Sin bots. Respuesta personal en menos de 2 horas.</div>
           </div>
-          <i class="fa-solid fa-arrow-right text-gray-600 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all"></i>
+          <i class="fa-solid fa-arrow-right" style="color:var(--green-text);font-size:14px;opacity:0.4;"></i>
         </div>
       </a>
 
     </div>
 
-    <!-- Anti-presion microcopy -->
-    <p class="text-center text-[11px] text-gray-600 mt-5 leading-relaxed max-w-md mx-auto">
-      <i class="fa-solid fa-shield-halved text-gray-700 mr-1"></i>
+    <p style="text-align:center;font-size:10px;color:var(--green-text);opacity:0.4;margin-top:16px;">
+      <i class="fa-solid fa-shield-halved" style="margin-right:4px;"></i>
       No pedimos datos bancarios. No hay cargos ocultos. Solo informacion para ayudarte a decidir.
     </p>
+
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════ -->
-<!-- AUTHORITY / TRUST BADGES -->
-<!-- ══════════════════════════════════════════ -->
-<section class="relative z-10 px-4 pb-16 fade-up">
-  <div class="max-w-4xl mx-auto">
+<!-- ══════════════ TRUST BADGES ══════════════ -->
+<section style="position:relative;z-index:1;padding:0 20px 50px;" class="fade-up">
+  <div style="max-width:800px;margin:0 auto;">
 
-    <div class="text-center mb-10">
-      <p class="text-xs text-brand-gold font-semibold uppercase tracking-widest mb-2">Por que confiar en Alabol</p>
-      <h2 class="text-xl sm:text-2xl font-bold text-white">No somos vendedores.<br>Somos tu consultor automotriz.</h2>
+    <div style="text-align:center;margin-bottom:32px;">
+      <div style="font-size:10px;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:8px;">Por que confiar en Alabol</div>
+      <h2 style="font-size:22px;font-weight:800;line-height:1.3;">No somos vendedores.<br><span class="gold-text">Somos tu consultor automotriz.</span></h2>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+    <div class="trust-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
 
-      <!-- Badge 1: Cero Riesgo -->
-      <div class="trust-card bg-brand-card rounded-2xl p-6 text-center">
-        <div class="w-14 h-14 mx-auto mb-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-content-center justify-center">
-          <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+      <div class="glass trust-card" style="padding:28px 20px;text-align:center;">
+        <div style="width:56px;height:56px;margin:0 auto 16px;border-radius:18px;background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.2);display:flex;align-items:center;justify-content:center;">
+          <i class="fa-solid fa-shield-halved" style="color:var(--emerald);font-size:24px;"></i>
         </div>
-        <h3 class="text-white font-bold text-sm mb-2">Cero Riesgo Legal y Mecanico</h3>
-        <p class="text-gray-400 text-xs leading-relaxed">Todos los vehiculos provienen directamente de agencias establecidas y pasan por una auditoria rigurosa para blindar tu inversion.</p>
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:8px;">Cero Riesgo</h3>
+        <p style="font-size:11px;color:var(--green-text);line-height:1.7;opacity:0.7;">Todos los vehiculos provienen de agencias establecidas y pasan por una auditoria rigurosa para blindar tu inversion.</p>
       </div>
 
-      <!-- Badge 2: Certificado -->
-      <div class="trust-card bg-brand-card rounded-2xl p-6 text-center">
-        <div class="w-14 h-14 mx-auto mb-4 rounded-2xl bg-brand-gold/10 border border-brand-gold/20 flex items-center justify-center">
-          <svg class="w-7 h-7 text-brand-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+      <div class="glass trust-card" style="padding:28px 20px;text-align:center;">
+        <div style="width:56px;height:56px;margin:0 auto 16px;border-radius:18px;background:rgba(212,175,55,0.1);border:1px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;">
+          <i class="fa-solid fa-certificate" style="color:var(--gold);font-size:24px;"></i>
         </div>
-        <h3 class="text-white font-bold text-sm mb-2">Broker Certificado</h3>
-        <p class="text-gray-400 text-xs leading-relaxed">No tratas con un vendedor tradicional, tratas con un consultor experto con estandares de marcas premium.</p>
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:8px;">Broker Certificado</h3>
+        <p style="font-size:11px;color:var(--green-text);line-height:1.7;opacity:0.7;">No tratas con un vendedor tradicional, tratas con un consultor experto con estandares de marcas premium.</p>
       </div>
 
-      <!-- Badge 3: Proceso VIP -->
-      <div class="trust-card bg-brand-card rounded-2xl p-6 text-center">
-        <div class="w-14 h-14 mx-auto mb-4 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
-          <svg class="w-7 h-7 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
+      <div class="glass trust-card" style="padding:28px 20px;text-align:center;">
+        <div style="width:56px;height:56px;margin:0 auto 16px;border-radius:18px;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.2);display:flex;align-items:center;justify-content:center;">
+          <i class="fa-solid fa-filter" style="color:#8B5CF6;font-size:24px;"></i>
         </div>
-        <h3 class="text-white font-bold text-sm mb-2">Proceso VIP</h3>
-        <p class="text-gray-400 text-xs leading-relaxed">Nosotros buscamos, negociamos y filtramos por ti. Tu solo te preocupas por manejar tu proximo auto.</p>
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:8px;">Proceso VIP</h3>
+        <p style="font-size:11px;color:var(--green-text);line-height:1.7;opacity:0.7;">Nosotros buscamos, negociamos y filtramos por ti. Tu solo te preocupas por manejar tu proximo auto.</p>
       </div>
 
     </div>
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════ -->
-<!-- SOCIAL PROOF TICKER -->
-<!-- ══════════════════════════════════════════ -->
-<section class="relative z-10 px-4 pb-16 fade-up">
-  <div class="max-w-2xl mx-auto">
-    <div class="bg-brand-card border border-brand-border rounded-2xl p-5 text-center">
-      <div class="text-[11px] text-gray-500 uppercase tracking-widest mb-3 font-medium">Actividad reciente</div>
-      <div class="h-6 overflow-hidden" id="tickerContainer">
-        <div class="ticker-item text-sm text-gray-300" id="tickerText"></div>
+<!-- ══════════════ TICKER ══════════════ -->
+<section style="position:relative;z-index:1;padding:0 20px 50px;" class="fade-up">
+  <div style="max-width:560px;margin:0 auto;">
+    <div class="glass" style="padding:16px 20px;text-align:center;">
+      <div style="font-size:9px;color:var(--green-text);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:8px;opacity:0.5;font-weight:600;">Actividad en vivo</div>
+      <div style="height:22px;overflow:hidden;">
+        <div id="tickerText" class="tick-anim" style="font-size:13px;color:var(--green-text);"></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════ -->
-<!-- ISRAEL — FACE OF THE BRAND -->
-<!-- ══════════════════════════════════════════ -->
-<section class="relative z-10 px-4 pb-16 fade-up">
-  <div class="max-w-2xl mx-auto">
-    <div class="bg-brand-card border border-brand-border rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6">
-      <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-brand-gold to-yellow-600 p-[2px] flex-shrink-0">
-        <img src="https://lh3.googleusercontent.com/a/ACg8ocJDP9kJ7OYU8SvWfnGNA8X2KJKZ0ScfJVVPj-7bRprXUH9ovrMJ=s96-c" alt="Israel Esperanza" class="w-full h-full rounded-full object-cover">
+<!-- ══════════════ ISRAEL — AUTHORITY ══════════════ -->
+<section style="position:relative;z-index:1;padding:0 20px 50px;" class="fade-up">
+  <div style="max-width:560px;margin:0 auto;">
+    <div class="glass" style="padding:28px 24px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;">
+
+      <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-bright));padding:3px;">
+        <img src="https://lh3.googleusercontent.com/a/ACg8ocJDP9kJ7OYU8SvWfnGNA8X2KJKZ0ScfJVVPj-7bRprXUH9ovrMJ=s96-c" alt="Israel Esperanza" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
       </div>
-      <div class="text-center sm:text-left">
-        <div class="text-xs text-brand-gold font-semibold uppercase tracking-wider mb-1">Tu consultor</div>
-        <h3 class="text-lg font-bold text-white mb-2">Israel Esperanza</h3>
-        <p class="text-sm text-gray-400 leading-relaxed">Consultor Automotriz Certificado. Fundador de Alabol Car Broker. Mi trabajo es que tomes la mejor decision, no la mas rapida. Si no encuentro el auto correcto para ti, prefiero decirtelo de frente.</p>
-        <div class="flex items-center justify-center sm:justify-start gap-3 mt-3">
-          <a href="https://www.instagram.com/alabolcb/" target="_blank" class="text-gray-500 hover:text-brand-gold transition-colors text-sm"><i class="fa-brands fa-instagram"></i></a>
-          <a href="https://www.tiktok.com/@alabolcb" target="_blank" class="text-gray-500 hover:text-brand-gold transition-colors text-sm"><i class="fa-brands fa-tiktok"></i></a>
-          <a href="https://api.whatsapp.com/send?phone=525568667571" target="_blank" class="text-gray-500 hover:text-emerald-400 transition-colors text-sm"><i class="fa-brands fa-whatsapp"></i></a>
-        </div>
+
+      <div>
+        <div style="font-size:10px;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:4px;">Tu consultor</div>
+        <h3 style="font-size:18px;font-weight:800;margin-bottom:8px;">Israel Esperanza</h3>
+        <p style="font-size:12px;color:var(--green-text);line-height:1.8;opacity:0.7;max-width:400px;">Consultor Automotriz Certificado. Fundador de Alabol Car Broker. Mi trabajo es que tomes la mejor decision, no la mas rapida. Si no encuentro el auto correcto para ti, prefiero decirtelo de frente.</p>
       </div>
+
+      <div style="display:flex;gap:12px;margin-top:4px;">
+        <a href="https://www.instagram.com/alabolcb/" target="_blank" style="width:36px;height:36px;border-radius:12px;background:rgba(212,175,55,0.08);border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center;color:var(--green-text);text-decoration:none;transition:all 0.3s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--glass-border)';this.style.color='var(--green-text)'"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://www.tiktok.com/@alabolcb" target="_blank" style="width:36px;height:36px;border-radius:12px;background:rgba(212,175,55,0.08);border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center;color:var(--green-text);text-decoration:none;transition:all 0.3s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--glass-border)';this.style.color='var(--green-text)'"><i class="fa-brands fa-tiktok"></i></a>
+        <a href="https://api.whatsapp.com/send?phone=525568667571" target="_blank" style="width:36px;height:36px;border-radius:12px;background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.15);display:flex;align-items:center;justify-content:center;color:var(--emerald);text-decoration:none;transition:all 0.3s;" onmouseover="this.style.borderColor='var(--emerald)'" onmouseout="this.style.borderColor='rgba(52,211,153,0.15)'"><i class="fa-brands fa-whatsapp"></i></a>
+      </div>
+
     </div>
   </div>
 </section>
 
-<!-- ══════════════════════════════════════════ -->
-<!-- FOOTER — Safety net -->
-<!-- ══════════════════════════════════════════ -->
-<footer class="relative z-10 px-4 pb-12 fade-up">
-  <div class="max-w-2xl mx-auto text-center">
-    <div class="w-12 h-px bg-brand-border mx-auto mb-6"></div>
-    <p class="text-sm text-gray-500 leading-relaxed max-w-lg mx-auto mb-4">
-      No estas seguro de que paso dar? Tomate tu tiempo, la seguridad de tu inversion es nuestra prioridad. Guarda esta pagina y escribenos cuando te sientas seguro. <strong class="text-gray-400">Las puertas de Alabol siempre estan abiertas para ti.</strong>
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer style="position:relative;z-index:1;padding:0 20px 100px;text-align:center;" class="fade-up">
+  <div style="max-width:500px;margin:0 auto;">
+    <div style="width:40px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 24px;"></div>
+    <p style="font-size:13px;color:var(--green-text);line-height:1.8;opacity:0.6;margin-bottom:16px;">
+      No estas seguro de que paso dar? Tomate tu tiempo, la seguridad de tu inversion es nuestra prioridad. Guarda esta pagina y escribenos cuando te sientas seguro. <strong style="color:var(--green-text);opacity:1;">Las puertas de Alabol siempre estan abiertas para ti.</strong>
     </p>
-    <div class="flex items-center justify-center gap-4 text-[11px] text-gray-600">
+    <div style="display:flex;align-items:center;justify-content:center;gap:12px;font-size:11px;color:var(--green-text);opacity:0.35;">
       <span>Alabol Car Broker</span>
       <span>&middot;</span>
       <span>Cancun, Mexico</span>
       <span>&middot;</span>
-      <a href="https://alabolcar.com.mx" class="text-brand-gold hover:underline">alabolcar.com.mx</a>
+      <a href="https://alabolcar.com.mx" style="color:var(--gold);text-decoration:none;">alabolcar.com.mx</a>
     </div>
   </div>
 </footer>
 
-<!-- ══════════════════════════════════════════ -->
-<!-- STICKY CTA BAR (appears after scroll) -->
-<!-- ══════════════════════════════════════════ -->
-<div id="stickyCta" class="sticky-cta fixed bottom-0 left-0 right-0 z-50 bg-brand-dark/90 backdrop-blur-xl border-t border-brand-border/50 px-4 py-3">
-  <div class="max-w-lg mx-auto flex gap-3">
-    <a href="https://alabolcar.com.mx/vip/" onclick="fbq('track','Lead');gtag('event','sticky_matchmaker');" class="flex-1 bg-gradient-to-r from-brand-gold to-yellow-500 text-brand-dark text-center py-3 rounded-xl font-bold text-sm">
-      Descubrir mi auto ideal
+<!-- ══════════════ STICKY BAR ══════════════ -->
+<div id="stickyBar" class="sticky-bar" style="position:fixed;bottom:0;left:0;right:0;z-index:98;background:rgba(10,31,26,0.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--glass-border);padding:10px 16px;">
+  <div style="max-width:480px;margin:0 auto;display:flex;gap:10px;">
+    <a href="https://alabolcar.com.mx/vip/" onclick="fbq('track','Lead');gtag('event','sticky_matchmaker');" style="flex:1;background:linear-gradient(135deg,var(--gold),var(--gold-bright));color:var(--dark-green);text-align:center;padding:14px;border-radius:14px;font-weight:800;font-size:13px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 20px rgba(212,175,55,0.3);">
+      <i class="fa-solid fa-crosshairs"></i> Descubrir mi auto ideal
     </a>
-    <a href="https://api.whatsapp.com/send?phone=525568667571&text=Hola%20Israel!%20Vi%20tu%20video%20y%20quiero%20saber%20mas." target="_blank" class="w-12 bg-emerald-500/15 border border-emerald-500/30 rounded-xl flex items-center justify-center text-emerald-400">
-      <i class="fa-brands fa-whatsapp text-lg"></i>
+    <a href="https://api.whatsapp.com/send?phone=525568667571&text=Hola%20Israel!%20Vi%20tu%20video." target="_blank" style="width:52px;background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.25);border-radius:14px;display:flex;align-items:center;justify-content:center;text-decoration:none;">
+      <i class="fa-brands fa-whatsapp" style="color:var(--emerald);font-size:20px;"></i>
     </a>
   </div>
 </div>
 
 <!-- Floating WhatsApp -->
-<a href="https://api.whatsapp.com/send?phone=525568667571&text=Hola%20Israel!%20Vi%20tu%20video%20en%20redes%20y%20quiero%20saber%20mas%20sobre%20Alabol." target="_blank" id="floatWa" class="fixed bottom-20 right-4 w-14 h-14 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/30 z-40 hover:scale-110 transition-transform" style="display:none;">
+<a href="https://api.whatsapp.com/send?phone=525568667571&text=Hola%20Israel!%20Vi%20tu%20video%20en%20redes." target="_blank" id="floatWa" style="display:none;position:fixed;bottom:76px;right:16px;width:56px;height:56px;background:#25D366;border-radius:50%;align-items:center;justify-content:center;box-shadow:0 4px 15px rgba(37,211,102,0.4);z-index:97;text-decoration:none;font-size:28px;transition:transform 0.3s;z-index:97;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
   <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
 </a>
 
 <script>
-// ══════════════════════════════════════════
-// SCROLL ANIMATIONS
-// ══════════════════════════════════════════
-var observer = new IntersectionObserver(function(entries) {
-  entries.forEach(function(entry) {
-    if (entry.isIntersecting) entry.target.classList.add('visible');
-  });
-}, { threshold: 0.1 });
-document.querySelectorAll('.fade-up').forEach(function(el) { observer.observe(el); });
-
-// ══════════════════════════════════════════
-// STICKY CTA — show after scrolling past hero
-// ══════════════════════════════════════════
-var stickyCta = document.getElementById('stickyCta');
-var floatWa = document.getElementById('floatWa');
-window.addEventListener('scroll', function() {
-  var show = window.scrollY > 600;
-  stickyCta.classList.toggle('show', show);
-  floatWa.style.display = show ? 'flex' : 'none';
-});
-
-// ══════════════════════════════════════════
-// NUMBER COUNTER ANIMATION
-// ══════════════════════════════════════════
-document.querySelectorAll('[data-count]').forEach(function(el) {
-  var target = parseInt(el.dataset.count);
-  var observed = false;
-  new IntersectionObserver(function(entries) {
-    if (entries[0].isIntersecting && !observed) {
-      observed = true;
-      var duration = 1500;
-      var start = performance.now();
-      function tick(now) {
-        var progress = Math.min((now - start) / duration, 1);
-        var eased = 1 - Math.pow(1 - progress, 3);
-        var current = Math.floor(eased * target);
-        el.textContent = current >= 1000 ? (current / 1000).toFixed(1) + 'K' : current.toLocaleString('es-MX');
-        if (progress < 1) requestAnimationFrame(tick);
-        else el.textContent = target >= 1000 ? (target / 1000).toFixed(1) + 'K' : target.toLocaleString('es-MX');
-      }
-      requestAnimationFrame(tick);
-    }
-  }, { threshold: 0.5 }).observe(el);
-});
-
-// ══════════════════════════════════════════
-// SOCIAL PROOF TICKER
-// ══════════════════════════════════════════
-var tickerMessages = [
-  '💘 Alguien en Cancun hizo match con un Toyota RAV4 2023',
-  '🚗 Nueva Hyundai Tucson 2024 agregada al inventario',
-  '📱 3 personas buscando SUV en los ultimos 30 minutos',
-  '✅ BMW X3 2022 verificada y publicada hoy',
-  '💬 Israel respondio 12 consultas en la ultima hora',
-  '🔥 Mazda CX-5 2023 — 4 personas interesadas',
-  '📍 Nuevo inventario disponible en CDMX y Cancun',
-  '💘 Match de 94% encontrado para un comprador en Merida'
-];
-var tickerIdx = 0;
-function rotateTicker() {
-  var el = document.getElementById('tickerText');
-  el.style.animation = 'none';
-  void el.offsetHeight; // trigger reflow
-  el.textContent = tickerMessages[tickerIdx];
-  el.style.animation = 'ticker 4s ease-in-out';
-  tickerIdx = (tickerIdx + 1) % tickerMessages.length;
+// Sound activation
+function activateSound(){
+  var iframe=document.querySelector('iframe');
+  if(iframe){
+    var src=iframe.src;
+    iframe.src=src.replace('muted=1','muted=0').replace('autoplay=1','autoplay=1');
+    var btn=document.getElementById('soundBtn');
+    btn.innerHTML='<i class="fa-solid fa-volume-high"></i> Sonido activado';
+    btn.style.background='rgba(52,211,153,0.15)';
+    btn.style.borderColor='rgba(52,211,153,0.3)';
+    btn.style.color='var(--emerald)';
+    setTimeout(function(){btn.style.opacity='0';setTimeout(function(){btn.style.display='none'},400)},2000);
+  }
 }
-rotateTicker();
-setInterval(rotateTicker, 4500);
 
-// ══════════════════════════════════════════
-// VIDEO PROGRESS HINT
-// ══════════════════════════════════════════
-setTimeout(function() {
-  var bar = document.getElementById('videoProgress');
-  if (bar) bar.style.width = '100%';
-}, 500);
-setTimeout(function() {
-  var bar = document.getElementById('videoProgress');
-  if (bar) bar.style.display = 'none';
-}, 4000);
+// Fade-up observer
+var obs = new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting)en.target.classList.add('vis')})},{threshold:0.1});
+document.querySelectorAll('.fade-up').forEach(function(el){obs.observe(el)});
+
+// Sticky bar
+var sb = document.getElementById('stickyBar');
+var fw = document.getElementById('floatWa');
+window.addEventListener('scroll',function(){var s=window.scrollY>500;sb.classList.toggle('show',s);fw.style.display=s?'flex':'none'});
+
+// Counter animation
+document.querySelectorAll('[data-count]').forEach(function(el){
+  var t=parseInt(el.dataset.count),done=false;
+  new IntersectionObserver(function(e){
+    if(e[0].isIntersecting&&!done){done=true;var d=1500,st=performance.now();
+      function tick(n){var p=Math.min((n-st)/d,1),ea=1-Math.pow(1-p,3),c=Math.floor(ea*t);
+        el.textContent=c>=1000?(c/1000).toFixed(1)+'K':c.toLocaleString('es-MX');
+        if(p<1)requestAnimationFrame(tick);else el.textContent=t>=1000?(t/1000).toFixed(1)+'K':t.toLocaleString('es-MX');
+      }requestAnimationFrame(tick)}
+  },{threshold:0.5}).observe(el)
+});
+
+// Ticker
+var msgs=['💘 Alguien en Cancun hizo match con un Toyota RAV4 2023','🚗 Nueva Hyundai Tucson 2024 agregada al inventario','📱 3 personas buscando SUV en los ultimos 30 min','✅ BMW X3 2022 verificada y publicada hoy','💬 Israel respondio 12 consultas en la ultima hora','🔥 Mazda CX-5 2023 — 4 personas interesadas','📍 Nuevo inventario disponible en CDMX y Cancun','💘 Match de 94% encontrado para un comprador en Merida'];
+var ti=0;function rotTick(){var el=document.getElementById('tickerText');el.style.animation='none';void el.offsetHeight;el.textContent=msgs[ti];el.style.animation='tick 4s ease-in-out';ti=(ti+1)%msgs.length}rotTick();setInterval(rotTick,4500);
+
+// Bubbles
+(function(){var c=document.getElementById('bubbles');for(var i=0;i<12;i++){var b=document.createElement('div');b.className='bubble';var s=Math.random()*20+8;b.style.width=s+'px';b.style.height=s+'px';b.style.left=Math.random()*100+'%';b.style.setProperty('--dur',(Math.random()*10+8)+'s');b.style.setProperty('--sc',Math.random()*0.5+0.5);b.style.setProperty('--op',Math.random()*0.3+0.1);b.style.setProperty('--sw',(Math.random()*2-1).toFixed(2));b.style.animationDelay=Math.random()*10+'s';c.appendChild(b)}})();
 </script>
 </body>
 </html>

@@ -421,10 +421,35 @@ body {
   </div>
 </div>
 
-<!-- Floating WhatsApp -->
-<a href="https://api.whatsapp.com/send?phone=525568667571&text=Hola%20Israel!%20Vi%20tu%20video%20en%20redes." target="_blank" id="floatWa" style="display:none;position:fixed;bottom:76px;right:16px;width:56px;height:56px;background:#25D366;border-radius:50%;align-items:center;justify-content:center;box-shadow:0 4px 15px rgba(37,211,102,0.4);z-index:97;text-decoration:none;font-size:28px;transition:transform 0.3s;z-index:97;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
-</a>
+<!-- ══════════════ CHATBOT ══════════════ -->
+<div id="chatBot" style="display:none;position:fixed;bottom:76px;right:16px;width:340px;max-width:calc(100vw - 32px);z-index:200;">
+  <div style="background:var(--dark-green);border:1px solid var(--glass-border);border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+    <!-- Header -->
+    <div style="background:linear-gradient(135deg,var(--gold),var(--gold-bright));padding:14px 16px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <img src="logo-circular.png" style="width:32px;height:32px;border-radius:50%;">
+        <div>
+          <div style="font-size:13px;font-weight:800;color:var(--dark-green);">Alabol Car Broker</div>
+          <div style="font-size:10px;color:rgba(10,31,26,0.6);display:flex;align-items:center;gap:4px;"><span style="width:6px;height:6px;background:var(--dark-green);border-radius:50%;opacity:0.6;"></span>En linea</div>
+        </div>
+      </div>
+      <button onclick="toggleChat()" style="background:none;border:none;color:var(--dark-green);font-size:18px;cursor:pointer;opacity:0.6;">&times;</button>
+    </div>
+    <!-- Messages -->
+    <div id="chatMessages" style="padding:16px;height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;background:var(--darker-green);">
+    </div>
+  </div>
+</div>
+
+<!-- Chat trigger button -->
+<button id="chatTrigger" onclick="toggleChat()" style="display:none;position:fixed;bottom:76px;right:16px;width:56px;height:56px;background:linear-gradient(135deg,var(--gold),var(--gold-bright));border:none;border-radius:50%;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(212,175,55,0.4);z-index:199;cursor:pointer;transition:transform 0.3s;font-size:22px;color:var(--dark-green);" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+  <i class="fa-solid fa-comments"></i>
+</button>
+<!-- Notification dot -->
+<div id="chatDot" style="display:none;position:fixed;bottom:120px;right:16px;background:var(--dark-green);border:1px solid var(--glass-border);border-radius:14px;padding:8px 14px;z-index:199;max-width:200px;box-shadow:0 4px 20px rgba(0,0,0,0.3);">
+  <div style="font-size:11px;color:var(--green-text);">Te ayudo a encontrar tu auto ideal</div>
+  <div style="position:absolute;bottom:-6px;right:24px;width:12px;height:12px;background:var(--dark-green);border-right:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border);transform:rotate(45deg);"></div>
+</div>
 
 <script>
 // Sound activation
@@ -446,15 +471,253 @@ function activateSound(){
 var obs = new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting)en.target.classList.add('vis')})},{threshold:0.1});
 document.querySelectorAll('.fade-up').forEach(function(el){obs.observe(el)});
 
-// Sticky bar
+// Sticky bar + chat trigger
 var sb = document.getElementById('stickyBar');
-var fw = document.getElementById('floatWa');
-window.addEventListener('scroll',function(){var s=window.scrollY>500;sb.classList.toggle('show',s);fw.style.display=s?'flex':'none'});
+var ct = document.getElementById('chatTrigger');
+var cd = document.getElementById('chatDot');
+window.addEventListener('scroll',function(){
+  var s=window.scrollY>500;
+  sb.classList.toggle('show',s);
+  if(s&&!chatOpened){ct.style.display='flex';cd.style.display='block'}
+  else if(!s){ct.style.display='none';cd.style.display='none'}
+});
+
+// ══════════════════════════════════════════
+// CHATBOT ENGINE
+// ══════════════════════════════════════════
+var chatOpen=false, chatOpened=false, chatStep=0;
+var chatData={tipo:'',presupuesto:'',urgencia:'',nombre:'',whatsapp:''};
+
+// UTM capture
+var urlParams=new URLSearchParams(window.location.search);
+var utmSource=urlParams.get('utm_source')||'';
+var utmMedium=urlParams.get('utm_medium')||'';
+var utmCampaign=urlParams.get('utm_campaign')||'';
+var utmContent=urlParams.get('utm_content')||'';
+
+function toggleChat(){
+  chatOpen=!chatOpen;
+  document.getElementById('chatBot').style.display=chatOpen?'block':'none';
+  document.getElementById('chatTrigger').style.display=chatOpen?'none':'flex';
+  document.getElementById('chatDot').style.display='none';
+  if(!chatOpened){chatOpened=true;startChat()}
+}
+
+function addMsg(text,isBot,delay){
+  return new Promise(function(resolve){
+    setTimeout(function(){
+      var el=document.getElementById('chatMessages');
+      var div=document.createElement('div');
+      div.style.cssText=isBot
+        ?'background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:16px 16px 16px 4px;padding:10px 14px;font-size:12px;color:var(--green-text);line-height:1.6;max-width:85%;align-self:flex-start;'
+        :'background:linear-gradient(135deg,var(--gold),var(--gold-bright));border-radius:16px 16px 4px 16px;padding:10px 14px;font-size:12px;color:var(--dark-green);font-weight:600;max-width:85%;align-self:flex-end;';
+      div.innerHTML=text;
+      el.appendChild(div);
+      el.scrollTop=el.scrollHeight;
+      resolve();
+    },delay||0);
+  });
+}
+
+function addButtons(options,callback){
+  var el=document.getElementById('chatMessages');
+  var wrap=document.createElement('div');
+  wrap.style.cssText='display:flex;flex-wrap:wrap;gap:6px;align-self:flex-start;max-width:95%;';
+  wrap.id='chatBtns';
+  options.forEach(function(opt){
+    var btn=document.createElement('button');
+    btn.style.cssText='background:rgba(212,175,55,0.1);border:1px solid var(--gold-dim);color:var(--gold);padding:8px 14px;border-radius:12px;font-family:inherit;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.2s;';
+    btn.textContent=opt.label;
+    btn.onmouseover=function(){this.style.background='rgba(212,175,55,0.2)'};
+    btn.onmouseout=function(){this.style.background='rgba(212,175,55,0.1)'};
+    btn.onclick=function(){
+      wrap.remove();
+      addMsg(opt.label,false,0).then(function(){callback(opt.value)});
+    };
+    wrap.appendChild(btn);
+  });
+  el.appendChild(wrap);
+  el.scrollTop=el.scrollHeight;
+}
+
+function addInput(placeholder,callback){
+  var el=document.getElementById('chatMessages');
+  var wrap=document.createElement('div');
+  wrap.style.cssText='display:flex;gap:6px;align-self:stretch;';
+  wrap.id='chatInput';
+  var inp=document.createElement('input');
+  inp.style.cssText='flex:1;background:rgba(0,0,0,0.3);border:1px solid var(--glass-border);border-radius:12px;padding:10px 14px;color:white;font-family:inherit;font-size:12px;outline:none;';
+  inp.placeholder=placeholder;
+  var btn=document.createElement('button');
+  btn.style.cssText='background:linear-gradient(135deg,var(--gold),var(--gold-bright));border:none;border-radius:12px;padding:10px 14px;color:var(--dark-green);font-weight:800;cursor:pointer;font-family:inherit;font-size:12px;';
+  btn.textContent='Enviar';
+  btn.onclick=function(){
+    var v=inp.value.trim();if(!v)return;
+    wrap.remove();
+    addMsg(v,false,0).then(function(){callback(v)});
+  };
+  inp.onkeydown=function(e){if(e.key==='Enter')btn.click()};
+  wrap.appendChild(inp);wrap.appendChild(btn);
+  el.appendChild(wrap);el.scrollTop=el.scrollHeight;
+  inp.focus();
+}
+
+async function startChat(){
+  if(typeof trackEvent==='function')trackEvent(4,'chatbot_opened');
+  await addMsg('Hola! Soy el asistente de <strong style="color:var(--gold);">Alabol Car Broker</strong>. Te ayudo a conectar con el auto ideal de agencias verificadas.',true,300);
+  await addMsg('Para darte las mejores opciones, necesito hacerte 3 preguntas rapidas. Toma menos de 30 segundos.',true,800);
+  await new Promise(function(r){setTimeout(r,400)});
+  await addMsg('Que tipo de vehiculo te interesa?',true,500);
+  addButtons([
+    {label:'SUV',value:'suv'},
+    {label:'Sedan',value:'sedan'},
+    {label:'Pickup',value:'pickup'},
+    {label:'Deportivo',value:'coupe'},
+    {label:'No se aun',value:'no_definido'}
+  ],function(v){
+    chatData.tipo=v;
+    stepPresupuesto();
+  });
+}
+
+async function stepPresupuesto(){
+  if(typeof trackEvent==='function')trackEvent(4,'chatbot_step_tipo');
+  await addMsg('Excelente eleccion. Cual es tu presupuesto aproximado?',true,600);
+  addButtons([
+    {label:'Hasta $250k',value:'250000'},
+    {label:'$250k - $400k',value:'400000'},
+    {label:'$400k - $600k',value:'600000'},
+    {label:'Mas de $600k',value:'1000000'},
+    {label:'Aun no defino',value:'0'}
+  ],function(v){
+    chatData.presupuesto=v;
+    stepUrgencia();
+  });
+}
+
+async function stepUrgencia(){
+  if(typeof trackEvent==='function')trackEvent(4,'chatbot_step_presupuesto');
+  await addMsg('Y cuando planeas hacer la compra?',true,600);
+  addButtons([
+    {label:'Esta semana',value:'urgente'},
+    {label:'Este mes',value:'caliente'},
+    {label:'2-3 meses',value:'tibio'},
+    {label:'Solo explorando',value:'frio'}
+  ],function(v){
+    chatData.urgencia=v;
+    stepContacto();
+  });
+}
+
+async function stepContacto(){
+  if(typeof trackEvent==='function')trackEvent(4,'chatbot_step_urgencia');
+  var temp=chatData.urgencia;
+  if(temp==='urgente'||temp==='caliente'){
+    await addMsg('Perfecto, tenemos opciones que te van a interesar. Para que nuestro equipo te contacte con las mejores opciones, dejame tu nombre y WhatsApp.',true,600);
+  } else {
+    await addMsg('Sin presion. Para enviarte opciones cuando encuentre algo que te pueda interesar, dejame tu nombre y WhatsApp.',true,600);
+  }
+  await addMsg('Como te llamas?',true,400);
+  addInput('Tu nombre...',function(nombre){
+    chatData.nombre=nombre;
+    askWhatsApp();
+  });
+}
+
+async function askWhatsApp(){
+  await addMsg('Y tu numero de WhatsApp? (10 digitos)',true,400);
+  addInput('Ej: 5512345678',function(wa){
+    chatData.whatsapp=wa.replace(/[^0-9]/g,'');
+    saveLead();
+  });
+}
+
+async function saveLead(){
+  if(typeof trackEvent==='function')trackEvent(5,'chatbot_lead_captured');
+
+  // Pixel events
+  if(typeof fbq==='function')fbq('track','Lead');
+  if(typeof gtag==='function')gtag('event','generate_lead',{event_category:'chatbot',value:chatData.presupuesto});
+
+  // Determine temperature
+  var temp=chatData.urgencia;
+  var presMax=parseInt(chatData.presupuesto)||0;
+  var presMin=0;
+  if(presMax===250000)presMin=0;
+  else if(presMax===400000)presMin=250000;
+  else if(presMax===600000)presMin=400000;
+  else if(presMax===1000000)presMin=600000;
+
+  var fuente='landing_chatbot';
+  if(utmSource)fuente=utmSource+'_chatbot';
+
+  // Save to Supabase
+  var leadData={
+    nombre:chatData.nombre,
+    whatsapp:chatData.whatsapp,
+    tipo_vehiculo:chatData.tipo,
+    presupuesto_min:presMin,
+    presupuesto_max:presMax>0?presMax:null,
+    temperatura:temp==='urgente'?'caliente':temp,
+    etapa_funnel:temp==='urgente'||temp==='caliente'?'contactado':'nuevo_lead',
+    fuente:fuente,
+    notas:'UTM: '+[utmSource,utmMedium,utmCampaign,utmContent].filter(Boolean).join(' | ')+' | Urgencia: '+chatData.urgencia,
+    estatus:'buscando',
+    dinero_listo:temp==='urgente'?'si':temp==='caliente'?'casi':'no'
+  };
+
+  var SU='https://rgnunjngtsgqgvplawfr.supabase.co';
+  var SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8';
+
+  fetch(SU+'/rest/v1/leads_matchmaker',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','apikey':SK,'Authorization':'Bearer '+SK,'Prefer':'return=minimal'},
+    body:JSON.stringify(leadData)
+  }).catch(function(){});
+
+  // Show confirmation
+  if(temp==='urgente'||temp==='caliente'){
+    await addMsg('Listo <strong style="color:white;">'+chatData.nombre+'</strong>! Tu perfil ya esta en nuestro sistema.',true,500);
+    await addMsg('Nuestro equipo te contactara por WhatsApp en menos de 2 horas con las mejores opciones de <strong style="color:white;">'+chatData.tipo.toUpperCase()+'</strong> dentro de tu presupuesto.',true,800);
+    await addMsg('Si quieres adelantarte, puedes escribirnos directo:',true,500);
+    var waMsg=encodeURIComponent('Hola Alabol! Soy '+chatData.nombre+'. Busco un '+chatData.tipo+' con presupuesto de $'+Number(presMax).toLocaleString('es-MX')+'. Quiero ver opciones.');
+    await new Promise(function(r){setTimeout(r,300)});
+    addButtons([
+      {label:'Escribir a Alabol por WhatsApp',value:'wa'},
+      {label:'Ver inventario',value:'inv'},
+      {label:'Usar Matchmaker IA',value:'match'}
+    ],function(v){
+      if(typeof fbq==='function')fbq('track','Contact');
+      if(v==='wa')window.open('https://api.whatsapp.com/send?phone=525568667571&text='+waMsg,'_blank');
+      else if(v==='inv')window.location.href='https://alabolcar.com.mx/inventario.html';
+      else window.location.href='https://alabolcar.com.mx/vip/';
+    });
+  } else {
+    await addMsg('Gracias <strong style="color:white;">'+chatData.nombre+'</strong>! Tu perfil esta guardado.',true,500);
+    await addMsg('Te recomiendo usar nuestro Matchmaker — el algoritmo cruza tus preferencias con el inventario real de agencias y te muestra tus mejores opciones.',true,800);
+    addButtons([
+      {label:'Usar Matchmaker IA',value:'match'},
+      {label:'Ver inventario',value:'inv'}
+    ],function(v){
+      if(v==='match')window.location.href='https://alabolcar.com.mx/vip/';
+      else window.location.href='https://alabolcar.com.mx/inventario.html';
+    });
+  }
+}
 
 
 // Ticker
 var msgs=['💘 Alguien en Cancun hizo match con un Toyota RAV4 2023','🚗 Nueva Hyundai Tucson 2024 agregada al inventario','📱 3 personas buscando SUV en los ultimos 30 min','✅ BMW X3 2022 verificada y publicada hoy','💬 Israel respondio 12 consultas en la ultima hora','🔥 Mazda CX-5 2023 — 4 personas interesadas','📍 Nuevo inventario disponible en CDMX y Cancun','💘 Match de 94% encontrado para un comprador en Merida'];
 var ti=0;function rotTick(){var el=document.getElementById('tickerText');el.style.animation='none';void el.offsetHeight;el.textContent=msgs[ti];el.style.animation='tick 4s ease-in-out';ti=(ti+1)%msgs.length}rotTick();setInterval(rotTick,4500);
+
+// Auto-show chat trigger after 8s
+setTimeout(function(){
+  if(!chatOpened&&window.scrollY<300){
+    var ct=document.getElementById('chatTrigger');
+    var cd=document.getElementById('chatDot');
+    ct.style.display='flex';cd.style.display='block';
+  }
+},8000);
 
 // Bubbles
 (function(){var c=document.getElementById('bubbles');for(var i=0;i<12;i++){var b=document.createElement('div');b.className='bubble';var s=Math.random()*20+8;b.style.width=s+'px';b.style.height=s+'px';b.style.left=Math.random()*100+'%';b.style.setProperty('--dur',(Math.random()*10+8)+'s');b.style.setProperty('--sc',Math.random()*0.5+0.5);b.style.setProperty('--op',Math.random()*0.3+0.1);b.style.setProperty('--sw',(Math.random()*2-1).toFixed(2));b.style.animationDelay=Math.random()*10+'s';c.appendChild(b)}})();
@@ -481,7 +744,7 @@ var ti=0;function rotTick(){var el=document.getElementById('tickerText');el.styl
     }).catch(function(){});
   }
 
-  function trackEvent(step,name){
+  window.trackEvent=function(step,name){
     if(tracked[name])return;
     tracked[name]=true;
     track('funnel_events',{step_number:step,step_name:name});

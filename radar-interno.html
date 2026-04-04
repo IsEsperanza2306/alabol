@@ -2492,12 +2492,16 @@
                     <td style="font-size:11px;">${i.agencia_id || 'particular'}</td>
                     <td><span style="background:${sc}22;color:${sc};border:1px solid ${sc}44;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700;text-transform:uppercase;">${i.estatus || 'disponible'}</span></td>
                     <td>
-                        <select onchange="changeInvStatus('${i.id}', this.value)" style="background:var(--bg-mid);border:1px solid var(--glass-border);color:var(--green-text);padding:4px 8px;border-radius:6px;font-size:11px;cursor:pointer;">
-                            <option value="disponible" ${i.estatus==='disponible'?'selected':''}>Disponible</option>
-                            <option value="vendido" ${i.estatus==='vendido'?'selected':''}>Vendido</option>
-                            <option value="reservado" ${i.estatus==='reservado'?'selected':''}>Reservado</option>
-                            <option value="inactivo" ${i.estatus==='inactivo'?'selected':''}>Inactivo</option>
-                        </select>
+                        <div style="display:flex;gap:4px;align-items:center;">
+                            <select onchange="changeInvStatus('${i.id}', this.value)" style="background:var(--bg-mid);border:1px solid var(--glass-border);color:var(--green-text);padding:4px 8px;border-radius:6px;font-size:11px;cursor:pointer;">
+                                <option value="disponible" ${i.estatus==='disponible'?'selected':''}>Disponible</option>
+                                <option value="vendido" ${i.estatus==='vendido'?'selected':''}>Vendido</option>
+                                <option value="reservado" ${i.estatus==='reservado'?'selected':''}>Reservado</option>
+                                <option value="inactivo" ${i.estatus==='inactivo'?'selected':''}>Inactivo</option>
+                            </select>
+                            <button onclick="openEditModal('${i.id}')" style="background:var(--gold);color:var(--bg-dark);border:none;padding:4px 8px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;" title="Editar">✏️</button>
+                            <button onclick="toggleDestacado('${i.id}', ${i.destacado ? 'true' : 'false'})" style="background:${i.destacado ? 'var(--gold)' : 'var(--bg-mid)'};color:${i.destacado ? 'var(--bg-dark)' : 'var(--green-text)'};border:1px solid var(--glass-border);padding:4px 8px;border-radius:6px;font-size:10px;cursor:pointer;" title="${i.destacado ? 'Quitar destacado' : 'Destacar'}">⭐</button>
+                        </div>
                     </td>
                 </tr>`;
             }).join('');
@@ -2512,6 +2516,84 @@
 
         function filterInvTable() {
             if (window._invData) renderInvTable(window._invData);
+        }
+
+        async function toggleDestacado(id, current) {
+            try {
+                await supabaseClient.from('inventario').update({ destacado: !current, updated_at: new Date().toISOString() }).eq('id', id);
+                loadInventarioTab();
+            } catch(e) { console.error('Destacado error:', e); }
+        }
+
+        function openEditModal(id) {
+            var car = (window._invData || []).find(function(i) { return i.id === id; });
+            if (!car) return;
+            var m = document.getElementById('editModal');
+            if (!m) {
+                m = document.createElement('div');
+                m.id = 'editModal';
+                m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;';
+                m.onclick = function(e) { if (e.target === m) m.style.display = 'none'; };
+                document.body.appendChild(m);
+            }
+            m.innerHTML = '<div style="background:var(--bg-mid);border:1px solid var(--glass-border);border-radius:16px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;padding:24px;">'
+                + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">'
+                    + '<h3 style="color:white;font-size:16px;">Editar: ' + (car.marca||'') + ' ' + (car.modelo||'') + '</h3>'
+                    + '<button onclick="document.getElementById(\'editModal\').style.display=\'none\'" style="background:none;border:none;color:var(--green-text);font-size:20px;cursor:pointer;">&times;</button>'
+                + '</div>'
+                + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">'
+                    + editField('Marca', 'eMarca', car.marca || '')
+                    + editField('Modelo', 'eModelo', car.modelo || '')
+                    + editField('Año', 'eAnio', car.anio || '', 'number')
+                    + editField('Precio', 'ePrecio', car.precio_venta || '', 'number')
+                    + editField('Kilometraje', 'eKm', car.kilometraje || 0, 'number')
+                    + editField('Ciudad', 'eCiudad', car.ciudad || '')
+                    + editField('Color', 'eColor', car.color || '')
+                    + editField('Transmision', 'eTrans', car.transmision || '')
+                + '</div>'
+                + '<div style="margin-top:10px;">'
+                    + '<label style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:0.05em;">Descripcion</label>'
+                    + '<textarea id="eDesc" style="width:100%;padding:8px;background:var(--bg-dark);border:1px solid var(--glass-border);border-radius:8px;color:white;font-family:inherit;font-size:12px;min-height:60px;resize:vertical;">' + (car.descripcion||'') + '</textarea>'
+                + '</div>'
+                + '<div style="margin-top:10px;">'
+                    + '<label style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:0.05em;">Fotos (URLs separadas por coma)</label>'
+                    + '<textarea id="eFotos" style="width:100%;padding:8px;background:var(--bg-dark);border:1px solid var(--glass-border);border-radius:8px;color:white;font-family:inherit;font-size:11px;min-height:40px;resize:vertical;">' + (car.fotos||[]).join(', ') + '</textarea>'
+                + '</div>'
+                + (car.fotos && car.fotos.length ? '<div style="display:flex;gap:4px;margin-top:8px;overflow-x:auto;">' + car.fotos.map(function(f,i){return '<img src="'+f+'" style="width:60px;height:45px;object-fit:cover;border-radius:6px;border:1px solid var(--glass-border);">';}).join('') + '</div>' : '')
+                + '<div style="margin-top:16px;display:flex;gap:8px;">'
+                    + '<button onclick="saveEditModal(\'' + id + '\')" style="flex:1;padding:12px;background:var(--gold);color:var(--bg-dark);border:none;border-radius:10px;font-weight:800;font-size:13px;cursor:pointer;">Guardar cambios</button>'
+                    + '<button onclick="document.getElementById(\'editModal\').style.display=\'none\'" style="padding:12px 20px;background:var(--bg-dark);color:var(--green-text);border:1px solid var(--glass-border);border-radius:10px;font-size:13px;cursor:pointer;">Cancelar</button>'
+                + '</div>'
+            + '</div>';
+            m.style.display = 'flex';
+        }
+
+        function editField(label, id, value, type) {
+            return '<div><label style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:0.05em;">' + label + '</label>'
+                + '<input id="' + id + '" value="' + value + '" type="' + (type||'text') + '" style="width:100%;padding:8px;background:var(--bg-dark);border:1px solid var(--glass-border);border-radius:8px;color:white;font-family:inherit;font-size:12px;"></div>';
+        }
+
+        async function saveEditModal(id) {
+            var fotosRaw = document.getElementById('eFotos').value;
+            var fotos = fotosRaw.split(',').map(function(f){return f.trim()}).filter(function(f){return f.startsWith('http')});
+            var update = {
+                marca: document.getElementById('eMarca').value.trim(),
+                modelo: document.getElementById('eModelo').value.trim(),
+                anio: parseInt(document.getElementById('eAnio').value) || 0,
+                precio_venta: parseFloat(document.getElementById('ePrecio').value) || 0,
+                kilometraje: parseInt(document.getElementById('eKm').value) || 0,
+                ciudad: document.getElementById('eCiudad').value.trim(),
+                color: document.getElementById('eColor').value.trim(),
+                transmision: document.getElementById('eTrans').value.trim(),
+                descripcion: document.getElementById('eDesc').value.trim(),
+                fotos: fotos.length > 0 ? fotos : undefined,
+                updated_at: new Date().toISOString()
+            };
+            try {
+                await supabaseClient.from('inventario').update(update).eq('id', id);
+                document.getElementById('editModal').style.display = 'none';
+                loadInventarioTab();
+            } catch(e) { alert('Error: ' + e.message); }
         }
 
         // =====================

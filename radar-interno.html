@@ -145,6 +145,7 @@ body{background:var(--bg);color:var(--white);min-height:100vh;display:flex;backg
     <button class="nav-item" onclick="switchTab('inventario')" data-tab="inventario"><i class="fa-solid fa-warehouse"></i>Inventario</button>
     <button class="nav-item" onclick="switchTab('agencias')" data-tab="agencias"><i class="fa-solid fa-building"></i>Agencias</button>
     <button class="nav-item" onclick="switchTab('trafico')" data-tab="trafico"><i class="fa-solid fa-chart-line"></i>Trafico & Reportes</button>
+    <button class="nav-item" onclick="switchTab('reportes')" data-tab="reportes"><i class="fa-solid fa-file-chart-column"></i>Reportes BI</button>
     <button class="nav-item" onclick="switchTab('herramientas')" data-tab="herramientas"><i class="fa-solid fa-gear"></i>Herramientas</button>
   </div>
   <div class="sidebar-footer">
@@ -208,21 +209,37 @@ body{background:var(--bg);color:var(--white);min-height:100vh;display:flex;backg
 <div class="tab" id="tab-leads">
   <div class="kpi-row" id="leadsKpis"></div>
 
+  <!-- Pipeline visual -->
+  <div class="section" style="margin-bottom:14px;">
+    <div class="section-title"><i class="fa-solid fa-diagram-project"></i>Pipeline visual</div>
+    <div id="pipelineVisual" style="display:flex;gap:4px;overflow-x:auto;"></div>
+  </div>
+
   <!-- Filtros -->
   <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
-    <input class="search-input" style="max-width:250px;" id="leadSearch" placeholder="Buscar lead..." oninput="renderLeadsTable()">
+    <input class="search-input" style="max-width:200px;" id="leadSearch" placeholder="Buscar lead..." oninput="renderLeadsTable()">
     <select id="leadTempFilter" onchange="renderLeadsTable()" style="padding:8px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:10px;color:var(--white);font-size:12px;">
-      <option value="all">Todas las temperaturas</option>
+      <option value="all">Todas temperaturas</option>
       <option value="caliente">🔥 Caliente</option>
       <option value="tibio">📞 Tibio</option>
       <option value="frio">💤 Frio</option>
       <option value="nuevo">🆕 Nuevo</option>
     </select>
+    <select id="leadAsesorFilter" onchange="renderLeadsTable()" style="padding:8px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:10px;color:var(--white);font-size:12px;">
+      <option value="all">Todos los asesores</option>
+      <option value="sin_asignar">Sin asignar</option>
+    </select>
   </div>
 
   <div class="section">
     <div class="section-title"><i class="fa-solid fa-fire"></i>Pipeline de leads</div>
-    <div style="overflow-x:auto;"><table class="tbl"><thead><tr><th>Nombre</th><th>Busca</th><th>Presupuesto</th><th>Ciudad</th><th>Temp.</th><th>Etapa</th><th>Dinero</th><th>Fecha</th><th>Acciones</th></tr></thead><tbody id="leadsTableBody"></tbody></table></div>
+    <div style="overflow-x:auto;"><table class="tbl"><thead><tr><th>Nombre</th><th>Busca</th><th>Presupuesto</th><th>Temp.</th><th>Dias</th><th>Asesor</th><th>Etapa</th><th>Acciones</th></tr></thead><tbody id="leadsTableBody"></tbody></table></div>
+  </div>
+
+  <!-- Leads sin atención -->
+  <div class="section">
+    <div class="section-title"><i class="fa-solid fa-triangle-exclamation" style="color:var(--danger);"></i>Leads sin atencion (>3 dias)</div>
+    <div id="leadsAlertBody"></div>
   </div>
 
   <!-- Citas -->
@@ -295,7 +312,57 @@ body{background:var(--bg);color:var(--white);min-height:100vh;display:flex;backg
 </div>
 
 <!-- ══════════════════════════════════════════ -->
-<!-- TAB 6: HERRAMIENTAS -->
+<!-- TAB 6: REPORTES BI -->
+<!-- ══════════════════════════════════════════ -->
+<div class="tab" id="tab-reportes">
+  <div class="kpi-row" id="repKpis"></div>
+
+  <!-- Selector de periodo -->
+  <div style="display:flex;gap:8px;margin-bottom:14px;">
+    <select id="repPeriod" onchange="renderReportes()" style="padding:8px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:10px;color:var(--white);font-size:12px;">
+      <option value="7">Ultimos 7 dias</option>
+      <option value="30" selected>Ultimos 30 dias</option>
+      <option value="90">Ultimos 90 dias</option>
+      <option value="365">Ultimo año</option>
+    </select>
+    <button class="btn btn-outline" onclick="exportReportPDF()"><i class="fa-solid fa-file-pdf"></i> Exportar PDF</button>
+    <button class="btn btn-outline" onclick="exportCSV()"><i class="fa-solid fa-download"></i> Exportar CSV</button>
+  </div>
+
+  <div class="chart-grid">
+    <!-- Conversión general -->
+    <div class="section">
+      <div class="section-title"><i class="fa-solid fa-bullseye"></i>Metricas de conversion</div>
+      <div id="repConversionBody"></div>
+    </div>
+    <!-- Performance por asesor -->
+    <div class="section">
+      <div class="section-title"><i class="fa-solid fa-user-tie"></i>Performance por asesor</div>
+      <div id="repAsesorBody"></div>
+    </div>
+  </div>
+
+  <!-- Tendencias -->
+  <div class="section">
+    <div class="section-title"><i class="fa-solid fa-chart-line"></i>Tendencia de leads por semana</div>
+    <div class="chart-container" style="height:220px;"><canvas id="chartTendencia"></canvas></div>
+  </div>
+
+  <!-- Concentrado BI -->
+  <div class="section">
+    <div class="section-title"><i class="fa-solid fa-brain"></i>Concentrado de Inteligencia de Negocio</div>
+    <div id="repBIBody"></div>
+  </div>
+
+  <!-- Revenue tracking -->
+  <div class="section">
+    <div class="section-title"><i class="fa-solid fa-coins"></i>Revenue tracking</div>
+    <div id="repRevenueBody"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- TAB 7: HERRAMIENTAS -->
 <!-- ══════════════════════════════════════════ -->
 <div class="tab" id="tab-herramientas">
   <div class="section">
@@ -362,6 +429,9 @@ async function loadAll(){
     G.funnel = funnelR.data || [];
     G.citas = citasR.data || [];
     G.apps = appsR.data || [];
+    // Load asesores
+    var asrR = await sb.from('perfiles').select('id,nombre,email,rol').eq('activo',true);
+    asesores = (asrR.data||[]).filter(function(a){return a.rol==='admin'||a.rol==='asesor'});
   } catch(e){ console.error('Load error:',e); }
   renderCurrentTab();
 }
@@ -370,7 +440,8 @@ async function loadAll(){
 // TAB SWITCHING
 // ══════════════════════════════════════════
 var currentTab = 'dashboard';
-var tabTitles = {dashboard:'📊 <span>Dashboard</span>',leads:'👥 <span>Leads & Pipeline</span>',inventario:'🚘 <span>Inventario</span>',agencias:'🏢 <span>Agencias</span>',trafico:'📈 <span>Trafico & Reportes</span>',herramientas:'⚙️ <span>Herramientas</span>'};
+var tabTitles = {dashboard:'📊 <span>Dashboard</span>',leads:'👥 <span>Leads & Pipeline</span>',inventario:'🚘 <span>Inventario</span>',agencias:'🏢 <span>Agencias</span>',trafico:'📈 <span>Trafico & Analitica</span>',reportes:'📋 <span>Reportes BI</span>',herramientas:'⚙️ <span>Herramientas</span>'};
+var asesores = [];
 
 function switchTab(id){
   currentTab = id;
@@ -389,6 +460,7 @@ function renderCurrentTab(){
   else if(currentTab==='inventario')renderInventario();
   else if(currentTab==='agencias')renderAgencias();
   else if(currentTab==='trafico')renderTrafico();
+  else if(currentTab==='reportes')renderReportes();
   else if(currentTab==='herramientas')renderHerramientas();
 }
 
@@ -527,15 +599,49 @@ function renderLeads(){
   var tibio=leads.filter(function(l){return l.temperatura==='tibio'}).length;
   var frio=leads.filter(function(l){return l.temperatura==='frio'}).length;
   var nuevo=leads.filter(function(l){return l.temperatura==='nuevo'}).length;
+  var sinAsignar=leads.filter(function(l){return !l.asesor_id}).length;
+  var sinAtencion=leads.filter(function(l){return daysSince(l.ultima_actividad_at||l.created_at)>3&&l.estatus==='buscando'}).length;
   var total=leads.length;
 
   document.getElementById('leadsKpis').innerHTML =
-    kpiCard('Total leads',total,'')
+    kpiCard('Total',total,'')
     + kpiCard('🔥 Calientes',hot,total?Math.round(hot/total*100)+'%':'','danger')
     + kpiCard('📞 Tibios',tibio,total?Math.round(tibio/total*100)+'%':'','warn')
-    + kpiCard('💤 Frios',frio,'','teal')
     + kpiCard('🆕 Nuevos',nuevo,'','purple')
-    + kpiCard('Citas',G.citas.length,G.citas.filter(function(c){return c.estatus==='confirmada'}).length+' confirmadas','');
+    + kpiCard('Sin asignar',sinAsignar,total?Math.round(sinAsignar/total*100)+'%':'','danger')
+    + kpiCard('⚠️ Sin atencion',sinAtencion,'>3 dias','danger');
+
+  // Pipeline visual
+  var etapas=['nuevo_lead','contactado','match_enviado','cita_agendada','cita_completada','negociando','cerrado'];
+  var etapaLabels={'nuevo_lead':'Nuevo','contactado':'Contactado','match_enviado':'Match','cita_agendada':'Cita','cita_completada':'Visito','negociando':'Negocia','cerrado':'Cerrado'};
+  var etapaColors={'nuevo_lead':'var(--purple)','contactado':'var(--teal)','match_enviado':'var(--gold)','cita_agendada':'var(--warn)','cita_completada':'var(--emerald)','negociando':'#3b82f6','cerrado':'var(--danger)'};
+  document.getElementById('pipelineVisual').innerHTML=etapas.map(function(e){
+    var count=leads.filter(function(l){return l.etapa_funnel===e}).length;
+    return '<div style="flex:1;min-width:80px;background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:10px;padding:10px 8px;text-align:center;">'
+      +'<div style="font-size:20px;font-weight:800;color:'+(etapaColors[e]||'var(--txt)')+';">'+count+'</div>'
+      +'<div style="font-size:9px;color:var(--txt);margin-top:2px;">'+etapaLabels[e]+'</div>'
+    +'</div>';
+  }).join('<div style="display:flex;align-items:center;color:var(--border);font-size:10px;">→</div>');
+
+  // Asesor filter
+  var asel=document.getElementById('leadAsesorFilter');
+  var curAF=asel.value;
+  asel.innerHTML='<option value="all">Todos</option><option value="sin_asignar">Sin asignar</option>';
+  asesores.forEach(function(a){var o=document.createElement('option');o.value=a.id;o.textContent=a.nombre;asel.appendChild(o)});
+  asel.value=curAF;
+
+  // Leads sin atención
+  var alertLeads=leads.filter(function(l){return daysSince(l.ultima_actividad_at||l.created_at)>3&&l.estatus==='buscando'});
+  document.getElementById('leadsAlertBody').innerHTML=alertLeads.length===0
+    ?'<p style="font-size:12px;color:var(--emerald);"><i class="fa-solid fa-check-circle"></i> Todos los leads estan atendidos</p>'
+    :alertLeads.slice(0,5).map(function(l){
+      var dias=daysSince(l.ultima_actividad_at||l.created_at);
+      var waMsg=encodeURIComponent('Hola '+l.nombre+', soy de Alabol Car Broker. Queria darle seguimiento a tu busqueda de '+(l.tipo_vehiculo||'auto')+'. Como vas?');
+      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">'
+        +'<div><span style="color:white;font-weight:600;font-size:12px;">'+l.nombre+'</span> <span style="font-size:10px;color:var(--danger);">'+dias+' dias sin contacto</span></div>'
+        +'<a href="https://wa.me/52'+l.whatsapp+'?text='+waMsg+'" target="_blank" class="btn btn-sm btn-danger"><i class="fa-brands fa-whatsapp"></i> Intervenir</a>'
+      +'</div>';
+    }).join('');
 
   renderLeadsTable();
   renderCitas();
@@ -544,15 +650,57 @@ function renderLeads(){
 function renderLeadsTable(){
   var search=(document.getElementById('leadSearch').value||'').toLowerCase();
   var tempF=document.getElementById('leadTempFilter').value;
+  var asesorF=document.getElementById('leadAsesorFilter').value;
   var filtered=G.leads.filter(function(l){
     var matchS=!search||(l.nombre+' '+(l.tipo_vehiculo||'')+' '+(l.ciudad||'')).toLowerCase().includes(search);
     var matchT=tempF==='all'||l.temperatura===tempF;
-    return matchS&&matchT;
+    var matchA=asesorF==='all'||(asesorF==='sin_asignar'?!l.asesor_id:l.asesor_id===asesorF);
+    return matchS&&matchT&&matchA;
   });
+
+  var asesorOpts=asesores.map(function(a){return '<option value="'+a.id+'">'+a.nombre+'</option>'}).join('');
+
   document.getElementById('leadsTableBody').innerHTML=filtered.map(function(l){
+    var dias=daysSince(l.ultima_actividad_at||l.created_at);
+    var diasColor=dias>7?'var(--danger)':dias>3?'var(--warn)':'var(--emerald)';
+    var asesor=asesores.find(function(a){return a.id===l.asesor_id});
     var waMsg=encodeURIComponent('Hola '+l.nombre+', soy de Alabol Car Broker. Te contacto sobre tu busqueda de '+(l.tipo_vehiculo||'auto')+'.');
-    return '<tr><td style="color:white;font-weight:600;">'+l.nombre+'</td><td>'+(l.tipo_vehiculo||'—')+'</td><td style="color:var(--gold);">'+fmt(l.presupuesto_max)+'</td><td>'+(l.ciudad||'—')+'</td><td>'+tempBadge(l.temperatura)+'</td><td><span class="badge badge-gold">'+(l.etapa_funnel||'nuevo')+'</span></td><td>'+(l.dinero_listo==='si'?'<span class="badge badge-emerald">Si</span>':'<span class="badge badge-warn">'+(l.dinero_listo||'—')+'</span>')+'</td><td>'+fmtDate(l.created_at)+'</td><td><a href="https://wa.me/52'+l.whatsapp+'?text='+waMsg+'" target="_blank" class="btn btn-sm btn-emerald"><i class="fa-brands fa-whatsapp"></i></a></td></tr>';
+
+    return '<tr>'
+      +'<td style="color:white;font-weight:600;">'+l.nombre+'<div style="font-size:9px;color:var(--txt);opacity:0.6;">'+l.whatsapp+'</div></td>'
+      +'<td>'+(l.tipo_vehiculo||'—')+'</td>'
+      +'<td style="color:var(--gold);font-weight:700;">'+fmt(l.presupuesto_max)+'</td>'
+      +'<td><select onchange="updateLeadTemp(\''+l.id+'\',this.value)" style="background:var(--bg2);border:1px solid var(--border);color:var(--txt);padding:3px 6px;border-radius:6px;font-size:10px;"><option value="nuevo" '+(l.temperatura==='nuevo'?'selected':'')+'>🆕 Nuevo</option><option value="caliente" '+(l.temperatura==='caliente'?'selected':'')+'>🔥 Caliente</option><option value="tibio" '+(l.temperatura==='tibio'?'selected':'')+'>📞 Tibio</option><option value="frio" '+(l.temperatura==='frio'?'selected':'')+'>💤 Frio</option></select></td>'
+      +'<td style="color:'+diasColor+';font-weight:700;font-size:11px;">'+dias+'d</td>'
+      +'<td><select onchange="assignAsesor(\''+l.id+'\',this.value)" style="background:var(--bg2);border:1px solid var(--border);color:var(--txt);padding:3px 6px;border-radius:6px;font-size:10px;"><option value="">Sin asignar</option>'+asesorOpts.replace('value="'+(l.asesor_id||'')+'"','value="'+(l.asesor_id||'')+'" selected')+'</select></td>'
+      +'<td><select onchange="updateLeadEtapa(\''+l.id+'\',this.value)" style="background:var(--bg2);border:1px solid var(--border);color:var(--txt);padding:3px;border-radius:6px;font-size:9px;"><option value="nuevo_lead" '+(l.etapa_funnel==='nuevo_lead'?'selected':'')+'>Nuevo</option><option value="contactado" '+(l.etapa_funnel==='contactado'?'selected':'')+'>Contactado</option><option value="match_enviado" '+(l.etapa_funnel==='match_enviado'?'selected':'')+'>Match</option><option value="cita_agendada" '+(l.etapa_funnel==='cita_agendada'?'selected':'')+'>Cita</option><option value="cita_completada" '+(l.etapa_funnel==='cita_completada'?'selected':'')+'>Visito</option><option value="negociando" '+(l.etapa_funnel==='negociando'?'selected':'')+'>Negocia</option><option value="cerrado" '+(l.etapa_funnel==='cerrado'?'selected':'')+'>Cerrado</option></select></td>'
+      +'<td><div style="display:flex;gap:3px;"><a href="https://wa.me/52'+l.whatsapp+'?text='+waMsg+'" target="_blank" class="btn btn-sm btn-emerald" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>'+(dias>3?'<button onclick="intervenir(\''+l.id+'\')" class="btn btn-sm btn-danger" title="Intervenir"><i class="fa-solid fa-bolt"></i></button>':'')+'</div></td>'
+    +'</tr>';
   }).join('');
+}
+
+async function updateLeadTemp(id,temp){
+  await sb.from('leads_matchmaker').update({temperatura:temp,updated_at:new Date().toISOString()}).eq('id',id);
+  var l=G.leads.find(function(x){return x.id===id});if(l)l.temperatura=temp;
+}
+
+async function updateLeadEtapa(id,etapa){
+  await sb.from('leads_matchmaker').update({etapa_funnel:etapa,updated_at:new Date().toISOString()}).eq('id',id);
+  var l=G.leads.find(function(x){return x.id===id});if(l)l.etapa_funnel=etapa;
+}
+
+async function assignAsesor(id,asesorId){
+  await sb.from('leads_matchmaker').update({asesor_id:asesorId||null,updated_at:new Date().toISOString()}).eq('id',id);
+  var l=G.leads.find(function(x){return x.id===id});if(l)l.asesor_id=asesorId||null;
+}
+
+function intervenir(id){
+  var l=G.leads.find(function(x){return x.id===id});if(!l)return;
+  var waMsg=encodeURIComponent('Hola '+l.nombre+'! Soy Israel de Alabol Car Broker. Vi que estas buscando un '+(l.tipo_vehiculo||'auto')+' y queria personalmente ayudarte. Tenemos opciones nuevas que creo te van a interesar. Te puedo llamar?');
+  window.open('https://wa.me/52'+l.whatsapp+'?text='+waMsg,'_blank');
+  // Update last activity
+  sb.from('leads_matchmaker').update({ultima_actividad_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',id);
+  l.ultima_actividad_at=new Date().toISOString();
 }
 
 function renderCitas(){
@@ -796,6 +944,123 @@ function renderTrafico(){
     return '<tr><td style="color:white;font-weight:600;">'+s+'</td><td>'+sources[s]+'</td><td>'+Math.round(sources[s]/(visits30.length||1)*100)+'%</td></tr>';
   }).join('');
 }
+
+// ══════════════════════════════════════════
+// TAB 6: REPORTES BI
+// ══════════════════════════════════════════
+function renderReportes(){
+  var days=parseInt(document.getElementById('repPeriod').value)||30;
+  var cutoff=Date.now()-days*86400000;
+  var leadsP=G.leads.filter(function(l){return new Date(l.created_at).getTime()>cutoff});
+  var visitsP=G.visits.filter(function(v){return new Date(v.created_at).getTime()>cutoff});
+  var citasP=G.citas.filter(function(c){return new Date(c.created_at).getTime()>cutoff});
+  var conv=visitsP.length?Math.round(leadsP.length/visitsP.length*100):0;
+  var hot=leadsP.filter(function(l){return l.temperatura==='caliente'}).length;
+  var cerrados=leadsP.filter(function(l){return l.etapa_funnel==='cerrado'}).length;
+  var conCita=citasP.length;
+  var completadas=citasP.filter(function(c){return c.estatus==='completada'}).length;
+
+  document.getElementById('repKpis').innerHTML =
+    kpiCard('Periodo',days+' dias','')
+    + kpiCard('Visitas',visitsP.length,'')
+    + kpiCard('Leads nuevos',leadsP.length,conv+'% conversion','emerald')
+    + kpiCard('Calientes',hot,leadsP.length?Math.round(hot/leadsP.length*100)+'%':'','danger')
+    + kpiCard('Citas',conCita,completadas+' completadas','warn')
+    + kpiCard('Cerrados',cerrados,'','teal');
+
+  // Conversion funnel metrics
+  var funnelP=G.funnel.filter(function(f){return new Date(f.created_at).getTime()>cutoff});
+  var step1=funnelP.filter(function(f){return f.step_number===1}).length;
+  var step5=funnelP.filter(function(f){return f.step_number===5}).length;
+  var matchConv=step1?Math.round(step5/step1*100):0;
+
+  document.getElementById('repConversionBody').innerHTML =
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">'
+      +'<div style="text-align:center;">'+pctRing(conv,'var(--gold)',90)+'<div style="font-size:10px;color:var(--txt);margin-top:4px;">Visita → Lead</div></div>'
+      +'<div style="text-align:center;">'+pctRing(matchConv,'var(--emerald)',90)+'<div style="font-size:10px;color:var(--txt);margin-top:4px;">Matchmaker → Completado</div></div>'
+    +'</div>'
+    +'<div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;text-align:center;">'
+      +'<div style="background:var(--bg);border-radius:8px;padding:8px;"><div style="font-size:16px;font-weight:800;color:var(--gold);">'+leadsP.length+'</div><div style="font-size:9px;color:var(--txt);">Leads</div></div>'
+      +'<div style="background:var(--bg);border-radius:8px;padding:8px;"><div style="font-size:16px;font-weight:800;color:var(--warn);">'+conCita+'</div><div style="font-size:9px;color:var(--txt);">Citas</div></div>'
+      +'<div style="background:var(--bg);border-radius:8px;padding:8px;"><div style="font-size:16px;font-weight:800;color:var(--emerald);">'+cerrados+'</div><div style="font-size:9px;color:var(--txt);">Cerrados</div></div>'
+    +'</div>';
+
+  // Performance por asesor
+  var asesorPerf={};
+  leadsP.forEach(function(l){
+    var aid=l.asesor_id||'sin_asignar';
+    if(!asesorPerf[aid])asesorPerf[aid]={total:0,calientes:0,cerrados:0,name:'Sin asignar'};
+    asesorPerf[aid].total++;
+    if(l.temperatura==='caliente')asesorPerf[aid].calientes++;
+    if(l.etapa_funnel==='cerrado')asesorPerf[aid].cerrados++;
+    var asesor=asesores.find(function(a){return a.id===aid});
+    if(asesor)asesorPerf[aid].name=asesor.nombre;
+  });
+  var asesorKeys=Object.keys(asesorPerf).sort(function(a,b){return asesorPerf[b].total-asesorPerf[a].total});
+  document.getElementById('repAsesorBody').innerHTML=asesorKeys.length===0
+    ?'<p style="font-size:12px;color:var(--txt);opacity:0.5;">Sin datos</p>'
+    :asesorKeys.map(function(k){
+      var a=asesorPerf[k];
+      var closePct=a.total?Math.round(a.cerrados/a.total*100):0;
+      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">'
+        +'<div><div style="color:white;font-weight:600;font-size:12px;">'+a.name+'</div><div style="font-size:10px;color:var(--txt);">'+a.total+' leads · '+a.calientes+' calientes</div></div>'
+        +'<div style="text-align:right;"><div style="font-size:14px;font-weight:800;color:'+(closePct>20?'var(--emerald)':'var(--warn)')+';">'+closePct+'%</div><div style="font-size:9px;color:var(--txt);">cierre</div></div>'
+      +'</div>';
+    }).join('');
+
+  // Tendencia semanal
+  destroyChart('chartTendencia');
+  var weeks={};
+  G.leads.forEach(function(l){
+    var d=new Date(l.created_at);
+    var weekStart=new Date(d);weekStart.setDate(d.getDate()-d.getDay());
+    var key=weekStart.toISOString().slice(0,10);
+    weeks[key]=(weeks[key]||0)+1;
+  });
+  var weekKeys=Object.keys(weeks).sort().slice(-12);
+  charts.chartTendencia=new Chart(document.getElementById('chartTendencia'),{
+    type:'line',
+    data:{labels:weekKeys.map(function(k){return k.slice(5)}),datasets:[{label:'Leads por semana',data:weekKeys.map(function(k){return weeks[k]}),borderColor:'var(--gold)',backgroundColor:'rgba(212,175,55,0.1)',fill:true,tension:0.4,pointBackgroundColor:'var(--gold)'}]},
+    options:{responsive:true,maintainAspectRatio:false,scales:{x:{ticks:{color:'#a8c5b8',font:{size:9}}},y:{ticks:{color:'#a8c5b8'}}},plugins:{legend:{labels:{color:'#a8c5b8'}}}}
+  });
+
+  // Concentrado BI
+  var topTipo='—',topMarca='—',topCiudad='—',topPresupuesto='—';
+  var tipos={},marcas={},ciudades={},rangos={'<250k':0,'250-400k':0,'400-600k':0,'600k-1M':0,'+1M':0};
+  leadsP.forEach(function(l){
+    var t=l.tipo_vehiculo||'otro';tipos[t]=(tipos[t]||0)+1;
+    (l.marcas||[]).forEach(function(m){marcas[m]=(marcas[m]||0)+1});
+    var c=l.ciudad||'N/A';ciudades[c]=(ciudades[c]||0)+1;
+    var p=parseFloat(l.presupuesto_max)||0;
+    if(p<=250000)rangos['<250k']++;else if(p<=400000)rangos['250-400k']++;else if(p<=600000)rangos['400-600k']++;else if(p<=1000000)rangos['600k-1M']++;else rangos['+1M']++;
+  });
+  topTipo=Object.keys(tipos).sort(function(a,b){return tipos[b]-tipos[a]})[0]||'—';
+  topMarca=Object.keys(marcas).sort(function(a,b){return marcas[b]-marcas[a]})[0]||'—';
+  topCiudad=Object.keys(ciudades).sort(function(a,b){return ciudades[b]-ciudades[a]})[0]||'—';
+  topPresupuesto=Object.keys(rangos).sort(function(a,b){return rangos[b]-rangos[a]})[0]||'—';
+
+  document.getElementById('repBIBody').innerHTML =
+    '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;">'
+      +'<div style="background:var(--bg);border-radius:10px;padding:14px;text-align:center;border-left:3px solid var(--gold);"><div style="font-size:10px;color:var(--txt);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">Tipo mas buscado</div><div style="font-size:16px;font-weight:800;color:var(--gold);text-transform:uppercase;">'+topTipo+'</div></div>'
+      +'<div style="background:var(--bg);border-radius:10px;padding:14px;text-align:center;border-left:3px solid var(--emerald);"><div style="font-size:10px;color:var(--txt);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">Marca estrella</div><div style="font-size:16px;font-weight:800;color:var(--emerald);">'+topMarca+'</div></div>'
+      +'<div style="background:var(--bg);border-radius:10px;padding:14px;text-align:center;border-left:3px solid var(--teal);"><div style="font-size:10px;color:var(--txt);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">Ciudad top</div><div style="font-size:16px;font-weight:800;color:var(--teal);">'+topCiudad+'</div></div>'
+      +'<div style="background:var(--bg);border-radius:10px;padding:14px;text-align:center;border-left:3px solid var(--warn);"><div style="font-size:10px;color:var(--txt);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">Rango top</div><div style="font-size:16px;font-weight:800;color:var(--warn);">'+topPresupuesto+'</div></div>'
+    +'</div>'
+    +'<div style="margin-top:12px;background:rgba(212,175,55,0.04);border:1px solid var(--border);border-radius:10px;padding:14px;">'
+      +'<div style="font-size:11px;font-weight:700;color:var(--gold);margin-bottom:6px;">📝 Resumen ejecutivo</div>'
+      +'<p style="font-size:11px;color:var(--txt);line-height:1.7;">En los ultimos <strong style="color:white;">'+days+' dias</strong>, Alabol recibio <strong style="color:white;">'+visitsP.length+' visitas</strong> que generaron <strong style="color:white;">'+leadsP.length+' leads</strong> (conversion del <strong style="color:var(--gold);">'+conv+'%</strong>). El tipo de vehiculo mas demandado es <strong style="color:white;">'+topTipo.toUpperCase()+'</strong>, la marca estrella es <strong style="color:white;">'+topMarca+'</strong> y el rango de presupuesto mas activo es <strong style="color:white;">'+topPresupuesto+'</strong>. Se agendaron <strong style="color:white;">'+conCita+' citas</strong> de las cuales <strong style="color:white;">'+completadas+'</strong> se completaron.</p>'
+    +'</div>';
+
+  // Revenue (placeholder)
+  var ventasCitas=G.citas.filter(function(c){return c.vendido==='si'||c.estatus==='vendida'});
+  document.getElementById('repRevenueBody').innerHTML =
+    '<div style="display:flex;align-items:center;gap:12px;">'
+      +'<div style="text-align:center;">'+pctRing(ventasCitas.length>0?100:0,'var(--emerald)',70)+'</div>'
+      +'<div><div style="font-size:20px;font-weight:800;color:var(--emerald);">'+ventasCitas.length+'</div><div style="font-size:11px;color:var(--txt);">Ventas registradas</div><div style="font-size:10px;color:var(--txt);opacity:0.5;margin-top:4px;">Activa Twilio para automatizar tracking de ventas</div></div>'
+    +'</div>';
+}
+
+function exportReportPDF(){ window.print(); }
 
 function exportCSV(){
   var rows=[['Nombre','WhatsApp','Tipo','Presupuesto','Ciudad','Temperatura','Etapa','Fecha']];

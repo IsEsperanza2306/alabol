@@ -1761,20 +1761,18 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
 
     <!-- Navigation -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <header>
-        <a href="#" class="logo-wrapper">
-            <div class="logo-glow"></div>
-            <img src="logo-circular.png" alt="Alabol Car Broker" class="logo-img">
-        </a>
-
-        <div class="mobile-menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+    <header style="height:50px;padding:0 16px;">
+        <div class="mobile-menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')" style="position:absolute;left:16px;">
             <i class="fa-solid fa-bars"></i>
         </div>
+
+        <a href="#" class="logo-wrapper" style="width:40px;height:40px;position:absolute;left:50%;transform:translateX(-50%);">
+            <img src="logo-circular.png" alt="Alabol Car Broker" class="logo-img" style="width:40px;height:40px;">
+        </a>
 
         <div class="nav-links">
             <a href="/inventario.html">🚗 Inventario</a>
             <a href="/vip/">💘 Matchmaker</a>
-            <a href="/vendedor.html" style="color: var(--gold); font-weight: 700;">🏷️ Vender Auto</a>
             <a href="/oportunidades/">🔥 Subastas</a>
             <a href="/portal-agencias.html">🏢 Agencias</a>
             <a href="./login.html" class="nav-item" id="navAuthBtn">
@@ -1783,21 +1781,20 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
         </div>
     </header>
 
-    <!-- HERO SECTION (Compact - leads to swipe) -->
-    <section class="hero">
-        <div class="hero-badge">El Tinder de los Autos</div>
-        <h1>Encuentra tu <span class="highlight">Media Naranja</span> con Llantas</h1>
-        <p>Desliza, haz match y agenda tu cita. Autos verificados de las mejores agencias.</p>
-        <div class="hero-cta-container">
-            <a href="./vip/" class="btn-premium-gold" style="padding: 14px 28px; font-size: 1rem;">
+    <!-- HERO MINI — directo a la acción -->
+    <section class="hero" style="padding:1rem 5% 0.8rem;min-height:auto;">
+        <div class="hero-badge" style="margin-bottom:0.6rem;">El Tinder de los Autos</div>
+        <h1 style="font-size:1.6rem;margin-bottom:0.4rem;">Encuentra tu <span class="highlight">Media Naranja</span> con Llantas</h1>
+        <p style="font-size:0.85rem;margin-bottom:0.8rem;">Autos verificados de agencias y lotes certificados. Desliza, haz match y agenda tu cita.</p>
+        <div class="hero-cta-container" style="gap:8px;">
+            <a href="./vip/" class="btn-premium-gold" style="padding:12px 24px;font-size:0.9rem;">
                 <i class="fa-solid fa-heart-circle-check"></i>
-                <span>Buscar mi Match</span>
+                <span>Buscar mi Amor sobre Ruedas</span>
             </a>
-            <a href="#inventario" class="btn-premium-teal" style="padding: 14px 28px; font-size: 1rem;">
+            <a href="#inventario" class="btn-premium-teal" style="padding:12px 24px;font-size:0.9rem;">
                 <i class="fa-solid fa-fire"></i> Ver Autos
             </a>
         </div>
-        <style>@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}</style>
     </section>
 
     <!-- INVENTARIO DESTACADO B2C (moved up - first interactive element) -->
@@ -1945,25 +1942,7 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
         </div>
     </section>
 
-    <!-- VENDE EN EL BÚNKER (C2B Focus) -->
-    <section class="about-us" id="vender-bunker"
-        style="background: linear-gradient(135deg, var(--dark-green) 0%, #061d18 100%); border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border);">
-        <div style="max-width: 800px; margin: 0 auto; text-align: center;">
-            <div class="hero-badge" style="background: rgba(212,175,55,0.1); color: var(--gold);">Para Vendedores
-                Particulares</div>
-            <h2 style="font-size: 2.5rem; margin-top: 15px;">¿Quieres Vender tu Auto en el <span
-                    style="color:var(--gold)">Búnker</span>? 🛡️</h2>
-            <p style="font-size: 1.1rem; opacity: 0.9; margin-bottom: 30px;">
-                Certificamos tu auto legal y mecánicamente para que las mejores agencias de CDMX se peleen por él.
-                Vende rápido, seguro y al mejor precio sin lidiar con desconocidos.
-            </p>
-            <a href="./vendedor.html" class="btn-premium-gold" style="padding: 18px 40px; font-size: 1.1rem;">
-                <i class="fa-solid fa-shield-halved"></i> Entrar al Búnker de Seguridad
-            </a>
-            <p class="humor-tag" style="margin-top: 20px; font-style: italic; opacity: 0.6;">"Es como blindar tu venta
-                contra los sustos del mercado." 😉</p>
-        </div>
-    </section>
+    <!-- [SECCIÓN VENDER REMOVIDA — enfoque en autos de agencias verificadas] -->
 
     <!-- ¿QUIÉNES SOMOS? -->
     <section class="about-us" id="nosotros">
@@ -2044,12 +2023,12 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
                 <div style="font-size:13px;font-weight:700;color:#d4af37;">Matchmaker VIP</div>
                 <div style="font-size:11px;color:#a8c5b8;margin-top:4px;opacity:0.7;">Dinos que buscas y te encontramos</div>
             </a>
-            <a href="./vendedor.html" style="text-decoration:none;background:rgba(13,38,28,0.7);border:1px solid rgba(212,175,55,0.2);border-radius:16px;padding:20px 16px;text-align:center;transition:all 0.3s;backdrop-filter:blur(8px);"
+            <a href="./portal-agencias.html" style="text-decoration:none;background:rgba(13,38,28,0.7);border:1px solid rgba(212,175,55,0.2);border-radius:16px;padding:20px 16px;text-align:center;transition:all 0.3s;backdrop-filter:blur(8px);"
                onmouseover="this.style.borderColor='rgba(212,175,55,0.5)';this.style.transform='translateY(-3px)'"
                onmouseout="this.style.borderColor='rgba(212,175,55,0.2)';this.style.transform='translateY(0)'">
-                <div style="font-size:28px;margin-bottom:8px;">🏷️</div>
-                <div style="font-size:13px;font-weight:700;color:#d4af37;">Vende tu Auto</div>
-                <div style="font-size:11px;color:#a8c5b8;margin-top:4px;opacity:0.7;">Publica y conecta con compradores VIP</div>
+                <div style="font-size:28px;margin-bottom:8px;">🏢</div>
+                <div style="font-size:13px;font-weight:700;color:#d4af37;">Portal Agencias</div>
+                <div style="font-size:11px;color:#a8c5b8;margin-top:4px;opacity:0.7;">Acceso para agencias aliadas</div>
             </a>
             <a href="./inventario.html" style="text-decoration:none;background:rgba(13,38,28,0.7);border:1px solid rgba(212,175,55,0.2);border-radius:16px;padding:20px 16px;text-align:center;transition:all 0.3s;backdrop-filter:blur(8px);"
                onmouseover="this.style.borderColor='rgba(212,175,55,0.5)';this.style.transform='translateY(-3px)'"
@@ -2066,14 +2045,14 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
                 <div style="font-size:11px;color:#a8c5b8;margin-top:4px;opacity:0.7;">Subastas con hasta 50% de ahorro</div>
             </a>
         </div>
-        <!-- CTA Vendedor -->
-        <div style="margin-top:16px;background:linear-gradient(135deg,rgba(212,175,55,0.08),rgba(212,175,55,0.03));border:1px solid rgba(212,175,55,0.25);border-radius:16px;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+        <!-- CTA Asesores -->
+        <div style="margin-top:16px;background:linear-gradient(135deg,rgba(13,148,136,0.08),rgba(13,148,136,0.03));border:1px solid rgba(13,148,136,0.25);border-radius:16px;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
             <div>
-                <div style="font-size:15px;font-weight:700;color:white;">🛡️ Tienes un auto que quieres vender?</div>
-                <div style="font-size:12px;color:#a8c5b8;margin-top:2px;">Publica gratis en nuestro Garage VIP y conecta con compradores verificados.</div>
+                <div style="font-size:15px;font-weight:700;color:white;">👔 Eres asesor automotriz?</div>
+                <div style="font-size:12px;color:#a8c5b8;margin-top:2px;">Accede a nuestro portal de asesores y conecta con compradores verificados.</div>
             </div>
-            <a href="./vendedor.html" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#d4af37,#c9a961);color:#0a1f1a;padding:12px 24px;border-radius:24px;text-decoration:none;font-weight:800;font-size:13px;white-space:nowrap;box-shadow:0 4px 15px rgba(212,175,55,0.35);transition:all 0.25s;">
-                <i class="fa-solid fa-plus"></i> Publicar mi Auto
+            <a href="./login.html" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#0D9488,#14b8a6);color:white;padding:12px 24px;border-radius:24px;text-decoration:none;font-weight:800;font-size:13px;white-space:nowrap;box-shadow:0 4px 15px rgba(13,148,136,0.35);transition:all 0.25s;">
+                <i class="fa-solid fa-right-to-bracket"></i> Portal Asesores
             </a>
         </div>
     </section>
@@ -2862,8 +2841,14 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
     })();
     </script>
 
-    <!-- Floating WhatsApp Button -->
-    <a href="https://api.whatsapp.com/send?phone=525568667571&text=Hola%20Alabol!" target="_blank" style="position:fixed;bottom:20px;right:20px;width:56px;height:56px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 15px rgba(37,211,102,0.4);z-index:998;text-decoration:none;font-size:28px;transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'"><svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg></a>
+    <!-- Floating WhatsApp Button + Bubble -->
+    <div id="waBubble" style="position:fixed;bottom:80px;right:20px;background:var(--dark-green);border:1px solid var(--glass-border);border-radius:14px;padding:8px 14px;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,0.3);animation:fadeInUp 0.5s ease 3s both;">
+      <div style="font-size:11px;color:#a8c5b8;">Escribenos por WhatsApp</div>
+      <div style="position:absolute;bottom:-6px;right:22px;width:12px;height:12px;background:var(--dark-green);border-right:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border);transform:rotate(45deg);"></div>
+    </div>
+    <style>@keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}</style>
+    <script>setTimeout(function(){var b=document.getElementById('waBubble');if(b)b.style.display='none';},8000);</script>
+    <a href="https://api.whatsapp.com/send?phone=525568667571&text=Hola%20Alabol!%20Vi%20su%20pagina%20y%20quiero%20saber%20mas." target="_blank" style="position:fixed;bottom:20px;right:20px;width:56px;height:56px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 15px rgba(37,211,102,0.4);z-index:998;text-decoration:none;font-size:28px;transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'"><svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg></a>
 
     <!-- ECOSYSTEM FOOTER -->
     <footer

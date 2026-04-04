@@ -1651,9 +1651,10 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
                 display: block;
             }
 
-            .hero h1 {
-                font-size: 2.6rem;
-            }
+            .hero { padding: 1.5rem 5% 1rem; }
+            .hero-badge { margin-bottom: 0.8rem; font-size: 0.7rem; padding: 4px 12px; }
+            .hero h1 { font-size: 1.8rem; margin-bottom: 0.6rem; }
+            .hero p { font-size: 0.85rem; margin-bottom: 1rem; }
 
             .hero-cta-container {
                 flex-direction: column;
@@ -2510,13 +2511,14 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
                     .select('*')
                     .eq('estatus', 'disponible')
                     .neq('origen', 'canario')
+                    .order('destacado', { ascending: false })
                     .order('created_at', { ascending: false });
 
                 if (error) {
                     console.error("Error fetching live inventory:", error);
                     return [];
                 }
-                // Only return cars with valid photos
+                // Only return cars with valid photos, destacados come first
                 return (data || []).filter(function(car) {
                     return car.fotos && car.fotos.length > 0 && car.fotos[0] && car.fotos[0].startsWith('http');
                 });

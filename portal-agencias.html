@@ -1783,20 +1783,24 @@ function renderInventory() {
     return;
   }
   g('carGrid').innerHTML = '<div class="car-grid">' + filtered.map(function(a) {
-    var photo = (a.fotos && a.fotos.length) ? '<img src="' + a.fotos[0] + '" alt="">' : '<i class="fa-solid fa-car"></i>';
+    var photo = (a.fotos && a.fotos.length && a.fotos[0] && a.fotos[0].startsWith('http')) ? '<img src="' + a.fotos[0] + '" alt="">' : '<i class="fa-solid fa-car"></i>';
+    var photoCount = (a.fotos||[]).filter(function(f){return f&&f.startsWith('http')}).length;
     var statusClass = 'status-' + (a.estatus || 'disponible');
     var statusLabel = a.estatus === 'disponible' ? 'Disponible' : a.estatus === 'vendido' ? 'Vendido' : a.estatus === 'reservado' ? 'Reservado' : 'Pausado';
     var toggleLabel = a.estatus === 'disponible' ? 'Pausar' : 'Activar';
     var toggleIcon = a.estatus === 'disponible' ? 'fa-pause' : 'fa-play';
     return '<div class="car-card">'
-      + '<div class="car-card-img">' + photo + '</div>'
+      + '<div class="car-card-img" style="position:relative;">' + photo
+        + (photoCount > 0 ? '<div style="position:absolute;bottom:6px;left:6px;background:rgba(0,0,0,0.7);color:white;padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;backdrop-filter:blur(4px);"><i class="fa-solid fa-images"></i> ' + photoCount + '</div>' : '')
+      + '</div>'
       + '<div class="car-card-body">'
         + '<div class="car-card-name">' + (a.marca||'') + ' ' + (a.modelo||'') + ' ' + (a.anio||'') + '</div>'
         + '<div class="car-card-meta">' + new Intl.NumberFormat('es-MX').format(a.kilometraje || 0) + ' km &middot; ' + (a.ciudad || '') + '</div>'
         + '<div class="car-card-price">' + fmt(a.precio_venta) + '</div>'
         + '<span class="car-card-status ' + statusClass + '">' + statusLabel + '</span>'
         + '<div class="car-card-actions">'
-          + '<button class="btn-toggle" onclick="toggleStatus(\'' + a.id + '\',\'' + a.estatus + '\')"><i class="fa-solid ' + toggleIcon + '"></i> ' + toggleLabel + '</button>'
+          + '<button class="btn-toggle" style="background:var(--emerald);color:white;border-color:var(--emerald);" onclick="triggerQuickPhoto(\'' + a.id + '\')"><i class="fa-solid fa-camera"></i> ' + (photoCount > 0 ? photoCount + ' fotos' : 'Subir fotos') + '</button>'
+          + '<input type="file" id="qp-' + a.id + '" accept="image/*" multiple style="display:none" onchange="quickUploadPhotos(\'' + a.id + '\',this.files)">'
           + '<button class="btn-edit" onclick="openForm(\'' + a.id + '\')"><i class="fa-solid fa-pen"></i></button>'
           + '<button class="btn-delete" onclick="openDel(\'' + a.id + '\')"><i class="fa-solid fa-trash"></i></button>'
         + '</div>'
@@ -2098,6 +2102,77 @@ function tapWizPhoto(idx) {
     wizSelectedPhoto = -1;
   }
   renderPhotoGrid();
+}
+
+// ══════════════════════════════════════════
+// QUICK PHOTO UPLOAD (direct from inventory card)
+// ══════════════════════════════════════════
+function triggerQuickPhoto(id) {
+  var input = g('qp-' + id);
+  if (input) input.click();
+}
+
+function quickUploadPhotos(carId, files) {
+  if (!files || !files.length) return;
+  var car = cars.find(function(c) { return c.id === carId; });
+  if (!car) return;
+  var existing = (car.fotos || []).filter(function(f) { return f && f.startsWith('http'); });
+  var remaining = 8 - existing.length;
+  if (remaining <= 0) { alert('Este auto ya tiene 8 fotos (maximo)'); return; }
+  var toProcess = Array.from(files).slice(0, remaining);
+  var uploaded = 0, total = toProcess.length;
+
+  // Show uploading state on the card
+  var btn = document.querySelector('#qp-' + carId).previousElementSibling;
+  if (btn) { btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Subiendo ' + total + '...'; btn.disabled = true; }
+
+  toProcess.forEach(function(file) {
+    if (!file.type.startsWith('image/')) { uploaded++; return; }
+    var reader = new FileReader();
+    reader.onerror = function() { checkDone(); };
+    reader.onload = function(e) {
+      var img = new Image();
+      img.onerror = function() { checkDone(); };
+      img.onload = function() {
+        var canvas = document.createElement('canvas');
+        var maxDim = 1200, w = img.width, h = img.height;
+        if (w > maxDim || h > maxDim) { if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; } else { w = Math.round(w * maxDim / h); h = maxDim; } }
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        canvas.toBlob(function(blob) {
+          if (!blob) { checkDone(); return; }
+          var folder = (uid || 'anon').substring(0, 8);
+          var fileName = folder + '/' + Date.now() + '-' + Math.random().toString(36).substring(2, 6) + '.webp';
+          fetch(S + '/storage/v1/object/vehicle_photos/' + fileName, {
+            method: 'POST',
+            headers: { 'apikey': K, 'Authorization': 'Bearer ' + (tok || K), 'Content-Type': 'image/webp', 'x-upsert': 'true' },
+            body: blob
+          }).then(function(r) {
+            if (r.ok) existing.push(S + '/storage/v1/object/public/vehicle_photos/' + fileName);
+            checkDone();
+          }).catch(function() { checkDone(); });
+        }, 'image/webp', 0.75);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function checkDone() {
+    uploaded++;
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ' + uploaded + '/' + total;
+    if (uploaded >= total) {
+      // Save to DB
+      fetch(S + '/rest/v1/inventario?id=eq.' + carId + '&user_id=eq.' + uid, {
+        method: 'PATCH',
+        headers: Object.assign({}, ah(tok), { 'Prefer': 'return=minimal' }),
+        body: JSON.stringify({ fotos: existing, updated_at: new Date().toISOString() })
+      }).then(function() {
+        car.fotos = existing;
+        renderAll();
+      });
+    }
+  }
 }
 
 function removePhoto(i) {

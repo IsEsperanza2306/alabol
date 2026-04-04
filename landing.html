@@ -458,6 +458,95 @@ var ti=0;function rotTick(){var el=document.getElementById('tickerText');el.styl
 
 // Bubbles
 (function(){var c=document.getElementById('bubbles');for(var i=0;i<12;i++){var b=document.createElement('div');b.className='bubble';var s=Math.random()*20+8;b.style.width=s+'px';b.style.height=s+'px';b.style.left=Math.random()*100+'%';b.style.setProperty('--dur',(Math.random()*10+8)+'s');b.style.setProperty('--sc',Math.random()*0.5+0.5);b.style.setProperty('--op',Math.random()*0.3+0.1);b.style.setProperty('--sw',(Math.random()*2-1).toFixed(2));b.style.animationDelay=Math.random()*10+'s';c.appendChild(b)}})();
+
+// ══════════════════════════════════════════
+// ANALYTICS TRACKING — Supabase
+// ══════════════════════════════════════════
+(function(){
+  var SU='https://rgnunjngtsgqgvplawfr.supabase.co';
+  var SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8';
+  var sid=sessionStorage.getItem('alabol_sid')||('s_'+Date.now()+'_'+Math.random().toString(36).substring(2,8));
+  sessionStorage.setItem('alabol_sid',sid);
+  var startTime=Date.now();
+  var maxScroll=0;
+  var tracked={};
+
+  function track(table,data){
+    data.session_id=sid;
+    data.created_at=new Date().toISOString();
+    fetch(SU+'/rest/v1/'+table,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SK,'Authorization':'Bearer '+SK,'Prefer':'return=minimal'},
+      body:JSON.stringify(data)
+    }).catch(function(){});
+  }
+
+  function trackEvent(step,name){
+    if(tracked[name])return;
+    tracked[name]=true;
+    track('funnel_events',{step_number:step,step_name:name});
+    // Also send to GA + FB
+    if(typeof gtag==='function')gtag('event',name,{event_category:'landing'});
+    if(typeof fbq==='function'&&(name.includes('click_')||name==='video_play'))fbq('trackCustom',name);
+  }
+
+  // 1. Page visit
+  track('page_visits',{page:'landing_vsl',referrer:document.referrer||'',user_agent:navigator.userAgent});
+  trackEvent(0,'landing_vsl_view');
+
+  // 2. Scroll depth tracking
+  window.addEventListener('scroll',function(){
+    var h=document.documentElement.scrollHeight-window.innerHeight;
+    var pct=h>0?Math.round(window.scrollY/h*100):0;
+    if(pct>maxScroll)maxScroll=pct;
+    if(maxScroll>=25&&!tracked['scroll_25']){tracked['scroll_25']=true;trackEvent(1,'scroll_25');}
+    if(maxScroll>=50&&!tracked['scroll_50']){tracked['scroll_50']=true;trackEvent(1,'scroll_50');}
+    if(maxScroll>=75&&!tracked['scroll_75']){tracked['scroll_75']=true;trackEvent(1,'scroll_75');}
+    if(maxScroll>=95&&!tracked['scroll_100']){tracked['scroll_100']=true;trackEvent(1,'scroll_100');}
+  },{passive:true});
+
+  // 3. Video section visible = "video_impression"
+  var videoEl=document.querySelector('iframe');
+  if(videoEl){
+    new IntersectionObserver(function(e){
+      if(e[0].isIntersecting)trackEvent(2,'video_impression');
+    },{threshold:0.5}).observe(videoEl);
+  }
+
+  // 4. Sound button = proxy for engagement
+  var origSound=window.activateSound;
+  window.activateSound=function(){
+    trackEvent(2,'video_sound_activated');
+    if(origSound)origSound();
+  };
+
+  // 5. CTA clicks — intercept all links
+  document.addEventListener('click',function(e){
+    var a=e.target.closest('a[href]');
+    if(!a)return;
+    var href=a.href||'';
+    if(href.includes('/vip/'))trackEvent(3,'click_matchmaker');
+    else if(href.includes('inventario'))trackEvent(3,'click_inventario');
+    else if(href.includes('whatsapp.com')||href.includes('wa.me'))trackEvent(3,'click_whatsapp');
+    else if(href.includes('instagram.com'))trackEvent(3,'click_instagram');
+    else if(href.includes('tiktok.com'))trackEvent(3,'click_tiktok');
+  });
+
+  // 6. Time on page — track at intervals
+  setTimeout(function(){trackEvent(1,'time_15s')},15000);
+  setTimeout(function(){trackEvent(1,'time_30s')},30000);
+  setTimeout(function(){trackEvent(1,'time_60s')},60000);
+  setTimeout(function(){trackEvent(1,'time_120s')},120000);
+
+  // 7. Before exit — track total time + max scroll
+  window.addEventListener('beforeunload',function(){
+    var totalSec=Math.round((Date.now()-startTime)/1000);
+    navigator.sendBeacon(SU+'/rest/v1/funnel_events',JSON.stringify({
+      session_id:sid,step_number:9,step_name:'exit_landing',
+      created_at:new Date().toISOString()
+    }));
+  });
+})();
 </script>
 </body>
 </html>

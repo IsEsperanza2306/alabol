@@ -2626,40 +2626,94 @@ function handleFileUpload(file) {
     reader.onload = function(e) {
       try {
         var wb = XLSX.read(e.target.result, { type: 'array' });
-        // Use first sheet, or sheet named 'Captura' if exists
-        var wsName = wb.SheetNames.indexOf('Captura') >= 0 ? 'Captura' : wb.SheetNames[0];
+        // Try sheets in priority: Captura, INVENTARIO, first sheet
+        var wsName = wb.SheetNames.indexOf('Captura') >= 0 ? 'Captura' : wb.SheetNames.find(function(s){return s.trim().toUpperCase().indexOf('INVENTARIO')>=0}) || wb.SheetNames[0];
         var ws = wb.Sheets[wsName];
-        var jsonData = XLSX.utils.sheet_to_json(ws, { defval: '' });
-        // Normalize headers: try to find DB-style headers in row 1 (hidden) or use display headers
+
+        // Smart header detection: scan rows to find the one with marca/modelo/automovil
+        var rawData = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+        var headerRow = -1;
+        var markerWords = ['marca','modelo','automovil','vehiculo','precio','año','anio'];
+        for (var ri = 0; ri < Math.min(20, rawData.length); ri++) {
+          var row = rawData[ri];
+          if (!row) continue;
+          var rowStr = row.map(function(c){return (c||'').toString().toLowerCase().trim()}).join('|');
+          var matches = markerWords.filter(function(w){return rowStr.indexOf(w) >= 0});
+          if (matches.length >= 2) { headerRow = ri; break; }
+        }
+
+        var jsonData;
+        if (headerRow >= 0) {
+          // Re-parse with detected header row
+          var headers = rawData[headerRow].map(function(h){return (h||'').toString().trim()});
+          jsonData = [];
+          for (var di = headerRow + 1; di < rawData.length; di++) {
+            var dataRow = rawData[di];
+            if (!dataRow || !dataRow.some(function(c){return c!==null&&c!==undefined&&c!==''})) continue;
+            var obj = {};
+            headers.forEach(function(h, ci) { if(h) obj[h] = dataRow[ci] !== undefined ? dataRow[ci] : ''; });
+            jsonData.push(obj);
+          }
+        } else {
+          jsonData = XLSX.utils.sheet_to_json(ws, { defval: '' });
+        }
+
+        // Universal field mapper — handles any Excel format
+        function getField(row, aliases) {
+          for (var a = 0; a < aliases.length; a++) {
+            // Try exact match
+            if (row[aliases[a]] !== undefined && row[aliases[a]] !== '') return row[aliases[a]];
+            // Try case-insensitive
+            var keys = Object.keys(row);
+            for (var k = 0; k < keys.length; k++) {
+              if (keys[k].toLowerCase().trim() === aliases[a].toLowerCase()) return row[keys[k]];
+            }
+          }
+          return '';
+        }
+
         agSyncData = jsonData.filter(function(row) {
-          var marca = row['marca'] || row['Marca'] || row['MARCA'] || '';
-          var modelo = row['modelo'] || row['Modelo'] || row['MODELO'] || '';
+          var marca = getField(row, ['marca','MARCA','Marca','brand','Make']);
+          var modelo = getField(row, ['modelo','MODELO','Modelo','AUTOMOVIL','Automovil','automovil','vehiculo','VEHICULO','model','Model','nombre']);
           return marca && modelo;
         }).map(function(row) {
-          // Map both Excel display headers and DB headers
+          var version = getField(row, ['version','VERSION','Version','VERSIÓN','trim']);
+          var modelo = getField(row, ['modelo','MODELO','Modelo','AUTOMOVIL','Automovil','automovil','vehiculo','VEHICULO','model','Model']);
+          // If there's a version, append it to modelo
+          if (version && modelo.toLowerCase().indexOf(version.toLowerCase()) < 0) modelo = modelo + ' ' + version;
+
           return {
-            'Marca': row['marca'] || row['Marca'] || row['MARCA'] || '',
-            'Modelo': row['modelo'] || row['Modelo'] || row['MODELO'] || '',
-            'Año': row['anio'] || row['Anio'] || row['Año'] || row['ano'] || row['AÑO'] || '',
-            'Precio': (row['precio_venta'] || row['Precio'] || row['precio'] || row['PRECIO'] || '').toString(),
-            'Tipo': row['tipo_vehiculo'] || row['Tipo'] || row['tipo'] || 'sedan',
-            'Kilometraje': (row['kilometraje'] || row['Kilometraje'] || row['km'] || row['KM'] || '0').toString(),
-            'Transmision': row['transmision'] || row['Transmision'] || row['Transmisión'] || 'Automatico',
-            'Color': row['color'] || row['Color'] || '',
-            'Ciudad': row['ciudad'] || row['Ciudad'] || '',
-            'Estatus': row['estatus'] || row['Estatus'] || 'disponible',
-            'Descripcion': row['descripcion'] || row['Descripcion'] || row['Descripción'] || '',
-            'Combustible': row['combustible'] || row['Combustible'] || 'gasolina',
-            'Traccion': row['traccion'] || row['Traccion'] || '4x2',
-            'Motor': row['motor'] || row['Motor'] || '',
-            'VIN': row['vin'] || row['VIN'] || '',
-            'Foto1': row['fotos'] || row['Foto1'] || '',
-            'Foto2': row['Foto2'] || '',
-            'Foto3': row['Foto3'] || '',
-            'Foto4': row['Foto4'] || ''
+            'Marca': getField(row, ['marca','MARCA','Marca','brand','Make']),
+            'Modelo': modelo.trim(),
+            'Año': getField(row, ['anio','Anio','Año','AÑO','ano','ANO','year','Year','YEAR']) || '',
+            'Precio': (getField(row, ['precio_venta','PRECIO DE VENTA','Precio de Venta','precio','PRECIO','Precio','price','Price','PRECIO DE VENTA SIN IVA']) || '0').toString(),
+            'Tipo': getField(row, ['tipo_vehiculo','Tipo','tipo','TIPO','type','categoria']) || 'sedan',
+            'Kilometraje': (getField(row, ['kilometraje','Kilometraje','KILOMETRAJE','km','KM','Km','mileage','odometro']) || '0').toString(),
+            'Transmision': getField(row, ['transmision','Transmision','TRANSMISION','Transmisión','TRANS','Trans','trans','transmission']) || 'Automatico',
+            'Color': getField(row, ['color','Color','COLOR','COLOR EXTERIOR','Color Exterior']) || '',
+            'Ciudad': getField(row, ['ciudad','Ciudad','CIUDAD','UBICACIÓN','Ubicacion','ubicacion','location']) || '',
+            'Estatus': (function(){
+              var disp = getField(row, ['estatus','Estatus','ESTATUS','DISPONIBILIDAD','Disponibilidad','disponibilidad','status']);
+              if (!disp) return 'disponible';
+              disp = disp.toString().toLowerCase().trim();
+              if (disp === 'libre' || disp === 'disponible' || disp === 'activo') return 'disponible';
+              if (disp.indexOf('proceso') >= 0 || disp.indexOf('reserv') >= 0) return 'reservado';
+              // If it contains a name (assigned to someone), mark as reservado
+              if (disp.length > 3 && disp.match(/[a-z]{3,}/i)) return 'reservado';
+              return 'disponible';
+            })(),
+            'Descripcion': getField(row, ['descripcion','Descripcion','DESCRIPCION','Descripción','desc','notas','NOTAS','observaciones']) || '',
+            'Combustible': getField(row, ['combustible','Combustible','COMBUSTIBLE','fuel']) || 'gasolina',
+            'Traccion': getField(row, ['traccion','Traccion','TRACCION','Tracción','4x2','4x4']) || '4x2',
+            'Motor': getField(row, ['motor','Motor','MOTOR','engine']) || '',
+            'VIN': getField(row, ['vin','VIN','Vin','CHASIS','Chasis','chasis','numero_serie','NUMERO DE SERIE','serie']) || '',
+            'Foto1': getField(row, ['fotos','Foto1','FOTO','foto1']) || '',
+            'Foto2': getField(row, ['Foto2','foto2']) || '',
+            'Foto3': getField(row, ['Foto3','foto3']) || '',
+            'Foto4': getField(row, ['Foto4','foto4']) || ''
           };
         });
-        if (agSyncData.length === 0) { status.textContent = '❌ No se encontraron autos validos en el archivo'; return; }
+        if (agSyncData.length === 0) { status.textContent = '❌ No se encontraron autos validos. Verifica que el archivo tenga columnas de Marca y Modelo/Automovil.'; return; }
         status.textContent = '✅ ' + agSyncData.length + ' autos encontrados en ' + file.name + ' (hoja: ' + wsName + ')';
         agFetchExisting();
       } catch(err) {

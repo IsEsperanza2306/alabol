@@ -117,6 +117,29 @@ body{background:var(--bg);color:var(--white);min-height:100vh;display:flex;backg
   .kpi-row{grid-template-columns:1fr 1fr;}
   .chart-grid{grid-template-columns:1fr;}
 }
+/* Print styles */
+@media print {
+  body { background: white !important; color: black !important; }
+  .sidebar, .mobile-toggle, .sidebar-overlay, .refresh-btn, .btn, select, button { display: none !important; }
+  .main { margin-left: 0 !important; padding: 10px !important; }
+  .tab { display: none !important; }
+  .tab.active { display: block !important; }
+  .kpi { background: #f5f5f5 !important; border: 1px solid #ddd !important; }
+  .kpi-value { color: #333 !important; }
+  .kpi-label, .kpi-sub { color: #666 !important; }
+  .section { background: #fafafa !important; border: 1px solid #ddd !important; }
+  .section-title { color: #333 !important; }
+  .section-title i { color: #b8860b !important; }
+  .tbl th { color: #b8860b !important; border-bottom: 2px solid #b8860b !important; }
+  .tbl td { color: #333 !important; border-bottom: 1px solid #eee !important; }
+  .badge { border: 1px solid #999 !important; }
+  .page-title { color: #333 !important; }
+  .page-title span { color: #b8860b !important; }
+  .chart-container canvas { max-height: 180px !important; }
+  .progress-bar { background: #eee !important; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
 .mobile-toggle{display:none;position:fixed;top:10px;left:10px;z-index:60;background:var(--card);border:1px solid var(--border);color:var(--gold);width:40px;height:40px;border-radius:10px;align-items:center;justify-content:center;font-size:16px;cursor:pointer;backdrop-filter:blur(10px);}
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:45;}
 .sidebar-overlay.open{display:block;}
@@ -784,7 +807,7 @@ function openEditModal(id){
       +eF('Marca','eMarca',car.marca||'')+eF('Modelo','eModelo',car.modelo||'')+eF('Año','eAnio',car.anio||'','number')+eF('Precio','ePrecio',car.precio_venta||'','number')+eF('KM','eKm',car.kilometraje||0,'number')+eF('Ciudad','eCiudad',car.ciudad||'')+eF('Color','eColor',car.color||'')+eF('Transmision','eTrans',car.transmision||'')
     +'</div>'
     +'<div style="margin-top:8px;"><label style="font-size:10px;color:var(--gold);text-transform:uppercase;">Descripcion</label><textarea id="eDesc" style="width:100%;padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:white;font-family:inherit;font-size:12px;min-height:50px;resize:vertical;">'+(car.descripcion||'')+'</textarea></div>'
-    +'<div style="margin-top:8px;"><label style="font-size:10px;color:var(--gold);text-transform:uppercase;margin-bottom:6px;display:block;">Fotos</label><div id="ePhotoGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;"></div><button onclick="document.getElementById(\'ePhotoInput\').click()" class="btn btn-outline" style="margin-top:8px;width:100%;"><i class="fa-solid fa-camera"></i> Subir fotos</button><input type="file" id="ePhotoInput" accept="image/*" multiple style="display:none" onchange="handleAdminPhotos(this.files)"><div style="font-size:9px;color:var(--txt);opacity:0.5;margin-top:4px;text-align:center;">★ = portada · toca para intercambiar</div></div>'
+    +'<div style="margin-top:8px;"><label style="font-size:10px;color:var(--gold);text-transform:uppercase;margin-bottom:6px;display:block;">Fotos (max 8)</label><div id="ePhotoGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;"></div><div id="ePhotoHint" style="font-size:10px;color:var(--txt);opacity:0.6;margin-top:6px;text-align:center;">★ = portada &middot; toca una foto y luego otra para cambiar orden &middot; X para eliminar</div><button onclick="document.getElementById(\'ePhotoInput\').click()" class="btn btn-outline" style="margin-top:8px;width:100%;padding:10px;"><i class="fa-solid fa-camera"></i> Subir mas fotos</button><input type="file" id="ePhotoInput" accept="image/*" multiple style="display:none" onchange="handleAdminPhotos(this.files)"></div>'
     +'<div style="margin-top:14px;display:flex;gap:8px;"><button onclick="saveEditModal(\''+id+'\')" class="btn btn-gold" style="flex:1;padding:12px;">Guardar</button><button onclick="document.getElementById(\'editModal\').style.display=\'none\'" class="btn btn-outline" style="padding:12px;">Cancelar</button></div>'
   +'</div>';
   m.style.display='flex';m.style.alignItems='center';m.style.justifyContent='center';
@@ -798,14 +821,16 @@ function eF(l,id,v,t){return '<div><label style="font-size:10px;color:var(--gold
 
 function renderAdminPhotos(){
   var g=document.getElementById('ePhotoGrid');if(!g)return;
+  var hint=document.getElementById('ePhotoHint');
   g.innerHTML=adminPhotos.map(function(url,i){
     var isSel=i===adminSelectedPhoto;
-    return '<div style="position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;border:2px solid '+(isSel?'var(--gold)':'var(--border)')+';cursor:pointer;transition:all 0.2s;'+(isSel?'box-shadow:0 0 12px rgba(212,175,55,0.5);transform:scale(1.05);':'')+'" onclick="tapAdminPhoto('+i+')">'
+    return '<div style="position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;border:3px solid '+(isSel?'var(--gold)':'var(--border)')+';cursor:pointer;transition:all 0.2s;'+(isSel?'box-shadow:0 0 16px rgba(212,175,55,0.6);transform:scale(1.08);':'')+'" onclick="tapAdminPhoto('+i+')">'
       +'<img src="'+url+'" style="width:100%;height:100%;object-fit:cover;">'
-      +'<div style="position:absolute;top:2px;left:2px;background:'+(i===0?'var(--gold)':'rgba(0,0,0,0.7)')+';color:'+(i===0?'var(--bg)':'var(--gold)')+';font-size:9px;font-weight:800;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;">'+(i===0?'★':(i+1))+'</div>'
-      +'<button onclick="event.stopPropagation();adminPhotos.splice('+i+',1);adminSelectedPhoto=-1;renderAdminPhotos();" style="position:absolute;top:2px;right:2px;background:rgba(239,68,68,0.85);color:white;border:none;width:16px;height:16px;border-radius:50%;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;">&times;</button>'
+      +'<div style="position:absolute;top:3px;left:3px;background:'+(i===0?'var(--gold)':'rgba(0,0,0,0.75)')+';color:'+(i===0?'var(--bg)':'var(--gold)')+';font-size:10px;font-weight:800;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;">'+(i===0?'★':(i+1))+'</div>'
+      +'<button onclick="event.stopPropagation();adminPhotos.splice('+i+',1);adminSelectedPhoto=-1;renderAdminPhotos();" style="position:absolute;top:3px;right:3px;background:rgba(239,68,68,0.9);color:white;border:none;width:22px;height:22px;border-radius:50%;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;">&times;</button>'
     +'</div>';
-  }).join('')+Array(adminPhotoUploading).fill('<div style="aspect-ratio:1;border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;"><div style="width:16px;height:16px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 0.7s linear infinite;"></div></div>').join('');
+  }).join('')+Array(adminPhotoUploading).fill('<div style="aspect-ratio:1;border-radius:10px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;"><div style="width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 0.7s linear infinite;"></div></div>').join('');
+  if(hint)hint.innerHTML=adminSelectedPhoto>=0?'<span style="color:var(--gold);font-weight:600;">👆 Toca otra foto para intercambiarla de posicion</span>':'★ = portada &middot; toca una foto y luego otra para cambiar orden &middot; X para eliminar';
 }
 function tapAdminPhoto(i){if(adminSelectedPhoto<0)adminSelectedPhoto=i;else if(adminSelectedPhoto===i)adminSelectedPhoto=-1;else{var t=adminPhotos[adminSelectedPhoto];adminPhotos[adminSelectedPhoto]=adminPhotos[i];adminPhotos[i]=t;adminSelectedPhoto=-1;}renderAdminPhotos();}
 

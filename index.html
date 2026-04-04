@@ -2680,6 +2680,43 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
             await renderCards();
             populateBrands();
             createBubbles();
+
+            // Touch swipe for Tinder cards
+            var tContainer = document.getElementById('tinder-container');
+            if (tContainer) {
+                var startX = 0, startY = 0, dragging = false, dragCard = null, dragDx = 0;
+                tContainer.addEventListener('touchstart', function(e) {
+                    var cards = document.querySelectorAll('.tinder-card:not(.removing)');
+                    if (!cards.length) return;
+                    dragCard = cards[0];
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                    dragging = true;
+                    dragDx = 0;
+                    dragCard.style.transition = 'none';
+                }, { passive: true });
+                tContainer.addEventListener('touchmove', function(e) {
+                    if (!dragging || !dragCard) return;
+                    dragDx = e.touches[0].clientX - startX;
+                    var dy = e.touches[0].clientY - startY;
+                    if (Math.abs(dy) > Math.abs(dragDx) && Math.abs(dragDx) < 30) return; // vertical scroll
+                    var rot = dragDx * 0.08;
+                    dragCard.style.transform = 'translateX(' + dragDx + 'px) rotate(' + rot + 'deg)';
+                    dragCard.style.opacity = Math.max(0.3, 1 - Math.abs(dragDx) / 400);
+                }, { passive: true });
+                tContainer.addEventListener('touchend', function() {
+                    if (!dragging || !dragCard) return;
+                    dragging = false;
+                    dragCard.style.transition = 'transform 0.3s, opacity 0.3s';
+                    if (Math.abs(dragDx) > 80) {
+                        swipe(dragDx > 0 ? 'right' : 'left');
+                    } else {
+                        dragCard.style.transform = '';
+                        dragCard.style.opacity = '1';
+                    }
+                    dragCard = null;
+                }, { passive: true });
+            }
         });
 
         // Generate Golden Bubbles Effect

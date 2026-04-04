@@ -1781,18 +1781,11 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
         </div>
     </header>
 
-    <!-- HERO MINI — directo a la acción -->
-    <section class="hero" style="padding:0.8rem 5% 0.5rem;min-height:auto;">
-        <div class="hero-badge" style="margin-bottom:0.5rem;font-size:0.7rem;padding:4px 12px;">El Tinder de los Autos</div>
-        <h1 style="font-size:1.4rem;margin-bottom:0.3rem;">Encuentra tu <span class="highlight">Media Naranja</span> con Llantas</h1>
-        <p style="font-size:0.8rem;margin-bottom:0.6rem;opacity:0.7;">Desliza, haz match y agenda tu primera cita.</p>
-    </section>
-
     <!-- INVENTARIO DESTACADO — LO PRIMERO QUE VEN -->
-    <section class="featured-section" id="inventario">
-        <div class="section-header" style="margin-bottom:10px;">
-            <h2>Las <span>Joyas</span> Mas Cotizadas 🔥</h2>
-            <p>Perfiles verificados de agencias esperando su match perfecto</p>
+    <section class="featured-section" id="inventario" style="padding-top:10px;">
+        <div class="section-header" style="margin-bottom:8px;">
+            <h2 style="font-size:1.3rem;">Las <span>Joyas</span> Mas Cotizadas 🔥</h2>
+            <p style="font-size:0.8rem;opacity:0.6;">Perfiles verificados de agencias — desliza y haz match</p>
         </div>
 
         <div class="filters-container" id="filtersSticky">
@@ -1898,21 +1891,15 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
             </div>
         </div>
 
-        <div class="tinder-social-proof"
-            style="text-align:center; margin-bottom: 25px; animation: fadeIn 1s ease-out; display: flex; justify-content: center; gap: 15px; align-items: center; flex-wrap: wrap;">
-            <div
-                style="display:inline-flex; align-items:center; gap:8px; background: rgba(212,175,55,0.1); border: 1px solid var(--gold-dim); padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; color: var(--gold-bright);">
-                <span class="pulse-dot"
-                    style="width:8px; height:8px; background:#25D366; border-radius:50%; box-shadow:0 0 10px #25D366; animation: pulse 2s infinite;"></span>
-                <strong>42 personas</strong> buscando su match ahora
+        <div style="text-align:center;margin-bottom:10px;display:flex;justify-content:center;gap:10px;align-items:center;flex-wrap:wrap;">
+            <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(212,175,55,0.08);border:1px solid var(--gold-dim);padding:5px 12px;border-radius:16px;font-size:0.75rem;color:var(--gold-bright);">
+                <span style="width:6px;height:6px;background:#25D366;border-radius:50%;box-shadow:0 0 8px #25D366;animation:pulse 2s infinite;"></span>
+                Personas buscando su match ahora
             </div>
-
-            <!-- MATCH COUNTER -->
-            <div id="matchCounter"
-                style="display:none; align-items:center; gap:8px; background: rgba(255,59,48,0.1); border: 1px solid rgba(255,59,48,0.3); padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; color: #ff3b30; cursor: pointer; transition: all 0.3s;"
-                onclick="if(typeof trackFunnelStep==='function') trackFunnelStep(3, 'click_matches_guardados'); location.href='./inventario.html?saved_matches=true'">
+            <div id="matchCounter" style="display:none;align-items:center;gap:6px;background:rgba(255,59,48,0.08);border:1px solid rgba(255,59,48,0.2);padding:5px 12px;border-radius:16px;font-size:0.75rem;color:#ff3b30;cursor:pointer;"
+                onclick="location.href='./inventario.html?saved_matches=true'">
                 <i class="fa-solid fa-heart"></i>
-                <strong><span id="savedMatchCount">0</span> Matches</strong> Guardados
+                <span id="savedMatchCount">0</span> Matches
             </div>
         </div>
 
@@ -1933,7 +1920,21 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
         </div>
     </section>
 
-    <!-- [SECCIÓN VENDER REMOVIDA — enfoque en autos de agencias verificadas] -->
+    <!-- HERO + CTA (después de ver las joyas) -->
+    <section class="hero" style="padding:1.5rem 5% 1rem;min-height:auto;">
+        <div class="hero-badge" style="margin-bottom:0.6rem;font-size:0.7rem;padding:4px 12px;">El Tinder de los Autos</div>
+        <h1 style="font-size:1.6rem;margin-bottom:0.5rem;">Encuentra tu <span class="highlight">Media Naranja</span> con Llantas</h1>
+        <p style="font-size:0.85rem;margin-bottom:1rem;opacity:0.7;">Autos verificados de agencias y lotes certificados. Usa nuestro Matchmaker para encontrar tu amor sobre ruedas.</p>
+        <div class="hero-cta-container" style="gap:10px;">
+            <a href="./vip/" class="btn-premium-gold" style="padding:14px 28px;font-size:0.95rem;">
+                <i class="fa-solid fa-heart-circle-check"></i>
+                <span>Buscar mi Amor sobre Ruedas</span>
+            </a>
+            <a href="./inventario.html" class="btn-premium-teal" style="padding:14px 28px;font-size:0.95rem;">
+                <i class="fa-solid fa-th-large"></i> Ver Inventario Completo
+            </a>
+        </div>
+    </section>
 
     <!-- ¿QUIÉNES SOMOS? -->
     <section class="about-us" id="nosotros">

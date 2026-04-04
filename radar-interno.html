@@ -2556,16 +2556,25 @@
                     + '<textarea id="eDesc" style="width:100%;padding:8px;background:var(--bg-dark);border:1px solid var(--glass-border);border-radius:8px;color:white;font-family:inherit;font-size:12px;min-height:60px;resize:vertical;">' + (car.descripcion||'') + '</textarea>'
                 + '</div>'
                 + '<div style="margin-top:10px;">'
-                    + '<label style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:0.05em;">Fotos (URLs separadas por coma)</label>'
-                    + '<textarea id="eFotos" style="width:100%;padding:8px;background:var(--bg-dark);border:1px solid var(--glass-border);border-radius:8px;color:white;font-family:inherit;font-size:11px;min-height:40px;resize:vertical;">' + (car.fotos||[]).join(', ') + '</textarea>'
+                    + '<label style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;display:block;">Fotos (toca para seleccionar, toca otra para intercambiar)</label>'
+                    + '<div id="ePhotoGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;"></div>'
+                    + '<div style="display:flex;gap:8px;margin-top:8px;">'
+                        + '<button onclick="document.getElementById(\'ePhotoInput\').click()" style="flex:1;padding:10px;background:var(--bg-dark);border:1px dashed var(--glass-border);border-radius:10px;color:var(--green-text);font-size:11px;cursor:pointer;font-family:inherit;"><i class="fa-solid fa-camera" style="margin-right:4px;"></i>Subir fotos</button>'
+                        + '<input type="file" id="ePhotoInput" accept="image/*" multiple style="display:none" onchange="handleAdminPhotos(this.files)">'
+                    + '</div>'
+                    + '<div id="ePhotoHint" style="font-size:10px;color:var(--green-text);opacity:0.5;margin-top:4px;text-align:center;">★ = portada · toca para seleccionar, toca otra para intercambiar</div>'
                 + '</div>'
-                + (car.fotos && car.fotos.length ? '<div style="display:flex;gap:4px;margin-top:8px;overflow-x:auto;">' + car.fotos.map(function(f,i){return '<img src="'+f+'" style="width:60px;height:45px;object-fit:cover;border-radius:6px;border:1px solid var(--glass-border);">';}).join('') + '</div>' : '')
                 + '<div style="margin-top:16px;display:flex;gap:8px;">'
                     + '<button onclick="saveEditModal(\'' + id + '\')" style="flex:1;padding:12px;background:var(--gold);color:var(--bg-dark);border:none;border-radius:10px;font-weight:800;font-size:13px;cursor:pointer;">Guardar cambios</button>'
                     + '<button onclick="document.getElementById(\'editModal\').style.display=\'none\'" style="padding:12px 20px;background:var(--bg-dark);color:var(--green-text);border:1px solid var(--glass-border);border-radius:10px;font-size:13px;cursor:pointer;">Cancelar</button>'
                 + '</div>'
             + '</div>';
             m.style.display = 'flex';
+            // Initialize photo manager
+            adminPhotos = (car.fotos || []).filter(function(f) { return f && f.startsWith('http'); });
+            adminSelectedPhoto = -1;
+            adminPhotoUploading = 0;
+            renderAdminPhotos();
         }
 
         function editField(label, id, value, type) {
@@ -2573,9 +2582,94 @@
                 + '<input id="' + id + '" value="' + value + '" type="' + (type||'text') + '" style="width:100%;padding:8px;background:var(--bg-dark);border:1px solid var(--glass-border);border-radius:8px;color:white;font-family:inherit;font-size:12px;"></div>';
         }
 
+        // Admin photo manager
+        var adminPhotos = [];
+        var adminSelectedPhoto = -1;
+        var adminPhotoUploading = 0;
+
+        function renderAdminPhotos() {
+            var grid = document.getElementById('ePhotoGrid');
+            if (!grid) return;
+            var html = adminPhotos.map(function(url, i) {
+                var isFirst = i === 0;
+                var isSel = i === adminSelectedPhoto;
+                return '<div style="position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;border:2px solid ' + (isSel ? 'var(--gold)' : 'var(--glass-border)') + ';cursor:pointer;transition:all 0.2s;' + (isSel ? 'box-shadow:0 0 12px rgba(212,175,55,0.5);transform:scale(1.05);' : '') + '" onclick="tapAdminPhoto(' + i + ')">'
+                    + '<img src="' + url + '" style="width:100%;height:100%;object-fit:cover;">'
+                    + '<div style="position:absolute;top:2px;left:2px;background:' + (isFirst ? 'var(--gold)' : 'rgba(0,0,0,0.7)') + ';color:' + (isFirst ? 'var(--bg-dark)' : 'var(--gold)') + ';font-size:9px;font-weight:800;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;">' + (isFirst ? '★' : (i+1)) + '</div>'
+                    + '<button onclick="event.stopPropagation();removeAdminPhoto(' + i + ')" style="position:absolute;top:2px;right:2px;background:rgba(239,68,68,0.85);color:white;border:none;width:16px;height:16px;border-radius:50%;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;">&times;</button>'
+                + '</div>';
+            }).join('');
+            for (var u = 0; u < adminPhotoUploading; u++) {
+                html += '<div style="aspect-ratio:1;border-radius:8px;border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center;"><div style="width:20px;height:20px;border:2px solid var(--glass-border);border-top-color:var(--gold);border-radius:50%;animation:spin 0.7s linear infinite;"></div></div>';
+            }
+            grid.innerHTML = html;
+            var hint = document.getElementById('ePhotoHint');
+            if (hint) hint.textContent = adminSelectedPhoto >= 0 ? '👆 Toca otra foto para intercambiar posicion' : '★ = portada · toca para seleccionar, toca otra para intercambiar';
+        }
+
+        function tapAdminPhoto(idx) {
+            if (adminSelectedPhoto < 0) { adminSelectedPhoto = idx; }
+            else if (adminSelectedPhoto === idx) { adminSelectedPhoto = -1; }
+            else {
+                var temp = adminPhotos[adminSelectedPhoto];
+                adminPhotos[adminSelectedPhoto] = adminPhotos[idx];
+                adminPhotos[idx] = temp;
+                adminSelectedPhoto = -1;
+            }
+            renderAdminPhotos();
+        }
+
+        function removeAdminPhoto(idx) {
+            adminPhotos.splice(idx, 1);
+            adminSelectedPhoto = -1;
+            renderAdminPhotos();
+        }
+
+        function handleAdminPhotos(files) {
+            if (!files || !files.length) return;
+            var remaining = 8 - adminPhotos.length;
+            if (remaining <= 0) return;
+            var toProcess = Array.from(files).slice(0, remaining);
+            toProcess.forEach(function(file) {
+                if (!file.type.startsWith('image/')) return;
+                adminPhotoUploading++;
+                renderAdminPhotos();
+                var reader = new FileReader();
+                reader.onerror = function() { adminPhotoUploading--; renderAdminPhotos(); };
+                reader.onload = function(e) {
+                    var img = new Image();
+                    img.onerror = function() { adminPhotoUploading--; renderAdminPhotos(); };
+                    img.onload = function() {
+                        var canvas = document.createElement('canvas');
+                        var maxDim = 1200, w = img.width, h = img.height;
+                        if (w > maxDim || h > maxDim) { if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; } else { w = Math.round(w * maxDim / h); h = maxDim; } }
+                        canvas.width = w; canvas.height = h;
+                        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                        canvas.toBlob(function(blob) {
+                            if (!blob) { adminPhotoUploading--; renderAdminPhotos(); return; }
+                            var fileName = 'admin/' + Date.now() + '-' + Math.random().toString(36).substring(2, 6) + '.webp';
+                            var SU = 'https://rgnunjngtsgqgvplawfr.supabase.co';
+                            var SK = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8';
+                            fetch(SU + '/storage/v1/object/vehicle_photos/' + fileName, {
+                                method: 'POST',
+                                headers: { 'apikey': SK, 'Authorization': 'Bearer ' + SK, 'Content-Type': 'image/webp', 'x-upsert': 'true' },
+                                body: blob
+                            }).then(function(r) {
+                                if (!r.ok) throw new Error();
+                                adminPhotos.push(SU + '/storage/v1/object/public/vehicle_photos/' + fileName);
+                                adminPhotoUploading--;
+                                renderAdminPhotos();
+                            }).catch(function() { adminPhotoUploading--; renderAdminPhotos(); });
+                        }, 'image/webp', 0.75);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
         async function saveEditModal(id) {
-            var fotosRaw = document.getElementById('eFotos').value;
-            var fotos = fotosRaw.split(',').map(function(f){return f.trim()}).filter(function(f){return f.startsWith('http')});
+            adminPhotoUploading = 0; // force unstick
             var update = {
                 marca: document.getElementById('eMarca').value.trim(),
                 modelo: document.getElementById('eModelo').value.trim(),
@@ -2586,7 +2680,7 @@
                 color: document.getElementById('eColor').value.trim(),
                 transmision: document.getElementById('eTrans').value.trim(),
                 descripcion: document.getElementById('eDesc').value.trim(),
-                fotos: fotos.length > 0 ? fotos : undefined,
+                fotos: adminPhotos.length > 0 ? adminPhotos : [],
                 updated_at: new Date().toISOString()
             };
             try {

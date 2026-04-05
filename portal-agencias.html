@@ -789,11 +789,9 @@ textarea.fi { resize: vertical; min-height: 80px; }
   <button class="pnav-hamburger" id="pNavHamburger" aria-label="Menú"><span></span><span></span><span></span></button>
   <ul class="pnav-links" id="pNavLinks" role="list">
     <li><a href="/inventario.html">🚗 Inventario</a></li>
-    <li><a href="/vip/">💘 Matchmaker</a></li>
-    <li><a href="/vendedor.html">🏷️ Vender Auto</a></li>
-    <li><a href="/oportunidades/">🔥 Subastas</a></li>
-    <li><a href="/portal-agencias.html">🏢 Agencias</a></li>
-    <li><a href="/vip/" class="pnav-cta">Buscar mi Auto →</a></li>
+    <li><a href="/inventario.html">🚗 Inventario</a></li>
+    <li><a href="/portal-agencias.html">🏢 Portal Agencias</a></li>
+    <li><a href="/">🏠 Inicio</a></li>
   </ul>
 </nav>
 <!-- Floating WhatsApp Button -->
@@ -1269,24 +1267,36 @@ textarea.fi { resize: vertical; min-height: 80px; }
         <div class="g2">
           <div class="ff">
             <label>Marca *</label>
-            <select class="fi" id="fm">
+            <select class="fi" id="fm" onchange="toggleOtro('fm','fmOtro')">
               <option value="">Seleccionar...</option>
-              <option value="Toyota">Toyota</option><option value="Honda">Honda</option>
-              <option value="Nissan">Nissan</option><option value="Volkswagen">Volkswagen</option>
-              <option value="Chevrolet">Chevrolet</option><option value="Ford">Ford</option>
-              <option value="BMW">BMW</option><option value="Mercedes-Benz">Mercedes-Benz</option>
-              <option value="Audi">Audi</option><option value="Mazda">Mazda</option>
-              <option value="Hyundai">Hyundai</option><option value="Kia">Kia</option>
-              <option value="Jeep">Jeep</option><option value="Dodge">Dodge</option>
-              <option value="Chrysler">Chrysler</option><option value="Subaru">Subaru</option>
-              <option value="Mini">Mini</option><option value="Mitsubishi">Mitsubishi</option>
-              <option value="Peugeot">Peugeot</option><option value="Renault">Renault</option>
-              <option value="Seat">Seat</option><option value="Suzuki">Suzuki</option>
-              <option value="Volvo">Volvo</option><option value="RAM">RAM</option>
-              <option value="GMC">GMC</option><option value="Fiat">Fiat</option>
-              <option value="MG">MG</option><option value="Acura">Acura</option>
+              <option value="Acura">Acura</option><option value="Audi">Audi</option>
+              <option value="BAIC">BAIC</option><option value="BMW">BMW</option>
+              <option value="BYD">BYD</option><option value="Buick">Buick</option>
+              <option value="Cadillac">Cadillac</option><option value="Changan">Changan</option>
+              <option value="Chevrolet">Chevrolet</option><option value="Chirey">Chirey</option>
+              <option value="Chrysler">Chrysler</option><option value="Cupra">Cupra</option>
+              <option value="Dodge">Dodge</option><option value="Fiat">Fiat</option>
+              <option value="Ford">Ford</option><option value="GAC">GAC</option>
+              <option value="Geely">Geely</option><option value="GMC">GMC</option>
+              <option value="GWM">GWM</option><option value="Hino">Hino</option>
+              <option value="Honda">Honda</option><option value="Hyundai">Hyundai</option>
+              <option value="Infiniti">Infiniti</option><option value="Isuzu">Isuzu</option>
+              <option value="JAC">JAC</option><option value="Jaguar">Jaguar</option>
+              <option value="Jeep">Jeep</option><option value="Kenworth">Kenworth</option>
+              <option value="Kia">Kia</option><option value="Land Rover">Land Rover</option>
+              <option value="Lexus">Lexus</option><option value="Lincoln">Lincoln</option>
+              <option value="Mazda">Mazda</option><option value="Mercedes-Benz">Mercedes-Benz</option>
+              <option value="MG">MG</option><option value="Mini">Mini</option>
+              <option value="Mitsubishi">Mitsubishi</option><option value="Nissan">Nissan</option>
+              <option value="Omoda">Omoda</option><option value="Peugeot">Peugeot</option>
+              <option value="Porsche">Porsche</option><option value="RAM">RAM</option>
+              <option value="Renault">Renault</option><option value="Seat">Seat</option>
+              <option value="Subaru">Subaru</option><option value="Suzuki">Suzuki</option>
+              <option value="Tesla">Tesla</option><option value="Toyota">Toyota</option>
+              <option value="Volkswagen">Volkswagen</option><option value="Volvo">Volvo</option>
               <option value="Otra">Otra</option>
             </select>
+            <input class="fi" id="fmOtro" placeholder="Escribe la marca..." style="display:none;margin-top:6px;">
           </div>
           <div class="ff">
             <label>Modelo *</label>
@@ -1341,14 +1351,18 @@ textarea.fi { resize: vertical; min-height: 80px; }
           </div>
           <div class="ff">
             <label>Color</label>
-            <select class="fi" id="fcol">
+            <select class="fi" id="fcol" onchange="toggleOtro('fcol','fcolOtro')">
               <option value="">Seleccionar...</option>
               <option value="Blanco">Blanco</option><option value="Negro">Negro</option>
               <option value="Gris">Gris</option><option value="Plata">Plata</option>
               <option value="Rojo">Rojo</option><option value="Azul">Azul</option>
-              <option value="Verde">Verde</option><option value="Cafe">Cafe</option>
-              <option value="Dorado">Dorado</option><option value="Otro">Otro</option>
+              <option value="Verde">Verde</option><option value="Amarillo">Amarillo</option>
+              <option value="Naranja">Naranja</option><option value="Cafe">Cafe</option>
+              <option value="Beige">Beige</option><option value="Dorado">Dorado</option>
+              <option value="Vino">Vino</option><option value="Morado">Morado</option>
+              <option value="Bronce">Bronce</option><option value="Otro">Otro</option>
             </select>
+            <input class="fi" id="fcolOtro" placeholder="Escribe el color..." style="display:none;margin-top:6px;">
           </div>
           <div class="ff">
             <label>Ciudad</label>
@@ -1863,12 +1877,19 @@ function openForm(id) {
   photoUploading = 0;
   g('ferr').textContent = '';
   g('photoGrid').innerHTML = '';
+  if(g('fmOtro')){g('fmOtro').value='';g('fmOtro').style.display='none';}
+  if(g('fcolOtro')){g('fcolOtro').value='';g('fcolOtro').style.display='none';}
 
   if (id) {
     var a = cars.find(function(x) { return x.id === id; });
     if (!a) return;
     g('ftit').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Editar Auto';
-    g('fm').value = a.marca || '';
+    // Check if marca exists in dropdown, if not use "Otra"
+    var marcaSel = g('fm');
+    var marcaFound = false;
+    for(var oi=0;oi<marcaSel.options.length;oi++){if(marcaSel.options[oi].value===a.marca){marcaFound=true;break;}}
+    if(marcaFound){marcaSel.value=a.marca;if(g('fmOtro'))g('fmOtro').style.display='none';}
+    else{marcaSel.value='Otra';if(g('fmOtro')){g('fmOtro').value=a.marca||'';g('fmOtro').style.display='block';}}
     g('fmo').value = a.modelo || '';
     g('fa').value = a.anio || '';
     g('fp').value = a.precio_venta || '';
@@ -1876,7 +1897,13 @@ function openForm(id) {
     g('fci').value = a.ciudad || 'CDMX';
     g('fti').value = a.tipo_vehiculo || 'sedan';
     g('ftr').value = a.transmision || 'Automatico';
-    g('fcol').value = a.color || '';
+    // Check if color exists in dropdown
+    var colSel = g('fcol');
+    var colFound = false;
+    for(var ci=0;ci<colSel.options.length;ci++){if(colSel.options[ci].value===a.color){colFound=true;break;}}
+    if(colFound){colSel.value=a.color;if(g('fcolOtro'))g('fcolOtro').style.display='none';}
+    else if(a.color){colSel.value='Otro';if(g('fcolOtro')){g('fcolOtro').value=a.color;g('fcolOtro').style.display='block';}}
+    else{colSel.value='';if(g('fcolOtro'))g('fcolOtro').style.display='none';}
     g('fco').value = a.combustible || 'gasolina';
     g('fd').value = a.descripcion || '';
     g('fst').value = a.estatus || 'disponible';
@@ -2184,8 +2211,27 @@ function removePhoto(i) {
 // ══════════════════════════════════════════
 // FORM SUBMIT
 // ══════════════════════════════════════════
+function toggleOtro(selectId, inputId) {
+  var sel = g(selectId);
+  var inp = g(inputId);
+  if (!sel || !inp) return;
+  inp.style.display = (sel.value === 'Otra' || sel.value === 'Otro') ? 'block' : 'none';
+  if (inp.style.display === 'block') inp.focus();
+}
+
+function getFieldWithOtro(selectId, inputId) {
+  var sel = g(selectId);
+  if (!sel) return '';
+  if (sel.value === 'Otra' || sel.value === 'Otro') {
+    var inp = g(inputId);
+    return inp ? inp.value.trim() : '';
+  }
+  return sel.value.trim();
+}
+
 function submitForm() {
-  var marca = g('fm').value.trim(), modelo = g('fmo').value.trim();
+  var marca = getFieldWithOtro('fm', 'fmOtro') || g('fm').value.trim();
+  var modelo = g('fmo').value.trim();
   var anio = parseInt(g('fa').value) || 0, precio = parseFloat(g('fp').value) || 0;
   g('ferr').textContent = '';
   if (!marca || !modelo || !anio || !precio) {
@@ -2201,7 +2247,7 @@ function submitForm() {
     kilometraje: parseInt(g('fk').value) || 0,
     ciudad: g('fci').value.trim() || 'CDMX',
     tipo_vehiculo: g('fti').value, transmision: g('ftr').value,
-    color: g('fcol').value.trim(), combustible: g('fco').value,
+    color: getFieldWithOtro('fcol', 'fcolOtro') || g('fcol').value.trim(), combustible: g('fco').value,
     descripcion: (g('fd').value.trim() + (g('fvin').value.trim() ? ' | VIN: ' + g('fvin').value.trim() : '')).trim(),
     estatus: g('fst').value,
     fotos: uploadedPhotos,

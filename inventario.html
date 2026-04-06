@@ -1800,7 +1800,7 @@
                             id: car.id_interno || car.id,
                             agencia: car.agencia || 'Alabol',
                             ubicacion: car.ciudad || getGenericLocation(car.agencia),
-                            vehicle: `${car.marca || car.brand || ''} ${car.modelo || car.model || ''} ${car.año || car.year || ''}`.trim().toUpperCase(),
+                            vehicle: `${car.marca || car.brand || ''} ${car.modelo || car.model || ''} ${car.anio || car.año || car.year || ''}`.trim().toUpperCase(),
                             version: car.version || 'Equipado',
                             priceMXN: car.precio_venta || car.precio || 0,
                             km: car.kilometraje || 0,

@@ -2228,7 +2228,7 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
                     id: autoId, // Use the normalized ID
                     brand: auto.marca || auto.brand,
                     model: auto.modelo || auto.model,
-                    year: auto.año || auto.year,
+                    year: auto.anio || auto.año || auto.year,
                     price: auto.precio_venta || auto.priceMXN
                 });
                 localStorage.setItem('alabol_matches', JSON.stringify(matches));
@@ -2449,7 +2449,7 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
                 const marca = auto.marca || auto.brand || 'Auto';
                 const modelo = auto.modelo || auto.model || 'Alabol';
                 const precio = auto.precio_venta || auto.priceMXN || 0;
-                const anio = auto.año || auto.year || '2024';
+                const anio = auto.anio || auto.año || auto.year || '';
                 const version = auto.version || 'Equipado';
 
                 let carImg = defaultImg;

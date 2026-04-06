@@ -960,6 +960,9 @@ textarea.fi { resize: vertical; min-height: 80px; }
         <input class="inp" id="lp" type="password" placeholder="Contrasena">
         <div class="aerr" id="lerr"></div>
         <button class="bgold" onclick="doLogin()">Entrar al Portal</button>
+        <div style="text-align:center;margin-top:10px;">
+          <a href="#" onclick="forgotPassword();return false;" style="font-size:11px;color:var(--green-text);opacity:0.7;text-decoration:underline;">Olvide mi contrasena</a>
+        </div>
       </div>
       <div id="fr" class="dn">
         <input class="inp" id="rcode" placeholder="Codigo de invitacion" style="text-transform:uppercase;letter-spacing:0.1em;text-align:center;border-color:var(--gold-dim);">
@@ -1609,6 +1612,26 @@ function doReg() {
       else g('rerr').textContent = d.msg || d.error_description || 'Error al registrar.';
     })
     .catch(function() { g('rerr').textContent = 'Error de conexion.'; });
+}
+
+function forgotPassword() {
+  var email = g('le').value.trim();
+  if (!email) { g('lerr').textContent = 'Ingresa tu email primero.'; return; }
+  g('lerr').style.color = 'var(--green-text)';
+  g('lerr').textContent = 'Enviando link de recuperacion...';
+  fetch(S + '/auth/v1/recover', {
+    method: 'POST', headers: ah(),
+    body: JSON.stringify({ email: email, gotrue_meta_security: {} })
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      g('lerr').style.color = '#34d399';
+      g('lerr').textContent = 'Link enviado a ' + email + '. Revisa tu bandeja de entrada (y spam).';
+    })
+    .catch(function() {
+      g('lerr').style.color = '';
+      g('lerr').textContent = 'Error al enviar. Intenta de nuevo.';
+    });
 }
 
 function signOut() {

@@ -10,6 +10,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+// XSS sanitizer — escapes user data before innerHTML
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 // Auth guard
 (async function(){
   var SU='https://rgnunjngtsgqgvplawfr.supabase.co';
@@ -609,7 +611,7 @@ function renderDashboard(){
 
   // Últimos leads
   document.getElementById('dashLeadsBody').innerHTML = leads.slice(0,10).map(function(l){
-    return '<tr><td>'+fmtDate(l.created_at)+'</td><td style="color:white;font-weight:600;">'+l.nombre+'</td><td>'+(l.tipo_vehiculo||'—')+'</td><td style="color:var(--gold);">'+fmt(l.presupuesto_max)+'</td><td>'+tempBadge(l.temperatura)+'</td><td><a href="https://wa.me/52'+l.whatsapp+'" target="_blank" style="color:var(--emerald);text-decoration:none;"><i class="fa-brands fa-whatsapp"></i> '+l.whatsapp+'</a></td></tr>';
+    return '<tr><td>'+fmtDate(l.created_at)+'</td><td style="color:white;font-weight:600;">'+esc(l.nombre)+'</td><td>'+esc(l.tipo_vehiculo||'—')+'</td><td style="color:var(--gold);">'+fmt(l.presupuesto_max)+'</td><td>'+tempBadge(l.temperatura)+'</td><td><a href="https://wa.me/52'+esc(l.whatsapp)+'" target="_blank" style="color:var(--emerald);text-decoration:none;"><i class="fa-brands fa-whatsapp"></i> '+esc(l.whatsapp)+'</a></td></tr>';
   }).join('');
 }
 
@@ -661,8 +663,8 @@ function renderLeads(){
       var dias=daysSince(l.ultima_actividad_at||l.created_at);
       var waMsg=encodeURIComponent('Hola '+l.nombre+', soy de Alabol Car Broker. Queria darle seguimiento a tu busqueda de '+(l.tipo_vehiculo||'auto')+'. Como vas?');
       return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">'
-        +'<div><span style="color:white;font-weight:600;font-size:12px;">'+l.nombre+'</span> <span style="font-size:10px;color:var(--danger);">'+dias+' dias sin contacto</span></div>'
-        +'<a href="https://wa.me/52'+l.whatsapp+'?text='+waMsg+'" target="_blank" class="btn btn-sm btn-danger"><i class="fa-brands fa-whatsapp"></i> Intervenir</a>'
+        +'<div><span style="color:white;font-weight:600;font-size:12px;">'+esc(l.nombre)+'</span> <span style="font-size:10px;color:var(--danger);">'+dias+' dias sin contacto</span></div>'
+        +'<a href="https://wa.me/52'+esc(l.whatsapp)+'?text='+waMsg+'" target="_blank" class="btn btn-sm btn-danger"><i class="fa-brands fa-whatsapp"></i> Intervenir</a>'
       +'</div>';
     }).join('');
 
@@ -690,8 +692,8 @@ function renderLeadsTable(){
     var waMsg=encodeURIComponent('Hola '+l.nombre+', soy de Alabol Car Broker. Te contacto sobre tu busqueda de '+(l.tipo_vehiculo||'auto')+'.');
 
     return '<tr>'
-      +'<td style="color:white;font-weight:600;">'+l.nombre+'<div style="font-size:9px;color:var(--txt);opacity:0.6;">'+l.whatsapp+'</div></td>'
-      +'<td>'+(l.tipo_vehiculo||'—')+'</td>'
+      +'<td style="color:white;font-weight:600;">'+esc(l.nombre)+'<div style="font-size:9px;color:var(--txt);opacity:0.6;">'+esc(l.whatsapp)+'</div></td>'
+      +'<td>'+esc(l.tipo_vehiculo||'—')+'</td>'
       +'<td style="color:var(--gold);font-weight:700;">'+fmt(l.presupuesto_max)+'</td>'
       +'<td><select onchange="updateLeadTemp(\''+l.id+'\',this.value)" style="background:var(--bg2);border:1px solid var(--border);color:var(--txt);padding:3px 6px;border-radius:6px;font-size:10px;"><option value="nuevo" '+(l.temperatura==='nuevo'?'selected':'')+'>🆕 Nuevo</option><option value="caliente" '+(l.temperatura==='caliente'?'selected':'')+'>🔥 Caliente</option><option value="tibio" '+(l.temperatura==='tibio'?'selected':'')+'>📞 Tibio</option><option value="frio" '+(l.temperatura==='frio'?'selected':'')+'>💤 Frio</option></select></td>'
       +'<td style="color:'+diasColor+';font-weight:700;font-size:11px;">'+dias+'d</td>'

@@ -10,6 +10,22 @@
     <meta name="apple-mobile-web-app-title" content="Alabol HQ">
     <meta name="theme-color" content="#0a1f1a">
     <title>Alabol HQ | Panel de Control</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script>
+    // Auth guard — admin only
+    (async function(){
+      var sb=window.supabaseClient;
+      if(!sb){window.location.href='./login.html?redirect=admin.html';return;}
+      var{data:{session}}=await sb.auth.getSession();
+      if(!session){window.location.href='./login.html?redirect=admin.html';return;}
+      var{data:perfil}=await sb.from('perfiles').select('rol').eq('id',session.user.id).eq('activo',true).single();
+      if(!perfil||perfil.rol!=='admin'){
+        document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:Poppins,sans-serif;background:#0a1f1a;color:white;text-align:center;padding:40px;"><div><div style="font-size:64px;margin-bottom:20px;">🔒</div><h1 style="color:#d4af37;">Acceso Restringido</h1><p style="color:#a8c5b8;margin-top:10px;">Solo administradores.</p><a href="./index.html" style="color:#d4af37;">Volver</a></div></div>';
+        return;
+      }
+    })();
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         @property --glow-angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
@@ -319,7 +335,7 @@
                     <div class="card-label">Portal Agencias</div>
                     <div class="card-sub">Red de agencias aliadas</div>
                 </a>
-                <a href="https://supabase.com/dashboard/project/rgnunjngtsgqgvplawfr" class="card" target="_blank">
+                <a href="#" onclick="window.open(atob('aHR0cHM6Ly9zdXBhYmFzZS5jb20vZGFzaGJvYXJkL3Byb2plY3QvcmdudW5qbmd0c2dxZ3ZwbGF3ZnI='),'_blank');return false;" class="card">
                     <div class="card-icon">🗄️</div>
                     <div class="card-label">Base de Datos</div>
                     <div class="card-sub">Supabase Dashboard</div>
@@ -402,7 +418,7 @@
                 <a href="https://resend.com/emails" class="ext-btn" target="_blank"><span>📧</span>Resend</a>
                 <a href="https://dash.cloudflare.com" class="ext-btn" target="_blank"><span>☁️</span>Cloudflare</a>
                 <a href="https://app.netlify.com" class="ext-btn" target="_blank"><span>🚀</span>Netlify</a>
-                <a href="https://github.com/IsEsperanza2306/alabol" class="ext-btn" target="_blank"><span>💻</span>GitHub</a>
+                <a href="#" onclick="window.open(atob('aHR0cHM6Ly9naXRodWIuY29tL0lzRXNwZXJhbnphMjMwNi9hbGFib2w='),'_blank');return false;" class="ext-btn"><span>💻</span>GitHub</a>
             </div>
         </div>
 

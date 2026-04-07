@@ -971,7 +971,7 @@
 
                 // Update form title
                 var formTitle = document.querySelector('.form-title');
-                if (formTitle) formTitle.innerHTML = '<span class="emoji">💘</span> Hola ' + prefillUser.nombre.split(' ')[0] + ', elige fecha y hora';
+                if (formTitle) { var safeName = String(prefillUser.nombre.split(' ')[0]).replace(/[<>"'&]/g,''); formTitle.innerHTML = '<span class="emoji">💘</span> Hola ' + safeName + ', elige fecha y hora'; }
                 var formSub = document.querySelector('.form-subtitle');
                 if (formSub) formSub.textContent = 'Ya tenemos tus datos del matchmaker. Solo falta elegir cuándo.';
             });

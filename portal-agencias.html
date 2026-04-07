@@ -1593,22 +1593,36 @@ function doLogin() {
     .catch(function() { g('lerr').textContent = 'Error de conexion.'; });
 }
 
-var INVITE_CODES = ['ALABOL-2026', 'EMBAJADOR-VIP'];
-
 function doReg() {
   var code = (g('rcode').value || '').trim().toUpperCase();
   var n = g('rn').value.trim(), e = g('re').value.trim(), p = g('rp').value;
   g('rerr').textContent = '';
-  if (!code || INVITE_CODES.indexOf(code) < 0) { g('rerr').textContent = 'Codigo de invitacion invalido. Solicita uno a tu contacto Alabol.'; return; }
+  if (!code) { g('rerr').textContent = 'Codigo de invitacion requerido.'; return; }
   if (!n || !e || !p) { g('rerr').textContent = 'Completa todos los campos.'; return; }
-  if (p.length < 6) { g('rerr').textContent = 'Minimo 6 caracteres.'; return; }
+  if (p.length < 10) { g('rerr').textContent = 'Minimo 10 caracteres.'; return; }
+  // Validate invite code server-side via Supabase
+  fetch(S + '/rest/v1/invite_codes?code=eq.' + encodeURIComponent(code) + '&activo=eq.true&usos_restantes=gt.0&select=id', {
+    headers: { 'apikey': K, 'Authorization': 'Bearer ' + K }
+  }).then(function(r){ return r.json(); }).then(function(codes){
+    if (!codes || codes.length === 0) { g('rerr').textContent = 'Codigo de invitacion invalido. Solicita uno a tu contacto Alabol.'; return; }
+    doRegSubmit(n, e, p, codes[0].id);
+  }).catch(function(){ g('rerr').textContent = 'Error validando codigo.'; });
+}
+function doRegSubmit(n, e, p, codeId) {
   fetch(S + '/auth/v1/signup', {
     method: 'POST', headers: ah(),
     body: JSON.stringify({ email: e, password: p, data: { full_name: n } })
   })
     .then(function(r) { return r.json(); })
     .then(function(d) {
-      if (d.id || d.access_token) { g('rerr').style.color = '#34d399'; g('rerr').textContent = 'Revisa tu email para confirmar tu cuenta!'; }
+      if (d.id || d.access_token) {
+        g('rerr').style.color = '#34d399'; g('rerr').textContent = 'Revisa tu email para confirmar tu cuenta!';
+        // Decrement invite code uses
+        fetch(S + '/rest/v1/rpc/decrement_invite_code', {
+          method: 'POST', headers: { 'apikey': K, 'Authorization': 'Bearer ' + K, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code_id: codeId })
+        }).catch(function(){});
+      }
       else g('rerr').textContent = d.msg || d.error_description || 'Error al registrar.';
     })
     .catch(function() { g('rerr').textContent = 'Error de conexion.'; });

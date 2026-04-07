@@ -395,7 +395,12 @@
         // Support ?redirect= param to return users to where they came from
         function getRedirectTarget() {
             const params = new URLSearchParams(window.location.search);
-            return params.get('redirect') || 'vendedor.html';
+            const redirect = params.get('redirect') || '';
+            // Security: only allow relative paths, block external redirects
+            if (redirect && !redirect.startsWith('http') && !redirect.startsWith('//') && !redirect.includes(':') && !redirect.includes('\\')) {
+                return redirect;
+            }
+            return 'vendedor.html';
         }
 
         (async function() {

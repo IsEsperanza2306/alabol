@@ -617,6 +617,7 @@ async function stepContacto(){
   } else {
     await addMsg('Sin presion. Para enviarte opciones cuando encuentre algo que te pueda interesar, dejame tu nombre y WhatsApp.',true,600);
   }
+  await addMsg('Al continuar, aceptas nuestros <a href="./terminos.html" target="_blank" style="color:#d4af37;">Terminos</a> y <a href="./aviso-privacidad.html" target="_blank" style="color:#d4af37;">Aviso de Privacidad</a>.',true,300);
   await addMsg('Como te llamas?',true,400);
   addInput('Tu nombre...',function(nombre){
     chatData.nombre=nombre;

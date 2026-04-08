@@ -573,7 +573,13 @@ textarea.fi { resize: vertical; min-height: 80px; }
       <div id="fr" class="dn">
         <input class="inp" id="rn" placeholder="Tu nombre">
         <input class="inp" id="re" type="email" placeholder="tu@email.com">
-        <input class="inp" id="rp" type="password" placeholder="Contrasena (min 6)">
+        <input class="inp" id="rp" type="password" placeholder="Contrasena (min 10)">
+        <div style="margin:10px 0;">
+          <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;font-size:11px;line-height:1.5;color:#a8c5b8;">
+            <input type="checkbox" id="acceptTermsVendedor" style="margin-top:3px;accent-color:#d4af37;min-width:16px;">
+            <span>Acepto los <a href="./terminos.html" target="_blank" style="color:#d4af37;">Terminos y Condiciones</a> y el <a href="./aviso-privacidad.html" target="_blank" style="color:#d4af37;">Aviso de Privacidad</a>.</span>
+          </label>
+        </div>
         <div class="aerr" id="rerr"></div>
         <button class="bgold" onclick="doReg()">Crear mi Perfil</button>
       </div>
@@ -970,7 +976,8 @@ function doReg() {
   var n = g('rn').value.trim(), e = g('re').value.trim(), p = g('rp').value;
   g('rerr').textContent = '';
   if (!n || !e || !p) { g('rerr').textContent = 'Completa todos los campos.'; return; }
-  if (p.length < 6) { g('rerr').textContent = 'Minimo 6 caracteres.'; return; }
+  if (p.length < 10) { g('rerr').textContent = 'Minimo 10 caracteres.'; return; }
+  if (!g('acceptTermsVendedor').checked) { g('rerr').textContent = 'Debes aceptar los Terminos y el Aviso de Privacidad.'; return; }
   fetch(S + '/auth/v1/signup', {
     method: 'POST', headers: ah(),
     body: JSON.stringify({ email: e, password: p, data: { full_name: n } })

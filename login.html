@@ -284,6 +284,12 @@
                     <input type="tel" id="whatsapp" placeholder="55 1234 5678">
                 </div>
 
+                <div class="form-group" id="termsGroup" style="display:none;margin:12px 0;">
+                    <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;font-size:11px;line-height:1.5;color:#a8c5b8;">
+                        <input type="checkbox" id="acceptTerms" style="margin-top:3px;accent-color:#d4af37;min-width:16px;">
+                        <span>Acepto los <a href="./terminos.html" target="_blank" style="color:#d4af37;">Terminos y Condiciones</a> y el <a href="./aviso-privacidad.html" target="_blank" style="color:#d4af37;">Aviso de Privacidad</a>.</span>
+                    </label>
+                </div>
                 <button type="submit" class="btn-primary" id="submitBtn">Entrar</button>
             </form>
 
@@ -437,6 +443,8 @@
 
                     if (nameGroup) nameGroup.style.display = isLogin ? 'none' : 'block';
                     if (whatsappGroup) whatsappGroup.style.display = isLogin ? 'none' : 'block';
+                    var termsGroup = document.getElementById('termsGroup');
+                    if (termsGroup) termsGroup.style.display = isLogin ? 'none' : 'block';
                     if (authTitle) authTitle.textContent = isLogin ? 'Bienvenido al Club' : 'Crea tu Perfil VIP';
                     if (authSubtitle) authSubtitle.textContent = isLogin ? 'Tu pasaporte VIP al mundo de los autos certificados.' : 'Únete a la red más exclusiva de CDMX.';
                     if (submitBtn) submitBtn.textContent = isLogin ? 'Entrar' : 'Registrarme';
@@ -506,6 +514,13 @@
                 if (isLogin) {
                     result = await sb.auth.signInWithPassword({ email, password });
                 } else {
+                    if (!document.getElementById('acceptTerms').checked) {
+                        errorBox.textContent = 'Debes aceptar los Terminos y el Aviso de Privacidad.';
+                        errorBox.style.display = 'block';
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+                        return;
+                    }
                     const fullName = document.getElementById('fullName').value;
                     const whatsapp = document.getElementById('whatsapp').value;
                     result = await sb.auth.signUp({

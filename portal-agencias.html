@@ -968,7 +968,13 @@ textarea.fi { resize: vertical; min-height: 80px; }
         <input class="inp" id="rcode" placeholder="Codigo de invitacion" style="text-transform:uppercase;letter-spacing:0.1em;text-align:center;border-color:var(--gold-dim);">
         <input class="inp" id="rn" placeholder="Nombre de la agencia">
         <input class="inp" id="re" type="email" placeholder="tu@email.com">
-        <input class="inp" id="rp" type="password" placeholder="Contrasena (min 6)">
+        <input class="inp" id="rp" type="password" placeholder="Contrasena (min 10)">
+        <div style="margin:10px 0;">
+          <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;font-size:11px;line-height:1.5;color:#a8c5b8;">
+            <input type="checkbox" id="acceptTermsAgencia" style="margin-top:3px;accent-color:#d4af37;min-width:16px;">
+            <span>Acepto los <a href="./terminos.html" target="_blank" style="color:#d4af37;">Terminos y Condiciones</a> y el <a href="./aviso-privacidad.html" target="_blank" style="color:#d4af37;">Aviso de Privacidad</a>.</span>
+          </label>
+        </div>
         <div class="aerr" id="rerr"></div>
         <button class="bgold" onclick="doReg()">Crear Cuenta de Agencia</button>
       </div>
@@ -1600,6 +1606,7 @@ function doReg() {
   if (!code) { g('rerr').textContent = 'Codigo de invitacion requerido.'; return; }
   if (!n || !e || !p) { g('rerr').textContent = 'Completa todos los campos.'; return; }
   if (p.length < 10) { g('rerr').textContent = 'Minimo 10 caracteres.'; return; }
+  if (!g('acceptTermsAgencia').checked) { g('rerr').textContent = 'Debes aceptar los Terminos y el Aviso de Privacidad.'; return; }
   // Validate invite code server-side via Supabase
   fetch(S + '/rest/v1/invite_codes?code=eq.' + encodeURIComponent(code) + '&activo=eq.true&usos_restantes=gt.0&select=id', {
     headers: { 'apikey': K, 'Authorization': 'Bearer ' + K }

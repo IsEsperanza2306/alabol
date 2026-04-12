@@ -775,8 +775,12 @@
         }
 
         function renderCarData(car) {
+            const isSociety = car.is_society === true;
+
             // Title & Specs
-            document.title = `Expediente: ${car.marca} ${car.modelo} | Alabol Búnker`;
+            document.title = isSociety
+                ? `${car.marca} ${car.modelo} | Alabol Society`
+                : `Expediente: ${car.marca} ${car.modelo} | Alabol Búnker`;
             document.getElementById('carName').innerHTML = `${car.marca} <span style="color: var(--gold);">${car.modelo}</span>`;
             document.getElementById('carPrice').innerHTML = `${formatCurrency(car.precio_venta || 0)} <span>MXN</span>`;
 
@@ -800,13 +804,108 @@
             document.getElementById('carImg').src = carImgUrl;
 
             // Expediente overlay ID
-            document.querySelector('.trust-badge-overlay').innerHTML = `<i class="fa-solid fa-shield-check"></i> Exp. #${String(car.id_interno || car.id).substring(0, 8).toUpperCase()}`;
+            document.querySelector('.trust-badge-overlay').innerHTML = isSociety
+                ? `<i class="fa-solid fa-shield-halved"></i> Verificado · Inspeccionado`
+                : `<i class="fa-solid fa-shield-check"></i> Exp. #${String(car.id_interno || car.id).substring(0, 8).toUpperCase()}`;
 
-            // Ensure CTA points to correct whatsapp link dynamically
-            const wBtn = document.querySelector('.cta-box .btn-gold');
-            if (wBtn) {
-                const waMsg = encodeURIComponent(`Hola Alabol, me interesa el ${car.marca} ${car.modelo} (${car.anio}) que vi en su sitio. Código: ${car.id_interno || car.id}.`);
-                wBtn.href = `https://wa.me/525568667571?text=${waMsg}`;
+            // ── SOCIETY TREATMENT ──
+            if (isSociety) {
+                // Change background to obsidian
+                document.body.style.backgroundColor = '#050505';
+                document.querySelector('.premium-bg').style.background =
+                    'radial-gradient(circle at 20% 30%, rgba(212,175,55,0.03) 0%, transparent 50%)';
+
+                // Swap navbar logo
+                const navLogo = document.querySelector('.nav-logo img');
+                if (navLogo) navLogo.src = 'alabol-society-lockup.png';
+                const navText = document.querySelector('.nav-logo-text');
+                if (navText) navText.textContent = 'Society';
+
+                // Add society shield to gallery
+                const gallery = document.querySelector('.car-gallery');
+                if (gallery) {
+                    const shield = document.createElement('img');
+                    shield.src = 'alabol-society-lockup.png';
+                    shield.alt = 'Society';
+                    shield.style.cssText = 'position:absolute;top:16px;left:16px;height:44px;z-index:10;filter:drop-shadow(0 2px 10px rgba(0,0,0,0.6));';
+                    gallery.appendChild(shield);
+
+                    const tag = document.createElement('div');
+                    tag.textContent = 'SOCIETY';
+                    tag.style.cssText = 'position:absolute;bottom:12px;right:12px;z-index:10;background:rgba(5,5,5,0.75);backdrop-filter:blur(12px);padding:5px 14px;font-size:8px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:rgba(212,175,55,0.7);border:1px solid rgba(212,175,55,0.15);';
+                    gallery.appendChild(tag);
+
+                    // Gold line top
+                    gallery.style.borderRadius = '20px';
+                    const line = document.createElement('div');
+                    line.style.cssText = 'position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(212,175,55,0.5),transparent);z-index:5;';
+                    gallery.appendChild(line);
+                }
+
+                // Replace humor tag with sober note
+                const humor = document.querySelector('.humor-tag');
+                if (humor) {
+                    humor.style.fontStyle = 'normal';
+                    humor.style.color = 'rgba(255,255,255,0.35)';
+                    humor.style.fontSize = '0.85rem';
+                    humor.textContent = `Servicio verificado · ${car.ciudad || 'CDMX'}`;
+                }
+
+                // Change availability badge
+                const avail = document.querySelector('.security-badge');
+                if (avail) {
+                    avail.style.background = 'rgba(212,175,55,0.08)';
+                    avail.style.color = 'rgba(212,175,55,0.8)';
+                    avail.innerHTML = '◆ ALABOL SOCIETY';
+                }
+
+                // Change CTA
+                const ctaBox = document.querySelector('.cta-box');
+                if (ctaBox) {
+                    ctaBox.style.background = 'rgba(5,5,5,0.88)';
+                    ctaBox.style.borderColor = 'rgba(212,175,55,0.2)';
+                    ctaBox.style.borderRadius = '4px';
+                }
+                const ctaLabel = document.querySelector('.cta-box span[style*="font-size: 0.7rem"]');
+                if (ctaLabel) ctaLabel.textContent = 'Alabol Society';
+                const ctaTitle = document.querySelector('.cta-box span[style*="color: var(--gold)"]');
+                if (ctaTitle) ctaTitle.textContent = 'Pieza Verificada';
+
+                const wBtn = document.querySelector('.cta-box .btn-gold');
+                if (wBtn) {
+                    wBtn.textContent = 'Solicitar Informacion Personalizada';
+                    wBtn.style.background = 'linear-gradient(135deg, #F2D27A 0%, #B8902A 40%, #E8C15A 100%)';
+                    wBtn.style.borderRadius = '4px';
+                    const waMsg = encodeURIComponent(`Hola Alabol Society, me interesa el ${car.marca} ${car.modelo} (${car.anio}). Solicito informacion personalizada.`);
+                    wBtn.href = `https://wa.me/525568667571?text=${waMsg}`;
+                }
+
+                // Style cert cards
+                document.querySelectorAll('.cert-card').forEach(c => {
+                    c.style.background = '#0a0a0a';
+                    c.style.borderColor = 'rgba(255,255,255,0.04)';
+                    c.style.borderRadius = '8px';
+                });
+
+                // Style expediente
+                const exp = document.querySelector('.expediente-section');
+                if (exp) {
+                    exp.style.background = 'rgba(255,255,255,0.02)';
+                    exp.style.borderColor = 'rgba(255,255,255,0.04)';
+                    exp.style.borderRadius = '8px';
+                }
+
+                // Header/nav dark
+                const navBar = document.querySelector('.alabol-nav');
+                if (navBar) navBar.style.background = 'rgba(5,5,5,0.95)';
+
+            } else {
+                // Normal flow — CTA update
+                const wBtn = document.querySelector('.cta-box .btn-gold');
+                if (wBtn) {
+                    const waMsg = encodeURIComponent(`Hola Alabol, me interesa el ${car.marca} ${car.modelo} (${car.anio}) que vi en su sitio. Código: ${car.id_interno || car.id}.`);
+                    wBtn.href = `https://wa.me/525568667571?text=${waMsg}`;
+                }
             }
         }
     </script>

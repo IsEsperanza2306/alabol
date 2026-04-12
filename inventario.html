@@ -728,6 +728,46 @@
             100% { opacity: 1; transform: translateY(0) scale(1); }
         }
 
+        /* ── ALABOL SOCIETY CARD OVERRIDES ── */
+        .card.society {
+            background: linear-gradient(135deg, rgba(8,8,8,0.95) 0%, rgba(16,16,16,0.95) 100%);
+            border-color: rgba(192,192,192,0.15);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 0 1px rgba(192,192,192,0.05);
+        }
+        .card.society:hover {
+            border-color: rgba(212,175,55,0.4);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.7), 0 0 40px rgba(212,175,55,0.08), inset 0 1px 0 rgba(212,175,55,0.1);
+        }
+        .card.society .card-img-placeholder { opacity: 0.85; }
+        .card.society:hover .card-img-placeholder { opacity: 1; }
+        .card.society .card-img-container::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0;
+            height: 2px; background: linear-gradient(90deg, transparent, rgba(212,175,55,0.6), transparent);
+            z-index: 5;
+        }
+        .society-shield {
+            position: absolute; top: 12px; right: 12px; z-index: 10;
+            width: 40px; height: 48px;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.6));
+            transition: transform 0.3s ease;
+        }
+        .card.society:hover .society-shield { transform: scale(1.08); }
+        .society-tag {
+            position: absolute; bottom: 8px; right: 8px;
+            background: rgba(5,5,5,0.8); backdrop-filter: blur(10px);
+            padding: 4px 12px; font-size: 8px; font-weight: 600;
+            letter-spacing: 3px; text-transform: uppercase;
+            color: rgba(212,175,55,0.7); border: 1px solid rgba(212,175,55,0.15); z-index: 5;
+        }
+        .card.society .price-tag { color: #e8e6e0; text-shadow: none; }
+        .card.society .car-version { color: rgba(255,255,255,0.4); }
+        .card.society .spec-label { color: rgba(255,255,255,0.35); }
+        .card.society .specs { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.04); }
+        .btn-society {
+            background: linear-gradient(135deg, #F2D27A 0%, #B8902A 40%, #E8C15A 100%) !important;
+            color: #050505 !important; border-radius: 8px;
+        }
+
         @media (max-width: 768px) {
             .grid {
                 grid-template-columns: 1fr;
@@ -1831,7 +1871,8 @@ function optimImg(url, width) {
                             views: car.vistas || 0,
                             featured: car.destacado === true,
                             origen: car.origen || 'agencia',
-                            ciudad: car.ciudad || 'México'
+                            ciudad: car.ciudad || 'México',
+                            is_society: car.is_society === true
                         };
                     });
                 }
@@ -2033,20 +2074,32 @@ function optimImg(url, width) {
 
             // CTA text based on trust level (dating app language)
             let ctaText = '🔍 Ver perfil completo';
-            if (tl === 'green') ctaText = '💘 Conocer a este candidato';
+            if (auto.is_society) ctaText = 'Solicitar Informacion Personalizada';
+            else if (tl === 'green') ctaText = '💘 Conocer a este candidato';
             else if (tl === 'yellow') ctaText = '👀 Stalkearlo un poco';
 
+            // Society badge & class
+            const societyClass = auto.is_society ? ' society' : '';
+            const societyShield = auto.is_society
+                ? '<img src="alabol-society-lockup.png" class="society-shield" alt="Society">'
+                : '';
+            const societyTag = auto.is_society
+                ? '<div class="society-tag">Society</div>'
+                : '';
+            const societyBtnClass = auto.is_society ? ' btn-society' : '';
+
             return `
-                <div class="card" onclick="openCarDetails('${auto.id}')" style="cursor:pointer;">
+                <div class="card${societyClass}" onclick="openCarDetails('${auto.id}')" style="cursor:pointer;">
                     <button class="wishlist-btn ${likedClass}" onclick="event.stopPropagation(); toggleWishlist('${auto.id}', this)">
                         <i class="fa-regular fa-heart"></i>
                     </button>
                     <div class="card-img-container">
+                        ${societyShield}
                         <img src="${imgUrl}" alt="${auto.vehicle}" class="card-img-placeholder" loading="lazy" decoding="async">
                         ${Array.isArray(auto.url_fotos) && auto.url_fotos.length > 1 ? `<div style="position:absolute;top:8px;right:50px;background:rgba(0,0,0,0.7);color:white;padding:3px 8px;border-radius:8px;font-size:10px;font-weight:700;backdrop-filter:blur(8px);z-index:3;"><i class="fa-solid fa-images"></i> ${auto.url_fotos.length} fotos</div>` : ''}
                         <div class="badge-container">
-                            <div class="badge ${badgeClass}">
-                                <i class="fa-solid ${badgeIcon}"></i> ${badgeText}
+                            <div class="badge ${auto.is_society ? '' : badgeClass}" ${auto.is_society ? 'style="border-color:rgba(212,175,55,0.3);color:rgba(212,175,55,0.8);"' : ''}>
+                                <i class="fa-solid ${auto.is_society ? 'fa-shield-halved' : badgeIcon}"></i> ${auto.is_society ? 'Verificado' : badgeText}
                             </div>
                         </div>
                         ${featuredBadge}
@@ -2056,6 +2109,7 @@ function optimImg(url, width) {
                         </div>
                         ${uniqueBadge}
                         ${origenBadge}
+                        ${societyTag}
                     </div>
 
                     <div class="card-body">
@@ -2083,7 +2137,7 @@ function optimImg(url, width) {
                         ${viewsIndicator}
 
                         <div class="actions" style="flex-direction:column; gap:8px;">
-                            <button class="btn btn-primary" style="width:100%; letter-spacing: 1px; font-weight: 800;">
+                            <button class="btn btn-primary${societyBtnClass}" style="width:100%; letter-spacing: 1px; font-weight: 800;">
                                 ${ctaText} <i class="fa-solid fa-arrow-right" style="font-size: 10px"></i>
                             </button>
                             <a href="agendar-cita.html?auto=${auto.id}" class="btn-cita" onclick="event.stopPropagation();">

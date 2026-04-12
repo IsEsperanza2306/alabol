@@ -810,103 +810,308 @@
 
             // ── SOCIETY TREATMENT ──
             if (isSociety) {
-                // Change background to obsidian
-                document.body.style.backgroundColor = '#050505';
-                document.querySelector('.premium-bg').style.background =
-                    'radial-gradient(circle at 20% 30%, rgba(212,175,55,0.03) 0%, transparent 50%)';
-
-                // Swap navbar logo
-                const navLogo = document.querySelector('.nav-logo img');
-                if (navLogo) navLogo.src = 'alabol-society-lockup.png';
-                const navText = document.querySelector('.nav-logo-text');
-                if (navText) navText.textContent = 'Society';
-
-                // Add society shield to gallery
-                const gallery = document.querySelector('.car-gallery');
-                if (gallery) {
-                    const shield = document.createElement('img');
-                    shield.src = 'alabol-society-lockup.png';
-                    shield.alt = 'Society';
-                    shield.style.cssText = 'position:absolute;top:16px;left:16px;height:44px;z-index:10;filter:drop-shadow(0 2px 10px rgba(0,0,0,0.6));';
-                    gallery.appendChild(shield);
-
-                    const tag = document.createElement('div');
-                    tag.textContent = 'SOCIETY';
-                    tag.style.cssText = 'position:absolute;bottom:12px;right:12px;z-index:10;background:rgba(5,5,5,0.75);backdrop-filter:blur(12px);padding:5px 14px;font-size:8px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:rgba(212,175,55,0.7);border:1px solid rgba(212,175,55,0.15);';
-                    gallery.appendChild(tag);
-
-                    // Gold line top
-                    gallery.style.borderRadius = '20px';
-                    const line = document.createElement('div');
-                    line.style.cssText = 'position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(212,175,55,0.5),transparent);z-index:5;';
-                    gallery.appendChild(line);
-                }
-
-                // Replace humor tag with sober note
-                const humor = document.querySelector('.humor-tag');
-                if (humor) {
-                    humor.style.fontStyle = 'normal';
-                    humor.style.color = 'rgba(255,255,255,0.35)';
-                    humor.style.fontSize = '0.85rem';
-                    humor.textContent = `Servicio verificado · ${car.ciudad || 'CDMX'}`;
-                }
-
-                // Change availability badge
-                const avail = document.querySelector('.security-badge');
-                if (avail) {
-                    avail.style.background = 'rgba(212,175,55,0.08)';
-                    avail.style.color = 'rgba(212,175,55,0.8)';
-                    avail.innerHTML = '◆ ALABOL SOCIETY';
-                }
-
-                // Change CTA
-                const ctaBox = document.querySelector('.cta-box');
-                if (ctaBox) {
-                    ctaBox.style.background = 'rgba(5,5,5,0.88)';
-                    ctaBox.style.borderColor = 'rgba(212,175,55,0.2)';
-                    ctaBox.style.borderRadius = '4px';
-                }
-                const ctaLabel = document.querySelector('.cta-box span[style*="font-size: 0.7rem"]');
-                if (ctaLabel) ctaLabel.textContent = 'Alabol Society';
-                const ctaTitle = document.querySelector('.cta-box span[style*="color: var(--gold)"]');
-                if (ctaTitle) ctaTitle.textContent = 'Pieza Verificada';
-
-                const wBtn = document.querySelector('.cta-box .btn-gold');
-                if (wBtn) {
-                    wBtn.textContent = 'Solicitar Informacion Personalizada';
-                    wBtn.style.background = 'linear-gradient(135deg, #F2D27A 0%, #B8902A 40%, #E8C15A 100%)';
-                    wBtn.style.borderRadius = '4px';
-                    const waMsg = encodeURIComponent(`Hola Alabol Society, me interesa el ${car.marca} ${car.modelo} (${car.anio}). Solicito informacion personalizada.`);
-                    wBtn.href = `https://wa.me/525568667571?text=${waMsg}`;
-                }
-
-                // Style cert cards
-                document.querySelectorAll('.cert-card').forEach(c => {
-                    c.style.background = '#0a0a0a';
-                    c.style.borderColor = 'rgba(255,255,255,0.04)';
-                    c.style.borderRadius = '8px';
-                });
-
-                // Style expediente
-                const exp = document.querySelector('.expediente-section');
-                if (exp) {
-                    exp.style.background = 'rgba(255,255,255,0.02)';
-                    exp.style.borderColor = 'rgba(255,255,255,0.04)';
-                    exp.style.borderRadius = '8px';
-                }
-
-                // Header/nav dark
-                const navBar = document.querySelector('.alabol-nav');
-                if (navBar) navBar.style.background = 'rgba(5,5,5,0.95)';
-
+                applySocietyTheme(car);
             } else {
-                // Normal flow — CTA update
                 const wBtn = document.querySelector('.cta-box .btn-gold');
                 if (wBtn) {
                     const waMsg = encodeURIComponent(`Hola Alabol, me interesa el ${car.marca} ${car.modelo} (${car.anio}) que vi en su sitio. Código: ${car.id_interno || car.id}.`);
                     wBtn.href = `https://wa.me/525568667571?text=${waMsg}`;
                 }
             }
+        }
+
+        function applySocietyTheme(car) {
+            // ── 1. INJECT FULL CSS OVERRIDE ──
+            const societyCSS = document.createElement('style');
+            societyCSS.textContent = `
+                /* === ALABOL SOCIETY FULL OVERRIDE === */
+                @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+
+                body {
+                    background-color: #050505 !important;
+                    color: #e8e6e0 !important;
+                }
+                .premium-bg {
+                    background: radial-gradient(circle at 20% 30%, rgba(212,175,55,0.02) 0%, transparent 50%) !important;
+                }
+
+                /* Nav override */
+                .alabol-nav {
+                    background: rgba(5,5,5,0.95) !important;
+                    border-bottom-color: rgba(255,255,255,0.04) !important;
+                }
+                .nav-links a { color: rgba(255,255,255,0.35) !important; }
+                .nav-links a:hover { color: #d4af37 !important; background: rgba(212,175,55,0.06) !important; }
+                .nav-links a.active { color: #d4af37 !important; background: rgba(212,175,55,0.08) !important; border-color: rgba(212,175,55,0.2) !important; }
+                .nav-cta { background: linear-gradient(135deg, #d4af37 0%, #f4e5b0 100%) !important; }
+                .nav-logo-text { color: #c0c0c0 !important; text-shadow: none !important; }
+
+                /* Gallery */
+                .car-gallery {
+                    box-shadow: 0 30px 80px rgba(0,0,0,0.8) !important;
+                    border-radius: 8px !important;
+                }
+                .car-gallery::before {
+                    content: '';
+                    position: absolute; top: 0; left: 0; right: 0;
+                    height: 2px;
+                    background: linear-gradient(90deg, transparent, rgba(212,175,55,0.5), transparent);
+                    z-index: 20;
+                }
+                .trust-badge-overlay {
+                    background: rgba(5,5,5,0.7) !important;
+                    backdrop-filter: blur(16px) !important;
+                    border: 1px solid rgba(212,175,55,0.25) !important;
+                    border-radius: 4px !important;
+                    color: rgba(212,175,55,0.85) !important;
+                    font-family: 'Inter', sans-serif !important;
+                    font-size: 10px !important;
+                    letter-spacing: 2px !important;
+                }
+
+                /* Car data */
+                .car-title {
+                    font-family: 'Playfair Display', serif !important;
+                    font-weight: 400 !important;
+                    font-size: 2.8rem !important;
+                    color: #fff !important;
+                    text-shadow: none !important;
+                }
+                .car-title span { color: #d4af37 !important; }
+                .car-specs {
+                    color: rgba(255,255,255,0.4) !important;
+                    font-family: 'Inter', sans-serif !important;
+                    font-weight: 400 !important;
+                    font-size: 13px !important;
+                    letter-spacing: 1px !important;
+                }
+                .price-tag {
+                    font-family: 'Playfair Display', serif !important;
+                    color: #e8e6e0 !important;
+                    text-shadow: none !important;
+                    font-weight: 400 !important;
+                }
+                .price-tag span {
+                    color: rgba(255,255,255,0.3) !important;
+                    font-family: 'Inter', sans-serif !important;
+                }
+                .humor-tag {
+                    font-style: normal !important;
+                    color: rgba(255,255,255,0.3) !important;
+                    opacity: 1 !important;
+                    font-family: 'Inter', sans-serif !important;
+                    font-size: 0.82rem !important;
+                    font-weight: 300 !important;
+                    letter-spacing: 0.5px !important;
+                }
+
+                /* Cert cards — total makeover */
+                .certification-grid {
+                    display: flex !important;
+                    gap: 0 !important;
+                    border: 1px solid rgba(255,255,255,0.04) !important;
+                    border-radius: 8px !important;
+                    overflow: hidden !important;
+                    margin-top: 48px !important;
+                }
+                .cert-card {
+                    background: rgba(255,255,255,0.02) !important;
+                    border: none !important;
+                    border-right: 1px solid rgba(255,255,255,0.04) !important;
+                    border-radius: 0 !important;
+                    padding: 32px 28px !important;
+                    flex: 1 !important;
+                    transition: background 0.3s !important;
+                }
+                .cert-card:last-child { border-right: none !important; }
+                .cert-card:hover {
+                    transform: none !important;
+                    background: rgba(212,175,55,0.03) !important;
+                    border-color: rgba(255,255,255,0.04) !important;
+                }
+                .cert-card .cert-icon div,
+                .cert-card .cert-icon i {
+                    display: none !important;
+                }
+                .cert-status {
+                    color: #d4af37 !important;
+                    font-family: 'Inter', sans-serif !important;
+                    font-size: 9px !important;
+                    letter-spacing: 3px !important;
+                    font-weight: 500 !important;
+                }
+                .cert-card h3 {
+                    font-family: 'Playfair Display', serif !important;
+                    font-size: 1.3rem !important;
+                    font-weight: 400 !important;
+                    color: #fff !important;
+                }
+                .cert-card p {
+                    color: rgba(255,255,255,0.3) !important;
+                    font-family: 'Inter', sans-serif !important;
+                    font-size: 12px !important;
+                    line-height: 1.6 !important;
+                }
+
+                /* Expediente section */
+                .expediente-section {
+                    background: rgba(255,255,255,0.015) !important;
+                    border: 1px solid rgba(255,255,255,0.04) !important;
+                    border-radius: 8px !important;
+                    padding: 40px !important;
+                    margin-top: 48px !important;
+                }
+                .expediente-title {
+                    font-family: 'Playfair Display', serif !important;
+                    font-weight: 400 !important;
+                    font-size: 1.3rem !important;
+                    color: #fff !important;
+                }
+                .expediente-title i { color: #d4af37 !important; }
+                .expediente-section h4 {
+                    color: rgba(212,175,55,0.6) !important;
+                    font-family: 'Inter', sans-serif !important;
+                    font-size: 9px !important;
+                    letter-spacing: 3px !important;
+                    font-weight: 500 !important;
+                }
+                .check-item {
+                    border-bottom-color: rgba(255,255,255,0.03) !important;
+                    color: rgba(255,255,255,0.5) !important;
+                    font-family: 'Inter', sans-serif !important;
+                    font-size: 13px !important;
+                }
+                .check-icon {
+                    background: rgba(212,175,55,0.1) !important;
+                    color: #d4af37 !important;
+                }
+
+                /* CTA bar */
+                .cta-box {
+                    background: rgba(5,5,5,0.9) !important;
+                    backdrop-filter: blur(40px) !important;
+                    border: 1px solid rgba(212,175,55,0.15) !important;
+                    border-radius: 0 !important;
+                    bottom: 0 !important;
+                    left: 0 !important;
+                    right: 0 !important;
+                    transform: none !important;
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    padding: 16px 48px !important;
+                    border-left: none !important;
+                    border-right: none !important;
+                    border-bottom: none !important;
+                }
+                .btn-gold {
+                    background: linear-gradient(135deg, #F2D27A 0%, #B8902A 40%, #E8C15A 100%) !important;
+                    color: #050505 !important;
+                    border-radius: 4px !important;
+                    border: none !important;
+                    font-family: 'Inter', sans-serif !important;
+                    font-size: 11px !important;
+                    letter-spacing: 1px !important;
+                    text-transform: uppercase !important;
+                    padding: 13px 28px !important;
+                }
+                .btn-outline {
+                    border: 1px solid rgba(255,255,255,0.1) !important;
+                    color: rgba(255,255,255,0.5) !important;
+                    border-radius: 4px !important;
+                    font-family: 'Inter', sans-serif !important;
+                    font-size: 11px !important;
+                    letter-spacing: 1px !important;
+                    text-transform: uppercase !important;
+                }
+                .btn-outline:hover { border-color: rgba(212,175,55,0.3) !important; color: #d4af37 !important; }
+
+                /* Footer */
+                .alabol-footer {
+                    background: #050505 !important;
+                    border-top-color: rgba(255,255,255,0.03) !important;
+                }
+                .footer-brand p, .footer-col a, .footer-bottom p {
+                    color: rgba(255,255,255,0.3) !important;
+                }
+                .footer-col h4 { color: rgba(212,175,55,0.6) !important; }
+
+                /* WhatsApp float adjust for full-width CTA */
+                a[href*="whatsapp"] { bottom: 70px !important; }
+
+                @media (max-width: 768px) {
+                    .certification-grid { flex-direction: column !important; }
+                    .cert-card { border-right: none !important; border-bottom: 1px solid rgba(255,255,255,0.04) !important; }
+                    .cert-card:last-child { border-bottom: none !important; }
+                    .cta-box { padding: 14px 20px !important; }
+                }
+            `;
+            document.head.appendChild(societyCSS);
+
+            // ── 2. SWAP NAV LOGO ──
+            const navLogo = document.querySelector('.nav-logo img');
+            if (navLogo) navLogo.src = 'alabol-society-isotipo.png';
+            const navText = document.querySelector('.nav-logo-text');
+            if (navText) navText.textContent = 'Society';
+
+            // ── 3. GALLERY ENHANCEMENTS ──
+            const gallery = document.querySelector('.car-gallery');
+            if (gallery) {
+                // Society shield
+                const shield = document.createElement('img');
+                shield.src = 'alabol-society-lockup.png';
+                shield.alt = 'Society';
+                shield.style.cssText = 'position:absolute;top:16px;left:16px;height:44px;z-index:10;filter:drop-shadow(0 2px 10px rgba(0,0,0,0.7));';
+                gallery.appendChild(shield);
+
+                // Society tag
+                const tag = document.createElement('div');
+                tag.textContent = 'SOCIETY';
+                tag.style.cssText = 'position:absolute;bottom:14px;right:14px;z-index:10;background:rgba(5,5,5,0.7);backdrop-filter:blur(16px);padding:5px 16px;font-family:Inter,sans-serif;font-size:8px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:rgba(212,175,55,0.7);border:1px solid rgba(212,175,55,0.15);';
+                gallery.appendChild(tag);
+            }
+
+            // ── 4. AVAILABILITY BADGE → SOCIETY EYEBROW ──
+            const avail = document.querySelector('.security-badge');
+            if (avail) {
+                avail.style.cssText = 'background:none;color:rgba(212,175,55,0.6);padding:0;border-radius:0;font-size:9px;width:fit-content;margin-bottom:14px;font-weight:500;font-family:Inter,sans-serif;letter-spacing:5px;text-transform:uppercase;';
+                avail.textContent = 'ALABOL SOCIETY';
+            }
+
+            // ── 5. HUMOR TAG → SOBER NOTE ──
+            const humor = document.querySelector('.humor-tag');
+            if (humor) {
+                humor.textContent = `Servicio verificado · ${car.ciudad || 'CDMX'}`;
+            }
+
+            // ── 6. CTA CONTENT ──
+            const ctaBox = document.querySelector('.cta-box');
+            if (ctaBox) {
+                ctaBox.innerHTML = `
+                    <div style="display:flex;align-items:center;gap:14px;">
+                        <img src="alabol-society-lockup.png" alt="Society" style="height:28px;filter:drop-shadow(0 0 4px rgba(192,192,192,0.15));">
+                        <div>
+                            <div style="font-family:Inter,sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.35);">Alabol Society</div>
+                            <div style="font-family:Playfair Display,serif;font-size:14px;color:#d4af37;">${car.marca} ${car.modelo}</div>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:10px;">
+                        <a href="tel:+525568667571" class="btn btn-outline" style="display:flex;align-items:center;gap:6px;"><i class="fa-solid fa-phone"></i> Llamar</a>
+                        <a href="https://wa.me/525568667571?text=${encodeURIComponent(`Hola Alabol Society, me interesa el ${car.marca} ${car.modelo} (${car.anio}). Solicito informacion personalizada.`)}" class="btn btn-gold">Solicitar Informacion Personalizada</a>
+                    </div>
+                `;
+            }
+
+            // ── 7. CERT CARDS CONTENT UPDATE ──
+            const certs = document.querySelectorAll('.cert-card');
+            if (certs.length >= 3) {
+                certs[0].innerHTML = '<div class="cert-icon"></div><div class="cert-status">Documentacion</div><h3>Legal Completa</h3><p>Factura original, tenencias al corriente, sin reportes de robo ni siniestros.</p>';
+                certs[1].innerHTML = '<div class="cert-icon"></div><div class="cert-status">Mecanica</div><h3>Inspeccionado</h3><p>Evaluacion integral por especialistas. Diagnostico electronico sin fallas.</p>';
+                certs[2].innerHTML = '<div class="cert-icon"></div><div class="cert-status">Alabol Society</div><h3>Curaduria Exclusiva</h3><p>Pieza seleccionada bajo estandares premium de nuestra coleccion.</p>';
+            }
+
+            // ── 8. FOOTER LOGO ──
+            const footerLogo = document.querySelector('.footer-brand img');
+            if (footerLogo) footerLogo.src = 'alabol-society-isotipo.png';
         }
     </script>
 <footer class="alabol-footer" role="contentinfo">

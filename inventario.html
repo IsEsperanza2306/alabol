@@ -2432,8 +2432,178 @@ function optimImg(url, width) {
 
             updateGalleryUI();
 
+            // ── SOCIETY MODAL TREATMENT ──
+            const modalContent = document.querySelector('.modal-content');
+            const modalOverlay = document.getElementById('carModal');
+            // Remove previous society state
+            modalContent.classList.remove('society-modal');
+            document.getElementById('societyModalCSS')?.remove();
+            document.getElementById('societyShieldModal')?.remove();
+            document.getElementById('societyTagModal')?.remove();
+            document.getElementById('societyGoldLine')?.remove();
+
+            // Reset modal elements to default
+            const waBtn = document.getElementById('modalWaBtn');
+            const matchBtn = document.querySelector('.modal-actions .btn-primary');
+            const descTitle = document.querySelector('.modal-description-title');
+
+            if (auto.is_society) {
+                modalContent.classList.add('society-modal');
+
+                // Inject society CSS for modal
+                if (!document.getElementById('societyModalCSS')) {
+                    const css = document.createElement('style');
+                    css.id = 'societyModalCSS';
+                    css.textContent = `
+                        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+
+                        .modal-content.society-modal {
+                            background: linear-gradient(135deg, #080808 0%, #0a0a0a 100%) !important;
+                            border-color: rgba(212,175,55,0.15) !important;
+                            border-radius: 8px !important;
+                        }
+                        .society-modal .modal-gallery {
+                            position: relative;
+                        }
+                        .society-modal .modal-gallery::before {
+                            content: ''; position: absolute; top: 0; left: 0; right: 0;
+                            height: 2px; z-index: 20;
+                            background: linear-gradient(90deg, transparent, rgba(212,175,55,0.5), transparent);
+                        }
+                        .society-modal .modal-title {
+                            font-family: 'Playfair Display', serif !important;
+                            font-weight: 400 !important;
+                            font-size: 1.8rem !important;
+                            color: #fff !important;
+                        }
+                        .society-modal .modal-price {
+                            color: #e8e6e0 !important;
+                            font-family: 'Playfair Display', serif !important;
+                            font-weight: 400 !important;
+                        }
+                        .society-modal .modal-price small {
+                            color: rgba(255,255,255,0.3) !important;
+                        }
+                        .society-modal .modal-spec-box {
+                            background: rgba(255,255,255,0.03) !important;
+                            border-color: rgba(255,255,255,0.04) !important;
+                            border-radius: 4px !important;
+                        }
+                        .society-modal .modal-spec-label {
+                            color: rgba(212,175,55,0.6) !important;
+                            font-family: 'Inter', sans-serif !important;
+                            font-size: 9px !important;
+                            letter-spacing: 2px !important;
+                        }
+                        .society-modal .modal-spec-value {
+                            font-family: 'Inter', sans-serif !important;
+                            color: rgba(255,255,255,0.8) !important;
+                        }
+                        .society-modal .modal-description {
+                            background: rgba(255,255,255,0.02) !important;
+                            border-left-color: rgba(212,175,55,0.3) !important;
+                            border-radius: 4px !important;
+                        }
+                        .society-modal .modal-description-title {
+                            color: rgba(212,175,55,0.7) !important;
+                            font-family: 'Inter', sans-serif !important;
+                            font-size: 9px !important;
+                            letter-spacing: 3px !important;
+                            text-transform: uppercase !important;
+                        }
+                        .society-modal .modal-description-text {
+                            color: rgba(255,255,255,0.4) !important;
+                            font-family: 'Inter', sans-serif !important;
+                        }
+                        .society-modal .btn-whatsapp {
+                            background: linear-gradient(135deg, #F2D27A 0%, #B8902A 40%, #E8C15A 100%) !important;
+                            color: #050505 !important;
+                            border-radius: 4px !important;
+                            font-family: 'Inter', sans-serif !important;
+                            font-size: 13px !important;
+                            letter-spacing: 1px !important;
+                            font-weight: 600 !important;
+                        }
+                        .society-modal .btn-whatsapp i { display: none !important; }
+                        .society-modal .modal-actions .btn-primary {
+                            background: transparent !important;
+                            border: 1px solid rgba(255,255,255,0.1) !important;
+                            color: rgba(255,255,255,0.5) !important;
+                            border-radius: 4px !important;
+                            font-family: 'Inter', sans-serif !important;
+                            font-weight: 500 !important;
+                        }
+                        .society-modal .modal-actions .btn-secondary {
+                            border-radius: 4px !important;
+                            font-family: 'Inter', sans-serif !important;
+                        }
+                        .society-modal .image-counter {
+                            font-family: 'Inter', sans-serif !important;
+                        }
+                        .society-modal .modal-close {
+                            border-radius: 4px !important;
+                            background: rgba(5,5,5,0.7) !important;
+                        }
+                        .society-modal .modal-info {
+                            background: #080808 !important;
+                        }
+                    `;
+                    document.head.appendChild(css);
+                }
+
+                // Add shield to gallery
+                const gallery = modalContent.querySelector('.modal-gallery');
+                if (gallery) {
+                    const shield = document.createElement('img');
+                    shield.id = 'societyShieldModal';
+                    shield.src = 'alabol-society-lockup.png';
+                    shield.alt = 'Society';
+                    shield.style.cssText = 'position:absolute;top:14px;left:14px;height:40px;z-index:20;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.7));';
+                    gallery.appendChild(shield);
+
+                    const tag = document.createElement('div');
+                    tag.id = 'societyTagModal';
+                    tag.textContent = 'SOCIETY';
+                    tag.style.cssText = 'position:absolute;bottom:12px;right:12px;z-index:20;background:rgba(5,5,5,0.7);backdrop-filter:blur(12px);padding:4px 14px;font-family:Inter,sans-serif;font-size:8px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:rgba(212,175,55,0.7);border:1px solid rgba(212,175,55,0.15);';
+                    gallery.appendChild(tag);
+
+                    const line = document.createElement('div');
+                    line.id = 'societyGoldLine';
+                    line.style.cssText = 'position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,0.3),transparent);z-index:20;';
+                    gallery.appendChild(line);
+                }
+
+                // Update WhatsApp CTA
+                if (waBtn) {
+                    const sMsg = encodeURIComponent(`Hola Alabol Society, me interesa el ${auto.vehicle}. Solicito informacion personalizada.`);
+                    waBtn.href = `https://wa.me/525568667571?text=${sMsg}`;
+                    waBtn.innerHTML = 'Solicitar Informacion Personalizada';
+                }
+
+                // Update match button
+                if (matchBtn) {
+                    matchBtn.innerHTML = '<i class="fa-solid fa-phone" style="font-size:12px;"></i> Llamar para mas detalles';
+                    matchBtn.href = 'tel:+525568667571';
+                    matchBtn.style.textDecoration = 'none';
+                }
+
+                // Update description title
+                if (descTitle) descTitle.textContent = 'Evaluacion del Especialista';
+
+            } else {
+                // Reset to normal
+                if (waBtn) {
+                    waBtn.innerHTML = '<i class="fa-brands fa-whatsapp"></i> Apartar con WhatsApp';
+                }
+                if (matchBtn) {
+                    matchBtn.innerHTML = '💘 ¿No es tu media naranja? Haz Match';
+                    matchBtn.href = 'vip/index.html';
+                }
+                if (descTitle) descTitle.textContent = 'Comentarios del Valuador';
+            }
+
             document.getElementById('carModal').classList.add('active');
-            document.body.style.overflow = 'hidden'; // Lock scroll
+            document.body.style.overflow = 'hidden';
 
             if (typeof trackFunnelStep === 'function') trackFunnelStep(4, 'ver_detalle_auto_' + id);
         }

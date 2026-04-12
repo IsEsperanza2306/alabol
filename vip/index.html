@@ -1309,10 +1309,13 @@
             const { data: invData } = await supabaseClient
                 .from('inventario')
                 .select('*')
-                .eq('estatus', 'disponible');
+                .eq('estatus', 'disponible')
+                .not('fotos', 'is', null)
+                .not('fotos', 'eq', '{}');
 
             if (invData && invData.length > 0) {
-                realInventory = invData;
+                // Filter out cars with empty foto arrays
+                realInventory = invData.filter(c => Array.isArray(c.fotos) && c.fotos.length > 0);
                 // Show banner with real inventory count
                 if (el) el.textContent = invData.length;
                 if (banner) banner.style.display = 'flex';
@@ -1548,10 +1551,14 @@
             const { data: invData, error } = await supabaseClient
                 .from('inventario')
                 .select('*')
-                .eq('estatus', 'disponible');
+                .eq('estatus', 'disponible')
+                .not('fotos', 'is', null)
+                .not('fotos', 'eq', '{}');
 
             if (error) throw error;
             if (!invData || invData.length === 0) return [];
+            // Extra filter: ensure fotos array actually has items
+            const filteredInv = invData.filter(c => Array.isArray(c.fotos) && c.fotos.length > 0);
 
             const minYear = parseInt(formData.anioDesde) || 2010;
             const maxYear = parseInt(formData.anioHasta) || 2026;
@@ -1562,7 +1569,7 @@
             const selectedType = (formData.carroceria || '').toLowerCase();
 
             // Score each car instead of strict filtering
-            const scored = invData.map(car => {
+            const scored = filteredInv.map(car => {
                 let score = 0;
                 const carType = (car.tipo_vehiculo || '').toLowerCase();
                 const carBrand = (car.marca || '').toLowerCase();

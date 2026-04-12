@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="logo-circular.png" type="image/png">
+    <link rel="preconnect" href="https://rgnunjngtsgqgvplawfr.supabase.co">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <meta property="og:title" content="Alabol Car Broker | El Tinder de los Autos">
     <meta property="og:description" content="Encuentra tu media naranja con llantas. Compra, vende o invierte en autos verificados.">
     <meta property="og:image" content="https://alabolcar.com.mx/logo-circular.png">
@@ -1713,6 +1716,16 @@
     <!-- SUPABASE TRACKING / ANALYTICS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+// Image optimizer
+function optimImg(url, width) {
+    if (!url || typeof url !== 'string') return url;
+    if (url.includes('supabase.co/storage/v1/object/public/')) {
+        return url.replace('/object/public/', '/render/image/public/') + '?width=' + (width || 600) + '&quality=75';
+    }
+    return url;
+}
+</script>
+<script>
 // === ALABOL GLOBAL SUPABASE INIT (single source of truth) ===
 (function() {
   var SU = 'https://rgnunjngtsgqgvplawfr.supabase.co';
@@ -1965,9 +1978,9 @@
             if (auto.url_fotos) {
                 // If it's an array, take the first one
                 if (Array.isArray(auto.url_fotos)) {
-                    imgUrl = auto.url_fotos[0];
+                    imgUrl = optimImg(auto.url_fotos[0], 500);
                 } else if (typeof auto.url_fotos === 'string' && auto.url_fotos.trim() !== '') {
-                    imgUrl = auto.url_fotos;
+                    imgUrl = optimImg(auto.url_fotos, 500);
                 }
             }
 
@@ -2029,7 +2042,7 @@
                         <i class="fa-regular fa-heart"></i>
                     </button>
                     <div class="card-img-container">
-                        <img src="${imgUrl}" alt="${auto.vehicle}" class="card-img-placeholder">
+                        <img src="${imgUrl}" alt="${auto.vehicle}" class="card-img-placeholder" loading="lazy" decoding="async">
                         ${Array.isArray(auto.url_fotos) && auto.url_fotos.length > 1 ? `<div style="position:absolute;top:8px;right:50px;background:rgba(0,0,0,0.7);color:white;padding:3px 8px;border-radius:8px;font-size:10px;font-weight:700;backdrop-filter:blur(8px);z-index:3;"><i class="fa-solid fa-images"></i> ${auto.url_fotos.length} fotos</div>` : ''}
                         <div class="badge-container">
                             <div class="badge ${badgeClass}">
@@ -2108,7 +2121,7 @@
             return `
                 <div class="card">
                     <div class="card-img-container" style="position:relative;">
-                        <img src="${imgUrl}" alt="${auto.vehicle}" class="card-img-placeholder">
+                        <img src="${imgUrl}" alt="${auto.vehicle}" class="card-img-placeholder" loading="lazy" decoding="async">
                         ${origenBadge}
                     </div>
                     <div class="card-body">

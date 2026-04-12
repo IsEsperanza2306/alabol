@@ -10,6 +10,10 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="logo-circular.png" type="image/png">
+    <link rel="preconnect" href="https://rgnunjngtsgqgvplawfr.supabase.co">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     <meta property="og:title" content="Alabol Car Broker | El Tinder de los Autos">
     <meta property="og:description" content="Encuentra tu media naranja con llantas. Compra, vende o invierte en autos verificados.">
     <meta property="og:image" content="https://alabolcar.com.mx/logo-circular.png">
@@ -2136,6 +2140,16 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+// Image optimizer — serves resized images from Supabase Storage
+function optimImg(url, width) {
+    if (!url || typeof url !== 'string') return url;
+    if (url.includes('supabase.co/storage/v1/object/public/')) {
+        return url.replace('/object/public/', '/render/image/public/') + '?width=' + (width || 600) + '&quality=75';
+    }
+    return url;
+}
+</script>
+<script>
 // === ALABOL GLOBAL SUPABASE INIT (single source of truth) ===
 (function() {
   var SU = 'https://rgnunjngtsgqgvplawfr.supabase.co';
@@ -2458,16 +2472,16 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
 
                 let carImg = defaultImg;
                 if (auto.fotos && Array.isArray(auto.fotos) && auto.fotos.length > 0) {
-                    carImg = auto.fotos[0];
+                    carImg = optimImg(auto.fotos[0], 600);
                 } else if (typeof auto.fotos === 'string' && auto.fotos.startsWith('[')) {
                     try {
                         const parsed = JSON.parse(auto.fotos);
-                        if (parsed.length > 0) carImg = parsed[0];
+                        if (parsed.length > 0) carImg = optimImg(parsed[0], 600);
                     } catch (e) { }
                 } else if (auto.link_fotos) {
-                    carImg = auto.link_fotos;
+                    carImg = optimImg(auto.link_fotos, 600);
                 } else if (auto.url_fotos) {
-                    carImg = auto.url_fotos;
+                    carImg = optimImg(auto.url_fotos, 600);
                 }
 
                 const isAlabol = (auto.agencia || '').toLowerCase() === 'alabol';
@@ -2488,7 +2502,7 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
                 card.innerHTML = `
                     ${trustBadge}
                     <div class="modal-badge" style="top:20px; left:20px; font-size:0.75rem; padding:6px 12px; border-radius:12px; backdrop-filter:blur(10px); background:rgba(212,175,55,0.9); color:black;">${badgeText}</div>
-                    <img src="${carImg}" class="tinder-card-img" alt="${modelo}">
+                    <img src="${carImg}" class="tinder-card-img" alt="${modelo}" loading="lazy" decoding="async">
                     <div class="tinder-card-body">
                         <div class="tinder-card-title">${marca} ${modelo} <span style="color:var(--gold); font-size:1.2rem; float:right;">${anio}</span></div>
                         <div class="tinder-card-version" style="opacity:0.8;">${version}</div>

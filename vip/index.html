@@ -1159,6 +1159,18 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
     // =====================
+    // IMAGE OPTIMIZER — serves resized images from Supabase Storage
+    // =====================
+    function optimImg(url, width) {
+        if (!url || typeof url !== 'string') return url;
+        // Supabase Storage supports render/image/authenticated for transforms
+        if (url.includes('supabase.co/storage/v1/object/public/')) {
+            return url.replace('/object/public/', '/render/image/public/') + '?width=' + (width || 600) + '&quality=75';
+        }
+        return url;
+    }
+
+    // =====================
     // SUPABASE
     // =====================
     const SUPABASE_URL = 'https://rgnunjngtsgqgvplawfr.supabase.co';
@@ -1653,8 +1665,9 @@
         document.getElementById('matchCountReveal').textContent = displayCars.length;
 
         displayCars.forEach((car, i) => {
-            const imgSrc = (Array.isArray(car.fotos) && car.fotos.length > 0 ? car.fotos[0] : '') || car.link_fotos || car.imagen || '';
-            const hasImage = imgSrc && imgSrc.startsWith('http');
+            const rawImg = (Array.isArray(car.fotos) && car.fotos.length > 0 ? car.fotos[0] : '') || car.link_fotos || car.imagen || '';
+            const imgSrc = optimImg(rawImg, 400);
+            const hasImage = rawImg && rawImg.startsWith('http');
             // Build tags from real car data
             const tags = [];
             if (car.transmision) tags.push(car.transmision.charAt(0).toUpperCase() + car.transmision.slice(1));
@@ -1729,8 +1742,9 @@
         const displayCars = matchStack.slice(0, 10);
 
         displayCars.forEach((car, i) => {
-            const imgSrc = (Array.isArray(car.fotos) && car.fotos.length > 0 ? car.fotos[0] : '') || car.link_fotos || car.imagen || '';
-            const hasImage = imgSrc && imgSrc.startsWith('http');
+            const rawImg = (Array.isArray(car.fotos) && car.fotos.length > 0 ? car.fotos[0] : '') || car.link_fotos || car.imagen || '';
+            const imgSrc = optimImg(rawImg, 500);
+            const hasImage = rawImg && rawImg.startsWith('http');
             const price = '$' + Number(car.precio_venta || 0).toLocaleString('es-MX');
             const km = (car.kilometraje ? car.kilometraje.toLocaleString('es-MX') + ' km' : '—');
             const tags = [];

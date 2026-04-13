@@ -1559,6 +1559,7 @@
     <li><a href="/inventario.html">🚗 Inventario</a></li>
     <li><a href="/vip/">💘 Matchmaker</a></li>
     <li><a href="/vendedor.html">🏷️ Vender Auto</a></li>
+    <li><a href="/simulador-credito.html">💰 Financiamiento</a></li>
     <li><a href="/oportunidades/">🔥 Subastas</a></li>
     <li><a href="/portal-agencias.html">🏢 Agencias</a></li>
     <li><a href="/vip/" class="nav-cta">Buscar mi Auto →</a></li>
@@ -1740,6 +1741,11 @@
                     <a href="#" id="modalWaBtn" class="btn-whatsapp" target="_blank"
                         onclick="if(typeof trackFunnelStep === 'function') trackFunnelStep(5, 'click_whatsapp_inventario');">
                         <i class="fa-brands fa-whatsapp"></i> Apartar con WhatsApp
+                    </a>
+                    <a href="#" id="modalFinBtn" target="_blank"
+                        style="display:block;text-align:center;width:100%;padding:14px;border-radius:14px;background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.25);color:var(--gold);font-weight:700;font-size:14px;text-decoration:none;margin-bottom:15px;transition:all 0.3s;"
+                        onmouseover="this.style.background='rgba(212,175,55,0.15)'" onmouseout="this.style.background='rgba(212,175,55,0.08)'">
+                        <i class="fa-solid fa-calculator"></i> Simular financiamiento
                     </a>
                     <a href="vip/index.html" class="btn btn-primary"
                         style="width:100%; margin-bottom: 15px; background: linear-gradient(135deg, #d4af37, #f4e5b0); color: #0a1f1a; font-weight: 800;">
@@ -2429,6 +2435,12 @@ function optimImg(url, width) {
 
             const waMsg = encodeURIComponent(`¡Hola Alabol! Me interesa el ${auto.vehicle} (${auto.id}) que vi en su inventario. ¿Sigue disponible?`);
             document.getElementById('modalWaBtn').href = `https://wa.me/525568667571?text=${waMsg}`;
+
+            // Financing simulator link with pre-filled price
+            const finBtn = document.getElementById('modalFinBtn');
+            if (finBtn && auto.priceMXN) {
+                finBtn.href = `simulador-credito.html?precio=${Math.round(auto.priceMXN)}`;
+            }
 
             updateGalleryUI();
 

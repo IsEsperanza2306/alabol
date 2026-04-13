@@ -568,6 +568,7 @@
     <li><a href="/inventario.html">🚗 Inventario</a></li>
     <li><a href="/vip/">💘 Matchmaker</a></li>
     <li><a href="/vendedor.html">🏷️ Vender Auto</a></li>
+    <li><a href="/simulador-credito.html">💰 Financiamiento</a></li>
     <li><a href="/oportunidades/">🔥 Subastas</a></li>
     <li><a href="/portal-agencias.html">🏢 Agencias</a></li>
     <li><a href="/vip/" class="nav-cta">Buscar mi Auto →</a></li>
@@ -697,14 +698,19 @@
     </div>
 
     <!-- CTA FIXED BAR -->
+    <!-- Monthly estimate banner -->
+    <div id="monthlyEstimate" style="display:none;position:fixed;bottom:105px;left:50%;transform:translateX(-50%);z-index:999;background:rgba(10,31,26,0.9);backdrop-filter:blur(15px);border:1px solid rgba(212,175,55,0.2);padding:8px 18px;border-radius:20px;font-size:12px;color:var(--gold);font-weight:600;white-space:nowrap;">
+        Desde ~<span id="monthlyAmount">$0</span>/mes a 48 meses
+    </div>
+
     <div class="cta-box">
         <div style="display: flex; flex-direction: column;">
             <span style="font-size: 0.7rem; opacity: 0.7; font-weight: 800; text-transform: uppercase;">Para Agentes
                 VIP</span>
             <span style="font-size: 0.9rem; font-weight: 800; color: var(--gold);">Ofertar o Comprar Ahora</span>
         </div>
-        <div style="display: flex; gap: 10px;">
-            <a href="#" class="btn btn-outline" style="font-size: 0.9rem;">Ver Reporte Completo</a>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <a href="#" id="fichaFinBtn" target="_blank" class="btn btn-outline" style="font-size: 0.85rem;"><i class="fa-solid fa-calculator"></i> Financiar</a>
             <a href="https://wa.me/525568667571?text=Hola%20Alabol,%20me%20interesa%20un%20auto%20que%20vi%20en%20su%20sitio"
                 class="btn btn-gold" style="font-size: 0.9rem;">Me Interesa</a>
         </div>
@@ -807,6 +813,20 @@
             document.querySelector('.trust-badge-overlay').innerHTML = isSociety
                 ? `<i class="fa-solid fa-shield-halved"></i> Verificado · Inspeccionado`
                 : `<i class="fa-solid fa-shield-check"></i> Exp. #${String(car.id_interno || car.id).substring(0, 8).toUpperCase()}`;
+
+            // ── FINANCING ESTIMATE ──
+            const precio = car.precio_venta || 0;
+            if (precio >= 100000) {
+                const r = 0.1499 / 12;
+                const monto = precio * 0.8; // 20% enganche
+                const pmt = monto * (r * (1+r)**48) / ((1+r)**48 - 1) * 1.16;
+                const est = document.getElementById('monthlyEstimate');
+                document.getElementById('monthlyAmount').textContent = '$' + Math.round(pmt).toLocaleString('es-MX');
+                est.style.display = 'block';
+
+                const finBtn = document.getElementById('fichaFinBtn');
+                if (finBtn) finBtn.href = `simulador-credito.html?precio=${Math.round(precio)}`;
+            }
 
             // ── SOCIETY TREATMENT ──
             if (isSociety) {

@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="logo-circular.png" type="image/png">
+    <title>Simulador de Credito Automotriz | Alabol Car Broker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #0a1f1a; --bg-mid: #0d2921;
+            --gold: #d4af37; --gold-light: #f4e5b0;
+            --green-text: #a8c5b8;
+            --glass-border: rgba(212,175,55,0.15);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg); color: white; min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            padding: 16px;
+        }
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(160deg, #0a1f1a, #0d2921 40%, #0f3329 60%, #0a1f1a);
+            z-index: -1;
+        }
+        .container { max-width: 480px; width: 100%; }
+        .header { text-align: center; margin-bottom: 16px; }
+        .header img { height: 44px; margin-bottom: 8px; filter: drop-shadow(0 0 8px rgba(212,175,55,0.4)); }
+        .header h1 { font-size: 18px; font-weight: 800; margin-bottom: 2px; }
+        .header p { font-size: 11px; color: var(--green-text); opacity: 0.5; }
+        .card {
+            background: rgba(13,41,33,0.45); backdrop-filter: blur(40px);
+            border-radius: 24px; padding: 24px 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block; margin-bottom: 5px;
+            font-size: 12px; font-weight: 600; color: var(--green-text);
+        }
+        .form-group label span { color: var(--gold); font-size: 10px; }
+        input[type="text"], input[type="number"], select {
+            width: 100%; padding: 14px 16px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px; color: white;
+            font-family: 'Poppins', sans-serif; font-size: 15px;
+        }
+        input:focus, select:focus {
+            outline: none; border-color: rgba(212,175,55,0.4);
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.08);
+        }
+        select {
+            cursor: pointer; appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23d4af37' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 12px center; background-size: 24px; padding-right: 40px;
+        }
+        select option { background: var(--bg); color: white; }
+
+        .slider-wrap { position: relative; }
+        .slider-value { position: absolute; right: 0; top: -2px; font-size: 18px; font-weight: 800; color: var(--gold); }
+        input[type="range"] {
+            -webkit-appearance: none; width: 100%; height: 6px;
+            background: rgba(255,255,255,0.1); border-radius: 3px; outline: none; margin-top: 10px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 24px; height: 24px;
+            background: var(--gold); border-radius: 50%; cursor: pointer;
+            box-shadow: 0 2px 8px rgba(212,175,55,0.4);
+        }
+        .slider-labels { display: flex; justify-content: space-between; font-size: 10px; color: rgba(168,197,184,0.4); margin-top: 4px; }
+        .enganche-monto { text-align: center; margin-top: 8px; font-size: 13px; color: var(--green-text); opacity: 0.7; }
+        .enganche-monto strong { color: var(--gold); }
+
+        .plazo-grid { display: flex; gap: 6px; flex-wrap: wrap; }
+        .plazo-pill {
+            flex: 1; min-width: 55px; text-align: center;
+            padding: 12px 6px; border-radius: 12px;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+            cursor: pointer; transition: all 0.3s;
+            font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.5);
+        }
+        .plazo-pill:hover { border-color: rgba(212,175,55,0.2); color: white; }
+        .plazo-pill.selected {
+            background: rgba(212,175,55,0.1); border-color: rgba(212,175,55,0.4);
+            color: var(--gold); box-shadow: 0 0 15px rgba(212,175,55,0.1);
+        }
+        .plazo-pill small { display: block; font-size: 9px; font-weight: 400; color: var(--green-text); opacity: 0.5; margin-top: 2px; }
+        .plazo-pill .tasa-hint { display: block; font-size: 8px; color: var(--gold); opacity: 0.6; margin-top: 1px; }
+
+        .btn-calcular {
+            width: 100%; padding: 16px; margin-top: 8px;
+            background: linear-gradient(135deg, var(--gold), #c9a430);
+            color: var(--bg); border: none; border-radius: 14px;
+            font-family: 'Poppins', sans-serif; font-size: 16px; font-weight: 800;
+            cursor: pointer; box-shadow: 0 4px 20px rgba(212,175,55,0.25); transition: all 0.3s;
+        }
+        .btn-calcular:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(212,175,55,0.35); }
+
+        /* Results */
+        .results { display: none; margin-top: 20px; }
+        .results.active { display: block; animation: fadeUp 0.4s ease; }
+        @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+        .result-card {
+            background: rgba(13,41,33,0.45); backdrop-filter: blur(40px);
+            border-radius: 24px; padding: 24px 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+        }
+        .result-hero {
+            text-align: center; margin-bottom: 20px; padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .result-hero .label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--green-text); opacity: 0.6; margin-bottom: 4px; }
+        .result-hero .amount { font-size: 34px; font-weight: 900; color: var(--gold); text-shadow: 0 0 20px rgba(212,175,55,0.2); }
+        .result-hero .amount small { font-size: 13px; opacity: 0.6; }
+        .result-hero .cat { font-size: 10px; color: var(--green-text); opacity: 0.5; margin-top: 4px; }
+
+        .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+        .result-item {
+            background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 12px; padding: 12px;
+        }
+        .result-item .ri-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--green-text); opacity: 0.5; margin-bottom: 3px; }
+        .result-item .ri-value { font-size: 14px; font-weight: 700; color: white; }
+        .result-item .ri-value.gold { color: var(--gold); }
+
+        .pago-inicial-box {
+            background: rgba(212,175,55,0.06); border: 1px solid rgba(212,175,55,0.2);
+            border-radius: 14px; padding: 16px; margin-bottom: 16px; text-align: center;
+        }
+        .pago-inicial-box .pi-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); opacity: 0.7; margin-bottom: 4px; }
+        .pago-inicial-box .pi-amount { font-size: 22px; font-weight: 900; color: var(--gold); }
+        .pago-inicial-box .pi-detail { font-size: 10px; color: var(--green-text); opacity: 0.5; margin-top: 4px; }
+
+        .amort-toggle {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--gold);
+            background: rgba(212,175,55,0.06); border: 1px solid rgba(212,175,55,0.15);
+            border-radius: 12px; transition: all 0.3s; margin-bottom: 12px;
+        }
+        .amort-toggle:hover { background: rgba(212,175,55,0.1); }
+        .amort-table-wrap { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+        .amort-table-wrap.open { max-height: 3000px; overflow-y: auto; }
+        .amort-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+        .amort-table th {
+            padding: 7px 4px; text-align: right; color: var(--gold); font-weight: 600;
+            border-bottom: 1px solid rgba(212,175,55,0.2);
+            font-size: 8px; letter-spacing: 1px; text-transform: uppercase;
+            position: sticky; top: 0; background: var(--bg-mid);
+        }
+        .amort-table th:first-child { text-align: center; }
+        .amort-table td {
+            padding: 6px 4px; border-bottom: 1px solid rgba(255,255,255,0.03);
+            color: var(--green-text); font-size: 10px; text-align: right; font-variant-numeric: tabular-nums;
+        }
+        .amort-table td:first-child { text-align: center; color: rgba(255,255,255,0.3); }
+        .amort-table tr:hover td { background: rgba(212,175,55,0.03); }
+        .amort-table tfoot td { font-weight: 700; color: var(--gold); border-top: 1px solid rgba(212,175,55,0.2); }
+
+        .disclaimer {
+            margin-top: 14px; padding: 12px; background: rgba(239,68,68,0.04);
+            border: 1px solid rgba(239,68,68,0.12); border-radius: 10px;
+            font-size: 9px; color: rgba(255,255,255,0.35); line-height: 1.6;
+        }
+        .disclaimer strong { color: rgba(239,68,68,0.6); }
+
+        .cta-formal {
+            display: block; text-align: center; margin-top: 12px; padding: 16px;
+            border-radius: 14px; background: rgba(212,175,55,0.08);
+            border: 1px solid rgba(212,175,55,0.25); color: var(--gold);
+            font-weight: 700; font-size: 14px; text-decoration: none; transition: all 0.3s;
+        }
+        .cta-formal:hover { background: var(--gold); color: var(--bg); }
+        .cta-wa {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            margin-top: 10px; padding: 16px; border-radius: 14px;
+            background: #25D366; color: white; font-weight: 700; font-size: 14px;
+            text-decoration: none; box-shadow: 0 4px 15px rgba(37,211,102,0.3); transition: all 0.3s;
+        }
+        .cta-wa:hover { transform: translateY(-2px); }
+
+        .btn-recalc {
+            width: 100%; margin-top: 10px; padding: 14px; border-radius: 14px;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+            color: var(--green-text); font-family: 'Poppins', sans-serif;
+            font-size: 13px; font-weight: 600; cursor: pointer;
+        }
+
+        @media (max-width: 400px) {
+            .card, .result-card { padding: 20px 16px; }
+            .result-hero .amount { font-size: 28px; }
+            .plazo-pill { min-width: 48px; padding: 10px 4px; font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <img src="logo-circular.png" alt="Alabol">
+        <h1>Simulador de Credito</h1>
+        <p>Estimacion basada en condiciones Hey Banco / Banregio 2026</p>
+    </div>
+
+    <div class="card" id="formCard">
+        <div class="form-group">
+            <label>Precio del vehiculo <span>(MXN)</span></label>
+            <input type="text" id="precio" placeholder="Ej: 500,000" oninput="formatPrice(this)">
+        </div>
+
+        <div class="form-group">
+            <label>Enganche</label>
+            <div class="slider-wrap">
+                <div class="slider-value" id="engancheDisplay">20%</div>
+                <input type="range" id="enganche" min="10" max="70" value="20" step="5" oninput="updateEnganche()">
+                <div class="slider-labels"><span>10%</span><span>70%</span></div>
+            </div>
+            <div class="enganche-monto">Enganche: <strong id="engancheMonto">$0</strong></div>
+        </div>
+
+        <div class="form-group">
+            <label>Plazo <span>(la tasa se ajusta automaticamente)</span></label>
+            <div class="plazo-grid">
+                <div class="plazo-pill selected" data-meses="48" onclick="selectPlazo(this)">48<small>meses</small><span class="tasa-hint">14.99%</span></div>
+                <div class="plazo-pill" data-meses="60" onclick="selectPlazo(this)">60<small>meses</small><span class="tasa-hint">14.99%</span></div>
+                <div class="plazo-pill" data-meses="72" onclick="selectPlazo(this)">72<small>meses</small><span class="tasa-hint">15.24%</span></div>
+                <div class="plazo-pill" data-meses="84" onclick="selectPlazo(this)">84<small>meses</small><span class="tasa-hint">15.24%</span></div>
+                <div class="plazo-pill" data-meses="96" onclick="selectPlazo(this)">96<small>meses</small><span class="tasa-hint">15.74%</span></div>
+            </div>
+        </div>
+
+        <button class="btn-calcular" onclick="calcular()">Calcular mensualidad →</button>
+    </div>
+
+    <div class="results" id="results">
+        <div class="result-card">
+            <div class="result-hero">
+                <div class="label">Tu pago mensual estimado</div>
+                <div class="amount" id="resMensualidad">$0 <small>MXN/mes</small></div>
+                <div class="cat" id="resCat">CAT estimado: 0% sin IVA | Tasa fija: 0%</div>
+            </div>
+
+            <div class="pago-inicial-box">
+                <div class="pi-label">Pago inicial estimado</div>
+                <div class="pi-amount" id="resPagoInicial">$0</div>
+                <div class="pi-detail" id="resPagoInicialDetail">Enganche + Comision apertura</div>
+            </div>
+
+            <div class="result-grid">
+                <div class="result-item">
+                    <div class="ri-label">Precio del auto</div>
+                    <div class="ri-value" id="resPrecio">$0</div>
+                </div>
+                <div class="result-item">
+                    <div class="ri-label">Enganche</div>
+                    <div class="ri-value gold" id="resEnganche">$0</div>
+                </div>
+                <div class="result-item">
+                    <div class="ri-label">Monto a financiar</div>
+                    <div class="ri-value" id="resFinanciar">$0</div>
+                </div>
+                <div class="result-item">
+                    <div class="ri-label">Comision apertura</div>
+                    <div class="ri-value" id="resComision">$0</div>
+                </div>
+                <div class="result-item">
+                    <div class="ri-label">Total intereses + IVA</div>
+                    <div class="ri-value" id="resIntereses">$0</div>
+                </div>
+                <div class="result-item">
+                    <div class="ri-label">Costo total del credito</div>
+                    <div class="ri-value gold" id="resTotal">$0</div>
+                </div>
+            </div>
+
+            <div class="amort-toggle" onclick="toggleAmort()">
+                <i class="fa-solid fa-table"></i> Ver tabla de amortizacion <span id="amortArrow">▼</span>
+            </div>
+            <div class="amort-table-wrap" id="amortWrap">
+                <table class="amort-table">
+                    <thead><tr>
+                        <th>#</th><th>Saldo</th><th>Capital</th><th>Interes</th><th>IVA</th><th>Pago</th>
+                    </tr></thead>
+                    <tbody id="amortBody"></tbody>
+                    <tfoot id="amortFoot"></tfoot>
+                </table>
+            </div>
+
+            <div class="disclaimer">
+                <strong>Simulacion informativa.</strong> Las tasas, mensualidades y condiciones son estimaciones de referencia basadas en el producto Autoregio de Hey Banco (abril 2026). La tasa, CAT y aprobacion final dependen del analisis crediticio de la institucion financiera. No constituye una oferta de credito. CAT para fines informativos y de comparacion exclusivamente.
+            </div>
+
+            <a href="https://cotizadorhey.azurewebsites.net/Busqueda/Seminuevos?cid=552OH2" target="_blank" class="cta-formal">
+                Cotizar formalmente con Hey Banco →
+            </a>
+            <a href="#" id="ctaWhatsApp" target="_blank" class="cta-wa">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+                Quiero financiar con Alabol
+            </a>
+            <button class="btn-recalc" onclick="document.getElementById('results').classList.remove('active');window.scrollTo(0,0);">← Recalcular</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ── TASAS REALES HEY BANCO 2026 ──
+    const TASAS = {
+        48: 14.99,
+        60: 14.99,
+        72: 15.24,
+        84: 15.24,
+        96: 15.74
+    };
+    const COMISION_APERTURA = 0.0232; // 2.32% del monto a financiar
+    const IVA = 0.16;
+
+    let selectedPlazo = 48;
+
+    function fmt(n) {
+        return new Intl.NumberFormat('es-MX', { style:'currency', currency:'MXN', minimumFractionDigits:2, maximumFractionDigits:2 }).format(n);
+    }
+    function fmt0(n) {
+        return new Intl.NumberFormat('es-MX', { style:'currency', currency:'MXN', minimumFractionDigits:0, maximumFractionDigits:0 }).format(n);
+    }
+
+    function formatPrice(el) {
+        let v = el.value.replace(/[^0-9]/g, '');
+        if (v) el.value = Number(v).toLocaleString('es-MX');
+        updateEnganche();
+    }
+
+    function getPrice() {
+        return Number(document.getElementById('precio').value.replace(/[^0-9]/g, '')) || 0;
+    }
+
+    function updateEnganche() {
+        const pct = document.getElementById('enganche').value;
+        document.getElementById('engancheDisplay').textContent = pct + '%';
+        document.getElementById('engancheMonto').textContent = fmt0(getPrice() * pct / 100);
+    }
+
+    function selectPlazo(el) {
+        document.querySelectorAll('.plazo-pill').forEach(p => p.classList.remove('selected'));
+        el.classList.add('selected');
+        selectedPlazo = parseInt(el.dataset.meses);
+    }
+
+    function calcular() {
+        const precio = getPrice();
+        if (!precio || precio < 100000) {
+            alert('Ingresa un precio valido (minimo $100,000)');
+            return;
+        }
+
+        const enganchePct = parseInt(document.getElementById('enganche').value);
+        const meses = selectedPlazo;
+        const tasaAnual = TASAS[meses];
+        const tasaMensual = tasaAnual / 100 / 12;
+
+        const enganche = precio * enganchePct / 100;
+        const montoFinanciar = precio - enganche;
+        const comisionApertura = montoFinanciar * COMISION_APERTURA;
+
+        // ── Calcular mensualidad con IVA sobre intereses ──
+        // Método: encontrar pago fijo donde cada mes:
+        //   interes = saldo * tasaMensual
+        //   iva = interes * 0.16
+        //   capital = pago - interes - iva
+        //   saldo -= capital
+        // Usamos bisección para encontrar el pago que deja saldo = 0
+
+        let pagoLow = montoFinanciar / meses;
+        let pagoHigh = montoFinanciar / meses * 3;
+        let pago = 0;
+
+        for (let iter = 0; iter < 100; iter++) {
+            pago = (pagoLow + pagoHigh) / 2;
+            let saldo = montoFinanciar;
+            for (let m = 0; m < meses; m++) {
+                const interes = saldo * tasaMensual;
+                const iva = interes * IVA;
+                const capital = pago - interes - iva;
+                saldo -= capital;
+            }
+            if (Math.abs(saldo) < 0.01) break;
+            if (saldo > 0) pagoLow = pago;
+            else pagoHigh = pago;
+        }
+
+        const mensualidad = pago;
+
+        // ── Generar tabla de amortización ──
+        let saldo = montoFinanciar;
+        let totalCapital = 0, totalInteres = 0, totalIva = 0;
+        const rows = [];
+
+        for (let i = 1; i <= meses; i++) {
+            const interes = saldo * tasaMensual;
+            const iva = interes * IVA;
+            let capital = mensualidad - interes - iva;
+
+            // Último mes: ajustar para liquidar exactamente
+            if (i === meses) {
+                capital = saldo;
+                const pagoFinal = capital + interes + iva;
+                rows.push({ n: i, saldo, capital, interes, iva, pago: pagoFinal });
+                totalCapital += capital;
+                totalInteres += interes;
+                totalIva += iva;
+                break;
+            }
+
+            saldo -= capital;
+            if (saldo < 0) saldo = 0;
+
+            rows.push({ n: i, saldo: saldo + capital, capital, interes, iva, pago: mensualidad });
+            totalCapital += capital;
+            totalInteres += interes;
+            totalIva += iva;
+        }
+
+        // ── Pago inicial ──
+        const pagoInicial = enganche + comisionApertura;
+
+        // ── CAT estimado (tasa + ~13% por seguros, comisión, IVA) ──
+        const catEstimado = (tasaAnual + 13.1).toFixed(1);
+
+        // ── Llenar resultados ──
+        document.getElementById('resMensualidad').innerHTML = `${fmt(mensualidad)} <small>MXN/mes</small>`;
+        document.getElementById('resCat').textContent = `CAT estimado: ${catEstimado}% sin IVA | Tasa fija: ${tasaAnual}% | ${meses} meses`;
+        document.getElementById('resPrecio').textContent = fmt0(precio);
+        document.getElementById('resEnganche').textContent = `${fmt0(enganche)} (${enganchePct}%)`;
+        document.getElementById('resFinanciar').textContent = fmt0(montoFinanciar);
+        document.getElementById('resComision').textContent = `${fmt(comisionApertura)} (2.32%)`;
+        document.getElementById('resIntereses').textContent = fmt0(totalInteres + totalIva);
+        document.getElementById('resTotal').textContent = fmt0(totalCapital + totalInteres + totalIva + enganche + comisionApertura);
+
+        document.getElementById('resPagoInicial').textContent = fmt0(pagoInicial);
+        document.getElementById('resPagoInicialDetail').textContent =
+            `Enganche ${fmt0(enganche)} + Comision ${fmt0(comisionApertura)}`;
+
+        // ── Tabla de amortización ──
+        const tbody = document.getElementById('amortBody');
+        tbody.innerHTML = rows.map(r => `<tr>
+            <td>${r.n}</td>
+            <td>${fmt(r.saldo)}</td>
+            <td>${fmt(r.capital)}</td>
+            <td>${fmt(r.interes)}</td>
+            <td>${fmt(r.iva)}</td>
+            <td>${fmt(r.pago)}</td>
+        </tr>`).join('');
+
+        document.getElementById('amortFoot').innerHTML = `<tr>
+            <td></td><td>Totales</td>
+            <td>${fmt(totalCapital)}</td>
+            <td>${fmt(totalInteres)}</td>
+            <td>${fmt(totalIva)}</td>
+            <td></td>
+        </tr>`;
+
+        // ── WhatsApp CTA ──
+        const waMsg = encodeURIComponent(
+            `Hola Alabol, me interesa financiar un auto.\n` +
+            `Precio: ${fmt0(precio)}\n` +
+            `Enganche: ${fmt0(enganche)} (${enganchePct}%)\n` +
+            `Plazo: ${meses} meses a ${tasaAnual}%\n` +
+            `Mensualidad estimada: ${fmt(mensualidad)}\n` +
+            `¿Me pueden ayudar con el proceso?`
+        );
+        document.getElementById('ctaWhatsApp').href = `https://wa.me/525568667571?text=${waMsg}`;
+
+        document.getElementById('results').classList.add('active');
+        setTimeout(() => document.getElementById('results').scrollIntoView({ behavior: 'smooth' }), 100);
+    }
+
+    function toggleAmort() {
+        const wrap = document.getElementById('amortWrap');
+        const arrow = document.getElementById('amortArrow');
+        wrap.classList.toggle('open');
+        arrow.textContent = wrap.classList.contains('open') ? '▲' : '▼';
+    }
+
+    // Pre-fill from URL
+    window.addEventListener('load', () => {
+        const params = new URLSearchParams(window.location.search);
+        const p = params.get('precio');
+        if (p) {
+            document.getElementById('precio').value = Number(p).toLocaleString('es-MX');
+            updateEnganche();
+        }
+    });
+</script>
+
+</body>
+</html>

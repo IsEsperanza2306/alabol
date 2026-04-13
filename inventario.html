@@ -2374,12 +2374,49 @@ function optimImg(url, width) {
                 return;
             }
 
-            grid.innerHTML = dataToRender.map(auto => {
-                if (auto.origen === 'subasta_mx' || auto.origen === 'subasta_usa') {
-                    return createSubastaCard(auto);
-                }
-                return createCard(auto);
-            }).join('');
+            // Lazy loading: render first 24, then load more on scroll
+            const BATCH_SIZE = 24;
+            let renderedCount = 0;
+
+            function renderBatch() {
+                const batch = dataToRender.slice(renderedCount, renderedCount + BATCH_SIZE);
+                const html = batch.map(auto => {
+                    if (auto.origen === 'subasta_mx' || auto.origen === 'subasta_usa') {
+                        return createSubastaCard(auto);
+                    }
+                    return createCard(auto);
+                }).join('');
+                grid.insertAdjacentHTML('beforeend', html);
+                renderedCount += batch.length;
+
+                // Remove load-more button if all rendered
+                const loadBtn = document.getElementById('loadMoreBtn');
+                if (renderedCount >= dataToRender.length && loadBtn) loadBtn.remove();
+            }
+
+            grid.innerHTML = '';
+            renderedCount = 0;
+            renderBatch();
+
+            // Add "load more" button if there are more
+            if (dataToRender.length > BATCH_SIZE) {
+                const existing = document.getElementById('loadMoreBtn');
+                if (existing) existing.remove();
+                const btn = document.createElement('div');
+                btn.id = 'loadMoreBtn';
+                btn.style.cssText = 'grid-column:1/-1;text-align:center;padding:20px;';
+                btn.innerHTML = '<button onclick="document.getElementById(\'loadMoreBtn\').querySelector(\'button\').textContent=\'Cargando...\';window._loadMore&&window._loadMore();" style="padding:14px 40px;background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.25);color:var(--gold);border-radius:14px;font-family:Poppins,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Ver mas autos (' + (dataToRender.length - BATCH_SIZE) + ' restantes)</button>';
+                grid.after(btn);
+                window._loadMore = function() {
+                    renderBatch();
+                    const remaining = dataToRender.length - renderedCount;
+                    if (remaining > 0) {
+                        btn.innerHTML = '<button onclick="document.getElementById(\'loadMoreBtn\').querySelector(\'button\').textContent=\'Cargando...\';window._loadMore&&window._loadMore();" style="padding:14px 40px;background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.25);color:var(--gold);border-radius:14px;font-family:Poppins,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Ver mas autos (' + remaining + ' restantes)</button>';
+                    } else {
+                        btn.remove();
+                    }
+                };
+            }
 
             // Update tab counts
             const seminuevosCount = database_inventory.filter(c => c.origen !== 'subasta_mx' && c.origen !== 'subasta_usa').length;

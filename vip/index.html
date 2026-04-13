@@ -87,7 +87,7 @@
         }
 
         /* VIP Badge — minimal */
-        .vip-badge { text-align: center; margin-bottom: 16px; animation: fadeInDown 0.6s ease-out; }
+        .vip-badge { text-align: center; margin-bottom: 8px; animation: fadeInDown 0.6s ease-out; }
         .vip-badge span {
             display: inline-block;
             background: rgba(212,175,55,0.1);
@@ -104,7 +104,7 @@
             backdrop-filter: blur(40px);
             -webkit-backdrop-filter: blur(40px);
             border-radius: 28px;
-            padding: 36px 28px;
+            padding: 24px 20px;
             border: 1px solid rgba(212,175,55,0.12);
             box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 0 0.5px rgba(212,175,55,0.06);
             animation: cardIn 0.6s cubic-bezier(.16,1,.3,1) 0.2s both;
@@ -124,9 +124,9 @@
         @keyframes cardIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
 
         /* Logo — Apple clean */
-        .logo-section { text-align: center; margin-bottom: 6px; position: relative; transition: height 0.4s ease, opacity 0.4s ease, margin 0.4s ease, overflow 0s; }
+        .logo-section { text-align: center; margin-bottom: 0; position: relative; transition: height 0.4s ease, opacity 0.4s ease, margin 0.4s ease, overflow 0s; }
         .logo-section.compact { height: 0; overflow: hidden; margin: 0; opacity: 0; }
-        .logo-container { position: relative; width: 72px; height: 72px; margin: 0 auto 14px; }
+        .logo-container { position: relative; width: 56px; height: 56px; margin: 0 auto 10px; }
         .logo-glow {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
             width: 100px; height: 100px;
@@ -136,14 +136,14 @@
         }
         @keyframes logoGlowPulse { 0%,100% { transform:translate(-50%,-50%) scale(1); opacity:0.4; } 50% { transform:translate(-50%,-50%) scale(1.1); opacity:0.7; } }
         .logo-circle {
-            position: relative; width: 72px; height: 72px;
+            position: relative; width: 56px; height: 56px;
             background: rgba(15,51,41,0.2); border-radius: 50%;
             border: 1.5px solid rgba(212,175,55,0.35);
             display: flex; align-items: center; justify-content: center;
             box-shadow: 0 0 30px rgba(212,175,55,0.15);
             overflow: hidden; backdrop-filter: blur(10px);
         }
-        .logo-circle img { width: 60px; height: 60px; object-fit: contain; filter: drop-shadow(0 0 8px rgba(212,175,55,0.3)); }
+        .logo-circle img { width: 48px; height: 48px; object-fit: contain; filter: drop-shadow(0 0 8px rgba(212,175,55,0.3)); }
         .logo-section h1 {
             font-size: 15px; font-weight: 800;
             color: var(--gold);
@@ -153,7 +153,7 @@
         .logo-section .highlight { color: var(--gold); font-weight: 600; }
 
         /* Trust — minimal */
-        .trust-row { display: flex; justify-content: center; gap: 16px; margin: 12px 0 18px; flex-wrap: wrap; }
+        .trust-row { display: flex; justify-content: center; gap: 16px; margin: 8px 0 12px; flex-wrap: wrap; }
         .trust-item {
             display: flex; align-items: center; gap: 5px;
             font-size: 10px; color: rgba(168,197,184,0.6); font-weight: 500;
@@ -292,10 +292,10 @@
         /* More brands expandable section */
         .more-brands-toggle {
             display: flex; align-items: center; justify-content: center; gap: 8px;
-            margin-top: 12px; padding: 10px 16px;
-            background: transparent; border: 1px solid rgba(255,255,255,0.06);
+            margin-top: 12px; padding: 14px 16px;
+            background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.25);
             border-radius: 12px; cursor: pointer; transition: all 0.3s;
-            color: rgba(212,175,55,0.6); font-size: 12px; font-weight: 500;
+            color: var(--gold); font-size: 14px; font-weight: 700;
         }
         .more-brands-toggle:hover { background: rgba(212,175,55,0.04); border-color: rgba(212,175,55,0.2); color: var(--gold); }
         .more-brands-toggle .toggle-arrow { transition: transform 0.3s; display: inline-block; }
@@ -436,11 +436,11 @@
             background: rgba(255,255,255,0.03); margin-bottom: 12px;
         }
         .reveal-card-img {
-            height: 130px; position: relative; overflow: hidden; background: var(--bg-mid);
+            height: 150px; position: relative; overflow: hidden; background: var(--bg-mid);
         }
         .reveal-card-img img {
-            width: 100%; height: 100%; object-fit: cover;
-            filter: blur(18px) brightness(0.4); transform: scale(1.15);
+            width: 100%; height: 100%; object-fit: cover; object-position: center 40%;
+            filter: blur(18px) brightness(0.4);
         }
         .reveal-card-img .lock-overlay {
             position: absolute; inset: 0;
@@ -486,7 +486,10 @@
         /* ===== TINDER DECK (Step 6) ===== */
         .tinder-deck {
             display: none; position: relative;
-            width: 100%; min-height: 440px; margin-top: 8px;
+            width: 100%; min-height: min(440px, calc(100vh - 260px)); margin-top: 8px;
+        }
+        @media (max-width: 768px) {
+            .tinder-deck { min-height: calc(100vh - 240px); }
         }
         .tinder-deck.active { display: flex; align-items: center; justify-content: center; }
 
@@ -504,7 +507,7 @@
         .tinder-card.swiped-left { transform: translateX(-150%) rotate(-15deg); opacity: 0; }
         .tinder-card.swiped-right { transform: translateX(150%) rotate(15deg); opacity: 0; }
 
-        .t-card-img { width: 100%; height: 55%; object-fit: cover; border-bottom: 1px solid rgba(212,175,55,0.15); }
+        .t-card-img { width: 100%; height: 50%; object-fit: cover; object-position: center 40%; border-bottom: 1px solid rgba(212,175,55,0.15); }
         .t-card-info { padding: 16px; height: 45%; display: flex; flex-direction: column; justify-content: space-between; }
         .t-card-title { font-size: 20px; font-weight: 800; color: white; line-height: 1.2; }
         .t-card-year { background: var(--gold); color: black; padding: 2px 8px; border-radius: 6px; font-size: 13px; font-weight: 800; display: inline-block; margin-left: 6px; vertical-align: middle; }
@@ -731,6 +734,7 @@
             .chip-grid { gap: 6px; }
             .chip { padding: 10px 8px; font-size: 11px; }
             .nav-btn { padding: 12px 16px; font-size: 12px; }
+            .btn-next { font-size: 16px !important; padding: 16px 24px !important; }
         }
         @media (max-height: 650px) {
             .logo-section.compact, .logo-section { height: 0; overflow: hidden; margin: 0; opacity: 0; }
@@ -993,18 +997,18 @@
             <div class="step" data-step="3">
                 <div style="text-align: center; margin-bottom: 16px;">
                     <div style="font-size: 44px; margin-bottom: 6px;">😏</div>
-                    <div class="step-title" id="revealTitle" style="font-size: 22px; background: linear-gradient(135deg, #d4af37, #f4e5b0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-                        Alguien te hizo match... (<span id="matchCountReveal">0</span> veces)
+                    <div class="step-title" id="revealTitle" style="font-size: 24px; background: linear-gradient(135deg, #d4af37, #f4e5b0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                        ¡Hiciste match! (<span id="matchCountReveal">0</span> resultados)
                     </div>
-                    <div class="step-subtitle" id="revealSubtitle">Les gustó tu perfil. ¿Quieres ver quiénes son?</div>
+                    <div class="step-subtitle" id="revealSubtitle">Estos autos coinciden con lo que buscas</div>
                     <div class="compat-score" id="compatScore">0%</div>
                 </div>
                 <div id="revealCardsContainer">
                     <!-- Injected via JS -->
                 </div>
                 <div class="unlock-banner">
-                    <p class="ub-title">🔓 Estos autos quieren conocerte</p>
-                    <p class="ub-sub">Deja tu WhatsApp y te los presentamos. Sin ghosteo, prometido.</p>
+                    <p class="ub-title">🔓 ¡Hiciste match!</p>
+                    <p class="ub-sub">Toca el boton para ver tus resultados</p>
                 </div>
             </div>
 
@@ -2146,8 +2150,8 @@
 
                 const revealTitle = document.getElementById('revealTitle');
                 const revealSubtitle = document.getElementById('revealSubtitle');
-                revealTitle.innerHTML = `Alguien te hizo match... (<span id="matchCountReveal">${matchStack.length > 3 ? 3 : matchStack.length}</span> veces)`;
-                revealSubtitle.textContent = 'Les gustó tu perfil. ¿Quieres ver quiénes son?';
+                revealTitle.innerHTML = `¡Hiciste match! (<span id="matchCountReveal">${matchStack.length > 3 ? 3 : matchStack.length}</span> resultados)`;
+                revealSubtitle.textContent = 'Estos autos coinciden con lo que buscas';
 
                 currentStep = 3;
                 document.querySelector('.progress-bar').style.display = 'flex';
@@ -2249,10 +2253,9 @@
 
         // Conditional button text
         if (currentStep === 3) {
-            nextBtn.textContent = '🔓 Ver quién me hizo match';
+            nextBtn.textContent = '🔓 Revelar perfiles →';
         } else if (currentStep === 4) {
-            const n = matchStack.length > 0 ? Math.min(matchStack.length, 3) : 3;
-            nextBtn.textContent = `💘 Revelar mis ${n} pretendientes`;
+            nextBtn.textContent = '💘 Revelar perfiles →';
         } else if (currentStep === 5) {
             navButtons.style.display = 'none'; // Swipe step: no nav
         } else {

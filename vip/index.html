@@ -507,12 +507,12 @@
         .tinder-card.swiped-left { transform: translateX(-150%) rotate(-15deg); opacity: 0; }
         .tinder-card.swiped-right { transform: translateX(150%) rotate(15deg); opacity: 0; }
 
-        .t-card-img { width: 100%; height: 50%; object-fit: cover; object-position: center 40%; border-bottom: 1px solid rgba(212,175,55,0.15); }
-        .t-card-info { padding: 16px; height: 45%; display: flex; flex-direction: column; justify-content: space-between; }
-        .t-card-title { font-size: 20px; font-weight: 800; color: white; line-height: 1.2; }
-        .t-card-year { background: var(--gold); color: black; padding: 2px 8px; border-radius: 6px; font-size: 13px; font-weight: 800; display: inline-block; margin-left: 6px; vertical-align: middle; }
-        .t-card-price { font-size: 22px; font-weight: 900; color: #34d399; margin-top: 6px; }
-        .t-card-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+        .t-card-img { width: 100%; height: 45%; object-fit: cover; object-position: center 40%; border-bottom: 1px solid rgba(212,175,55,0.15); }
+        .t-card-info { padding: 14px 16px; height: 55%; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
+        .t-card-title { font-size: 18px; font-weight: 800; color: white; line-height: 1.2; }
+        .t-card-year { background: var(--gold); color: black; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 800; display: inline-block; margin-left: 6px; vertical-align: middle; }
+        .t-card-price { font-size: 20px; font-weight: 900; color: #34d399; margin-top: 4px; }
+        .t-card-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px; }
         .t-card-tag {
             padding: 4px 10px; border-radius: 10px;
             background: rgba(212,175,55,0.1); font-size: 10px;
@@ -520,6 +520,8 @@
             border: 1px solid rgba(212,175,55,0.2);
         }
         .t-card-details { display: flex; justify-content: space-between; font-size: 12px; color: var(--green-text); margin-top: auto; align-items: center; }
+        .t-card-km { font-size: 13px; font-weight: 600; }
+        .t-card-location { font-size: 11px; color: rgba(168,197,184,0.6); }
         .t-badge { background: rgba(212,175,55,0.15); border: 1px solid rgba(212,175,55,0.3); color: var(--gold); padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
         .t-card-cita {
             display: block; text-align: center; margin-top: 10px; padding: 10px;
@@ -1808,11 +1810,11 @@
                         <div>
                             <div class="t-card-title">${car.marca} ${car.modelo} <span class="t-card-year">${car.anio}</span></div>
                             ${priceDisplay}
+                            <div style="display:flex;gap:12px;margin-top:6px;font-size:12px;color:var(--green-text);">
+                                <span class="t-card-km">📏 ${km}</span>
+                                <span class="t-card-location">📍 ${car.ciudad || 'Mexico'}</span>
+                            </div>
                             <div class="t-card-tags">${tags.map(t => `<span class="t-card-tag">${t}</span>`).join('')}</div>
-                        </div>
-                        <div class="t-card-details">
-                            <span>${km}</span>
-                            <span class="t-badge">Match Alabol</span>
                         </div>
                         <a href="../agendar-cita.html?auto=${car.id}" class="t-card-cita" onclick="event.stopPropagation();">📅 Agendar primera cita</a>
                     </div>

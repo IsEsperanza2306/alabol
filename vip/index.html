@@ -183,8 +183,8 @@
         @keyframes stepEnter { from { opacity:0; transform:translateX(60px) scale(0.95); } to { opacity:1; transform:translateX(0) scale(1); } }
         @keyframes stepExit { from { opacity:1; transform:translateX(0) rotate(0); } to { opacity:0; transform:translateX(-80px) rotate(-3deg); } }
 
-        .step-header { margin-bottom: 22px; }
-        .step-icon { font-size: 28px; margin-bottom: 8px; }
+        .step-header { margin-bottom: 16px; }
+        .step-icon { font-size: 26px; margin-bottom: 6px; }
         .step-title { font-size: 20px; font-weight: 700; color: white; margin-bottom: 4px; line-height: 1.3; letter-spacing: -0.02em; }
         .step-subtitle { font-size: 12px; color: rgba(168,197,184,0.5); font-weight: 400; }
 
@@ -474,14 +474,14 @@
 
         /* Unlock banner */
         .unlock-banner {
-            margin-top: 16px; padding: 16px;
+            margin-top: 12px; padding: 18px;
             border-radius: 14px;
-            background: linear-gradient(135deg, rgba(212,175,55,0.12), rgba(212,175,55,0.06));
+            background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(212,175,55,0.08));
             border: 1px solid rgba(212,175,55,0.3);
             text-align: center;
         }
-        .unlock-banner .ub-title { font-size: 14px; font-weight: 700; color: white; margin: 0; }
-        .unlock-banner .ub-sub { font-size: 12px; color: rgba(168,197,184,0.5); margin: 4px 0 0; }
+        .unlock-banner .ub-title { font-size: 18px; font-weight: 800; color: white; margin: 0; }
+        .unlock-banner .ub-sub { font-size: 13px; color: rgba(168,197,184,0.6); margin: 6px 0 0; }
 
         /* ===== TINDER DECK (Step 6) ===== */
         .tinder-deck {
@@ -609,7 +609,7 @@
         @keyframes radarSweep { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* Navigation — Apple clean */
-        .nav-buttons { display: flex; gap: 10px; margin-top: 24px; }
+        .nav-buttons { display: flex; gap: 10px; margin-top: 14px; }
         .btn {
             flex: 1; padding: 15px 20px; border: none; border-radius: 14px;
             font-size: 15px; font-weight: 600; font-family: 'Poppins', sans-serif;
@@ -678,11 +678,11 @@
 
         /* Upgrade 6: Compatibility counter on reveal */
         .compat-score {
-            font-size: 48px; font-weight: 900;
+            font-size: 36px; font-weight: 900;
             background: linear-gradient(135deg, #d4af37, #f4e5b0);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin: 8px 0;
+            margin: 4px 0;
         }
 
         /* Upgrade 7: Rotating border glow */
@@ -741,6 +741,34 @@
             .trust-row { display: none; }
             .vip-badge { margin-bottom: 4px; }
             .card { padding: 16px 14px; }
+        }
+
+        /* ── MOBILE AGGRESSIVE COMPACT ── */
+        @media (max-width: 768px) {
+            body { padding: 8px; align-items: flex-start; }
+            .card { padding: 20px 16px; }
+            .step-header { margin-bottom: 14px; }
+            .step-icon { font-size: 24px; margin-bottom: 4px; }
+            .step-title { font-size: 18px; }
+            .step-subtitle { font-size: 11px; }
+            .nav-buttons { margin-top: 10px; }
+            .btn-next {
+                font-size: 17px !important;
+                padding: 18px 24px !important;
+                border-radius: 16px !important;
+                font-weight: 800 !important;
+                letter-spacing: 0.5px !important;
+            }
+            .reveal-card { margin-bottom: 8px; }
+            .reveal-card-img { height: 120px; }
+            .reveal-card-info { padding: 10px 12px; }
+            .reveal-card-info .rc-name { font-size: 13px; }
+            .compat-score { font-size: 28px; margin: 2px 0; }
+            .unlock-banner { padding: 14px; }
+            .unlock-banner .ub-title { font-size: 16px; }
+            .form-group { margin-bottom: 12px; }
+            .form-group label { font-size: 13px; margin-bottom: 4px; }
+            input, select, textarea { padding: 14px 16px; font-size: 15px; }
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -995,18 +1023,17 @@
 
             <!-- ====== STEP 4: Blurred Reveal ====== -->
             <div class="step" data-step="3">
-                <div style="text-align: center; margin-bottom: 16px;">
-                    <div style="font-size: 44px; margin-bottom: 6px;">😏</div>
-                    <div class="step-title" id="revealTitle" style="font-size: 24px; background: linear-gradient(135deg, #d4af37, #f4e5b0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                <div style="text-align: center; margin-bottom: 10px;">
+                    <div class="step-title" id="revealTitle" style="font-size: 22px; background: linear-gradient(135deg, #d4af37, #f4e5b0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 2px;">
                         ¡Hiciste match! (<span id="matchCountReveal">0</span> resultados)
                     </div>
                     <div class="step-subtitle" id="revealSubtitle">Estos autos coinciden con lo que buscas</div>
                     <div class="compat-score" id="compatScore">0%</div>
                 </div>
-                <div id="revealCardsContainer">
+                <div id="revealCardsContainer" style="max-height: 280px; overflow-y: auto;">
                     <!-- Injected via JS -->
                 </div>
-                <div class="unlock-banner">
+                <div class="unlock-banner" style="margin-top: 10px;">
                     <p class="ub-title">🔓 ¡Hiciste match!</p>
                     <p class="ub-sub">Toca el boton para ver tus resultados</p>
                 </div>

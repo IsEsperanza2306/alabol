@@ -270,8 +270,13 @@ button, input { font-family: inherit; outline: none; }
 
       if (isAprobado) {
         html += '<div class="cert-vigencia ' + (vigente ? 'vigente' : 'vencido') + '"><i class="fas fa-' + (vigente ? 'check-circle' : 'clock') + '"></i> ' + (vigente ? 'Este auto tiene green flags vigentes' : 'La vigencia del certificado expiro') + '</div>';
-        html += '<div class="cert-download"><button onclick="CertificadoPDF.downloadCertificado(\'' + v.folio + '\')"><i class="fas fa-file-pdf"></i> Descargar Certificado PDF</button></div>';
+      } else if (isRechazado) {
+        html += '<div class="cert-vigencia vencido"><i class="fas fa-exclamation-triangle"></i> Este vehiculo no paso el background check de Alabol</div>';
       }
+
+      // Siempre mostrar botón de descarga cuando hay dictamen
+      html += '<div class="cert-download"><button onclick="CertificadoPDF.downloadCertificado(\'' + v.folio + '\')"><i class="fas fa-file-pdf"></i> Descargar Reporte PDF Completo</button></div>';
+
     } else {
       html += '<div class="cert-vigencia pendiente" style="background:rgba(59,130,246,0.1);color:#60a5fa;border-color:rgba(59,130,246,0.2)"><i class="fas fa-hourglass-half"></i> Nuestro verificador esta revisando este soltero sobre ruedas. Te notificamos cuando este listo.</div>';
     }

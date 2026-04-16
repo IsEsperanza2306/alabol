@@ -9,11 +9,8 @@
   var BUCKET = 'verificaciones';
   var SITE_URL = 'https://alabolcar.com.mx';
 
-  var _sb = null;
   function getSb() {
-    if (_sb) return _sb;
-    if (window.supabaseClient) { _sb = window.supabaseClient; return _sb; }
-    return null;
+    return window.supabaseClient || null;
   }
 
   // Colors

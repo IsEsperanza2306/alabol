@@ -469,12 +469,55 @@
     loadExpedientes(filter).then(renderList);
   }
 
+  var galleryPhotos = [];
+  var galleryIndex = 0;
+
   function zoomPhoto(src) {
+    // Collect all visible photos for gallery navigation
+    galleryPhotos = [];
+    document.querySelectorAll('.photo-review-card img').forEach(function (img) {
+      galleryPhotos.push(img.src);
+    });
+    galleryIndex = galleryPhotos.indexOf(src);
+    if (galleryIndex === -1) galleryIndex = 0;
+    showGallery();
+  }
+
+  function showGallery() {
+    var existing = document.querySelector('.photo-zoom-overlay');
+    if (existing) existing.remove();
+
+    var total = galleryPhotos.length;
     var overlay = document.createElement('div');
     overlay.className = 'photo-zoom-overlay';
-    overlay.innerHTML = '<img src="' + src + '" alt="Zoom"><button class="zoom-close" onclick="this.parentElement.remove()">&times;</button>';
+    overlay.innerHTML =
+      '<button class="gallery-nav gallery-prev" onclick="event.stopPropagation();VerificadorPanel.galleryPrev()"><i class="fas fa-chevron-left"></i></button>' +
+      '<img src="' + galleryPhotos[galleryIndex] + '" alt="Foto">' +
+      '<button class="gallery-nav gallery-next" onclick="event.stopPropagation();VerificadorPanel.galleryNext()"><i class="fas fa-chevron-right"></i></button>' +
+      '<div class="gallery-counter">' + (galleryIndex + 1) + ' / ' + total + '</div>' +
+      '<button class="zoom-close" onclick="event.stopPropagation();this.parentElement.remove()">&times;</button>';
     overlay.onclick = function (e) { if (e.target === overlay) overlay.remove(); };
     document.body.appendChild(overlay);
+
+    // Keyboard navigation
+    overlay._keyHandler = function (e) {
+      if (e.key === 'ArrowRight') galleryNext();
+      else if (e.key === 'ArrowLeft') galleryPrev();
+      else if (e.key === 'Escape') { overlay.remove(); document.removeEventListener('keydown', overlay._keyHandler); }
+    };
+    document.addEventListener('keydown', overlay._keyHandler);
+  }
+
+  function galleryNext() {
+    if (galleryPhotos.length === 0) return;
+    galleryIndex = (galleryIndex + 1) % galleryPhotos.length;
+    showGallery();
+  }
+
+  function galleryPrev() {
+    if (galleryPhotos.length === 0) return;
+    galleryIndex = (galleryIndex - 1 + galleryPhotos.length) % galleryPhotos.length;
+    showGallery();
   }
 
   // ── STATS ──
@@ -526,6 +569,8 @@
     backToList: backToList,
     setFilter: setFilter,
     zoomPhoto: zoomPhoto,
+    galleryNext: galleryNext,
+    galleryPrev: galleryPrev,
     runAutoVerify: runAutoVerify,
     SEMAFORO_PUNTOS: SEMAFORO_PUNTOS
   };

@@ -1,2 +1,5 @@
 # Showroom de agencias - redirige /agencia/slug a la página showroom
 /agencia/*  /agencia-showroom.html  200
+
+# Verificacion vehicular - certificado publico por folio
+/certificado/:folio  /certificado/index.html  200

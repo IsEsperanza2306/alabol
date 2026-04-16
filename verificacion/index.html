@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="/logo-circular.png" type="image/png">
+<meta property="og:title" content="Verificacion Vehicular | Alabol Car Broker">
+<meta property="og:description" content="Verifica la legalidad de tu auto. Detectamos autos remarcados, robados o con problemas legales.">
+<meta property="og:image" content="https://alabolcar.com.mx/logo-circular.png">
+<meta property="og:url" content="https://alabolcar.com.mx/verificacion/">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RMENV8G466"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RMENV8G466');</script>
+<title>Chequeo de Confianza | Alabol — El Tinder de los Autos</title>
+<meta name="description" content="Antes de hacer match, asegurate de que tu auto no tenga red flags. Verificacion anti-remarcado, REPUVE y revision documental.">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --bg-primary: #0a1f1a;
+  --bg-secondary: #0d2921;
+  --bg-card: rgba(13, 38, 28, 0.6);
+  --gold: #d4af37;
+  --gold-light: #f4e5b0;
+  --gold-dim: rgba(212, 175, 55, 0.25);
+  --gold-glow: rgba(212, 175, 55, 0.15);
+  --emerald: #34d399;
+  --green-text: #a8c5b8;
+  --green-muted: rgba(148, 184, 167, 0.5);
+  --glass-bg: rgba(13, 38, 28, 0.65);
+  --glass-border: rgba(212, 175, 55, 0.18);
+  --danger: #ef4444;
+  --success: #10b981;
+  --warning: #f59e0b;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100vh; font-family: 'Poppins', sans-serif; background: var(--bg-primary); color: var(--green-text); }
+body {
+  background-image:
+    linear-gradient(rgba(13, 148, 136, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(13, 148, 136, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+button, input, select, textarea { font-family: inherit; outline: none; }
+
+/* Ambient Glows */
+.ambient-glow-1 {
+  position: fixed; top: -10%; left: -10%; width: 50vw; height: 50vw;
+  background: radial-gradient(circle, rgba(13, 148, 136, 0.2) 0%, transparent 60%);
+  border-radius: 50%; z-index: 0; filter: blur(90px); pointer-events: none;
+  animation: ambFloat 12s ease-in-out infinite alternate;
+}
+.ambient-glow-2 {
+  position: fixed; bottom: -10%; right: -10%; width: 50vw; height: 50vw;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.12) 0%, transparent 60%);
+  border-radius: 50%; z-index: 0; filter: blur(90px); pointer-events: none;
+  animation: ambFloat 10s ease-in-out infinite alternate-reverse;
+}
+@keyframes ambFloat {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(40px, 40px) scale(1.1); }
+}
+
+/* Header */
+.hdr {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(10, 31, 26, 0.92);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 14px 24px; display: flex; align-items: center; justify-content: space-between;
+}
+.hdr-left { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.hdr-logo { width: 40px; height: 40px; object-fit: contain; filter: drop-shadow(0 0 10px rgba(212,175,55,0.5)); }
+.hdr-title { font-size: 18px; font-weight: 800; color: var(--gold); text-shadow: 0 0 14px rgba(212,175,55,0.3); }
+.hdr-sub { font-size: 10px; color: var(--green-text); text-transform: uppercase; letter-spacing: .1em; opacity: 0.6; }
+.hdr-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 20px;
+  background: rgba(212,175,55,0.08); border: 1px solid var(--gold-dim);
+  color: var(--gold); font-size: 11px; font-weight: 600;
+}
+
+/* Main Container */
+.main-container {
+  max-width: 680px; margin: 0 auto; padding: 24px 16px 120px;
+  position: relative; z-index: 1;
+}
+
+/* Hero Section */
+.verify-hero {
+  text-align: center; padding: 32px 20px 28px;
+}
+.verify-hero-icon {
+  width: 72px; height: 72px; margin: 0 auto 16px;
+  background: rgba(212,175,55,0.1); border: 2px solid var(--gold-dim);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 32px; color: var(--gold);
+  box-shadow: 0 0 30px rgba(212,175,55,0.15);
+}
+.verify-hero h1 {
+  font-size: 26px; font-weight: 800; color: white; margin-bottom: 8px;
+}
+.verify-hero h1 span { color: var(--gold); }
+.verify-hero p {
+  font-size: 14px; color: var(--green-text); line-height: 1.7; opacity: 0.8; max-width: 500px; margin: 0 auto;
+}
+.verify-badges {
+  display: flex; justify-content: center; gap: 8px; margin-top: 16px; flex-wrap: wrap;
+}
+.verify-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 12px; border-radius: 20px; font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.verify-badge.legal { background: rgba(239,68,68,0.12); color: #fca5a5; border: 1px solid rgba(239,68,68,0.25); }
+.verify-badge.secure { background: rgba(16,185,129,0.12); color: var(--emerald); border: 1px solid rgba(16,185,129,0.25); }
+.verify-badge.fast { background: rgba(212,175,55,0.12); color: var(--gold); border: 1px solid var(--gold-dim); }
+
+/* Progress Bar */
+.progress-bar {
+  display: flex; align-items: center; margin-bottom: 28px;
+  padding: 20px; background: var(--glass-bg); border: 1px solid var(--glass-border);
+  border-radius: 16px; backdrop-filter: blur(10px);
+}
+.progress-step { display: flex; align-items: center; gap: 8px; }
+.progress-dot {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+  background: var(--bg-secondary); border: 2px solid var(--glass-border);
+  color: var(--green-muted); transition: all 0.4s;
+}
+.progress-dot.active { border-color: var(--gold); color: var(--gold); background: rgba(212,175,55,0.12); box-shadow: 0 0 16px rgba(212,175,55,0.25); }
+.progress-dot.done { border-color: var(--emerald); color: white; background: var(--emerald); }
+.progress-label { font-size: 11px; color: var(--green-muted); transition: color 0.3s; }
+.progress-label.active { color: var(--gold); font-weight: 600; }
+.progress-label.done { color: var(--emerald); }
+.progress-line { flex: 1; height: 2px; background: var(--glass-border); margin: 0 12px; }
+.progress-line.done { background: var(--emerald); }
+
+/* Steps */
+.wiz-step { display: none; }
+.wiz-step.active { display: block; animation: fadeSlide 0.4s ease; }
+@keyframes fadeSlide { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+.step-header { margin-bottom: 24px; }
+.step-title { font-size: 22px; font-weight: 800; color: white; margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
+.step-title i { color: var(--gold); font-size: 20px; }
+.step-sub { font-size: 13px; color: var(--green-text); opacity: 0.7; line-height: 1.6; }
+
+/* Form Fields */
+.ff { margin-bottom: 16px; }
+.ff label {
+  display: block; font-size: 10px; font-weight: 700; color: var(--gold);
+  text-transform: uppercase; letter-spacing: .1em; margin-bottom: 6px; opacity: 0.85;
+}
+.fi {
+  width: 100%; padding: 13px 14px; border-radius: 12px;
+  background: rgba(10,31,26,0.6); border: 1px solid var(--glass-border);
+  color: white; font-size: 14px; transition: all 0.3s;
+}
+.fi:focus { border-color: var(--gold); box-shadow: 0 0 16px rgba(212,175,55,0.15); }
+.fi::placeholder { color: var(--green-muted); }
+select.fi { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23a8c5b8' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+select.fi option { background: var(--bg-primary); color: white; }
+
+.ff-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 480px) { .ff-row { grid-template-columns: 1fr; } }
+
+.ff-hint { font-size: 11px; color: var(--green-muted); margin-top: 4px; }
+
+/* VIN Input Special */
+.vin-input-wrap {
+  position: relative;
+}
+.vin-input-wrap .fi {
+  font-family: 'Courier New', monospace; font-size: 16px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+}
+#vin-status { margin-top: 8px; font-size: 12px; min-height: 20px; }
+.vin-ok { color: var(--emerald); }
+.vin-error { color: var(--danger); }
+.vin-warn { color: var(--warning); }
+.vin-partial { color: var(--green-muted); }
+#vin-country { font-size: 11px; color: var(--green-muted); margin-top: 4px; }
+
+/* NHTSA Results */
+.nhtsa-loading { color: var(--gold); }
+.nhtsa-error { color: var(--warning); }
+.nhtsa-decoded {
+  background: rgba(212,175,55,0.06); border: 1px solid var(--gold-dim);
+  border-radius: 12px; padding: 16px; margin-top: 12px;
+}
+.nhtsa-title { font-size: 12px; font-weight: 700; color: var(--gold); margin-bottom: 10px; }
+.nhtsa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 12px; }
+.nhtsa-grid div { color: var(--green-text); }
+.nhtsa-grid strong { color: white; font-weight: 600; }
+@media (max-width: 480px) { .nhtsa-grid { grid-template-columns: 1fr; } }
+
+/* REPUVE */
+.repuve-status {
+  background: rgba(13,148,136,0.08); border: 1px solid rgba(13,148,136,0.2);
+  border-radius: 12px; padding: 12px 16px; margin-top: 12px;
+  font-size: 12px; color: var(--green-text);
+}
+.repuve-status a { color: var(--gold); text-decoration: none; }
+.repuve-status a:hover { text-decoration: underline; }
+
+/* Section Divider */
+.section-divider {
+  display: flex; align-items: center; gap: 12px; margin: 28px 0 20px;
+  font-size: 11px; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 0.1em;
+}
+.section-divider::before, .section-divider::after { content: ''; flex: 1; height: 1px; background: var(--glass-border); }
+
+/* Listing checkbox */
+.listing-option {
+  background: linear-gradient(135deg, rgba(212,175,55,0.08), rgba(13,148,136,0.06));
+  border: 1px solid var(--gold-dim); border-radius: 16px; padding: 18px;
+  margin-top: 20px; display: flex; align-items: flex-start; gap: 14px; cursor: pointer;
+  transition: all 0.3s;
+}
+.listing-option:hover { border-color: var(--gold); }
+.listing-option input[type="checkbox"] { display: none; }
+.listing-check {
+  width: 24px; height: 24px; border-radius: 8px; flex-shrink: 0; margin-top: 2px;
+  border: 2px solid var(--glass-border); background: var(--bg-secondary);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: transparent; transition: all 0.3s;
+}
+.listing-option input:checked ~ .listing-check { border-color: var(--gold); background: var(--gold); color: var(--bg-primary); }
+.listing-text h4 { font-size: 14px; font-weight: 700; color: white; margin-bottom: 4px; }
+.listing-text p { font-size: 12px; color: var(--green-text); line-height: 1.5; opacity: 0.8; }
+
+/* ── STEP 2: PHOTOS ── */
+.photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 480px) { .photo-grid { grid-template-columns: 1fr; } }
+
+.photo-slot {
+  background: var(--glass-bg); border: 1px dashed var(--glass-border);
+  border-radius: 16px; padding: 16px; text-align: center;
+  transition: all 0.3s; position: relative; overflow: hidden; cursor: pointer;
+}
+.photo-slot:hover { border-color: var(--gold); border-style: solid; }
+.photo-slot.has-photo { border-style: solid; border-color: var(--emerald); }
+.photo-slot.uploading { opacity: 0.6; pointer-events: none; }
+
+.photo-slot-icon { font-size: 28px; color: var(--gold-dim); margin-bottom: 8px; transition: color 0.3s; }
+.photo-slot:hover .photo-slot-icon { color: var(--gold); }
+.photo-slot.has-photo .photo-slot-icon { color: var(--emerald); }
+
+.photo-slot-name { font-size: 12px; font-weight: 700; color: white; margin-bottom: 4px; }
+.photo-slot-instruction { font-size: 10px; color: var(--green-muted); line-height: 1.4; margin-bottom: 10px; }
+.photo-slot-status { font-size: 11px; }
+.photo-pending { color: var(--green-muted); }
+.photo-ready { color: var(--emerald); }
+
+.photo-preview {
+  width: 100%; border-radius: 8px; margin-top: 8px; display: none;
+  max-height: 140px; object-fit: cover;
+}
+.photo-slot.has-photo .photo-preview { display: block; }
+
+.photo-slot input[type="file"] { display: none; }
+
+.photo-remove-btn {
+  position: absolute; top: 8px; right: 8px;
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(239,68,68,0.8); border: none;
+  color: white; font-size: 14px; cursor: pointer;
+  display: none; align-items: center; justify-content: center; z-index: 2;
+  transition: background 0.3s;
+}
+.photo-remove-btn:hover { background: var(--danger); }
+.photo-slot.has-photo .photo-remove-btn { display: flex; }
+
+.photo-counter-bar {
+  margin-top: 16px; background: var(--glass-bg); border: 1px solid var(--glass-border);
+  border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; gap: 12px;
+}
+.photo-counter-bar .bar-track {
+  flex: 1; height: 6px; background: var(--bg-secondary); border-radius: 3px; overflow: hidden;
+}
+.photo-counter-bar .bar-fill {
+  height: 100%; background: linear-gradient(90deg, var(--gold), var(--emerald));
+  border-radius: 3px; transition: width 0.4s ease; width: 0;
+}
+#photo-counter { font-size: 12px; font-weight: 600; color: var(--gold); white-space: nowrap; }
+
+/* ── STEP 3: TIERS ── */
+.tier-cards { display: grid; grid-template-columns: 1fr; gap: 14px; }
+
+.tier-card {
+  background: var(--glass-bg); border: 2px solid var(--glass-border);
+  border-radius: 20px; padding: 24px; cursor: pointer;
+  transition: all 0.3s; position: relative; overflow: hidden;
+}
+.tier-card:hover { border-color: var(--gold-dim); transform: translateY(-2px); }
+.tier-card.selected { border-color: var(--gold); box-shadow: 0 0 24px rgba(212,175,55,0.2); }
+.tier-card.popular::before {
+  content: 'MAS POPULAR'; position: absolute; top: 12px; right: -28px;
+  background: linear-gradient(135deg, var(--gold), #c9a961);
+  color: var(--bg-primary); font-size: 9px; font-weight: 800;
+  padding: 3px 32px; transform: rotate(45deg); letter-spacing: 0.05em;
+}
+
+.tier-name { font-size: 16px; font-weight: 800; color: white; margin-bottom: 4px; }
+.tier-price { font-size: 28px; font-weight: 800; color: var(--gold); margin-bottom: 14px; }
+.tier-price small { font-size: 14px; font-weight: 400; color: var(--green-text); }
+.tier-features { list-style: none; }
+.tier-features li {
+  font-size: 12px; color: var(--green-text); padding: 5px 0;
+  display: flex; align-items: flex-start; gap: 8px;
+}
+.tier-features li i { color: var(--emerald); margin-top: 2px; font-size: 10px; }
+.tier-radio { display: none; }
+
+/* Payment summary */
+.pago-summary {
+  background: var(--glass-bg); border: 1px solid var(--glass-border);
+  border-radius: 16px; padding: 20px; margin-top: 20px;
+}
+.pago-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 13px; }
+.pago-row.total { border-top: 1px solid var(--glass-border); padding-top: 14px; margin-top: 8px; }
+.pago-row.total span:last-child { font-size: 22px; font-weight: 800; color: var(--gold); }
+.pago-disclaimer { font-size: 11px; color: var(--green-muted); margin-top: 12px; line-height: 1.5; }
+
+/* Buttons */
+.btn-row { display: flex; gap: 12px; margin-top: 28px; }
+.btn-back {
+  padding: 14px 24px; border-radius: 12px;
+  border: 1px solid var(--glass-border); background: transparent;
+  color: var(--green-text); font-size: 14px; font-weight: 600; cursor: pointer;
+  transition: all 0.3s; flex-shrink: 0;
+}
+.btn-back:hover { border-color: var(--gold); color: var(--gold); }
+.btn-next {
+  flex: 1; padding: 14px 24px; border-radius: 12px; border: none;
+  background: linear-gradient(135deg, var(--gold), #c9a961, var(--gold-light));
+  background-size: 200% 200%; animation: goldShimmer 3s ease infinite;
+  color: var(--bg-primary); font-size: 14px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 4px 20px rgba(212,175,55,0.35); transition: all 0.3s;
+}
+.btn-next:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(212,175,55,0.5); }
+.btn-next:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+@keyframes goldShimmer { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+
+/* Confirmation Screen */
+.confirmation-screen { text-align: center; padding: 40px 20px; }
+.confirm-icon { font-size: 72px; color: var(--emerald); margin-bottom: 20px; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+@keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+.confirmation-screen h2 { font-size: 28px; font-weight: 800; color: white; margin-bottom: 12px; }
+.confirm-folio {
+  font-size: 18px; color: var(--gold); margin-bottom: 16px;
+  background: rgba(212,175,55,0.08); border: 1px solid var(--gold-dim);
+  display: inline-block; padding: 10px 24px; border-radius: 12px;
+}
+.confirm-text { font-size: 14px; color: var(--green-text); line-height: 1.7; margin-bottom: 24px; max-width: 500px; margin-left: auto; margin-right: auto; }
+.confirm-tier { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 24px; }
+.tier-badge {
+  padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase;
+  background: rgba(212,175,55,0.12); color: var(--gold); border: 1px solid var(--gold-dim);
+}
+.tier-price { font-size: 18px; font-weight: 800; color: var(--gold); }
+.confirm-next {
+  background: var(--glass-bg); border: 1px solid var(--glass-border);
+  border-radius: 16px; padding: 24px; text-align: left; margin-bottom: 24px;
+  max-width: 500px; margin-left: auto; margin-right: auto;
+}
+.confirm-next h3 { font-size: 14px; font-weight: 700; color: var(--gold); margin-bottom: 12px; }
+.confirm-next ol { padding-left: 20px; }
+.confirm-next li { font-size: 13px; color: var(--green-text); padding: 4px 0; line-height: 1.5; }
+.confirm-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn-secondary {
+  padding: 12px 24px; border-radius: 12px;
+  border: 1px solid var(--glass-border); background: transparent;
+  color: var(--green-text); font-size: 13px; font-weight: 600; cursor: pointer;
+  text-decoration: none; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+.btn-gold {
+  padding: 12px 24px; border-radius: 12px; border: none;
+  background: linear-gradient(135deg, var(--gold), #c9a961);
+  color: var(--bg-primary); font-size: 13px; font-weight: 800; cursor: pointer;
+  text-decoration: none; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px;
+  box-shadow: 0 4px 16px rgba(212,175,55,0.35);
+}
+.btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(212,175,55,0.5); }
+
+/* Responsive */
+@media (max-width: 480px) {
+  .verify-hero h1 { font-size: 22px; }
+  .progress-label { display: none; }
+  .step-title { font-size: 18px; }
+  .tier-price { font-size: 24px; }
+  .btn-row { flex-direction: column; }
+  .btn-back { order: 2; }
+  .btn-next { order: 1; }
+}
+</style>
+</head>
+<body>
+
+<div class="ambient-glow-1"></div>
+<div class="ambient-glow-2"></div>
+
+<!-- Header -->
+<header class="hdr">
+  <a href="/" class="hdr-left">
+    <img src="/logo-circular.png" class="hdr-logo" alt="Alabol">
+    <div>
+      <div class="hdr-title">Alabol</div>
+      <div class="hdr-sub">El Tinder de los Autos</div>
+    </div>
+  </a>
+  <div class="hdr-badge">
+    <i class="fas fa-shield-halved"></i> Chequeo de Confianza
+  </div>
+</header>
+
+<div class="main-container" id="wizard-container">
+
+  <!-- Hero -->
+  <div class="verify-hero">
+    <div class="verify-hero-icon"><i class="fas fa-shield-halved"></i></div>
+    <h1>Antes del match, <span>el background check</span></h1>
+    <p>No hagas swipe right a un auto con red flags. Verificamos que tu soltero sobre ruedas no sea remarcado, robado ni tenga broncas legales. Tu tranquilidad es el mejor match.</p>
+    <div class="verify-badges">
+      <span class="verify-badge legal"><i class="fas fa-gavel"></i> Anti-remarcado</span>
+      <span class="verify-badge secure"><i class="fas fa-lock"></i> REPUVE + NHTSA</span>
+      <span class="verify-badge fast"><i class="fas fa-bolt"></i> 24-48 hrs</span>
+    </div>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-bar">
+    <div class="progress-step">
+      <div class="progress-dot active" id="dot-1">1</div>
+      <span class="progress-label active" id="label-1">Datos</span>
+    </div>
+    <div class="progress-line" id="line-1"></div>
+    <div class="progress-step">
+      <div class="progress-dot" id="dot-2">2</div>
+      <span class="progress-label" id="label-2">Fotos</span>
+    </div>
+    <div class="progress-line" id="line-2"></div>
+    <div class="progress-step">
+      <div class="progress-dot" id="dot-3">3</div>
+      <span class="progress-label" id="label-3">Pago</span>
+    </div>
+  </div>
+
+  <!-- STEP 1: Vehicle Data -->
+  <div class="wiz-step active" id="step-1">
+    <div class="step-header">
+      <div class="step-title"><i class="fas fa-car-side"></i> Conoce a tu pretendiente</div>
+      <div class="step-sub">Antes de hacer match, necesitamos los datos de tu soltero sobre ruedas. El NIV es como su huella digital — lo cruzamos con bases de datos oficiales para que no te lleves sorpresas.</div>
+    </div>
+
+    <!-- VIN -->
+    <div class="ff">
+      <label><i class="fas fa-fingerprint"></i> NIV / VIN — La huella digital de tu auto</label>
+      <div class="vin-input-wrap">
+        <input type="text" class="fi" id="inp-vin" placeholder="Ej: 3N1CN7AD5KL832457" maxlength="17" autocomplete="off" spellcheck="false">
+      </div>
+      <div id="vin-status"></div>
+      <div id="vin-country"></div>
+      <div class="ff-hint">17 caracteres — lo encuentras bajo el parabrisas (lado conductor) o en la etiqueta de la puerta</div>
+    </div>
+
+    <div id="nhtsa-result"></div>
+    <div id="repuve-result"></div>
+
+    <div class="section-divider">Perfil del soltero sobre ruedas</div>
+
+    <div class="ff-row">
+      <div class="ff">
+        <label>Marca</label>
+        <input type="text" class="fi" id="inp-marca" placeholder="Ej: Nissan">
+      </div>
+      <div class="ff">
+        <label>Modelo</label>
+        <input type="text" class="fi" id="inp-modelo" placeholder="Ej: Versa">
+      </div>
+    </div>
+    <div class="ff-row">
+      <div class="ff">
+        <label>Ano</label>
+        <input type="number" class="fi" id="inp-anio" placeholder="Ej: 2022" min="1990" max="2027">
+      </div>
+      <div class="ff">
+        <label>Color</label>
+        <input type="text" class="fi" id="inp-color" placeholder="Ej: Blanco">
+      </div>
+    </div>
+    <div class="ff-row">
+      <div class="ff">
+        <label>Placas</label>
+        <input type="text" class="fi" id="inp-placas" placeholder="Ej: ABC-123-A" style="text-transform:uppercase">
+      </div>
+      <div class="ff">
+        <label>Estado de registro</label>
+        <select class="fi" id="inp-estado">
+          <option value="">Selecciona...</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="section-divider">Tus datos para el match</div>
+
+    <div class="ff">
+      <label>Nombre del propietario</label>
+      <input type="text" class="fi" id="inp-nombre" placeholder="Nombre completo como aparece en documentos">
+    </div>
+    <div class="ff-row">
+      <div class="ff">
+        <label>Email</label>
+        <input type="email" class="fi" id="inp-email" placeholder="correo@ejemplo.com">
+      </div>
+      <div class="ff">
+        <label>WhatsApp</label>
+        <input type="tel" class="fi" id="inp-telefono" placeholder="55 1234 5678">
+      </div>
+    </div>
+
+    <!-- Listing option -->
+    <label class="listing-option">
+      <input type="checkbox" id="chk-listing">
+      <span class="listing-check"><i class="fas fa-check"></i></span>
+      <div class="listing-text">
+        <h4><i class="fas fa-heart"></i> Quiero que mi auto haga match en Alabol</h4>
+        <p>Publica tu soltero sobre ruedas en el portal y conecta con compradores verificados. Sin costo extra — solo necesitas la verificacion aprobada.</p>
+      </div>
+    </label>
+
+    <div class="btn-row">
+      <button class="btn-next" onclick="Verificacion.nextStep()">
+        Siguiente: sesion de fotos <i class="fas fa-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 2: Photos -->
+  <div class="wiz-step" id="step-2">
+    <div class="step-header">
+      <div class="step-title"><i class="fas fa-camera"></i> Sesion de fotos — la primera impresion</div>
+      <div class="step-sub">Asi como en una app de citas, las fotos lo dicen todo. Estas 6 tomas son las que nuestro verificador usara para detectar red flags: remarcado, soldaduras sospechosas o documentos alterados.</div>
+    </div>
+
+    <div class="photo-grid" id="photo-grid">
+      <!-- Generated by JS -->
+    </div>
+
+    <div class="photo-counter-bar">
+      <span id="photo-counter">0 / 6 fotos</span>
+      <div class="bar-track"><div class="bar-fill" id="photo-progress-bar"></div></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" onclick="Verificacion.prevStep()"><i class="fas fa-arrow-left"></i> Atras</button>
+      <button class="btn-next" onclick="Verificacion.nextStep()">
+        Siguiente: elige tu plan <i class="fas fa-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 3: Tier + Payment -->
+  <div class="wiz-step" id="step-3">
+    <div class="step-header">
+      <div class="step-title"><i class="fas fa-shield-halved"></i> Elige tu nivel de confianza</div>
+      <div class="step-sub">Como en toda relacion, la confianza se construye. Elige que tan profundo quieres el background check de tu auto. Todos incluyen certificado PDF con QR verificable.</div>
+    </div>
+
+    <div class="tier-cards" id="tier-cards">
+      <!-- Generated by JS -->
+    </div>
+
+    <div class="pago-summary">
+      <div class="pago-row">
+        <span>Plan seleccionado</span>
+        <span id="pago-plan">Basico</span>
+      </div>
+      <div class="pago-row">
+        <span>Certificado PDF + QR</span>
+        <span style="color:var(--emerald)">Incluido</span>
+      </div>
+      <div class="pago-row total">
+        <span style="color:white;font-weight:700">Total</span>
+        <span id="pago-total">$299 MXN</span>
+      </div>
+      <div class="pago-disclaimer">
+        <i class="fas fa-lock"></i> Pago seguro via MercadoPago. Sin compromisos, sin letras chiquitas.
+        Al continuar aceptas los <a href="/terminos.html" target="_blank" style="color:var(--gold)">terminos y condiciones</a>.
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" onclick="Verificacion.prevStep()"><i class="fas fa-arrow-left"></i> Atras</button>
+      <button class="btn-next" id="btn-submit" onclick="Verificacion.submitVerificacion()">
+        <i class="fas fa-lock"></i> Confirmar y Pagar
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/config.js"></script>
+<script src="/js/vin-validator.js"></script>
+<script src="/js/verificacion.js"></script>
+<script>
+(function() {
+  // Generate photo grid
+  var grid = document.getElementById('photo-grid');
+  if (grid) {
+    var html = '';
+    Verificacion.REQUIRED_PHOTOS.forEach(function(p) {
+      html +=
+        '<div class="photo-slot" id="photo-slot-' + p.key + '" onclick="document.getElementById(\'photo-input-' + p.key + '\').click()">' +
+        '<button class="photo-remove-btn" onclick="event.stopPropagation();Verificacion.removePhoto(\'' + p.key + '\')">&times;</button>' +
+        '<div class="photo-slot-icon"><i class="fas ' + p.icon + '"></i></div>' +
+        '<div class="photo-slot-name">' + p.name + '</div>' +
+        '<div class="photo-slot-instruction">' + p.instruction + '</div>' +
+        '<div id="photo-status-' + p.key + '" class="photo-slot-status"><span class="photo-pending"><i class="fas fa-camera"></i> Pendiente</span></div>' +
+        '<img class="photo-preview" id="photo-preview-' + p.key + '" alt="' + p.name + '">' +
+        '<input type="file" id="photo-input-' + p.key + '" accept="image/jpeg,image/png,image/heic,image/heif" capture="environment" onchange="Verificacion.handlePhotoSelect(\'' + p.key + '\', this)">' +
+        '</div>';
+    });
+    grid.innerHTML = html;
+  }
+
+  // Generate tier cards
+  var tiersEl = document.getElementById('tier-cards');
+  if (tiersEl) {
+    var tiers = Verificacion.TIERS;
+    var tierKeys = ['basico', 'verificado', 'plus'];
+    var tierIcons = { basico: 'fa-shield', verificado: 'fa-shield-halved', plus: 'fa-certificate' };
+    var html = '';
+    tierKeys.forEach(function(key) {
+      var t = tiers[key];
+      var isPopular = key === 'verificado';
+      html +=
+        '<div class="tier-card' + (key === 'basico' ? ' selected' : '') + (isPopular ? ' popular' : '') + '" data-tier="' + key + '" onclick="Verificacion.selectTier(\'' + key + '\')">' +
+        '<div class="tier-name"><i class="fas ' + tierIcons[key] + '"></i> ' + t.nombre + '</div>' +
+        '<div class="tier-price">$' + t.precio + ' <small>MXN</small></div>' +
+        '<ul class="tier-features">';
+      t.features.forEach(function(f) {
+        html += '<li><i class="fas fa-check"></i> ' + f + '</li>';
+      });
+      html += '</ul></div>';
+    });
+    tiersEl.innerHTML = html;
+  }
+
+  // Init wizard
+  Verificacion.init();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="/logo-circular.png" type="image/png">
+<title>Certificado de Confianza | Alabol — El Tinder de los Autos</title>
+<meta name="description" content="Consulta si un auto paso el background check de Alabol. Certificado verificable con codigo QR.">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<style>
+:root {
+  --bg-primary: #0a1f1a;
+  --bg-secondary: #0d2921;
+  --gold: #d4af37;
+  --gold-light: #f4e5b0;
+  --gold-dim: rgba(212, 175, 55, 0.25);
+  --emerald: #34d399;
+  --green-text: #a8c5b8;
+  --green-muted: rgba(148, 184, 167, 0.5);
+  --glass-bg: rgba(13, 38, 28, 0.65);
+  --glass-border: rgba(212, 175, 55, 0.18);
+  --danger: #ef4444;
+  --success: #10b981;
+  --warning: #f59e0b;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100vh; font-family: 'Poppins', sans-serif; background: var(--bg-primary); color: var(--green-text); }
+body { background-image: linear-gradient(rgba(13,148,136,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(13,148,136,0.05) 1px, transparent 1px); background-size: 40px 40px; }
+button, input { font-family: inherit; outline: none; }
+
+.ambient-glow-1 { position:fixed;top:-10%;left:-10%;width:50vw;height:50vw;background:radial-gradient(circle,rgba(13,148,136,0.2) 0%,transparent 60%);border-radius:50%;z-index:0;filter:blur(90px);pointer-events:none; }
+.ambient-glow-2 { position:fixed;bottom:-10%;right:-10%;width:50vw;height:50vw;background:radial-gradient(circle,rgba(212,175,55,0.12) 0%,transparent 60%);border-radius:50%;z-index:0;filter:blur(90px);pointer-events:none; }
+
+.hdr { position:sticky;top:0;z-index:50;background:rgba(10,31,26,0.92);backdrop-filter:blur(24px);border-bottom:1px solid var(--glass-border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between; }
+.hdr-left { display:flex;align-items:center;gap:12px;text-decoration:none; }
+.hdr-logo { width:40px;height:40px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(212,175,55,0.5)); }
+.hdr-title { font-size:18px;font-weight:800;color:var(--gold); }
+.hdr-sub { font-size:10px;color:var(--green-text);text-transform:uppercase;letter-spacing:.1em;opacity:0.6; }
+
+.container { max-width:600px;margin:0 auto;padding:32px 16px 80px;position:relative;z-index:1; }
+
+/* Search */
+.search-section { text-align:center;margin-bottom:32px; }
+.search-icon { width:64px;height:64px;margin:0 auto 16px;background:rgba(212,175,55,0.1);border:2px solid var(--gold-dim);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--gold); }
+.search-section h1 { font-size:24px;font-weight:800;color:white;margin-bottom:8px; }
+.search-section h1 span { color:var(--gold); }
+.search-section p { font-size:13px;color:var(--green-text);opacity:0.8;margin-bottom:20px; }
+
+.search-box { display:flex;gap:8px; }
+.search-input { flex:1;padding:14px 16px;border-radius:12px;background:rgba(10,31,26,0.6);border:1px solid var(--glass-border);color:white;font-size:15px;font-family:'Courier New',monospace;letter-spacing:1px;text-transform:uppercase;transition:border-color 0.3s; }
+.search-input:focus { border-color:var(--gold);box-shadow:0 0 16px rgba(212,175,55,0.15); }
+.search-input::placeholder { color:var(--green-muted);text-transform:none;font-family:'Poppins',sans-serif;letter-spacing:normal; }
+.search-btn { padding:14px 24px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--gold),#c9a961);color:var(--bg-primary);font-size:14px;font-weight:800;cursor:pointer;transition:all 0.3s;white-space:nowrap; }
+.search-btn:hover { transform:translateY(-2px);box-shadow:0 8px 24px rgba(212,175,55,0.5); }
+
+/* Result */
+#result-area { display:none; }
+
+.cert-card { background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:20px;padding:28px;backdrop-filter:blur(10px);overflow:hidden;position:relative; }
+
+.cert-status-bar { padding:12px 20px;border-radius:12px;text-align:center;font-size:14px;font-weight:800;margin-bottom:20px;text-transform:uppercase;letter-spacing:0.05em; }
+.cert-status-bar.aprobado { background:rgba(16,185,129,0.15);color:var(--emerald);border:1px solid rgba(16,185,129,0.3); }
+.cert-status-bar.observaciones { background:rgba(245,158,11,0.15);color:var(--warning);border:1px solid rgba(245,158,11,0.3); }
+.cert-status-bar.rechazado { background:rgba(239,68,68,0.15);color:var(--danger);border:1px solid rgba(239,68,68,0.3); }
+.cert-status-bar.pendiente { background:rgba(59,130,246,0.15);color:#60a5fa;border:1px solid rgba(59,130,246,0.3); }
+.cert-status-bar.vencido { background:rgba(100,100,100,0.15);color:#999;border:1px solid rgba(100,100,100,0.3); }
+
+.cert-folio { font-family:'Courier New',monospace;font-size:22px;font-weight:800;color:var(--gold);text-align:center;margin-bottom:16px; }
+
+.cert-vehicle { text-align:center;margin-bottom:20px; }
+.cert-vehicle h2 { font-size:20px;font-weight:800;color:white; }
+.cert-vehicle .vin { font-family:'Courier New',monospace;font-size:12px;color:var(--green-muted);margin-top:4px; }
+
+.cert-grid { display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px; }
+.cert-item { font-size:12px; }
+.cert-item strong { color:white;font-weight:600;display:block;font-size:10px;text-transform:uppercase;color:var(--gold);opacity:0.7;margin-bottom:2px; }
+
+/* Semáforo mini */
+.cert-semaforo { margin-bottom:20px; }
+.cert-semaforo h3 { font-size:12px;font-weight:700;color:var(--gold);margin-bottom:10px; }
+.sem-mini-grid { display:grid;grid-template-columns:1fr 1fr;gap:4px; }
+.sem-mini-row { display:flex;align-items:center;gap:6px;font-size:10px;padding:4px 0; }
+.sem-dot { width:8px;height:8px;border-radius:50%;flex-shrink:0; }
+.sem-dot.verde { background:var(--emerald); }
+.sem-dot.amarillo { background:var(--warning); }
+.sem-dot.rojo { background:var(--danger); }
+.sem-dot.pendiente { background:#666; }
+
+.cert-dates { display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid var(--glass-border);font-size:11px; }
+.cert-dates .label { color:var(--green-muted); }
+.cert-dates .value { color:white;font-weight:600; }
+
+.cert-vigencia { text-align:center;margin-top:12px;padding:10px;border-radius:10px;font-size:12px;font-weight:600; }
+.cert-vigencia.vigente { background:rgba(16,185,129,0.1);color:var(--emerald);border:1px solid rgba(16,185,129,0.2); }
+.cert-vigencia.vencido { background:rgba(239,68,68,0.1);color:var(--danger);border:1px solid rgba(239,68,68,0.2); }
+
+.cert-download { text-align:center;margin-top:20px; }
+.cert-download button { padding:12px 28px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--gold),#c9a961);color:var(--bg-primary);font-size:13px;font-weight:800;cursor:pointer;transition:all 0.3s; }
+.cert-download button:hover { transform:translateY(-2px);box-shadow:0 8px 24px rgba(212,175,55,0.5); }
+
+.cert-footer { text-align:center;margin-top:16px;font-size:10px;color:var(--green-muted); }
+
+/* Not found */
+.not-found { text-align:center;padding:40px 20px; }
+.not-found i { font-size:48px;color:var(--danger);opacity:0.4;margin-bottom:12px;display:block; }
+.not-found h2 { font-size:20px;color:white;margin-bottom:8px; }
+.not-found p { font-size:13px;color:var(--green-text); }
+
+/* Loading */
+.cert-loading { text-align:center;padding:40px;color:var(--gold); }
+.spinner { display:inline-block;width:32px;height:32px;border:3px solid var(--glass-border);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+@media (max-width:480px) {
+  .search-box { flex-direction:column; }
+  .cert-grid { grid-template-columns:1fr; }
+  .sem-mini-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="ambient-glow-1"></div>
+<div class="ambient-glow-2"></div>
+
+<header class="hdr">
+  <a href="/" class="hdr-left">
+    <img src="/logo-circular.png" class="hdr-logo" alt="Alabol">
+    <div>
+      <div class="hdr-title">Alabol</div>
+      <div class="hdr-sub">El Tinder de los Autos</div>
+    </div>
+  </a>
+</header>
+
+<div class="container">
+  <div class="search-section">
+    <div class="search-icon"><i class="fas fa-qrcode"></i></div>
+    <h1>Background check <span>verificable</span></h1>
+    <p>Ingresa el folio para saber si este auto paso el filtro de confianza de Alabol. Tambien puedes escanear el QR del certificado.</p>
+    <div class="search-box">
+      <input type="text" class="search-input" id="folio-input" placeholder="Ej: ALB-A1B2C3" maxlength="10" autocomplete="off">
+      <button class="search-btn" onclick="buscarCertificado()"><i class="fas fa-search"></i> Buscar</button>
+    </div>
+  </div>
+
+  <div id="result-area"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/config.js"></script>
+<script src="/js/certificado-pdf.js"></script>
+<script>
+(function() {
+  var SEMAFORO_LABELS = {
+    documentos_completos: 'Documentos completos',
+    vin_valido: 'NIV valido',
+    vin_no_remarcado: 'Sin remarcado',
+    placas_vigentes: 'Placas vigentes',
+    sin_reporte_robo: 'Sin reporte robo',
+    factura_original: 'Factura original',
+    tarjeta_circulacion: 'Tarjeta circ.',
+    chip_repuve: 'Chip REPUVE',
+    numero_motor: 'Num. motor',
+    condicion_exterior: 'Exterior',
+    pintura_original: 'Pintura',
+    estructura_integra: 'Estructura'
+  };
+
+  // Check if folio is in URL path
+  var pathParts = window.location.pathname.split('/').filter(Boolean);
+  var folioFromUrl = null;
+  if (pathParts.length >= 2 && pathParts[0] === 'certificado' && pathParts[1].startsWith('ALB')) {
+    folioFromUrl = pathParts[1].toUpperCase();
+  }
+
+  // Also check query param
+  var params = new URLSearchParams(window.location.search);
+  var folioFromParam = params.get('folio');
+
+  var initialFolio = folioFromUrl || folioFromParam;
+  if (initialFolio) {
+    document.getElementById('folio-input').value = initialFolio;
+    setTimeout(function() { buscarCertificado(); }, 300);
+  }
+
+  window.buscarCertificado = function() {
+    var folio = (document.getElementById('folio-input').value || '').trim().toUpperCase();
+    if (!folio) return;
+
+    var area = document.getElementById('result-area');
+    area.style.display = 'block';
+    area.innerHTML = '<div class="cert-loading"><div class="spinner"></div><p>Buscando certificado...</p></div>';
+
+    window.supabaseClient
+      .from('verificaciones')
+      .select('folio, vin, marca, modelo, anio, color, placas, estado_registro, tier, estatus, resultado_final, semaforo, aprobado_at, vigencia_certificado, created_at')
+      .eq('folio', folio)
+      .limit(1)
+      .then(function(res) {
+        if (res.error || !res.data || !res.data.length) {
+          area.innerHTML =
+            '<div class="not-found">' +
+            '<i class="fas fa-search"></i>' +
+            '<h2>No encontramos ese perfil</h2>' +
+            '<p>El folio "' + folio + '" no existe o el background check aun esta en proceso. Revisa que el folio sea correcto.</p>' +
+            '</div>';
+          return;
+        }
+
+        var v = res.data[0];
+        renderCertificado(v, area);
+      })
+      .catch(function(err) {
+        area.innerHTML = '<div class="not-found"><i class="fas fa-exclamation-circle"></i><h2>Error</h2><p>' + err.message + '</p></div>';
+      });
+  };
+
+  function renderCertificado(v, area) {
+    var isAprobado = v.estatus === 'aprobado' || v.estatus === 'aprobado_con_observaciones';
+    var isRechazado = v.estatus === 'rechazado';
+    var isPendiente = !isAprobado && !isRechazado;
+
+    var vigente = false;
+    if (v.vigencia_certificado) {
+      vigente = new Date(v.vigencia_certificado) > new Date();
+    }
+
+    var statusClass, statusLabel;
+    if (isPendiente) { statusClass = 'pendiente'; statusLabel = 'BACKGROUND CHECK EN PROCESO'; }
+    else if (v.resultado_final === 'aprobado') { statusClass = vigente ? 'aprobado' : 'vencido'; statusLabel = vigente ? 'GREEN FLAGS — APROBADO' : 'APROBADO — VIGENCIA VENCIDA'; }
+    else if (v.resultado_final === 'aprobado_con_observaciones') { statusClass = vigente ? 'observaciones' : 'vencido'; statusLabel = vigente ? 'YELLOW FLAGS — CON OBSERVACIONES' : 'CON OBSERVACIONES — VENCIDO'; }
+    else { statusClass = 'rechazado'; statusLabel = 'RED FLAGS — NO APROBADO'; }
+
+    var fechaEmision = v.aprobado_at ? new Date(v.aprobado_at).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' }) : '-';
+    var fechaVigencia = v.vigencia_certificado ? new Date(v.vigencia_certificado).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' }) : '-';
+    var fechaSolicitud = new Date(v.created_at).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
+
+    // Semáforo
+    var semaforo = v.semaforo || {};
+    var semaforoHtml = '';
+    Object.keys(SEMAFORO_LABELS).forEach(function(key) {
+      var valor = semaforo[key] || 'pendiente';
+      semaforoHtml += '<div class="sem-mini-row"><div class="sem-dot ' + valor + '"></div> ' + SEMAFORO_LABELS[key] + '</div>';
+    });
+
+    var html =
+      '<div class="cert-card">' +
+      '<div class="cert-status-bar ' + statusClass + '"><i class="fas fa-' + (isAprobado ? 'check-circle' : isPendiente ? 'clock' : 'times-circle') + '"></i> ' + statusLabel + '</div>' +
+      '<div class="cert-folio">' + v.folio + '</div>' +
+      '<div class="cert-vehicle"><h2>' + (v.marca || '') + ' ' + (v.modelo || '') + ' ' + (v.anio || '') + '</h2><div class="vin">NIV: ' + (v.vin || 'N/A') + '</div></div>' +
+      '<div class="cert-grid">' +
+      '<div class="cert-item"><strong>Color</strong>' + (v.color || 'N/A') + '</div>' +
+      '<div class="cert-item"><strong>Placas</strong>' + (v.placas || 'N/A') + '</div>' +
+      '<div class="cert-item"><strong>Estado</strong>' + (v.estado_registro || 'N/A') + '</div>' +
+      '<div class="cert-item"><strong>Plan</strong>' + (v.tier || '').toUpperCase() + '</div>' +
+      '</div>';
+
+    if (!isPendiente) {
+      html +=
+        '<div class="cert-semaforo"><h3><i class="fas fa-traffic-light"></i> Puntos de Verificacion</h3><div class="sem-mini-grid">' + semaforoHtml + '</div></div>' +
+        '<div class="cert-dates">' +
+        '<div><span class="label">Solicitud</span><br><span class="value">' + fechaSolicitud + '</span></div>' +
+        '<div><span class="label">Emision</span><br><span class="value">' + fechaEmision + '</span></div>' +
+        '<div><span class="label">Vigencia</span><br><span class="value">' + fechaVigencia + '</span></div>' +
+        '</div>';
+
+      if (isAprobado) {
+        html += '<div class="cert-vigencia ' + (vigente ? 'vigente' : 'vencido') + '"><i class="fas fa-' + (vigente ? 'check-circle' : 'clock') + '"></i> ' + (vigente ? 'Este auto tiene green flags vigentes' : 'La vigencia del certificado expiro') + '</div>';
+        html += '<div class="cert-download"><button onclick="CertificadoPDF.downloadCertificado(\'' + v.folio + '\')"><i class="fas fa-file-pdf"></i> Descargar Certificado PDF</button></div>';
+      }
+    } else {
+      html += '<div class="cert-vigencia pendiente" style="background:rgba(59,130,246,0.1);color:#60a5fa;border-color:rgba(59,130,246,0.2)"><i class="fas fa-hourglass-half"></i> Nuestro verificador esta revisando este soltero sobre ruedas. Te notificamos cuando este listo.</div>';
+    }
+
+    html += '<div class="cert-footer">Background check por Alabol Car Broker — El Tinder de los Autos — alabolcar.com.mx</div>';
+    html += '</div>';
+
+    area.innerHTML = html;
+  }
+
+  // Enter key search
+  document.getElementById('folio-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') buscarCertificado();
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="/logo-circular.png" type="image/png">
+<title>Panel Verificador | Alabol Car Broker</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --bg-primary: #0a1f1a;
+  --bg-secondary: #0d2921;
+  --gold: #d4af37;
+  --gold-light: #f4e5b0;
+  --gold-dim: rgba(212, 175, 55, 0.25);
+  --gold-glow: rgba(212, 175, 55, 0.15);
+  --emerald: #34d399;
+  --green-text: #a8c5b8;
+  --green-muted: rgba(148, 184, 167, 0.5);
+  --glass-bg: rgba(13, 38, 28, 0.65);
+  --glass-border: rgba(212, 175, 55, 0.18);
+  --danger: #ef4444;
+  --success: #10b981;
+  --warning: #f59e0b;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100vh; font-family: 'Poppins', sans-serif; background: var(--bg-primary); color: var(--green-text); }
+body { background-image: linear-gradient(rgba(13,148,136,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(13,148,136,0.05) 1px, transparent 1px); background-size: 40px 40px; }
+button, input, select, textarea { font-family: inherit; outline: none; }
+
+.ambient-glow-1 { position:fixed;top:-10%;left:-10%;width:50vw;height:50vw;background:radial-gradient(circle,rgba(13,148,136,0.2) 0%,transparent 60%);border-radius:50%;z-index:0;filter:blur(90px);pointer-events:none; }
+.ambient-glow-2 { position:fixed;bottom:-10%;right:-10%;width:50vw;height:50vw;background:radial-gradient(circle,rgba(212,175,55,0.12) 0%,transparent 60%);border-radius:50%;z-index:0;filter:blur(90px);pointer-events:none; }
+
+/* Header */
+.hdr { position:sticky;top:0;z-index:50;background:rgba(10,31,26,0.92);backdrop-filter:blur(24px);border-bottom:1px solid var(--glass-border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between; }
+.hdr-left { display:flex;align-items:center;gap:12px;text-decoration:none; }
+.hdr-logo { width:40px;height:40px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(212,175,55,0.5)); }
+.hdr-title { font-size:18px;font-weight:800;color:var(--gold); }
+.hdr-sub { font-size:10px;color:var(--green-text);text-transform:uppercase;letter-spacing:.1em;opacity:0.6; }
+.hdr-right { display:flex;align-items:center;gap:12px; }
+.hdr-user { font-size:12px;color:var(--green-text); }
+.bout { padding:7px 16px;border-radius:20px;border:1px solid var(--glass-border);background:transparent;color:var(--green-text);font-size:12px;cursor:pointer;transition:all 0.3s; }
+.bout:hover { border-color:var(--gold);color:var(--gold); }
+
+/* Loading / Denied */
+#panel-loading { display:flex;align-items:center;justify-content:center;min-height:80vh;position:relative;z-index:1; }
+.spinner { width:40px;height:40px;border:3px solid var(--glass-border);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+#panel-denied { display:none;align-items:center;justify-content:center;min-height:80vh;position:relative;z-index:1;flex-direction:column;gap:16px;text-align:center;padding:20px; }
+#panel-denied i { font-size:48px;color:var(--danger);opacity:0.6; }
+#panel-denied h2 { color:white;font-size:22px; }
+#panel-denied p { color:var(--green-text);max-width:400px; }
+
+#panel-content { display:none;position:relative;z-index:1; }
+
+/* Stats */
+.stats-row { display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:700px;margin:20px auto;padding:0 16px; }
+.stat-box { background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:16px;padding:18px;text-align:center;backdrop-filter:blur(10px); }
+.stat-num { font-size:28px;font-weight:800;color:var(--gold); }
+.stat-label { font-size:10px;color:var(--green-text);text-transform:uppercase;letter-spacing:0.08em;margin-top:4px;opacity:0.7; }
+.stat-icon { font-size:16px;margin-bottom:4px;color:var(--gold-dim); }
+
+/* Filters */
+.filters { max-width:700px;margin:20px auto 14px;padding:0 16px;display:flex;gap:8px; }
+.filter-btn { padding:8px 18px;border-radius:20px;border:1px solid var(--glass-border);background:transparent;color:var(--green-text);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.3s; }
+.filter-btn.active { border-color:var(--gold);color:var(--gold);background:rgba(212,175,55,0.08); }
+.filter-btn:hover { border-color:var(--gold);color:var(--gold); }
+
+/* Expediente Cards */
+#expedientes-list { max-width:700px;margin:0 auto;padding:0 16px 80px; }
+.exp-card { background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:16px;padding:18px;margin-bottom:12px;cursor:pointer;transition:all 0.3s;backdrop-filter:blur(10px); }
+.exp-card:hover { border-color:var(--gold-dim);transform:translateX(4px); }
+.exp-card-header { display:flex;justify-content:space-between;align-items:center;margin-bottom:10px; }
+.exp-folio { font-family:'Courier New',monospace;font-size:14px;font-weight:700;color:var(--gold); }
+.exp-status { padding:4px 12px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase; }
+.status-new { background:rgba(59,130,246,0.15);color:#60a5fa;border:1px solid rgba(59,130,246,0.3); }
+.status-review { background:rgba(245,158,11,0.15);color:var(--warning);border:1px solid rgba(245,158,11,0.3); }
+.status-ok { background:rgba(16,185,129,0.15);color:var(--emerald);border:1px solid rgba(16,185,129,0.3); }
+.status-reject { background:rgba(239,68,68,0.15);color:var(--danger);border:1px solid rgba(239,68,68,0.3); }
+.status-obs { background:rgba(212,175,55,0.15);color:var(--gold);border:1px solid var(--gold-dim); }
+.exp-vehicle { font-size:16px;font-weight:700;color:white; }
+.exp-vin { font-size:11px;color:var(--green-muted);margin-top:4px;font-family:'Courier New',monospace; }
+.exp-meta { display:flex;gap:14px;margin-top:8px;font-size:11px;flex-wrap:wrap; }
+.exp-tier { font-weight:700;text-transform:uppercase; }
+.tier-basico { color:var(--green-text); }
+.tier-verificado { color:var(--gold); }
+.tier-plus { color:var(--emerald); }
+
+.empty-state { text-align:center;padding:60px 24px;color:var(--green-muted); }
+.empty-state i { font-size:48px;margin-bottom:12px;display:block;opacity:0.4; }
+
+/* Detail View */
+#view-detail { display:none;max-width:800px;margin:0 auto;padding:20px 16px 80px; }
+.detail-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:20px; }
+.detail-back { background:none;border:1px solid var(--glass-border);color:var(--green-text);padding:8px 16px;border-radius:10px;font-size:12px;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;gap:6px; }
+.detail-back:hover { border-color:var(--gold);color:var(--gold); }
+.detail-folio-big { font-family:'Courier New',monospace;font-size:20px;font-weight:800;color:var(--gold); }
+
+.detail-section { background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:16px;padding:20px;margin-bottom:16px;backdrop-filter:blur(10px); }
+.detail-section h3 { font-size:14px;font-weight:700;color:var(--gold);margin-bottom:14px;display:flex;align-items:center;gap:8px; }
+.data-grid { display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px; }
+.data-grid div { color:var(--green-text); }
+.data-grid strong { color:white;font-weight:600; }
+.txt-ok { color:var(--emerald);font-weight:700; }
+.txt-warn { color:var(--warning);font-weight:700; }
+.txt-muted { color:var(--green-muted);font-style:italic; }
+@media (max-width:480px) { .data-grid { grid-template-columns:1fr; } }
+
+/* Photos review */
+.photos-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:12px; }
+@media (max-width:600px) { .photos-grid { grid-template-columns:repeat(2,1fr); } }
+.photo-review-card { border-radius:12px;overflow:hidden;border:1px solid var(--glass-border);cursor:pointer;transition:all 0.3s; }
+.photo-review-card:hover { border-color:var(--gold); }
+.photo-review-card img { width:100%;height:120px;object-fit:cover;display:block; }
+.photo-review-label { padding:6px 10px;font-size:10px;font-weight:600;color:var(--green-text);background:var(--bg-secondary); }
+
+/* Photo zoom */
+.photo-zoom-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:999;display:flex;align-items:center;justify-content:center;cursor:pointer; }
+.photo-zoom-overlay img { max-width:90%;max-height:90%;object-fit:contain;border-radius:8px; }
+.zoom-close { position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.2);border:none;color:white;width:40px;height:40px;border-radius:50%;font-size:24px;cursor:pointer; }
+
+/* Semáforo */
+.semaforo-row { display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(212,175,55,0.08); }
+.semaforo-row:last-child { border-bottom:none; }
+.semaforo-label { font-size:12px;color:var(--green-text);display:flex;align-items:center;gap:8px;flex:1; }
+.semaforo-label i { color:var(--gold-dim);width:18px;text-align:center; }
+.semaforo-btns { display:flex;gap:6px; }
+.sem-btn { width:32px;height:32px;border-radius:8px;border:1px solid var(--glass-border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all 0.2s; }
+.sem-verde { color:rgba(16,185,129,0.4); }
+.sem-verde.active,.sem-verde:hover { background:rgba(16,185,129,0.2);border-color:var(--emerald);color:var(--emerald); }
+.sem-amarillo { color:rgba(245,158,11,0.4); }
+.sem-amarillo.active,.sem-amarillo:hover { background:rgba(245,158,11,0.2);border-color:var(--warning);color:var(--warning); }
+.sem-rojo { color:rgba(239,68,68,0.4); }
+.sem-rojo.active,.sem-rojo:hover { background:rgba(239,68,68,0.2);border-color:var(--danger);color:var(--danger); }
+
+/* Notes */
+.notes-textarea { width:100%;min-height:80px;padding:12px;border-radius:12px;background:rgba(10,31,26,0.6);border:1px solid var(--glass-border);color:white;font-size:13px;resize:vertical;transition:border-color 0.3s; }
+.notes-textarea:focus { border-color:var(--gold); }
+
+/* Action buttons */
+.action-row { display:flex;gap:12px;margin-top:20px; }
+.btn-approve { flex:1;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--emerald),#059669);color:white;font-size:14px;font-weight:800;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:8px; }
+.btn-approve:hover { transform:translateY(-2px);box-shadow:0 8px 24px rgba(16,185,129,0.4); }
+.btn-reject { flex:1;padding:14px;border-radius:12px;border:1px solid rgba(239,68,68,0.3);background:transparent;color:var(--danger);font-size:14px;font-weight:700;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:8px; }
+.btn-reject:hover { background:rgba(239,68,68,0.08);border-color:var(--danger); }
+
+/* Verify link cards */
+/* Auto-verify button */
+.btn-auto-verify { padding:12px 28px;border-radius:12px;border:none;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:white;font-size:13px;font-weight:800;cursor:pointer;transition:all 0.3s;display:inline-flex;align-items:center;gap:8px; }
+.btn-auto-verify:hover { transform:translateY(-2px);box-shadow:0 8px 24px rgba(124,58,237,0.4); }
+.btn-auto-verify:disabled { opacity:0.6;cursor:not-allowed;transform:none; }
+
+.verify-link-card { display:flex;align-items:center;gap:12px;padding:12px 16px;border:1px solid var(--glass-border);border-radius:12px;margin-bottom:8px;text-decoration:none;color:var(--green-text);transition:all 0.3s;cursor:pointer; }
+.verify-link-card:hover { border-color:var(--gold);background:rgba(212,175,55,0.04);transform:translateX(4px); }
+.verify-link-card > i:first-child { font-size:20px;color:var(--gold);width:24px;text-align:center;flex-shrink:0; }
+.verify-link-card div { flex:1; }
+.verify-link-card strong { color:white;font-size:12px;font-weight:600; }
+.verify-link-card span { font-size:10px;color:var(--green-muted); }
+.verify-link-card > i:last-child { font-size:10px;color:var(--green-muted); }
+</style>
+</head>
+<body>
+
+<div class="ambient-glow-1"></div>
+<div class="ambient-glow-2"></div>
+
+<header class="hdr">
+  <a href="/" class="hdr-left">
+    <img src="/logo-circular.png" class="hdr-logo" alt="Alabol">
+    <div>
+      <div class="hdr-title">Alabol</div>
+      <div class="hdr-sub">Panel Verificador</div>
+    </div>
+  </a>
+  <div class="hdr-right">
+    <span class="hdr-user"><i class="fas fa-user-shield"></i> <span id="verificador-nombre"></span></span>
+    <button class="bout" onclick="window.supabaseClient.auth.signOut().then(function(){location.href='/login.html'})">Salir</button>
+  </div>
+</header>
+
+<!-- Loading -->
+<div id="panel-loading">
+  <div class="spinner"></div>
+</div>
+
+<!-- Access Denied -->
+<div id="panel-denied">
+  <i class="fas fa-lock"></i>
+  <h2>Acceso Restringido</h2>
+  <p>Esta seccion es exclusiva para verificadores autorizados de Alabol. Si crees que deberias tener acceso, contacta al administrador.</p>
+  <button class="bout" onclick="location.href='/login.html'">Iniciar Sesion</button>
+</div>
+
+<!-- Panel Content -->
+<div id="panel-content">
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-box">
+      <div class="stat-icon"><i class="fas fa-inbox"></i></div>
+      <div class="stat-num" id="stat-pendientes">0</div>
+      <div class="stat-label">Pendientes</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-icon"><i class="fas fa-magnifying-glass"></i></div>
+      <div class="stat-num" id="stat-revision">0</div>
+      <div class="stat-label">En revision</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+      <div class="stat-num" id="stat-aprobados">0</div>
+      <div class="stat-label">Aprobados hoy</div>
+    </div>
+  </div>
+
+  <!-- List View -->
+  <div id="view-list">
+    <div class="filters">
+      <button class="filter-btn active" data-filter="pendientes" onclick="VerificadorPanel.setFilter('pendientes')"><i class="fas fa-clock"></i> Pendientes</button>
+      <button class="filter-btn" data-filter="completados" onclick="VerificadorPanel.setFilter('completados')"><i class="fas fa-check"></i> Completados</button>
+    </div>
+    <div id="expedientes-list"></div>
+  </div>
+
+  <!-- Detail View -->
+  <div id="view-detail">
+    <div class="detail-header">
+      <button class="detail-back" onclick="VerificadorPanel.backToList()"><i class="fas fa-arrow-left"></i> Volver</button>
+      <div class="detail-folio-big" id="detail-folio"></div>
+    </div>
+
+    <!-- Vehicle info -->
+    <div class="detail-section">
+      <h3><i class="fas fa-car"></i> Datos del Vehiculo — <span id="detail-vehicle"></span></h3>
+      <div id="detail-data"></div>
+    </div>
+
+    <div id="detail-nhtsa"></div>
+
+    <!-- Auto-verify results -->
+    <div id="detail-auto-results"></div>
+
+    <!-- Verification Links -->
+    <div id="detail-verify-links"></div>
+
+    <!-- Photos -->
+    <div class="detail-section">
+      <h3><i class="fas fa-camera"></i> Evidencia Fotografica</h3>
+      <div class="photos-grid" id="detail-photos"></div>
+    </div>
+
+    <!-- Semáforo -->
+    <div class="detail-section">
+      <h3><i class="fas fa-traffic-light"></i> Semaforo de Verificacion (12 puntos)</h3>
+      <div id="detail-semaforo"></div>
+    </div>
+
+    <!-- Notes -->
+    <div class="detail-section">
+      <h3><i class="fas fa-pen"></i> Notas del Verificador</h3>
+      <textarea class="notes-textarea" id="detail-notas" placeholder="Observaciones, notas o dictamen..."></textarea>
+    </div>
+
+    <!-- Actions -->
+    <div class="action-row">
+      <button class="btn-approve" onclick="VerificadorPanel.aprobar()"><i class="fas fa-certificate"></i> Emitir Dictamen</button>
+      <button class="btn-reject" onclick="VerificadorPanel.rechazar()"><i class="fas fa-times-circle"></i> Rechazar</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="/config.js"></script>
+<script src="/js/vin-validator.js"></script>
+<script src="/js/certificado-pdf.js"></script>
+<script src="/js/verificador-panel.js"></script>
+<script>VerificadorPanel.init();</script>
+</body>
+</html>

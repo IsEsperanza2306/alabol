@@ -4,294 +4,381 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" href="/logo-circular.png" type="image/png">
-<title>Certificado de Confianza | Alabol — El Tinder de los Autos</title>
-<meta name="description" content="Consulta si un auto paso el background check de Alabol. Certificado verificable con codigo QR.">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<title>Verificacion Vehicular | Alabol Car Broker</title>
+<meta name="description" content="Consulta el reporte de verificacion vehicular de Alabol Car Broker.">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="/config.js"></script>
+<script>
+// Ensure Supabase is initialized
+if (!window.supabaseClient && typeof window.supabase !== 'undefined' && window.supabase.createClient) {
+  window.supabaseClient = window.supabase.createClient('https://rgnunjngtsgqgvplawfr.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8');
+}
+</script>
+<script src="/js/certificado-pdf.js"></script>
 <style>
 :root {
-  --bg-primary: #0a1f1a;
-  --bg-secondary: #0d2921;
-  --gold: #d4af37;
-  --gold-light: #f4e5b0;
-  --gold-dim: rgba(212, 175, 55, 0.25);
-  --emerald: #34d399;
-  --green-text: #a8c5b8;
-  --green-muted: rgba(148, 184, 167, 0.5);
-  --glass-bg: rgba(13, 38, 28, 0.65);
-  --glass-border: rgba(212, 175, 55, 0.18);
+  --bg-dark: #0a1f1a;
+  --bg-panel: rgba(13, 38, 28, 0.6);
+  --panel-border: rgba(212, 175, 55, 0.18);
+  --brand-gold-start: #f9e27b;
+  --brand-gold-end: #d4af37;
+  --brand-gold-glow: rgba(212, 175, 55, 0.4);
+  --cyber-green: #34d399;
+  --cyber-green-glow: rgba(52, 211, 153, 0.3);
+  --cyber-grid: rgba(13, 148, 136, 0.05);
+  --text-main: #ffffff;
+  --text-muted: #a8c5b8;
+  --font-heading: 'Poppins', sans-serif;
+  --font-body: 'Poppins', sans-serif;
+  --font-cyber: 'Share Tech Mono', monospace;
   --danger: #ef4444;
-  --success: #10b981;
-  --warning: #f59e0b;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { min-height: 100vh; font-family: 'Poppins', sans-serif; background: var(--bg-primary); color: var(--green-text); }
-body { background-image: linear-gradient(rgba(13,148,136,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(13,148,136,0.05) 1px, transparent 1px); background-size: 40px 40px; }
-button, input { font-family: inherit; outline: none; }
+body {
+  background-color: var(--bg-dark);
+  background-image: linear-gradient(var(--cyber-grid) 1px, transparent 1px), linear-gradient(90deg, var(--cyber-grid) 1px, transparent 1px), radial-gradient(circle at 50% -20%, rgba(212,175,55,0.1), transparent 50%);
+  background-size: 40px 40px, 40px 40px, 100% 100%;
+  color: var(--text-main); font-family: var(--font-body); font-size: 14px; line-height: 1.6;
+  min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 40px 20px;
+}
+.gold-gradient-text { background: linear-gradient(135deg, var(--brand-gold-start), var(--brand-gold-end)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 
-.ambient-glow-1 { position:fixed;top:-10%;left:-10%;width:50vw;height:50vw;background:radial-gradient(circle,rgba(13,148,136,0.2) 0%,transparent 60%);border-radius:50%;z-index:0;filter:blur(90px);pointer-events:none; }
-.ambient-glow-2 { position:fixed;bottom:-10%;right:-10%;width:50vw;height:50vw;background:radial-gradient(circle,rgba(212,175,55,0.12) 0%,transparent 60%);border-radius:50%;z-index:0;filter:blur(90px);pointer-events:none; }
+/* Search bar */
+.search-bar { width: 100%; max-width: 900px; margin-bottom: 30px; display: flex; gap: 10px; }
+.search-bar input { flex: 1; padding: 14px 18px; border-radius: 14px; background: rgba(10,31,26,0.6); border: 1px solid var(--panel-border); color: white; font-family: var(--font-cyber); font-size: 16px; letter-spacing: 2px; text-transform: uppercase; }
+.search-bar input:focus { outline: none; border-color: var(--brand-gold-end); box-shadow: 0 0 16px rgba(212,175,55,0.15); }
+.search-bar input::placeholder { color: var(--text-muted); text-transform: none; font-family: var(--font-body); letter-spacing: normal; font-size: 14px; }
+.search-bar button { padding: 14px 28px; border-radius: 14px; border: none; background: linear-gradient(135deg, var(--brand-gold-start), var(--brand-gold-end)); color: #000; font-weight: 800; font-size: 14px; cursor: pointer; white-space: nowrap; }
+.search-bar button:hover { box-shadow: 0 0 20px var(--brand-gold-glow); }
 
-.hdr { position:sticky;top:0;z-index:50;background:rgba(10,31,26,0.92);backdrop-filter:blur(24px);border-bottom:1px solid var(--glass-border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between; }
-.hdr-left { display:flex;align-items:center;gap:12px;text-decoration:none; }
-.hdr-logo { width:40px;height:40px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(212,175,55,0.5)); }
-.hdr-title { font-size:18px;font-weight:800;color:var(--gold); }
-.hdr-sub { font-size:10px;color:var(--green-text);text-transform:uppercase;letter-spacing:.1em;opacity:0.6; }
+/* Page Container */
+.page-container { width: 100%; max-width: 900px; margin-bottom: 50px; background: rgba(13, 38, 28, 0.65); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--panel-border); border-radius: 24px; padding: 40px; box-shadow: 0 8px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(212,175,55,0.08); }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); position: relative; }
+.header::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 100px; height: 2px; background: linear-gradient(90deg, var(--brand-gold-start), var(--brand-gold-end)); box-shadow: 0 0 10px var(--brand-gold-glow); }
+.brand-title { font-family: var(--font-heading); font-weight: 900; font-size: 28px; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; }
+.report-subtitle { font-family: var(--font-cyber); color: var(--cyber-green); letter-spacing: 1px; font-size: 12px; margin-top: 5px; opacity: 0.8; }
 
-.container { max-width:600px;margin:0 auto;padding:32px 16px 80px;position:relative;z-index:1; }
+.qr-verification { display: flex; align-items: center; gap: 15px; background: rgba(212,175,55,0.04); border: 1px solid var(--panel-border); padding: 10px 15px; border-radius: 12px; }
+.qr-box { position: relative; padding: 5px; background: #fff; border-radius: 8px; }
+.qr-box img { display: block; width: 65px; height: 65px; }
+.qr-box::before, .qr-box::after { content: ''; position: absolute; width: 10px; height: 10px; }
+.qr-box::before { top: -4px; left: -4px; border-top: 2px solid var(--brand-gold-end); border-left: 2px solid var(--brand-gold-end); }
+.qr-box::after { bottom: -4px; right: -4px; border-bottom: 2px solid var(--brand-gold-end); border-right: 2px solid var(--brand-gold-end); }
+.qr-text { display: flex; flex-direction: column; }
+.scan-title { font-family: var(--font-heading); font-size: 12px; font-weight: 700; color: var(--brand-gold-start); text-transform: uppercase; }
+.scan-desc { font-size: 10px; color: var(--text-muted); }
 
-/* Search */
-.search-section { text-align:center;margin-bottom:32px; }
-.search-icon { width:64px;height:64px;margin:0 auto 16px;background:rgba(212,175,55,0.1);border:2px solid var(--gold-dim);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--gold); }
-.search-section h1 { font-size:24px;font-weight:800;color:white;margin-bottom:8px; }
-.search-section h1 span { color:var(--gold); }
-.search-section p { font-size:13px;color:var(--green-text);opacity:0.8;margin-bottom:20px; }
+.grid-layout { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 25px; margin-bottom: 30px; }
+.span-full { grid-column: 1 / -1; }
+.panel { background: var(--bg-panel); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; padding: 25px; backdrop-filter: blur(10px); }
+.panel-header { font-family: var(--font-heading); font-size: 13px; font-weight: 800; letter-spacing: 1.5px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
+.panel-header::before { content: ''; width: 8px; height: 8px; background: var(--brand-gold-start); border-radius: 50%; box-shadow: 0 0 8px var(--brand-gold-glow); }
 
-.search-box { display:flex;gap:8px; }
-.search-input { flex:1;padding:14px 16px;border-radius:12px;background:rgba(10,31,26,0.6);border:1px solid var(--glass-border);color:white;font-size:15px;font-family:'Courier New',monospace;letter-spacing:1px;text-transform:uppercase;transition:border-color 0.3s; }
-.search-input:focus { border-color:var(--gold);box-shadow:0 0 16px rgba(212,175,55,0.15); }
-.search-input::placeholder { color:var(--green-muted);text-transform:none;font-family:'Poppins',sans-serif;letter-spacing:normal; }
-.search-btn { padding:14px 24px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--gold),#c9a961);color:var(--bg-primary);font-size:14px;font-weight:800;cursor:pointer;transition:all 0.3s;white-space:nowrap; }
-.search-btn:hover { transform:translateY(-2px);box-shadow:0 8px 24px rgba(212,175,55,0.5); }
+.identity-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.data-group { display: flex; flex-direction: column; gap: 5px; }
+.data-group label { font-family: var(--font-cyber); font-size: 11px; color: var(--text-muted); text-transform: uppercase; }
+.data-group .value { font-size: 16px; font-weight: 600; }
+.plate-box { background: rgba(255,255,255,0.9); color: #0a1f1a; font-family: var(--font-heading); font-weight: 800; padding: 4px 12px; border-radius: 6px; border: 2px solid rgba(212,175,55,0.4); display: inline-block; }
 
-/* Result */
-#result-area { display:none; }
+.score-hud { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+.score-circle-container { position: relative; width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; }
+.score-circle-container svg { position: absolute; width: 100%; height: 100%; transform: rotate(-90deg); }
+.score-hud-bg { fill: none; stroke: rgba(255,255,255,0.05); stroke-width: 4; }
+.score-hud-track { fill: none; stroke: rgba(212,175,55,0.1); stroke-width: 12; }
+.score-hud-progress { fill: none; stroke: url(#goldGradient); stroke-width: 12; stroke-linecap: round; filter: drop-shadow(0 0 10px var(--brand-gold-glow)); stroke-dasharray: 502; stroke-dashoffset: 502; }
+.score-center { text-align: center; z-index: 2; position: absolute; }
+.huge-grade { font-family: var(--font-heading); font-size: 48px; font-weight: 900; line-height: 1; }
+.score-center .label { font-family: var(--font-cyber); font-size: 12px; color: var(--brand-gold-start); letter-spacing: 2px; margin-top: 5px; }
 
-.cert-card { background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:20px;padding:28px;backdrop-filter:blur(10px);overflow:hidden;position:relative; }
+.status-badge { position: absolute; top: -15px; right: 25px; background: rgba(212,175,55,0.08); border: 1px solid var(--brand-gold-start); color: var(--brand-gold-start); padding: 6px 15px; border-radius: 20px; font-family: var(--font-heading); font-size: 11px; font-weight: 800; box-shadow: 0 4px 16px rgba(212,175,55,0.15); z-index: 3; }
+.status-badge.green { background: rgba(52,211,153,0.08); border-color: var(--cyber-green); color: var(--cyber-green); }
+.status-badge.red { background: rgba(239,68,68,0.08); border-color: var(--danger); color: var(--danger); }
 
-.cert-status-bar { padding:12px 20px;border-radius:12px;text-align:center;font-size:14px;font-weight:800;margin-bottom:20px;text-transform:uppercase;letter-spacing:0.05em; }
-.cert-status-bar.aprobado { background:rgba(16,185,129,0.15);color:var(--emerald);border:1px solid rgba(16,185,129,0.3); }
-.cert-status-bar.observaciones { background:rgba(245,158,11,0.15);color:var(--warning);border:1px solid rgba(245,158,11,0.3); }
-.cert-status-bar.rechazado { background:rgba(239,68,68,0.15);color:var(--danger);border:1px solid rgba(239,68,68,0.3); }
-.cert-status-bar.pendiente { background:rgba(59,130,246,0.15);color:#60a5fa;border:1px solid rgba(59,130,246,0.3); }
-.cert-status-bar.vencido { background:rgba(100,100,100,0.15);color:#999;border:1px solid rgba(100,100,100,0.3); }
+.terminal-hud { background: rgba(10,31,26,0.8); border: 1px solid var(--panel-border); border-radius: 12px; padding: 20px; font-family: var(--font-cyber); color: var(--cyber-green); position: relative; overflow: hidden; }
+.t-line { display: flex; margin-bottom: 8px; font-size: 13px; }
+.t-line .prefix { opacity: 0.5; margin-right: 15px; }
+.t-line.success .status { color: var(--cyber-green); margin-right: 10px; }
+.t-line.error .status { color: var(--danger); margin-right: 10px; }
+.t-line.pending .status { color: var(--text-muted); margin-right: 10px; }
 
-.cert-folio { font-family:'Courier New',monospace;font-size:22px;font-weight:800;color:var(--gold);text-align:center;margin-bottom:16px; }
+.checklist-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px; }
+.check-item { display: flex; align-items: center; gap: 10px; padding: 12px 15px; background: rgba(10,31,26,0.6); border-radius: 12px; border: 1px solid rgba(212,175,55,0.08); font-size: 13px; font-weight: 500; }
+.check-item .icon { font-size: 16px; }
+.check-item.ok .icon { color: var(--cyber-green); }
+.check-item.obs { border-color: rgba(212,175,55,0.3); }
+.check-item.obs .icon { color: var(--brand-gold-start); }
+.check-item.fail { border-color: rgba(255,51,102,0.3); }
+.check-item.fail .icon { color: #ff3366; }
 
-.cert-vehicle { text-align:center;margin-bottom:20px; }
-.cert-vehicle h2 { font-size:20px;font-weight:800;color:white; }
-.cert-vehicle .vin { font-family:'Courier New',monospace;font-size:12px;color:var(--green-muted);margin-top:4px; }
+.footer { display: flex; justify-content: space-between; align-items: center; padding-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); font-family: var(--font-cyber); font-size: 12px; color: var(--text-muted); flex-wrap: wrap; gap: 10px; }
+.footer strong { color: var(--text-main); font-weight: normal; }
+.golden-tag { color: var(--brand-gold-start); border: 1px solid var(--brand-gold-start); padding: 2px 8px; border-radius: 4px; font-size: 11px; }
 
-.cert-grid { display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px; }
-.cert-item { font-size:12px; }
-.cert-item strong { color:white;font-weight:600;display:block;font-size:10px;text-transform:uppercase;color:var(--gold);opacity:0.7;margin-bottom:2px; }
+.photo-grid { display: grid; grid-template-columns: repeat(2, 1fr); grid-auto-rows: 220px; gap: 20px; margin-bottom: 30px; }
+.photo-card { background: var(--bg-dark); border: 1px solid var(--panel-border); border-radius: 16px; position: relative; overflow: hidden; }
+.photo-card img { width: 100%; height: 100%; object-fit: cover; }
+.photo-card::after { content: ''; position: absolute; top: 10px; right: 10px; bottom: 10px; left: 10px; border: 1px solid rgba(255,255,255,0.05); pointer-events: none; }
+.photo-hud-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.8); padding: 12px; font-family: var(--font-cyber); color: var(--brand-gold-start); font-size: 13px; border-top: 1px solid rgba(212,175,55,0.2); display: flex; justify-content: space-between; }
+.photo-hud-label .timestamp { color: var(--cyber-green); opacity: 0.7; }
+.photo-hud-label .timestamp.obs { color: var(--brand-gold-start); }
+.photo-hud-label .timestamp.fail { color: #ff3366; }
 
-/* Semáforo mini */
-.cert-semaforo { margin-bottom:20px; }
-.cert-semaforo h3 { font-size:12px;font-weight:700;color:var(--gold);margin-bottom:10px; }
-.sem-mini-grid { display:grid;grid-template-columns:1fr 1fr;gap:4px; }
-.sem-mini-row { display:flex;align-items:center;gap:6px;font-size:10px;padding:4px 0; }
-.sem-dot { width:8px;height:8px;border-radius:50%;flex-shrink:0; }
-.sem-dot.verde { background:var(--emerald); }
-.sem-dot.amarillo { background:var(--warning); }
-.sem-dot.rojo { background:var(--danger); }
-.sem-dot.pendiente { background:#666; }
+.download-bar { width: 100%; max-width: 900px; text-align: center; margin-bottom: 30px; }
+.download-bar button { padding: 14px 32px; border-radius: 14px; border: none; background: linear-gradient(135deg, var(--brand-gold-start), var(--brand-gold-end)); color: var(--bg-dark); font-family: var(--font-heading); font-size: 14px; font-weight: 800; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 20px rgba(212,175,55,0.35); }
+.download-bar button:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(212,175,55,0.5); }
 
-.cert-dates { display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid var(--glass-border);font-size:11px; }
-.cert-dates .label { color:var(--green-muted); }
-.cert-dates .value { color:white;font-weight:600; }
+/* Loading / Not found */
+.loading { text-align: center; padding: 80px 20px; color: var(--brand-gold-start); font-family: var(--font-cyber); }
+.spinner { width: 40px; height: 40px; border: 3px solid rgba(212,175,55,0.2); border-top-color: var(--brand-gold-start); border-radius: 50%; animation: spin .7s linear infinite; margin: 0 auto 16px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.not-found { text-align: center; padding: 80px 20px; }
+.not-found h2 { font-family: var(--font-heading); font-size: 24px; color: var(--text-main); margin-bottom: 10px; }
+.not-found p { color: var(--text-muted); }
 
-.cert-vigencia { text-align:center;margin-top:12px;padding:10px;border-radius:10px;font-size:12px;font-weight:600; }
-.cert-vigencia.vigente { background:rgba(16,185,129,0.1);color:var(--emerald);border:1px solid rgba(16,185,129,0.2); }
-.cert-vigencia.vencido { background:rgba(239,68,68,0.1);color:var(--danger);border:1px solid rgba(239,68,68,0.2); }
+.notas-section { background: rgba(212,175,55,0.04); border: 1px solid rgba(212,175,55,0.15); border-radius: 12px; padding: 16px; margin-top: 15px; }
+.notas-section h4 { font-family: var(--font-cyber); font-size: 11px; color: var(--brand-gold-start); margin-bottom: 8px; text-transform: uppercase; }
+.notas-section p { font-size: 13px; color: var(--text-muted); }
 
-.cert-download { text-align:center;margin-top:20px; }
-.cert-download button { padding:12px 28px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--gold),#c9a961);color:var(--bg-primary);font-size:13px;font-weight:800;cursor:pointer;transition:all 0.3s; }
-.cert-download button:hover { transform:translateY(-2px);box-shadow:0 8px 24px rgba(212,175,55,0.5); }
+/* Legal Disclaimers */
+.legal-disclaimers { width: 100%; max-width: 900px; margin-bottom: 40px; }
+.disclaimer-block { background: rgba(13,38,28,0.4); border: 1px solid rgba(212,175,55,0.1); border-radius: 12px; padding: 18px 20px; margin-bottom: 12px; }
+.disclaimer-block h4 { font-family: var(--font-heading); font-size: 10px; font-weight: 800; color: var(--brand-gold-start); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+.disclaimer-block p { font-size: 11px; color: var(--text-muted); line-height: 1.7; margin-bottom: 6px; }
+.disclaimer-block p:last-child { margin-bottom: 0; }
+.disclaimer-block strong { color: #fff; }
+.disclaimer-block a { color: var(--brand-gold-start); text-decoration: none; }
+.disclaimer-block a:hover { text-decoration: underline; }
+.disclaimer-links { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; padding: 12px 0; font-size: 11px; }
+.disclaimer-links a { color: var(--brand-gold-start); text-decoration: none; font-weight: 600; }
+.disclaimer-links a:hover { text-decoration: underline; }
+.disclaimer-links span { color: var(--text-muted); opacity: 0.6; }
 
-.cert-footer { text-align:center;margin-top:16px;font-size:10px;color:var(--green-muted); }
-
-/* Not found */
-.not-found { text-align:center;padding:40px 20px; }
-.not-found i { font-size:48px;color:var(--danger);opacity:0.4;margin-bottom:12px;display:block; }
-.not-found h2 { font-size:20px;color:white;margin-bottom:8px; }
-.not-found p { font-size:13px;color:var(--green-text); }
-
-/* Loading */
-.cert-loading { text-align:center;padding:40px;color:var(--gold); }
-.spinner { display:inline-block;width:32px;height:32px;border:3px solid var(--glass-border);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite; }
-@keyframes spin { to { transform:rotate(360deg); } }
-
-@media (max-width:480px) {
-  .search-box { flex-direction:column; }
-  .cert-grid { grid-template-columns:1fr; }
-  .sem-mini-grid { grid-template-columns:1fr; }
+@media (max-width: 700px) {
+  body { padding: 20px 12px; }
+  .page-container { padding: 20px; border-radius: 16px; }
+  .header { flex-direction: column; align-items: flex-start; gap: 15px; }
+  .brand-title { font-size: 20px; }
+  .grid-layout { grid-template-columns: 1fr; }
+  .checklist-grid { grid-template-columns: repeat(2, 1fr); }
+  .photo-grid { grid-template-columns: 1fr; grid-auto-rows: 180px; }
+  .score-circle-container { width: 160px; height: 160px; }
+  .huge-grade { font-size: 38px; }
+  .search-bar { flex-direction: column; }
+  .qr-verification { display: none; }
+}
+@media print {
+  @page { size: A4 portrait; margin: 0; }
+  body { background: #000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 0; }
+  .search-bar, .download-bar { display: none !important; }
+  .page-container { max-width: 100%; margin: 0; border: none; border-radius: 0; page-break-after: always; padding: 10mm 15mm; }
 }
 </style>
 </head>
 <body>
 
-<div class="ambient-glow-1"></div>
-<div class="ambient-glow-2"></div>
-
-<header class="hdr">
-  <a href="/" class="hdr-left">
-    <img src="/logo-circular.png" class="hdr-logo" alt="Alabol">
-    <div>
-      <div class="hdr-title">Alabol</div>
-      <div class="hdr-sub">El Tinder de los Autos</div>
-    </div>
-  </a>
-</header>
-
-<div class="container">
-  <div class="search-section">
-    <div class="search-icon"><i class="fas fa-qrcode"></i></div>
-    <h1>Background check <span>verificable</span></h1>
-    <p>Ingresa el folio para saber si este auto paso el filtro de confianza de Alabol. Tambien puedes escanear el QR del certificado.</p>
-    <div class="search-box">
-      <input type="text" class="search-input" id="folio-input" placeholder="Ej: ALB-A1B2C3" maxlength="10" autocomplete="off">
-      <button class="search-btn" onclick="buscarCertificado()"><i class="fas fa-search"></i> Buscar</button>
-    </div>
-  </div>
-
-  <div id="result-area"></div>
+<!-- Search -->
+<div class="search-bar">
+  <input type="text" id="folio-input" placeholder="Ingresa el folio de verificacion" maxlength="12" autocomplete="off">
+  <button onclick="buscarFolio()">VERIFICAR</button>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/config.js"></script>
-<script src="/js/certificado-pdf.js"></script>
+<div id="report-area">
+  <div class="loading" id="initial-msg" style="display:none">
+    <div class="spinner"></div>
+    <p>Buscando reporte...</p>
+  </div>
+</div>
+
 <script>
-(function() {
+var SITE = 'https://alabolcar.com.mx';
+var BUCKET = 'verificaciones';
+
   var SEMAFORO_LABELS = {
-    documentos_completos: 'Documentos completos',
-    vin_valido: 'NIV valido',
-    vin_no_remarcado: 'Sin remarcado',
-    placas_vigentes: 'Placas vigentes',
-    sin_reporte_robo: 'Sin reporte robo',
-    factura_original: 'Factura original',
-    tarjeta_circulacion: 'Tarjeta circ.',
-    chip_repuve: 'Chip REPUVE',
-    numero_motor: 'Num. motor',
-    condicion_exterior: 'Exterior',
-    pintura_original: 'Pintura',
-    estructura_integra: 'Estructura'
+    documentos_completos: 'Doc. Completos', vin_valido: 'NIV Consistente', vin_no_remarcado: 'Sin Remarcado',
+    placas_vigentes: 'Placas Vigentes', sin_reporte_robo: 'Reporte Robo', factura_original: 'Factura / Carta',
+    tarjeta_circulacion: 'Tarjeta Circ.', chip_repuve: 'Chip REPUVE', numero_motor: 'Num. Motor',
+    condicion_exterior: 'Cond. Exterior', pintura_original: 'Pintura Original', estructura_integra: 'Intr. Estructural'
   };
+  var PHOTO_LABELS = { niv_tablero: 'NIV EN TABLERO', niv_chasis: 'NIV EN CHASIS', numero_motor: 'NUMERO DE MOTOR', chip_repuve: 'CHIP REPUVE', tarjeta_circulacion: 'TARJETA CIRCULACION', factura: 'FACTURA / CARTA FACTURA' };
 
-  // Check if folio is in URL path
-  var pathParts = window.location.pathname.split('/').filter(Boolean);
-  var folioFromUrl = null;
-  if (pathParts.length >= 2 && pathParts[0] === 'certificado' && pathParts[1].startsWith('ALB')) {
-    folioFromUrl = pathParts[1].toUpperCase();
+  function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  // Init Supabase directly — no dependency on config.js
+  var sb;
+  try {
+    sb = window.supabaseClient || (window.supabase && window.supabase.createClient(
+      'https://rgnunjngtsgqgvplawfr.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8'
+    ));
+    if (sb) window.supabaseClient = sb;
+  } catch(e) { sb = null; }
+
+  if (!sb) {
+    document.getElementById('report-area').innerHTML = '<div class="not-found"><h2>Error de conexion</h2><p>No se pudo conectar. Supabase: ' + (typeof window.supabase) + '</p></div>';
   }
 
-  // Also check query param
-  var params = new URLSearchParams(window.location.search);
-  var folioFromParam = params.get('folio');
-
-  var initialFolio = folioFromUrl || folioFromParam;
-  if (initialFolio) {
-    document.getElementById('folio-input').value = initialFolio;
-    setTimeout(function() { buscarCertificado(); }, 300);
+  // Check URL for folio
+  var pathParts = location.pathname.split('/').filter(Boolean);
+  var initialFolio = (pathParts.length >= 2 && pathParts[0] === 'certificado' && pathParts[1].startsWith('ALB')) ? pathParts[1].toUpperCase() : null;
+  var paramFolio = new URLSearchParams(location.search).get('folio');
+  if (initialFolio || paramFolio) {
+    document.getElementById('folio-input').value = initialFolio || paramFolio;
+    setTimeout(buscarFolio, 300);
   }
 
-  window.buscarCertificado = function() {
-    var folio = (document.getElementById('folio-input').value || '').trim().toUpperCase();
+  function buscarFolio() {
+    var folio = (document.getElementById('folio-input').value || '').trim().toUpperCase().replace(/[^A-Z0-9\-]/g, '');
     if (!folio) return;
+    var area = document.getElementById('report-area');
+    area.innerHTML = '<div class="loading"><div class="spinner"></div><p>Buscando reporte...</p></div>';
 
-    var area = document.getElementById('result-area');
-    area.style.display = 'block';
-    area.innerHTML = '<div class="cert-loading"><div class="spinner"></div><p>Buscando certificado...</p></div>';
-
-    window.supabaseClient
-      .from('verificaciones')
-      .select('folio, vin, marca, modelo, anio, color, placas, estado_registro, tier, estatus, resultado_final, semaforo, aprobado_at, vigencia_certificado, created_at')
-      .eq('folio', folio)
-      .limit(1)
-      .then(function(res) {
-        if (res.error || !res.data || !res.data.length) {
-          area.innerHTML =
-            '<div class="not-found">' +
-            '<i class="fas fa-search"></i>' +
-            '<h2>No encontramos ese perfil</h2>' +
-            '<p>El folio "' + folio.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '" no existe o el background check aun esta en proceso. Revisa que el folio sea correcto.</p>' +
-            '</div>';
-          return;
-        }
-
-        var v = res.data[0];
-        renderCertificado(v, area);
-      })
-      .catch(function(err) {
-        area.innerHTML = '<div class="not-found"><i class="fas fa-exclamation-circle"></i><h2>Error</h2><p>' + err.message + '</p></div>';
-      });
+    sb.from('verificaciones').select('*').eq('folio', folio).limit(1).then(function(res) {
+      if (res.error || !res.data || !res.data.length) {
+        area.innerHTML = '<div class="not-found"><h2>Reporte no encontrado</h2><p>El folio "' + esc(folio) + '" no existe o aun esta en proceso.</p></div>';
+        return;
+      }
+      renderReport(res.data[0], area);
+    });
   };
 
-  function renderCertificado(v, area) {
-    var isAprobado = v.estatus === 'aprobado' || v.estatus === 'aprobado_con_observaciones';
-    var isRechazado = v.estatus === 'rechazado';
-    var isPendiente = !isAprobado && !isRechazado;
+  document.getElementById('folio-input').addEventListener('keypress', function(e) { if (e.key === 'Enter') buscarFolio(); });
 
-    var vigente = false;
-    if (v.vigencia_certificado) {
-      vigente = new Date(v.vigencia_certificado) > new Date();
-    }
+  function renderReport(v, area) {
+    var sem = v.semaforo || {};
+    var auto = v.resultados_automaticos || {};
+    var checks = auto.checks || {};
+    var fotos = v.fotos || {};
+    var resultado = v.resultado_final || 'pendiente';
 
-    var statusClass, statusLabel;
-    if (isPendiente) { statusClass = 'pendiente'; statusLabel = 'BACKGROUND CHECK EN PROCESO'; }
-    else if (v.resultado_final === 'aprobado') { statusClass = vigente ? 'aprobado' : 'vencido'; statusLabel = vigente ? 'GREEN FLAGS — APROBADO' : 'APROBADO — VIGENCIA VENCIDA'; }
-    else if (v.resultado_final === 'aprobado_con_observaciones') { statusClass = vigente ? 'observaciones' : 'vencido'; statusLabel = vigente ? 'YELLOW FLAGS — CON OBSERVACIONES' : 'CON OBSERVACIONES — VENCIDO'; }
-    else { statusClass = 'rechazado'; statusLabel = 'RED FLAGS — NO APROBADO'; }
+    // Score calc
+    var verdes = 0, amarillos = 0, rojos = 0;
+    Object.values(sem).forEach(function(val) { if (val==='verde') verdes++; else if (val==='amarillo') amarillos++; else if (val==='rojo') rojos++; });
+    var score = verdes + amarillos * 0.5;
+    var pct = Math.round((score / 12) * 100);
+    var dashOffset = 502 - (502 * pct / 100);
 
-    var fechaEmision = v.aprobado_at ? new Date(v.aprobado_at).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' }) : '-';
-    var fechaVigencia = v.vigencia_certificado ? new Date(v.vigencia_certificado).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' }) : '-';
-    var fechaSolicitud = new Date(v.created_at).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
+    var statusEmoji = resultado === 'aprobado' ? '🟢' : resultado === 'aprobado_con_observaciones' ? '🟡' : resultado === 'no_aprobado' ? '🔴' : '⏳';
+    var statusText = resultado === 'aprobado' ? 'GREEN FLAGS' : resultado === 'aprobado_con_observaciones' ? 'YELLOW FLAGS' : resultado === 'no_aprobado' ? 'RED FLAGS' : 'EN PROCESO';
+    var badgeClass = resultado === 'aprobado' ? 'green' : resultado === 'no_aprobado' ? 'red' : '';
+    var tierLabel = v.tier === 'basico' ? 'ESCUDO' : v.tier === 'verificado' ? 'ESCUDO PRO' : 'ESCUDO TOTAL';
 
-    // Semáforo
-    var semaforo = v.semaforo || {};
-    var semaforoHtml = '';
-    Object.keys(SEMAFORO_LABELS).forEach(function(key) {
-      var valor = semaforo[key] || 'pendiente';
-      semaforoHtml += '<div class="sem-mini-row"><div class="sem-dot ' + valor + '"></div> ' + SEMAFORO_LABELS[key] + '</div>';
+    // Terminal lines
+    var terminalHtml = '';
+    var termLines = [
+      { code: '0x01', label: 'Checksum NIV ISO 3779', ok: checks.vin_checksum && checks.vin_checksum.valid },
+      { code: '0x02', label: 'NHTSA Decode', ok: checks.nhtsa && checks.nhtsa.success },
+      { code: '0x03', label: 'Cruce marca/modelo/ano', ok: checks.cross_reference && checks.cross_reference.match, fail: checks.cross_reference && !checks.cross_reference.match },
+      { code: '0x04', label: 'Consulta REPUVE', ok: checks.repuve && checks.repuve.status === 'limpio', pending: !checks.repuve || checks.repuve.status === 'pendiente' },
+      { code: '0x05', label: 'Analisis Fotos IA', ok: checks.ai_analysis && checks.ai_analysis.success }
+    ];
+    termLines.forEach(function(t) {
+      var cls = t.ok ? 'success' : t.fail ? 'error' : t.pending ? 'pending' : 'error';
+      var status = t.ok ? '[OK]' : t.fail ? '[WARN]' : t.pending ? '[WAIT]' : '[WARN]';
+      var suffix = t.ok ? 'VALIDATED' : t.fail ? 'MISMATCH' : t.pending ? 'PENDING...' : 'VERIFICAR';
+      terminalHtml += '<div class="t-line ' + cls + '"><span class="prefix">' + t.code + '</span><span class="status">' + status + '</span><span>' + esc(t.label) + ' ' + suffix + '</span></div>';
     });
 
-    var html =
-      '<div class="cert-card">' +
-      '<div class="cert-status-bar ' + statusClass + '"><i class="fas fa-' + (isAprobado ? 'check-circle' : isPendiente ? 'clock' : 'times-circle') + '"></i> ' + statusLabel + '</div>' +
-      '<div class="cert-folio">' + v.folio + '</div>' +
-      '<div class="cert-vehicle"><h2>' + (v.marca || '') + ' ' + (v.modelo || '') + ' ' + (v.anio || '') + '</h2><div class="vin">NIV: ' + (v.vin || 'N/A') + '</div></div>' +
-      '<div class="cert-grid">' +
-      '<div class="cert-item"><strong>Color</strong>' + (v.color || 'N/A') + '</div>' +
-      '<div class="cert-item"><strong>Placas</strong>' + (v.placas || 'N/A') + '</div>' +
-      '<div class="cert-item"><strong>Estado</strong>' + (v.estado_registro || 'N/A') + '</div>' +
-      '<div class="cert-item"><strong>Plan</strong>' + (v.tier || '').toUpperCase() + '</div>' +
-      '</div>';
+    // Checklist
+    var checklistHtml = '';
+    Object.keys(SEMAFORO_LABELS).forEach(function(key) {
+      var val = sem[key] || 'pendiente';
+      var cls = val === 'verde' ? 'ok' : val === 'rojo' ? 'fail' : 'obs';
+      var icon = val === 'verde' ? '✓' : val === 'rojo' ? '✗' : '⚠️';
+      checklistHtml += '<div class="check-item ' + cls + '"><span class="icon">' + icon + '</span> ' + SEMAFORO_LABELS[key] + '</div>';
+    });
 
-    if (!isPendiente) {
-      html +=
-        '<div class="cert-semaforo"><h3><i class="fas fa-traffic-light"></i> Puntos de Verificacion</h3><div class="sem-mini-grid">' + semaforoHtml + '</div></div>' +
-        '<div class="cert-dates">' +
-        '<div><span class="label">Solicitud</span><br><span class="value">' + fechaSolicitud + '</span></div>' +
-        '<div><span class="label">Emision</span><br><span class="value">' + fechaEmision + '</span></div>' +
-        '<div><span class="label">Vigencia</span><br><span class="value">' + fechaVigencia + '</span></div>' +
-        '</div>';
-
-      if (isAprobado) {
-        html += '<div class="cert-vigencia ' + (vigente ? 'vigente' : 'vencido') + '"><i class="fas fa-' + (vigente ? 'check-circle' : 'clock') + '"></i> ' + (vigente ? 'Este auto tiene green flags vigentes' : 'La vigencia del certificado expiro') + '</div>';
-      } else if (isRechazado) {
-        html += '<div class="cert-vigencia vencido"><i class="fas fa-exclamation-triangle"></i> Este vehiculo no paso el background check de Alabol</div>';
+    // Photos
+    var photosHtml = '';
+    var photoKeys = ['niv_tablero', 'niv_chasis', 'numero_motor', 'chip_repuve', 'tarjeta_circulacion', 'factura'];
+    photoKeys.forEach(function(key) {
+      var path = fotos[key];
+      var semKey = key === 'niv_tablero' ? 'vin_valido' : key === 'niv_chasis' ? 'vin_no_remarcado' : key;
+      var pVal = sem[semKey] || 'pendiente';
+      var statusLabel = pVal === 'verde' ? 'VERIFIED' : pVal === 'rojo' ? 'ALERT' : 'OBSERVATION';
+      var statusCls = pVal === 'verde' ? '' : pVal === 'rojo' ? 'fail' : 'obs';
+      var imgHtml = '';
+      if (path) {
+        var urlRes = sb.storage.from(BUCKET).getPublicUrl(path);
+        imgHtml = '<img src="' + (urlRes.data ? urlRes.data.publicUrl : '') + '" alt="' + esc(PHOTO_LABELS[key]) + '">';
       }
+      photosHtml += '<div class="photo-card">' + imgHtml + '<div class="photo-hud-label"><span>' + PHOTO_LABELS[key] + '</span><span class="timestamp ' + statusCls + '">' + statusLabel + '</span></div></div>';
+    });
 
-      // Siempre mostrar botón de descarga cuando hay dictamen
-      html += '<div class="cert-download"><button onclick="CertificadoPDF.downloadCertificado(\'' + v.folio + '\', this)"><i class="fas fa-file-pdf"></i> Descargar Reporte PDF Completo</button></div>';
+    var qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodeURIComponent(SITE + '/certificado/' + v.folio);
 
-    } else {
-      html += '<div class="cert-vigencia pendiente" style="background:rgba(59,130,246,0.1);color:#60a5fa;border-color:rgba(59,130,246,0.2)"><i class="fas fa-hourglass-half"></i> Nuestro verificador esta revisando este soltero sobre ruedas. Te notificamos cuando este listo.</div>';
-    }
+    var html =
+    // PAGE 1
+    '<div class="page-container page-one">' +
+    '<header class="header"><div class="header-brand"><div class="brand-title"><img src="/logo-circular.png" alt="Alabol" style="width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(212,175,55,0.5))"><span class="gold-gradient-text">ALABOL CAR BROKER</span></div><div class="report-subtitle">[ SYS.VERIFICACION.' + esc(v.folio) + ' ] // MATCHMAKER PROTOCOL</div></div>' +
+    '<div class="qr-verification"><div class="qr-text"><span class="scan-title">Escanea para Validar</span><span class="scan-desc">Verificacion en tiempo real</span></div><div class="qr-box"><img src="' + qrUrl + '" alt="QR"></div></div></header>' +
 
-    html += '<div class="cert-footer">Background check por Alabol Car Broker — El Tinder de los Autos — alabolcar.com.mx</div>';
-    html += '</div>';
+    '<main class="grid-layout">' +
+    // Score
+    '<section class="panel panel-score span-full" style="display:flex;justify-content:space-between;align-items:center;background:radial-gradient(circle at right,rgba(212,175,55,0.1),transparent)">' +
+    '<div><h3 class="panel-header">DIAGNOSTICO ALABOL</h3><div style="max-width:400px"><p style="font-size:13px;color:var(--text-muted);margin-bottom:15px">Hemos analizado esta unidad en 12 puntos criticos de integridad estructural, documental y digital.</p>' +
+    '<ul style="font-family:var(--font-cyber);font-size:13px;list-style:none"><li style="color:var(--cyber-green)">> ' + verdes + ' PUNTOS APROBADOS</li><li style="color:var(--brand-gold-start)">> ' + amarillos + ' OBSERVACIONES ALABOL</li><li style="color:#ff3366">> ' + rojos + ' ALERTAS CRITICAS</li></ul></div></div>' +
+    '<div class="score-hud"><div class="status-badge ' + badgeClass + '">' + statusEmoji + ' ' + statusText + '</div><div class="score-circle-container"><svg viewBox="0 0 180 180"><circle class="score-hud-bg" cx="90" cy="90" r="80"></circle><circle class="score-hud-track" cx="90" cy="90" r="80"></circle><circle class="score-hud-progress" cx="90" cy="90" r="80" style="stroke-dashoffset:' + dashOffset + '"></circle><defs><linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#f9e27b"/><stop offset="100%" stop-color="#d4af37"/></linearGradient></defs></svg><div class="score-center" style="position:absolute"><div class="huge-grade">' + score + '</div><div class="label">SCORE / 12</div></div></div></div></section>' +
+
+    // Identity
+    '<section class="panel panel-identity"><h3 class="panel-header">IDENTIDAD DEL VEHICULO</h3><div class="identity-grid">' +
+    '<div class="data-group" style="grid-column:span 2"><label>NIV / VIN SCANNED</label><span class="value" style="font-family:var(--font-cyber);color:var(--cyber-green);font-size:18px;text-shadow:0 0 5px var(--cyber-green-glow)">' + esc(v.vin) + '</span></div>' +
+    '<div class="data-group"><label>MARCA</label><span class="value">' + esc(v.marca) + '</span></div>' +
+    '<div class="data-group"><label>MODELO</label><span class="value">' + esc(v.modelo) + ' (' + (v.anio || '') + ')</span></div>' +
+    '<div class="data-group"><label>ESTATUS REPUVE</label><span class="value" style="color:var(--brand-gold-start)">' + esc(v.repuve_status || 'PENDIENTE').toUpperCase() + '</span></div>' +
+    '<div class="data-group"><label>PLACAS DE CONTROL</label><span class="plate-box">' + esc(v.placas) + '</span></div>' +
+    '</div></section>' +
+
+    // Terminal
+    '<section class="panel panel-ai" style="padding:15px"><h3 class="panel-header" style="margin-top:10px;margin-left:5px">IA &amp; BASES DE DATOS</h3><div class="terminal-hud">' + terminalHtml + '</div></section>' +
+
+    // Checklist
+    '<section class="panel span-full" style="margin-bottom:0"><h3 class="panel-header">INSPECCION FISICA Y DOCUMENTAL</h3><div class="checklist-grid">' + checklistHtml + '</div>' +
+    (v.notas_verificador ? '<div class="notas-section"><h4>OBSERVACIONES DEL VERIFICADOR</h4><p>' + esc(v.notas_verificador) + '</p></div>' : '') +
+    '</section>' +
+    '</main>' +
+
+    '<div style="padding:12px 0;margin-top:15px;border-top:1px solid rgba(255,255,255,0.05);font-size:8px;color:rgba(168,197,184,0.4);line-height:1.5">Servicio informativo. Alabol Car Broker no es autoridad legal ni pericial. Margen de error inherente. No sustituye verificacion oficial.</div>' +
+    '<footer class="footer"><div><span><strong>SOLICITANTE:</strong> ' + esc(v.nombre_solicitante) + '</span></div><div><span class="golden-tag">PLAN ' + tierLabel + '</span></div></footer>' +
+    '</div>' +
+
+    // PAGE 2 — Photos
+    '<div class="page-container page-two">' +
+    '<header class="header"><div class="header-brand"><div class="brand-title"><img src="/logo-circular.png" alt="Alabol" style="width:32px;height:32px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(212,175,55,0.4))"><span class="gold-gradient-text">EVIDENCIA FOTOGRAFICA</span></div><div class="report-subtitle">[ IMG.DATABANK.' + esc(v.marca) + '-' + esc(v.modelo) + ' ]</div></div>' +
+    '<div class="qr-verification" style="padding:5px 15px"><span style="font-family:var(--font-cyber);font-size:13px;color:var(--brand-gold-start)">REF: ' + esc(v.folio) + '</span></div></header>' +
+    '<main class="photo-grid">' + photosHtml + '</main>' +
+    '<div style="padding:8px 0;font-size:8px;color:rgba(168,197,184,0.4);line-height:1.5">Las fotografias son evidencia del estado del vehiculo al momento de la verificacion. Alabol Car Broker no garantiza la autenticidad de las imagenes proporcionadas por el solicitante.</div>' +
+    '<footer class="footer"><span>Pagina 2 / 2</span><span>' + SITE + '/certificado/' + esc(v.folio) + '</span></footer></div>';
+
+    // Download bar
+    html += '<div class="download-bar"><button onclick="CertificadoPDF.downloadCertificado(\'' + esc(v.folio) + '\', this)">DESCARGAR REPORTE PDF</button></div>';
+
+    // Legal disclaimers
+    html += '<div class="legal-disclaimers">' +
+      '<div class="disclaimer-block">' +
+      '<h4>AVISO LEGAL IMPORTANTE</h4>' +
+      '<p>Este reporte es un <strong>servicio informativo de revision vehicular</strong> proporcionado por Alabol Car Broker y <strong>NO constituye un dictamen legal, pericial ni oficial</strong>. Alabol Car Broker no es una autoridad gubernamental, perito certificado ni institucion regulatoria.</p>' +
+      '<p>La informacion presentada se obtiene mediante consultas a bases de datos publicas (NHTSA, REPUVE), analisis de inteligencia artificial y revision visual de documentos fotograficos. Estos metodos tienen un <strong>margen de error inherente</strong> y no garantizan la deteccion del 100% de irregularidades.</p>' +
+      '<p><strong>Alabol Car Broker no se hace responsable</strong> por decisiones de compra, venta o cualquier transaccion realizada con base en este reporte. Recomendamos complementar esta revision con una verificacion fisica presencial y consulta directa en las dependencias oficiales correspondientes (REPUVE, Fiscalia, Registro Publico).</p>' +
+      '</div>' +
+      '<div class="disclaimer-block">' +
+      '<h4>PROTECCION DE DATOS PERSONALES</h4>' +
+      '<p>Los datos recabados se tratan conforme a la Ley Federal de Proteccion de Datos Personales en Posesion de los Particulares (LFPDPPP). Consulta nuestro <a href="' + SITE + '/aviso-privacidad.html" target="_blank">Aviso de Privacidad</a> para conocer como protegemos tu informacion.</p>' +
+      '</div>' +
+      '<div class="disclaimer-block">' +
+      '<h4>VIGENCIA Y ALCANCE</h4>' +
+      '<p>Este reporte refleja el estado del vehiculo <strong>al momento de la verificacion</strong>. Cualquier evento posterior (siniestros, reportes de robo, cambio de propietario) no se vera reflejado. La vigencia del reporte es de 30 dias a partir de la fecha de emision. Pasado ese periodo, se recomienda una nueva verificacion.</p>' +
+      '</div>' +
+      '<div class="disclaimer-links">' +
+      '<a href="' + SITE + '/terminos.html" target="_blank">Terminos y Condiciones</a>' +
+      '<a href="' + SITE + '/aviso-privacidad.html" target="_blank">Aviso de Privacidad</a>' +
+      '<span>© ' + new Date().getFullYear() + ' Alabol Car Broker. Todos los derechos reservados.</span>' +
+      '</div>' +
+      '</div>';
 
     area.innerHTML = html;
   }
-
-  // Enter key search
-  document.getElementById('folio-input').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') buscarCertificado();
-  });
-})();
 </script>
 </body>
 </html>

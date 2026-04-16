@@ -466,16 +466,24 @@
   // ── STEP 2: FOTOS ──
 
   function validateStep2() {
+    var uploaded = 0;
     var missing = [];
     REQUIRED_PHOTOS.forEach(function (photo) {
-      if (!state.photos[photo.key] || !state.photos[photo.key].preview) {
+      if (state.photos[photo.key] && state.photos[photo.key].preview) {
+        uploaded++;
+      } else {
         missing.push(photo.name);
       }
     });
 
-    if (missing.length > 0) {
-      showAlert('error', 'Fotos faltantes', 'Debes subir: ' + missing.join(', '));
+    // Permitir avanzar sin todas, pero avisar
+    if (uploaded === 0) {
+      showAlert('error', 'Al menos una foto', 'Sube al menos una foto para continuar. Las demas las puedes agregar despues.');
       return false;
+    }
+
+    if (missing.length > 0) {
+      showAlert('warning', 'Fotos pendientes', 'Faltan ' + missing.length + ' fotos. Podras subirlas mas adelante. El verificador las revisara cuando esten completas.');
     }
     return true;
   }

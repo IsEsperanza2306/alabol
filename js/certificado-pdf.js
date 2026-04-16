@@ -214,8 +214,10 @@
         doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(10, 31, 26);
         doc.text('Verificable en: ' + SITE_URL + '/certificado/' + s(v.folio) + '  |  alabolcar.com.mx  |  WhatsApp: +52 55 6866 7571', W / 2, H - 4, { align: 'center' });
 
-        // Save
-        doc.save('Alabol-Verificacion-' + v.folio + '.pdf');
+        // Open PDF in new tab (compatible with all browsers)
+        var blob = doc.output('blob');
+        var url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
         if (btn) { btn.disabled = false; btn.textContent = 'DESCARGAR REPORTE PDF'; }
 
       }).catch(function (err) {

@@ -5,19 +5,15 @@
 (function () {
   'use strict';
 
-  var SUPABASE_URL = 'https://rgnunjngtsgqgvplawfr.supabase.co';
-  var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8';
   var BUCKET = 'verificaciones';
 
+  function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+  // Supabase client — uses config.js initialization
   var _sb = null;
   function getSb() {
     if (_sb) return _sb;
     if (window.supabaseClient) { _sb = window.supabaseClient; return _sb; }
-    if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
-      _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-      window.supabaseClient = _sb;
-      return _sb;
-    }
     return null;
   }
 
@@ -79,7 +75,7 @@
       query = query.in('estatus', ['aprobado', 'aprobado_con_observaciones', 'rechazado']);
     }
 
-    return query.then(function (res) {
+    return query.limit(50).then(function (res) {
       if (res.error) throw res.error;
       return res.data || [];
     });
@@ -393,9 +389,12 @@
           return;
         }
         // Notificar al cliente por email
-        sendNotification(currentFolio, 'dictamen');
-        alert('Verificacion ' + resultado.replace(/_/g, ' ') + ' — Folio: ' + currentFolio + '. Se notifico al cliente por correo.');
-        backToList();
+        var _folio = currentFolio;
+        var _resultado = resultado;
+        sendNotification(_folio, 'dictamen').then(function (ok) {
+          alert('Verificacion ' + _resultado.replace(/_/g, ' ') + ' — Folio: ' + _folio + (ok ? '. Cliente notificado por correo.' : '. Nota: el email no se pudo enviar.'));
+          backToList();
+        });
       });
   }
 
@@ -417,31 +416,45 @@
           alert('Error: ' + res.error.message);
           return;
         }
-        sendNotification(currentFolio, 'dictamen');
-        alert('Verificacion rechazada — Folio: ' + currentFolio + '. Se notifico al cliente por correo.');
-        backToList();
+        var _folio = currentFolio;
+        sendNotification(_folio, 'dictamen').then(function (ok) {
+          alert('Verificacion rechazada — Folio: ' + _folio + (ok ? '. Cliente notificado.' : '. Email no enviado.'));
+          backToList();
+        });
       });
   }
 
+  function getAuthHeaders() {
+    var h = { 'Content-Type': 'application/json' };
+    // Send session token for function auth
+    var sb = getSb();
+    if (sb && sb.auth) {
+      try {
+        var session = sb.auth.session && sb.auth.session();
+        if (session && session.access_token) h['Authorization'] = 'Bearer ' + session.access_token;
+      } catch (e) { /* no session */ }
+    }
+    return h;
+  }
+
   function sendNotification(folio, tipo) {
-    fetch('/.netlify/functions/send-notification', {
+    return fetch('/.netlify/functions/send-notification', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ folio: folio, tipo: tipo })
     })
     .then(function (res) { return res.json(); })
     .then(function (data) {
-      if (data.error) {
-        alert('Email no enviado: ' + data.error);
-      }
+      if (data.error) return false;
+      return data.sent || data.success;
     })
-    .catch(function () { /* silent */ });
+    .catch(function () { return false; });
   }
 
   function previewEmail(folio) {
     fetch('/.netlify/functions/send-notification', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ folio: folio, tipo: 'dictamen' })
     })
     .then(function (res) { return res.json(); })
@@ -453,7 +466,7 @@
       overlay.style.background = 'rgba(0,0,0,0.95)';
       overlay.innerHTML =
         '<div style="width:90%;max-width:620px;max-height:90vh;overflow-y:auto;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.5)">' +
-        '<iframe srcdoc="' + html.replace(/"/g, '&quot;') + '" style="width:100%;height:80vh;border:none;border-radius:12px"></iframe>' +
+        '<iframe sandbox="" srcdoc="' + html.replace(/"/g, '&quot;') + '" style="width:100%;height:80vh;border:none;border-radius:12px"></iframe>' +
         '</div>' +
         '<button class="zoom-close" onclick="this.parentElement.remove()" style="position:absolute;top:16px;right:16px">&times;</button>';
       overlay.onclick = function (e) { if (e.target === overlay) overlay.remove(); };
@@ -467,7 +480,7 @@
 
     fetch('/.netlify/functions/auto-verify', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ folio: folio })
     })
     .then(function (res) { return res.json(); })

@@ -6,21 +6,18 @@
 (function () {
   'use strict';
 
-  var SUPABASE_URL = 'https://rgnunjngtsgqgvplawfr.supabase.co';
-  var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8';
   var STORAGE_KEY = 'alabol_verificacion_draft';
   var BUCKET = 'verificaciones';
   var PHOTO_MAX_SIZE = 10 * 1024 * 1024; // 10MB
+  var _submitting = false;
 
-  // Ensure Supabase client exists
+  function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+  // Supabase client — uses config.js initialization
   var _sb = null;
   function getSb() {
     if (_sb) return _sb;
-    if (window.supabaseClient) { _sb = window.supabaseClient; return _sb; }
-    if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
-      _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-      window.supabaseClient = _sb;
-      return _sb;
+    if (window.supabaseClient) { _sb = window.supabaseClient; return _sb;
     }
     return null;
   }
@@ -243,7 +240,7 @@
         // Call OCR function
         fetch('/.netlify/functions/ocr-document', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer client' },
           body: JSON.stringify({ image: base64, type: 'tarjeta_circulacion' })
         })
         .then(function (res) { return res.json(); })
@@ -627,10 +624,13 @@
   }
 
   function submitVerificacion() {
+    if (_submitting) return;
+    _submitting = true;
     try {
     // Guard: Supabase
     if (!getSb()) {
       showAlert('error', 'Error de conexion', 'No se pudo conectar con el servidor. Recarga la pagina.');
+      _submitting = false;
       return;
     }
 
@@ -696,11 +696,13 @@
         showConfirmation();
       })
       .catch(function (err) {
+        _submitting = false;
         var errorMsg = (err && err.message) ? err.message : 'Ocurrio un error. Intenta de nuevo.';
         showAlert('error', 'Error al enviar', errorMsg);
         if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = '<i class="fas fa-lock"></i> Confirmar y Pagar'; }
       });
     } catch (syncErr) {
+      _submitting = false;
       showAlert('error', 'Error inesperado', syncErr.message || 'Error desconocido');
     }
   }
@@ -713,10 +715,10 @@
       '<div class="confirmation-screen">' +
       '<div class="confirm-icon"><i class="fas fa-heart"></i></div>' +
       '<h2>Tu background check esta en camino</h2>' +
-      '<p class="confirm-folio">Folio: <strong>' + state.folio + '</strong></p>' +
+      '<p class="confirm-folio">Folio: <strong>' + esc(state.folio) + '</strong></p>' +
       '<p class="confirm-text">Recibimos toda la info de tu soltero sobre ruedas. ' +
-      'Te enviaremos el enlace de pago por WhatsApp al <strong>' + state.telefono + '</strong> ' +
-      'y por correo a <strong>' + state.email + '</strong>. Una vez pagado, nuestro verificador hace su magia.</p>' +
+      'Te enviaremos el enlace de pago por WhatsApp al <strong>' + esc(state.telefono) + '</strong> ' +
+      'y por correo a <strong>' + esc(state.email) + '</strong>. Una vez pagado, nuestro verificador hace su magia.</p>' +
       '<div class="confirm-tier">' +
       '<span class="tier-badge tier-' + state.tier + '">' + TIERS[state.tier].nombre + '</span>' +
       '<span class="tier-price">$' + TIERS[state.tier].precio + ' MXN</span>' +

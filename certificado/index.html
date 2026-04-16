@@ -206,7 +206,7 @@ button, input { font-family: inherit; outline: none; }
             '<div class="not-found">' +
             '<i class="fas fa-search"></i>' +
             '<h2>No encontramos ese perfil</h2>' +
-            '<p>El folio "' + folio + '" no existe o el background check aun esta en proceso. Revisa que el folio sea correcto.</p>' +
+            '<p>El folio "' + folio.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '" no existe o el background check aun esta en proceso. Revisa que el folio sea correcto.</p>' +
             '</div>';
           return;
         }
@@ -275,7 +275,7 @@ button, input { font-family: inherit; outline: none; }
       }
 
       // Siempre mostrar botón de descarga cuando hay dictamen
-      html += '<div class="cert-download"><button onclick="CertificadoPDF.downloadCertificado(\'' + v.folio + '\')"><i class="fas fa-file-pdf"></i> Descargar Reporte PDF Completo</button></div>';
+      html += '<div class="cert-download"><button onclick="CertificadoPDF.downloadCertificado(\'' + v.folio + '\', this)"><i class="fas fa-file-pdf"></i> Descargar Reporte PDF Completo</button></div>';
 
     } else {
       html += '<div class="cert-vigencia pendiente" style="background:rgba(59,130,246,0.1);color:#60a5fa;border-color:rgba(59,130,246,0.2)"><i class="fas fa-hourglass-half"></i> Nuestro verificador esta revisando este soltero sobre ruedas. Te notificamos cuando este listo.</div>';

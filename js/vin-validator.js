@@ -40,6 +40,12 @@
       return { valid: false, error: 'El NIV no puede contener las letras I, O o Q', checkDigit: null };
     }
 
+    // Skip checksum for non-North American VINs (no usan dígito verificador)
+    var firstChar = vin[0];
+    if ('12345'.indexOf(firstChar) === -1 && firstChar !== '3') {
+      return { valid: true, error: null, checkDigit: null, skipped: true, note: 'Checksum no aplica para VINs fuera de Norteamerica' };
+    }
+
     var sum = 0;
     for (var i = 0; i < 17; i++) {
       var char = vin[i];
@@ -219,21 +225,6 @@
   }
 
   /**
-   * Consulta NICB VINCheck — reporte de robo en USA (gratis)
-   * Util para autos importados. Detecta si fue reportado robado en Estados Unidos.
-   * @param {string} vin
-   * @returns {Promise<{ success: boolean, stolen: boolean, message: string }>}
-   */
-  function checkNicb(vin) {
-    // NICB VINCheck no tiene API REST publica — requiere captcha en su sitio.
-    // Generamos el link directo para verificacion manual asistida.
-    return Promise.resolve({
-      success: true,
-      stolen: false,
-      message: 'Consulta NICB disponible para verificacion manual.',
-      url: 'https://www.nicb.org/vincheck'
-    });
-  }
 
   /**
    * Detecta pais de origen por WMI (primeros 3 caracteres)
@@ -319,7 +310,6 @@
     decodeNhtsa: decodeNhtsa,
     compareWithNhtsa: compareWithNhtsa,
     checkRepuve: checkRepuve,
-    checkNicb: checkNicb,
     detectCountry: detectCountry,
     getVerificationLinks: getVerificationLinks
   };

@@ -1,3 +1,17 @@
+# Functions config
+[functions]
+  [functions.auto-verify]
+    schedule = ""
+  [functions.ocr-document]
+    schedule = ""
+
+# Rate limit hint for functions (requires Netlify Pro for enforcement)
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-store"
+
 # Security headers - anti-scraping + protection
 [[headers]]
   for = "/*"

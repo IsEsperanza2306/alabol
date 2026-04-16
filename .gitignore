@@ -3,3 +3,6 @@ society-card-preview.html
 demo-matchmaker-mobile.html
 ficha-society-preview.html
 .gstack/
+
+# Local Netlify folder
+.netlify

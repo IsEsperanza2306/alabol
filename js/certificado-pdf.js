@@ -6,8 +6,6 @@
 (function () {
   'use strict';
 
-  var SUPABASE_URL = 'https://rgnunjngtsgqgvplawfr.supabase.co';
-  var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8';
   var BUCKET = 'verificaciones';
   var SITE_URL = 'https://alabolcar.com.mx';
 
@@ -15,11 +13,6 @@
   function getSb() {
     if (_sb) return _sb;
     if (window.supabaseClient) { _sb = window.supabaseClient; return _sb; }
-    if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
-      _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-      window.supabaseClient = _sb;
-      return _sb;
-    }
     return null;
   }
 
@@ -448,8 +441,8 @@
 
   // ── DOWNLOAD ──
 
-  function downloadCertificado(folio) {
-    var btn = event && event.target;
+  function downloadCertificado(folio, btnEl) {
+    var btn = btnEl || null;
     if (btn) { btn.disabled = true; btn.textContent = 'Generando PDF...'; }
 
     return getSb()

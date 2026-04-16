@@ -69,6 +69,9 @@ exports.handler = async function (event) {
     // Using fetch to a simple email API — Resend is the simplest
     var RESEND_KEY = process.env.RESEND_API_KEY;
 
+    // Determinar remitente — usar dominio verificado en Resend o el de prueba
+    var RESEND_FROM = process.env.RESEND_FROM || 'Alabol Car Broker <onboarding@resend.dev>';
+
     if (RESEND_KEY) {
       var emailRes = await fetch('https://api.resend.com/emails', {
         method: 'POST',
@@ -77,27 +80,31 @@ exports.handler = async function (event) {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          from: 'Alabol Car Broker <verificacion@alabolcar.com.mx>',
+          from: RESEND_FROM,
           to: [email],
           subject: subject,
           html: htmlBody
         })
       });
 
+      var resBody = await emailRes.text();
+
       if (!emailRes.ok) {
-        var errText = await emailRes.text();
-        throw new Error('Resend error: ' + errText.substring(0, 200));
+        return {
+          statusCode: 200,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ success: false, error: 'Resend: ' + resBody.substring(0, 300), to: email, html: htmlBody })
+        };
       }
 
       return {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ success: true, to: email, tipo: tipo })
+        body: JSON.stringify({ success: true, sent: true, to: email, tipo: tipo, resend: JSON.parse(resBody) })
       };
     }
 
-    // Fallback: Supabase Edge Function hook (si no hay Resend)
-    // Por ahora retornamos el HTML para preview
+    // Fallback sin Resend: retornar HTML para preview
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
@@ -106,7 +113,6 @@ exports.handler = async function (event) {
         preview: true,
         to: email,
         subject: subject,
-        message: 'Email generado pero no enviado — configura RESEND_API_KEY para envio automatico',
         html: htmlBody
       })
     };

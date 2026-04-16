@@ -428,7 +428,37 @@
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ folio: folio, tipo: tipo })
-    }).catch(function () { /* silent — notification is best effort */ });
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+      if (data.error) {
+        alert('Email no enviado: ' + data.error);
+      }
+    })
+    .catch(function () { /* silent */ });
+  }
+
+  function previewEmail(folio) {
+    fetch('/.netlify/functions/send-notification', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ folio: folio, tipo: 'dictamen' })
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+      var html = data.html;
+      if (!html) { alert('No se pudo generar preview'); return; }
+      var overlay = document.createElement('div');
+      overlay.className = 'photo-zoom-overlay';
+      overlay.style.background = 'rgba(0,0,0,0.95)';
+      overlay.innerHTML =
+        '<div style="width:90%;max-width:620px;max-height:90vh;overflow-y:auto;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.5)">' +
+        '<iframe srcdoc="' + html.replace(/"/g, '&quot;') + '" style="width:100%;height:80vh;border:none;border-radius:12px"></iframe>' +
+        '</div>' +
+        '<button class="zoom-close" onclick="this.parentElement.remove()" style="position:absolute;top:16px;right:16px">&times;</button>';
+      overlay.onclick = function (e) { if (e.target === overlay) overlay.remove(); };
+      document.body.appendChild(overlay);
+    });
   }
 
   function runAutoVerify(folio) {
@@ -583,6 +613,7 @@
     galleryNext: galleryNext,
     galleryPrev: galleryPrev,
     runAutoVerify: runAutoVerify,
+    previewEmail: previewEmail,
     SEMAFORO_PUNTOS: SEMAFORO_PUNTOS
   };
 

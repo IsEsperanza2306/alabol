@@ -273,6 +273,9 @@ button, input, select, textarea { font-family: inherit; outline: none; }
       <button class="btn-approve" onclick="VerificadorPanel.aprobar()"><i class="fas fa-certificate"></i> Emitir Dictamen</button>
       <button class="btn-reject" onclick="VerificadorPanel.rechazar()"><i class="fas fa-times-circle"></i> Rechazar</button>
     </div>
+    <div style="text-align:center;margin-top:12px">
+      <button onclick="VerificadorPanel.previewEmail(document.getElementById('detail-folio').textContent)" style="background:none;border:1px solid var(--glass-border);color:var(--green-text);padding:8px 20px;border-radius:10px;font-size:12px;cursor:pointer"><i class="fas fa-eye"></i> Preview email del cliente</button>
+    </div>
   </div>
 </div>
 

@@ -1,6 +1,6 @@
 // =============================================
 // CERTIFICADO PDF — ALABOL CAR BROKER
-// Reporte Premium de Verificación Vehicular
+// Reporte de Verificacion Vehicular
 // =============================================
 
 (function () {
@@ -9,28 +9,12 @@
   var BUCKET = 'verificaciones';
   var SITE_URL = 'https://alabolcar.com.mx';
 
-  function getSb() {
-    return window.supabaseClient || null;
-  }
-
-  // Colors
-  var C = {
-    bg: [10, 31, 26],
-    bgLight: [13, 41, 33],
-    gold: [212, 175, 55],
-    goldRgb: '#D4AF37',
-    white: [255, 255, 255],
-    text: [168, 197, 184],
-    green: [52, 211, 153],
-    red: [239, 68, 68],
-    yellow: [245, 158, 11],
-    muted: [107, 143, 123]
-  };
+  function getSb() { return window.supabaseClient || null; }
 
   var SEMAFORO_LABELS = {
     documentos_completos: 'Documentos completos',
-    vin_valido: 'NIV valido y consistente',
-    vin_no_remarcado: 'Sin indicios de remarcado',
+    vin_valido: 'NIV valido',
+    vin_no_remarcado: 'Sin remarcado',
     placas_vigentes: 'Placas vigentes',
     sin_reporte_robo: 'Sin reporte de robo',
     factura_original: 'Factura / carta factura',
@@ -42,401 +26,7 @@
     estructura_integra: 'Integridad estructural'
   };
 
-  function generateQR(text) {
-    return new Promise(function (resolve) {
-      if (typeof QRCode === 'undefined') { resolve(null); return; }
-      var container = document.createElement('div');
-      container.style.cssText = 'position:fixed;left:-9999px;top:-9999px';
-      document.body.appendChild(container);
-      new QRCode(container, { text: text, width: 256, height: 256, colorDark: '#D4AF37', colorLight: '#0a1f1a', correctLevel: QRCode.CorrectLevel.M });
-      setTimeout(function () {
-        var canvas = container.querySelector('canvas');
-        resolve(canvas ? canvas.toDataURL('image/png') : null);
-        document.body.removeChild(container);
-      }, 150);
-    });
-  }
-
-  function loadImageBase64(url) {
-    return new Promise(function (resolve) {
-      var img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.onload = function () {
-        var c = document.createElement('canvas');
-        c.width = img.width; c.height = img.height;
-        c.getContext('2d').drawImage(img, 0, 0);
-        resolve(c.toDataURL('image/jpeg', 0.75));
-      };
-      img.onerror = function () { resolve(null); };
-      img.src = url;
-    });
-  }
-
-  // ── MAIN GENERATE ──
-
-  function generateCertificado(v, qrDataUrl, photoImages) {
-    var doc = new jspdf.jsPDF('p', 'mm', 'a4');
-    var W = 210, H = 297;
-    var m = 12; // margin
-    var cw = W - m * 2; // content width
-    var y;
-
-    // ══════════════════════════════════════
-    // PAGE 1 — PORTADA + DATOS + SEMÁFORO
-    // ══════════════════════════════════════
-
-    // Background
-    doc.setFillColor(C.bg[0], C.bg[1], C.bg[2]);
-    doc.rect(0, 0, W, H, 'F');
-
-    // Gold accent line top
-    doc.setFillColor(C.gold[0], C.gold[1], C.gold[2]);
-    doc.rect(0, 0, W, 2.5, 'F');
-
-    // ── HEADER BAND ──
-    doc.setFillColor(C.bgLight[0], C.bgLight[1], C.bgLight[2]);
-    doc.rect(0, 2.5, W, 38, 'F');
-
-    // Title
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(16);
-    doc.setTextColor(C.gold[0], C.gold[1], C.gold[2]);
-    doc.text('REPORTE DE VERIFICACION VEHICULAR', m, 16);
-
-    doc.setFontSize(9);
-    doc.setTextColor(C.text[0], C.text[1], C.text[2]);
-    doc.text('Alabol Car Broker — El Tinder de los Autos', m, 23);
-
-    // Folio big
-    doc.setFontSize(20);
-    doc.setFont('courier', 'bold');
-    doc.setTextColor(C.gold[0], C.gold[1], C.gold[2]);
-    doc.text(v.folio || '', m, 34);
-
-    // QR top right
-    if (qrDataUrl) {
-      doc.addImage(qrDataUrl, 'PNG', W - m - 28, 6, 28, 28);
-    }
-
-    y = 46;
-
-    // ── RESULTADO BANNER ──
-    var resultado = v.resultado_final || 'pendiente';
-    var esAprobado = resultado === 'aprobado';
-    var esObs = resultado === 'aprobado_con_observaciones';
-    var esRechazado = resultado === 'no_aprobado';
-
-    var bannerColor = esAprobado ? C.green : esObs ? C.yellow : esRechazado ? C.red : C.text;
-    var bannerText = esAprobado ? 'GREEN FLAGS — APROBADO' :
-                     esObs ? 'YELLOW FLAGS — APROBADO CON OBSERVACIONES' :
-                     esRechazado ? 'RED FLAGS — NO APROBADO' : 'EN PROCESO';
-
-    doc.setFillColor(bannerColor[0], bannerColor[1], bannerColor[2]);
-    doc.roundedRect(m, y, cw, 11, 2, 2, 'F');
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(12);
-    doc.setTextColor(C.bg[0], C.bg[1], C.bg[2]);
-    doc.text(bannerText, W / 2, y + 7.5, { align: 'center' });
-    y += 16;
-
-    // ── DATOS DEL VEHÍCULO — 2 columnas ──
-    doc.setFillColor(C.bgLight[0], C.bgLight[1], C.bgLight[2]);
-    doc.roundedRect(m, y, cw, 42, 2, 2, 'F');
-
-    // Gold header bar
-    doc.setFillColor(C.gold[0], C.gold[1], C.gold[2]);
-    doc.rect(m, y, cw, 6, 'F');
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(8);
-    doc.setTextColor(C.bg[0], C.bg[1], C.bg[2]);
-    doc.text('IDENTIDAD DEL VEHICULO', m + 3, y + 4.2);
-    y += 9;
-
-    var col1 = m + 3;
-    var col2 = m + cw / 2 + 3;
-
-    function dataRow(label, value, x, yPos) {
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(7);
-      doc.setTextColor(C.muted[0], C.muted[1], C.muted[2]);
-      doc.text(label, x, yPos);
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(9);
-      doc.setTextColor(C.white[0], C.white[1], C.white[2]);
-      doc.text(String(value || 'N/A'), x, yPos + 4);
-    }
-
-    dataRow('NIV / VIN', v.vin, col1, y);
-    dataRow('PAIS DE ORIGEN', detectCountry(v.vin), col2, y);
-    y += 10;
-    dataRow('MARCA', v.marca, col1, y);
-    dataRow('MODELO', v.modelo, col2, y);
-    y += 10;
-    dataRow('AÑO', v.anio, col1, y);
-    dataRow('COLOR', v.color, col2, y);
-    y += 10;
-    dataRow('PLACAS', v.placas, col1, y);
-    dataRow('ESTADO', v.estado_registro, col2, y);
-
-    y += 12;
-
-    // ── SCORE GAUGE ──
-    var semaforo = v.semaforo || {};
-    var verdes = 0, amarillos = 0, rojos = 0;
-    Object.values(semaforo).forEach(function (v) {
-      if (v === 'verde') verdes++;
-      else if (v === 'amarillo') amarillos++;
-      else if (v === 'rojo') rojos++;
-    });
-    var score = verdes + amarillos * 0.5;
-    var pct = Math.round((score / 12) * 100);
-
-    // Score box
-    doc.setFillColor(C.bgLight[0], C.bgLight[1], C.bgLight[2]);
-    doc.roundedRect(m, y, 40, 20, 2, 2, 'F');
-
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(24);
-    doc.setTextColor(pct >= 75 ? C.green[0] : pct >= 50 ? C.yellow[0] : C.red[0],
-                     pct >= 75 ? C.green[1] : pct >= 50 ? C.yellow[1] : C.red[1],
-                     pct >= 75 ? C.green[2] : pct >= 50 ? C.yellow[2] : C.red[2]);
-    doc.text(score + '/12', m + 20, y + 11, { align: 'center' });
-
-    doc.setFontSize(6);
-    doc.setTextColor(C.muted[0], C.muted[1], C.muted[2]);
-    doc.text('SCORE DE CONFIANZA', m + 20, y + 17, { align: 'center' });
-
-    // Mini counts
-    doc.setFontSize(8);
-    doc.setTextColor(C.green[0], C.green[1], C.green[2]);
-    doc.text(verdes + ' OK', m + 48, y + 7);
-    doc.setTextColor(C.yellow[0], C.yellow[1], C.yellow[2]);
-    doc.text(amarillos + ' OBS', m + 48, y + 13);
-    doc.setTextColor(C.red[0], C.red[1], C.red[2]);
-    doc.text(rojos + ' ALERTA', m + 48, y + 19);
-
-    // ── SEMÁFORO TABLE ── (right side of score)
-    var semX = m + 72;
-    var semW = cw - 72 + m;
-    var semY = y;
-
-    doc.setFillColor(C.bgLight[0], C.bgLight[1], C.bgLight[2]);
-    doc.roundedRect(semX - 2, semY, semW + 2, 46, 2, 2, 'F');
-
-    // Header
-    doc.setFillColor(C.gold[0], C.gold[1], C.gold[2]);
-    doc.rect(semX - 2, semY, semW + 2, 5, 'F');
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(6.5);
-    doc.setTextColor(C.bg[0], C.bg[1], C.bg[2]);
-    doc.text('SEMAFORO DE VERIFICACION — 12 PUNTOS', semX + 1, semY + 3.5);
-    semY += 7;
-
-    var semKeys = Object.keys(SEMAFORO_LABELS);
-    // Two columns
-    var halfCount = Math.ceil(semKeys.length / 2);
-
-    semKeys.forEach(function (key, i) {
-      var col = i < halfCount ? 0 : 1;
-      var row = i < halfCount ? i : i - halfCount;
-      var sx = semX + (col * (semW / 2));
-      var sy = semY + row * 6.2;
-
-      var val = semaforo[key] || 'pendiente';
-      var dotColor = val === 'verde' ? C.green : val === 'amarillo' ? C.yellow : val === 'rojo' ? C.red : C.muted;
-
-      doc.setFillColor(dotColor[0], dotColor[1], dotColor[2]);
-      doc.circle(sx + 2, sy + 0.5, 1.5, 'F');
-
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(6.5);
-      doc.setTextColor(C.text[0], C.text[1], C.text[2]);
-      doc.text(SEMAFORO_LABELS[key], sx + 5.5, sy + 1.5);
-    });
-
-    y += 50;
-
-    // ── TITULAR / SOLICITANTE ──
-    doc.setFillColor(C.bgLight[0], C.bgLight[1], C.bgLight[2]);
-    doc.roundedRect(m, y, cw, 14, 2, 2, 'F');
-
-    dataRow('SOLICITANTE', v.nombre_solicitante, col1, y + 2);
-    dataRow('TITULAR EN TARJETA', v.nombre_titular || v.nombre_solicitante || 'N/A', col2, y + 2);
-    y += 18;
-
-    // ── CHECKS AUTOMÁTICOS ──
-    var auto = v.resultados_automaticos || {};
-    var checks = auto.checks || {};
-
-    doc.setFillColor(C.bgLight[0], C.bgLight[1], C.bgLight[2]);
-    doc.roundedRect(m, y, cw, 22, 2, 2, 'F');
-
-    doc.setFillColor(C.gold[0], C.gold[1], C.gold[2]);
-    doc.rect(m, y, cw, 5, 'F');
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(6.5);
-    doc.setTextColor(C.bg[0], C.bg[1], C.bg[2]);
-    doc.text('VERIFICACIONES AUTOMATICAS (IA + BASES DE DATOS)', m + 3, y + 3.5);
-    y += 7;
-
-    var checkItems = [
-      { label: 'Checksum NIV (ISO 3779)', ok: checks.vin_checksum && checks.vin_checksum.valid },
-      { label: 'NHTSA Decode', ok: checks.nhtsa && checks.nhtsa.success },
-      { label: 'Cruce marca/modelo/ano', ok: checks.cross_reference && checks.cross_reference.match },
-      { label: 'Consulta REPUVE', ok: checks.repuve && checks.repuve.status === 'limpio', pending: checks.repuve && checks.repuve.status === 'pendiente' },
-      { label: 'Analisis IA fotos', ok: checks.ai_analysis && checks.ai_analysis.success }
-    ];
-
-    checkItems.forEach(function (item, i) {
-      var ix = m + 3 + (i % 3) * (cw / 3);
-      var iy = y + Math.floor(i / 3) * 6;
-      var icon = item.ok ? 'OK' : item.pending ? '--' : 'X';
-      var iconColor = item.ok ? C.green : item.pending ? C.yellow : C.red;
-
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(7);
-      doc.setTextColor(iconColor[0], iconColor[1], iconColor[2]);
-      doc.text(icon, ix, iy + 1);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(C.text[0], C.text[1], C.text[2]);
-      doc.text(' ' + item.label, ix + 5, iy + 1);
-    });
-
-    y += 18;
-
-    // ── OBSERVACIONES ──
-    if (v.notas_verificador) {
-      doc.setFillColor(C.bgLight[0], C.bgLight[1], C.bgLight[2]);
-      var notasLines = doc.splitTextToSize(v.notas_verificador, cw - 6);
-      var notasH = 8 + notasLines.length * 3.5;
-      doc.roundedRect(m, y, cw, notasH, 2, 2, 'F');
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(7);
-      doc.setTextColor(C.gold[0], C.gold[1], C.gold[2]);
-      doc.text('OBSERVACIONES DEL VERIFICADOR', m + 3, y + 5);
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(7.5);
-      doc.setTextColor(C.text[0], C.text[1], C.text[2]);
-      doc.text(notasLines, m + 3, y + 9.5);
-      y += notasH + 3;
-    }
-
-    // ── FECHAS ──
-    var fechaEmision = v.aprobado_at ? new Date(v.aprobado_at).toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' }) : 'Pendiente';
-    var fechaVigencia = v.vigencia_certificado ? new Date(v.vigencia_certificado).toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' }) : 'N/A';
-    var tierLabel = v.tier === 'basico' ? 'Escudo' : v.tier === 'verificado' ? 'Escudo Pro' : 'Escudo Total';
-
-    doc.setFontSize(7);
-    doc.setTextColor(C.muted[0], C.muted[1], C.muted[2]);
-    doc.text('Emitido: ' + fechaEmision + '    |    Vigencia: ' + fechaVigencia + '    |    Plan: ' + tierLabel, m, y + 3);
-
-    // ── FOOTER ──
-    doc.setFillColor(C.gold[0], C.gold[1], C.gold[2]);
-    doc.rect(0, H - 12, W, 12, 'F');
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(7);
-    doc.setTextColor(C.bg[0], C.bg[1], C.bg[2]);
-    doc.text('Verificable en: ' + SITE_URL + '/certificado/' + v.folio + '  |  alabolcar.com.mx  |  WhatsApp: +52 55 6866 7571', W / 2, H - 5, { align: 'center' });
-
-    // Watermark if not approved
-    if (esRechazado) {
-      doc.setFontSize(50);
-      doc.setTextColor(239, 68, 68);
-      doc.saveGraphicsState();
-      doc.setGState(new doc.GState({ opacity: 0.08 }));
-      doc.text('RED FLAGS', W / 2, H / 2, { align: 'center', angle: 35 });
-      doc.restoreGraphicsState();
-    }
-
-    // ══════════════════════════════════════
-    // PAGE 2 — EVIDENCIA FOTOGRÁFICA
-    // ══════════════════════════════════════
-
-    if (photoImages && photoImages.length > 0) {
-      doc.addPage();
-
-      // Background
-      doc.setFillColor(C.bg[0], C.bg[1], C.bg[2]);
-      doc.rect(0, 0, W, H, 'F');
-      doc.setFillColor(C.gold[0], C.gold[1], C.gold[2]);
-      doc.rect(0, 0, W, 2.5, 'F');
-
-      // Header
-      doc.setFillColor(C.bgLight[0], C.bgLight[1], C.bgLight[2]);
-      doc.rect(0, 2.5, W, 18, 'F');
-
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(12);
-      doc.setTextColor(C.gold[0], C.gold[1], C.gold[2]);
-      doc.text('EVIDENCIA FOTOGRAFICA', m, 13);
-
-      doc.setFontSize(8);
-      doc.setTextColor(C.text[0], C.text[1], C.text[2]);
-      doc.text(v.folio + ' — ' + (v.marca || '') + ' ' + (v.modelo || '') + ' ' + (v.anio || ''), m, 18);
-
-      y = 26;
-
-      var photoLabels = {
-        niv_tablero: 'NIV en tablero',
-        niv_chasis: 'NIV en chasis',
-        numero_motor: 'Numero de motor',
-        chip_repuve: 'Chip REPUVE',
-        tarjeta_circulacion: 'Tarjeta de circulacion',
-        factura: 'Factura / carta factura'
-      };
-
-      // 3x2 grid
-      var pw = (cw - 8) / 3; // photo width
-      var ph = pw * 0.7; // photo height
-
-      photoImages.forEach(function (photo, i) {
-        var col = i % 3;
-        var row = Math.floor(i / 3);
-        var px = m + col * (pw + 4);
-        var py = y + row * (ph + 14);
-
-        // Photo card background
-        doc.setFillColor(C.bgLight[0], C.bgLight[1], C.bgLight[2]);
-        doc.roundedRect(px, py, pw, ph + 10, 2, 2, 'F');
-
-        // Photo
-        if (photo.data) {
-          try {
-            doc.addImage(photo.data, 'JPEG', px + 1, py + 1, pw - 2, ph - 2);
-          } catch (e) { /* image failed */ }
-        }
-
-        // Label
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(6.5);
-        doc.setTextColor(C.white[0], C.white[1], C.white[2]);
-        doc.text(photoLabels[photo.key] || photo.key, px + 2, py + ph + 3);
-
-        // Semaforo dot for this photo
-        var semKey = photo.key === 'niv_tablero' ? 'vin_valido' :
-                     photo.key === 'niv_chasis' ? 'vin_no_remarcado' :
-                     photo.key;
-        var pVal = semaforo[semKey];
-        if (pVal) {
-          var pColor = pVal === 'verde' ? C.green : pVal === 'amarillo' ? C.yellow : C.red;
-          doc.setFillColor(pColor[0], pColor[1], pColor[2]);
-          doc.circle(px + pw - 4, py + ph + 4, 2, 'F');
-        }
-      });
-
-      // Footer page 2
-      doc.setFillColor(C.gold[0], C.gold[1], C.gold[2]);
-      doc.rect(0, H - 12, W, 12, 'F');
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(7);
-      doc.setTextColor(C.bg[0], C.bg[1], C.bg[2]);
-      doc.text('Pagina 2/2  |  ' + SITE_URL + '/certificado/' + v.folio, W / 2, H - 5, { align: 'center' });
-    }
-
-    return doc;
-  }
-
-  // ── DOWNLOAD ──
+  function s(v) { return String(v == null ? 'N/A' : v); }
 
   function downloadCertificado(folio, btnEl) {
     var btn = btnEl || null;
@@ -444,59 +34,202 @@
 
     try {
       var client = getSb();
-      if (!client) throw new Error('No hay conexion con el servidor. Recarga la pagina.');
-      if (typeof jspdf === 'undefined') throw new Error('El generador de PDF no cargo. Recarga la pagina.');
+      if (!client) { alert('Error: No hay conexion. Recarga la pagina.'); if (btn) { btn.disabled = false; btn.textContent = 'DESCARGAR REPORTE PDF'; } return; }
+      if (typeof jspdf === 'undefined') { alert('Error: PDF no disponible. Recarga la pagina.'); if (btn) { btn.disabled = false; btn.textContent = 'DESCARGAR REPORTE PDF'; } return; }
 
-      client
-        .from('verificaciones')
-        .select('*')
-        .eq('folio', folio)
-        .limit(1)
-        .then(function (res) {
-          if (res.error) throw res.error;
-          if (!res.data || !res.data.length) throw new Error('Reporte no encontrado');
-          var v = res.data[0];
+      client.from('verificaciones').select('*').eq('folio', folio).limit(1).then(function (res) {
+        if (res.error || !res.data || !res.data.length) { alert('Reporte no encontrado'); if (btn) { btn.disabled = false; btn.textContent = 'DESCARGAR REPORTE PDF'; } return; }
 
-          // Load photos
-          var fotos = v.fotos || {};
-          var photoKeys = ['niv_tablero', 'niv_chasis', 'numero_motor', 'chip_repuve', 'tarjeta_circulacion', 'factura'];
-          var photoPromises = photoKeys.map(function (key) {
-            if (!fotos[key]) return Promise.resolve({ key: key, data: null });
-            var urlRes = client.storage.from(BUCKET).getPublicUrl(fotos[key]);
-            var url = urlRes.data ? urlRes.data.publicUrl : '';
-            if (!url) return Promise.resolve({ key: key, data: null });
-            return loadImageBase64(url).then(function (data) { return { key: key, data: data }; });
-          });
+        var v = res.data[0];
+        var doc = new jspdf.jsPDF('p', 'mm', 'a4');
+        var W = 210, H = 297, m = 14, cw = W - m * 2, y = 0;
 
-          return Promise.all([generateQR(SITE_URL + '/certificado/' + folio), Promise.all(photoPromises)])
-            .then(function (results) {
-              var qr = results[0];
-              var photos = results[1].filter(function (p) { return p.data; });
-              var doc = generateCertificado(v, qr, photos);
-              doc.save('Alabol-Verificacion-' + folio + '.pdf');
-              if (btn) { btn.disabled = false; btn.textContent = 'DESCARGAR REPORTE PDF'; }
-            });
-        })
-        .catch(function (err) {
-          alert('Error: ' + (err.message || 'No se pudo generar el PDF'));
-          if (btn) { btn.disabled = false; btn.textContent = 'DESCARGAR REPORTE PDF'; }
+        // ── PAGE 1 ──
+
+        // Dark background
+        doc.setFillColor(10, 31, 26);
+        doc.rect(0, 0, W, H, 'F');
+
+        // Gold top line
+        doc.setFillColor(212, 175, 55);
+        doc.rect(0, 0, W, 3, 'F');
+
+        // Header band
+        doc.setFillColor(13, 41, 33);
+        doc.rect(0, 3, W, 35, 'F');
+
+        // Title
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(16);
+        doc.setTextColor(212, 175, 55);
+        doc.text('REPORTE DE VERIFICACION VEHICULAR', m, 17);
+
+        doc.setFontSize(9);
+        doc.setTextColor(168, 197, 184);
+        doc.text('Alabol Car Broker — El Tinder de los Autos', m, 24);
+
+        // Folio
+        doc.setFontSize(18);
+        doc.setFont('courier', 'bold');
+        doc.setTextColor(212, 175, 55);
+        doc.text(s(v.folio), m, 34);
+
+        y = 44;
+
+        // ── RESULTADO ──
+        var resultado = v.resultado_final || 'pendiente';
+        var bc = resultado === 'aprobado' ? [52, 211, 153] : resultado === 'aprobado_con_observaciones' ? [245, 158, 11] : resultado === 'no_aprobado' ? [239, 68, 68] : [168, 197, 184];
+        var bt = resultado === 'aprobado' ? 'GREEN FLAGS — APROBADO' : resultado === 'aprobado_con_observaciones' ? 'YELLOW FLAGS — CON OBSERVACIONES' : resultado === 'no_aprobado' ? 'RED FLAGS — NO APROBADO' : 'EN PROCESO';
+
+        doc.setFillColor(bc[0], bc[1], bc[2]);
+        doc.rect(m, y, cw, 10, 'F');
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(11);
+        doc.setTextColor(10, 31, 26);
+        doc.text(bt, W / 2, y + 7, { align: 'center' });
+        y += 16;
+
+        // ── SCORE ──
+        var sem = v.semaforo || {};
+        var verdes = 0, amarillos = 0, rojos = 0;
+        Object.values(sem).forEach(function (val) { if (val === 'verde') verdes++; else if (val === 'amarillo') amarillos++; else if (val === 'rojo') rojos++; });
+        var score = verdes + amarillos * 0.5;
+
+        doc.setFillColor(13, 41, 33);
+        doc.rect(m, y, cw, 18, 'F');
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(28);
+        doc.setTextColor(212, 175, 55);
+        doc.text(score + ' / 12', m + 25, y + 13, { align: 'center' });
+        doc.setFontSize(8);
+        doc.setTextColor(168, 197, 184);
+        doc.text('SCORE DE CONFIANZA', m + 25, y + 17, { align: 'center' });
+
+        doc.setFontSize(9);
+        doc.setTextColor(52, 211, 153);
+        doc.text(verdes + ' Aprobados', m + 65, y + 8);
+        doc.setTextColor(245, 158, 11);
+        doc.text(amarillos + ' Observaciones', m + 65, y + 13);
+        doc.setTextColor(239, 68, 68);
+        doc.text(rojos + ' Alertas', m + 65, y + 18);
+
+        y += 24;
+
+        // ── DATOS DEL VEHICULO ──
+        doc.setFillColor(212, 175, 55);
+        doc.rect(m, y, cw, 5, 'F');
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(8);
+        doc.setTextColor(10, 31, 26);
+        doc.text('IDENTIDAD DEL VEHICULO', m + 3, y + 3.5);
+        y += 7;
+
+        doc.setFillColor(13, 41, 33);
+        doc.rect(m, y, cw, 34, 'F');
+
+        var cx = m + 3;
+        var cx2 = m + cw / 2 + 3;
+
+        function row(label, val, x, yy) {
+          doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(107, 143, 123);
+          doc.text(label, x, yy);
+          doc.setFont('helvetica', 'bold'); doc.setFontSize(9); doc.setTextColor(255, 255, 255);
+          doc.text(s(val), x, yy + 4);
+        }
+
+        row('NIV / VIN', v.vin, cx, y + 4);
+        row('MARCA', v.marca, cx2, y + 4);
+        row('MODELO', v.modelo, cx, y + 13);
+        row('ANO', v.anio, cx2, y + 13);
+        row('COLOR', v.color, cx, y + 22);
+        row('PLACAS', v.placas, cx2, y + 22);
+        row('ESTADO', v.estado_registro, cx, y + 31);
+        row('SOLICITANTE', v.nombre_solicitante, cx2, y + 31);
+
+        y += 38;
+
+        // ── SEMAFORO ──
+        doc.setFillColor(212, 175, 55);
+        doc.rect(m, y, cw, 5, 'F');
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.setTextColor(10, 31, 26);
+        doc.text('INSPECCION — 12 PUNTOS DE VERIFICACION', m + 3, y + 3.5);
+        y += 7;
+
+        var semKeys = Object.keys(SEMAFORO_LABELS);
+        var rh = 5.5;
+
+        semKeys.forEach(function (key, i) {
+          var col = i % 2 === 0 ? 0 : 1;
+          var rowIdx = Math.floor(i / 2);
+          var rx = m + col * (cw / 2);
+          var ry = y + rowIdx * rh;
+
+          if (rowIdx % 2 === 0) {
+            doc.setFillColor(13, 41, 33);
+          } else {
+            doc.setFillColor(10, 31, 26);
+          }
+          doc.rect(rx, ry, cw / 2, rh, 'F');
+
+          var val = sem[key] || 'pendiente';
+          var dotC = val === 'verde' ? [52, 211, 153] : val === 'amarillo' ? [245, 158, 11] : val === 'rojo' ? [239, 68, 68] : [100, 100, 100];
+          doc.setFillColor(dotC[0], dotC[1], dotC[2]);
+          doc.circle(rx + 4, ry + rh / 2, 1.5, 'F');
+
+          doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(168, 197, 184);
+          doc.text(SEMAFORO_LABELS[key], rx + 8, ry + rh / 2 + 1);
         });
+
+        y += Math.ceil(semKeys.length / 2) * rh + 4;
+
+        // ── OBSERVACIONES ──
+        if (v.notas_verificador) {
+          doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.setTextColor(212, 175, 55);
+          doc.text('OBSERVACIONES DEL PERITO', m, y + 4);
+          y += 7;
+          doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(168, 197, 184);
+          var lines = doc.splitTextToSize(v.notas_verificador, cw);
+          doc.text(lines, m, y);
+          y += lines.length * 3.5 + 4;
+        }
+
+        // ── FECHAS ──
+        var fEmision = v.aprobado_at ? new Date(v.aprobado_at).toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' }) : 'Pendiente';
+        var fVigencia = v.vigencia_certificado ? new Date(v.vigencia_certificado).toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' }) : 'N/A';
+        var tier = v.tier === 'basico' ? 'Escudo' : v.tier === 'verificado' ? 'Escudo Pro' : 'Escudo Total';
+
+        doc.setFontSize(7); doc.setTextColor(107, 143, 123);
+        doc.text('Emitido: ' + fEmision + '  |  Vigencia: ' + fVigencia + '  |  Plan: ' + tier, m, y + 3);
+        y += 6;
+
+        // ── DISCLAIMER ──
+        doc.setFontSize(6); doc.setTextColor(80, 100, 90);
+        var disc = 'Este reporte es un servicio informativo. Alabol Car Broker no es una autoridad legal ni pericial. Margen de error inherente. No sustituye una verificacion oficial. alabolcar.com.mx';
+        var discLines = doc.splitTextToSize(disc, cw);
+        doc.text(discLines, m, y);
+
+        // ── FOOTER ──
+        doc.setFillColor(212, 175, 55);
+        doc.rect(0, H - 10, W, 10, 'F');
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(10, 31, 26);
+        doc.text('Verificable en: ' + SITE_URL + '/certificado/' + s(v.folio) + '  |  alabolcar.com.mx  |  WhatsApp: +52 55 6866 7571', W / 2, H - 4, { align: 'center' });
+
+        // Save
+        doc.save('Alabol-Verificacion-' + v.folio + '.pdf');
+        if (btn) { btn.disabled = false; btn.textContent = 'DESCARGAR REPORTE PDF'; }
+
+      }).catch(function (err) {
+        alert('Error: ' + (err.message || 'No se pudo generar'));
+        if (btn) { btn.disabled = false; btn.textContent = 'DESCARGAR REPORTE PDF'; }
+      });
+
     } catch (e) {
       alert('Error: ' + e.message);
       if (btn) { btn.disabled = false; btn.textContent = 'DESCARGAR REPORTE PDF'; }
     }
   }
 
-  function detectCountry(vin) {
-    if (!vin || vin.length < 2) return 'Desconocido';
-    var first = vin[0].toUpperCase();
-    if (first === '3') return 'Mexico';
-    var map = { '1': 'USA', '4': 'USA', '5': 'USA', '2': 'Canada', 'J': 'Japon', 'K': 'Corea', 'L': 'China', 'W': 'Alemania', 'Z': 'Italia' };
-    return map[first] || 'Otro';
-  }
-
   window.CertificadoPDF = {
-    generateCertificado: generateCertificado,
     downloadCertificado: downloadCertificado
   };
 

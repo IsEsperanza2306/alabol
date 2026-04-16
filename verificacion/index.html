@@ -387,6 +387,50 @@ select.fi option { background: var(--bg-primary); color: white; }
 }
 .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(212,175,55,0.5); }
 
+/* Smart Scan */
+.smart-scan-card {
+  background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(212,175,55,0.06));
+  border: 2px dashed rgba(124,58,237,0.3);
+  border-radius: 20px; padding: 24px; text-align: center; margin-bottom: 24px;
+  transition: all 0.3s;
+}
+.smart-scan-card:hover { border-color: rgba(124,58,237,0.5); }
+.smart-scan-icon { font-size: 36px; color: #7c3aed; margin-bottom: 10px; }
+.smart-scan-card h3 { font-size: 16px; font-weight: 800; color: white; margin-bottom: 6px; }
+.smart-scan-card p { font-size: 12px; color: var(--green-text); opacity: 0.8; margin-bottom: 16px; }
+
+.smart-scan-upload {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 16px 24px; border-radius: 14px; cursor: pointer;
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  color: white; font-size: 14px; font-weight: 700;
+  transition: all 0.3s; box-shadow: 0 4px 20px rgba(124,58,237,0.35);
+}
+.smart-scan-upload:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(124,58,237,0.5); }
+
+.smart-scan-or {
+  margin-top: 16px; font-size: 11px; color: var(--green-muted);
+  display: flex; align-items: center; gap: 12px;
+}
+.smart-scan-or::before, .smart-scan-or::after { content: ''; flex: 1; height: 1px; background: var(--glass-border); }
+
+.scan-preview-row { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
+#scan-progress { font-size: 13px; color: #7c3aed; font-weight: 600; }
+
+#scan-result .scan-success {
+  background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.25);
+  border-radius: 12px; padding: 14px; margin-top: 12px; text-align: left;
+}
+#scan-result .scan-success .scan-title { font-size: 12px; font-weight: 700; color: var(--emerald); margin-bottom: 8px; }
+#scan-result .scan-fields { font-size: 11px; color: var(--green-text); line-height: 1.8; }
+#scan-result .scan-fields strong { color: white; }
+
+#scan-result .scan-fail {
+  background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.25);
+  border-radius: 12px; padding: 14px; margin-top: 12px;
+  font-size: 12px; color: var(--warning);
+}
+
 /* Responsive */
 @media (max-width: 480px) {
   .verify-hero h1 { font-size: 22px; }
@@ -454,7 +498,29 @@ select.fi option { background: var(--bg-primary); color: white; }
   <div class="wiz-step active" id="step-1">
     <div class="step-header">
       <div class="step-title"><i class="fas fa-car-side"></i> Conoce a tu pretendiente</div>
-      <div class="step-sub">Antes de hacer match, necesitamos los datos de tu soltero sobre ruedas. El NIV es como su huella digital — lo cruzamos con bases de datos oficiales para que no te lleves sorpresas.</div>
+      <div class="step-sub">Toma foto de tu tarjeta de circulacion y nuestra IA lee todos los datos automaticamente. Tambien puedes llenar manual si prefieres.</div>
+    </div>
+
+    <!-- SMART SCAN -->
+    <div class="smart-scan-card" id="smart-scan">
+      <div class="smart-scan-icon"><i class="fas fa-magic"></i></div>
+      <h3>Escaneo inteligente</h3>
+      <p>Sube una foto de la tarjeta de circulacion y llenamos todo por ti</p>
+      <div class="smart-scan-upload" id="scan-dropzone" onclick="document.getElementById('scan-input').click()">
+        <i class="fas fa-camera"></i>
+        <span>Tomar foto o seleccionar archivo</span>
+        <input type="file" id="scan-input" accept="image/jpeg,image/png,image/heic" capture="environment" style="display:none" onchange="Verificacion.scanDocument(this)">
+      </div>
+      <div id="scan-status" style="display:none">
+        <div class="scan-preview-row">
+          <img id="scan-preview-img" style="width:80px;height:55px;object-fit:cover;border-radius:8px">
+          <div id="scan-progress"><i class="fas fa-spinner fa-spin"></i> Leyendo documento con IA...</div>
+        </div>
+      </div>
+      <div id="scan-result" style="display:none"></div>
+      <div class="smart-scan-or">
+        <span>o llena manualmente</span>
+      </div>
     </div>
 
     <!-- VIN -->
@@ -506,11 +572,19 @@ select.fi option { background: var(--bg-primary); color: white; }
       </div>
     </div>
 
+    <div class="section-divider">Titular en tarjeta de circulacion</div>
+
+    <div class="ff">
+      <label>Nombre que aparece en la tarjeta</label>
+      <input type="text" class="fi" id="inp-titular" placeholder="Se llena automatico si escaneas la tarjeta">
+      <div class="ff-hint">Es normal que no coincida con quien solicita — en Mexico muchos autos no estan a nombre del dueno actual</div>
+    </div>
+
     <div class="section-divider">Tus datos para el match</div>
 
     <div class="ff">
-      <label>Nombre del propietario</label>
-      <input type="text" class="fi" id="inp-nombre" placeholder="Nombre completo como aparece en documentos">
+      <label>Tu nombre (quien solicita la verificacion)</label>
+      <input type="text" class="fi" id="inp-nombre" placeholder="Tu nombre completo">
     </div>
     <div class="ff-row">
       <div class="ff">

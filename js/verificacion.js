@@ -90,6 +90,7 @@
     color: '',
     placas: '',
     estado_registro: '',
+    nombre_titular: '',
     nombre: '',
     email: '',
     telefono: '',
@@ -206,6 +207,113 @@
     if (state.paso > 1) showStep(state.paso - 1);
   }
 
+  // ── SMART SCAN ──
+
+  function scanDocument(input) {
+    var file = input.files && input.files[0];
+    if (!file) return;
+
+    var statusEl = g('scan-status');
+    var resultEl = g('scan-result');
+    var uploadEl = g('scan-dropzone');
+    if (statusEl) statusEl.style.display = 'block';
+    if (resultEl) { resultEl.style.display = 'none'; resultEl.innerHTML = ''; }
+    if (uploadEl) uploadEl.style.display = 'none';
+
+    // Show preview
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var previewImg = g('scan-preview-img');
+      if (previewImg) previewImg.src = e.target.result;
+
+      // Compress for API
+      var img = new Image();
+      img.onload = function () {
+        var canvas = document.createElement('canvas');
+        var maxDim = 1200;
+        var w = img.width, h = img.height;
+        if (w > maxDim || h > maxDim) {
+          if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
+          else { w = Math.round(w * maxDim / h); h = maxDim; }
+        }
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        var base64 = canvas.toDataURL('image/jpeg', 0.85);
+
+        // Call OCR function
+        fetch('/.netlify/functions/ocr-document', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: base64, type: 'tarjeta_circulacion' })
+        })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          var progressEl = g('scan-progress');
+          if (!data.success) {
+            if (progressEl) progressEl.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:var(--warning)"></i> ' + (data.error || 'No se pudo leer');
+            if (resultEl) {
+              resultEl.style.display = 'block';
+              resultEl.innerHTML = '<div class="scan-fail"><i class="fas fa-info-circle"></i> No pudimos leer la tarjeta automaticamente. Llena los datos manualmente.</div>';
+            }
+            if (uploadEl) uploadEl.style.display = 'flex';
+            return;
+          }
+
+          var d = data.data;
+          if (progressEl) progressEl.innerHTML = '<i class="fas fa-check-circle" style="color:var(--emerald)"></i> Documento leido con exito';
+
+          // Pre-fill fields
+          if (d.vin) { g('inp-vin').value = d.vin; onVinInput(); }
+          if (d.marca) g('inp-marca').value = d.marca;
+          if (d.modelo) g('inp-modelo').value = d.modelo;
+          if (d.anio) g('inp-anio').value = d.anio;
+          if (d.color) g('inp-color').value = d.color;
+          if (d.placas) g('inp-placas').value = d.placas;
+          if (d.nombre_titular) g('inp-titular').value = d.nombre_titular;
+          if (d.estado) {
+            // Try to match estado in dropdown
+            var sel = g('inp-estado');
+            for (var i = 0; i < sel.options.length; i++) {
+              if (sel.options[i].value.toLowerCase().indexOf(d.estado.toLowerCase()) !== -1) {
+                sel.selectedIndex = i; break;
+              }
+            }
+          }
+
+          // Show what was extracted
+          var fieldsHtml = '';
+          if (d.vin) fieldsHtml += '<div><strong>NIV:</strong> ' + d.vin + '</div>';
+          if (d.marca) fieldsHtml += '<div><strong>Marca:</strong> ' + d.marca + '</div>';
+          if (d.modelo) fieldsHtml += '<div><strong>Modelo:</strong> ' + d.modelo + '</div>';
+          if (d.anio) fieldsHtml += '<div><strong>Ano:</strong> ' + d.anio + '</div>';
+          if (d.color) fieldsHtml += '<div><strong>Color:</strong> ' + d.color + '</div>';
+          if (d.placas) fieldsHtml += '<div><strong>Placas:</strong> ' + d.placas + '</div>';
+          if (d.nombre_titular) fieldsHtml += '<div><strong>Titular:</strong> ' + d.nombre_titular + '</div>';
+          if (d.estado) fieldsHtml += '<div><strong>Estado:</strong> ' + d.estado + '</div>';
+
+          if (resultEl) {
+            resultEl.style.display = 'block';
+            resultEl.innerHTML =
+              '<div class="scan-success">' +
+              '<div class="scan-title"><i class="fas fa-check-circle"></i> Datos extraidos — verifica que esten correctos</div>' +
+              '<div class="scan-fields">' + fieldsHtml + '</div>' +
+              (d.confianza ? '<div style="margin-top:8px;font-size:10px;color:var(--green-muted)">Confianza: ' + d.confianza + '</div>' : '') +
+              '</div>';
+          }
+
+          saveDraft();
+        })
+        .catch(function (err) {
+          var progressEl = g('scan-progress');
+          if (progressEl) progressEl.innerHTML = '<i class="fas fa-times-circle" style="color:var(--danger)"></i> Error: ' + err.message;
+          if (uploadEl) uploadEl.style.display = 'flex';
+        });
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
   // ── STEP 1: DATOS DEL VEHICULO ──
 
   function validateStep1() {
@@ -221,6 +329,7 @@
     state.color = (g('inp-color').value || '').trim();
     state.placas = (g('inp-placas').value || '').trim().toUpperCase();
     state.estado_registro = g('inp-estado').value || '';
+    state.nombre_titular = (g('inp-titular').value || '').trim();
     state.nombre = (g('inp-nombre').value || '').trim();
     state.email = (g('inp-email').value || '').trim();
     state.telefono = (g('inp-telefono').value || '').trim();
@@ -533,6 +642,7 @@
       placas: state.placas,
       estado_registro: state.estado_registro,
       nombre_solicitante: state.nombre,
+      nombre_titular: state.nombre_titular || null,
       email_solicitante: state.email,
       telefono_solicitante: state.telefono,
       tier: state.tier,
@@ -654,6 +764,7 @@
       if (g('inp-color')) g('inp-color').value = state.color || '';
       if (g('inp-placas')) g('inp-placas').value = state.placas || '';
       if (g('inp-estado')) g('inp-estado').value = state.estado_registro || '';
+      if (g('inp-titular')) g('inp-titular').value = state.nombre_titular || '';
       if (g('inp-nombre')) g('inp-nombre').value = state.nombre || '';
       if (g('inp-email')) g('inp-email').value = state.email || '';
       if (g('inp-telefono')) g('inp-telefono').value = state.telefono || '';
@@ -702,6 +813,7 @@
     handlePhotoSelect: handlePhotoSelect,
     removePhoto: removePhoto,
     submitVerificacion: submitVerificacion,
+    scanDocument: scanDocument,
     REQUIRED_PHOTOS: REQUIRED_PHOTOS,
     TIERS: TIERS
   };

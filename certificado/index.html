@@ -216,7 +216,7 @@ var BUCKET = 'verificaciones';
   } catch(e) { sb = null; }
 
   if (!sb) {
-    document.getElementById('report-area').innerHTML = '<div class="not-found"><h2>Error de conexion</h2><p>No se pudo conectar. Supabase: ' + (typeof window.supabase) + '</p></div>';
+    document.getElementById('report-area').innerHTML = '<div class="not-found"><h2>Error de conexion</h2><p>No se pudo conectar con el servidor. Recarga la pagina e intenta de nuevo.</p></div>';
   }
 
   // Check URL for folio
@@ -267,16 +267,16 @@ var BUCKET = 'verificaciones';
     // Terminal lines
     var terminalHtml = '';
     var termLines = [
-      { code: '0x01', label: 'Checksum NIV ISO 3779', ok: checks.vin_checksum && checks.vin_checksum.valid },
-      { code: '0x02', label: 'NHTSA Decode', ok: checks.nhtsa && checks.nhtsa.success },
-      { code: '0x03', label: 'Cruce marca/modelo/ano', ok: checks.cross_reference && checks.cross_reference.match, fail: checks.cross_reference && !checks.cross_reference.match },
-      { code: '0x04', label: 'Consulta REPUVE', ok: checks.repuve && checks.repuve.status === 'limpio', pending: !checks.repuve || checks.repuve.status === 'pendiente' },
-      { code: '0x05', label: 'Analisis Fotos IA', ok: checks.ai_analysis && checks.ai_analysis.success }
+      { code: '01', label: 'Numero de serie (NIV) verificado', ok: checks.vin_checksum && checks.vin_checksum.valid },
+      { code: '02', label: 'Datos del fabricante consultados', ok: checks.nhtsa && checks.nhtsa.success },
+      { code: '03', label: 'Marca, modelo y ano coinciden', ok: checks.cross_reference && checks.cross_reference.match, fail: checks.cross_reference && !checks.cross_reference.match },
+      { code: '04', label: 'Consulta en registro de vehiculos robados', ok: checks.repuve && checks.repuve.status === 'limpio', pending: !checks.repuve || checks.repuve.status === 'pendiente' },
+      { code: '05', label: 'Revision fotografica por perito', ok: checks.ai_analysis && checks.ai_analysis.success }
     ];
     termLines.forEach(function(t) {
       var cls = t.ok ? 'success' : t.fail ? 'error' : t.pending ? 'pending' : 'error';
-      var status = t.ok ? '[OK]' : t.fail ? '[WARN]' : t.pending ? '[WAIT]' : '[WARN]';
-      var suffix = t.ok ? 'VALIDATED' : t.fail ? 'MISMATCH' : t.pending ? 'PENDING...' : 'VERIFICAR';
+      var status = t.ok ? '[OK]' : t.fail ? '[!]' : t.pending ? '[...]' : '[!]';
+      var suffix = t.ok ? '— Aprobado' : t.fail ? '— Requiere atencion' : t.pending ? '— En proceso' : '— Por revisar';
       terminalHtml += '<div class="t-line ' + cls + '"><span class="prefix">' + t.code + '</span><span class="status">' + status + '</span><span>' + esc(t.label) + ' ' + suffix + '</span></div>';
     });
 
@@ -311,13 +311,13 @@ var BUCKET = 'verificaciones';
     var html =
     // PAGE 1
     '<div class="page-container page-one">' +
-    '<header class="header"><div class="header-brand"><div class="brand-title"><img src="/logo-circular.png" alt="Alabol" style="width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(212,175,55,0.5))"><span class="gold-gradient-text">ALABOL CAR BROKER</span></div><div class="report-subtitle">[ SYS.VERIFICACION.' + esc(v.folio) + ' ] // MATCHMAKER PROTOCOL</div></div>' +
-    '<div class="qr-verification"><div class="qr-text"><span class="scan-title">Escanea para Validar</span><span class="scan-desc">Verificacion en tiempo real</span></div><div class="qr-box"><img src="' + qrUrl + '" alt="QR"></div></div></header>' +
+    '<header class="header"><div class="header-brand"><div class="brand-title"><img src="/logo-circular.png" alt="Alabol" style="width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(212,175,55,0.5))"><span class="gold-gradient-text">ALABOL CAR BROKER</span></div><div class="report-subtitle">Reporte de Verificacion — ' + esc(v.folio) + '</div></div>' +
+    '<div class="qr-verification"><div class="qr-text"><span class="scan-title">Escanea para Validar</span><span class="scan-desc">Consulta este reporte en linea</span></div><div class="qr-box"><img src="' + qrUrl + '" alt="QR"></div></div></header>' +
 
     '<main class="grid-layout">' +
     // Score
     '<section class="panel panel-score span-full" style="display:flex;justify-content:space-between;align-items:center;background:radial-gradient(circle at right,rgba(212,175,55,0.1),transparent)">' +
-    '<div><h3 class="panel-header">DIAGNOSTICO ALABOL</h3><div style="max-width:400px"><p style="font-size:13px;color:var(--text-muted);margin-bottom:15px">Hemos analizado esta unidad en 12 puntos criticos de integridad estructural, documental y digital.</p>' +
+    '<div><h3 class="panel-header">DIAGNOSTICO ALABOL</h3><div style="max-width:400px"><p style="font-size:13px;color:var(--text-muted);margin-bottom:15px">Nuestros peritos especializados revisaron esta unidad en 12 puntos clave de seguridad, documentacion e integridad fisica.</p>' +
     '<ul style="font-family:var(--font-cyber);font-size:13px;list-style:none"><li style="color:var(--cyber-green)">> ' + verdes + ' PUNTOS APROBADOS</li><li style="color:var(--brand-gold-start)">> ' + amarillos + ' OBSERVACIONES ALABOL</li><li style="color:#ff3366">> ' + rojos + ' ALERTAS CRITICAS</li></ul></div></div>' +
     '<div class="score-hud"><div class="status-badge ' + badgeClass + '">' + statusEmoji + ' ' + statusText + '</div><div class="score-circle-container"><svg viewBox="0 0 180 180"><circle class="score-hud-bg" cx="90" cy="90" r="80"></circle><circle class="score-hud-track" cx="90" cy="90" r="80"></circle><circle class="score-hud-progress" cx="90" cy="90" r="80" style="stroke-dashoffset:' + dashOffset + '"></circle><defs><linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#f9e27b"/><stop offset="100%" stop-color="#d4af37"/></linearGradient></defs></svg><div class="score-center" style="position:absolute"><div class="huge-grade">' + score + '</div><div class="label">SCORE / 12</div></div></div></div></section>' +
 
@@ -331,7 +331,7 @@ var BUCKET = 'verificaciones';
     '</div></section>' +
 
     // Terminal
-    '<section class="panel panel-ai" style="padding:15px"><h3 class="panel-header" style="margin-top:10px;margin-left:5px">IA &amp; BASES DE DATOS</h3><div class="terminal-hud">' + terminalHtml + '</div></section>' +
+    '<section class="panel panel-ai" style="padding:15px"><h3 class="panel-header" style="margin-top:10px;margin-left:5px">VERIFICACIONES REALIZADAS</h3><div class="terminal-hud">' + terminalHtml + '</div></section>' +
 
     // Checklist
     '<section class="panel span-full" style="margin-bottom:0"><h3 class="panel-header">INSPECCION FISICA Y DOCUMENTAL</h3><div class="checklist-grid">' + checklistHtml + '</div>' +
@@ -345,7 +345,7 @@ var BUCKET = 'verificaciones';
 
     // PAGE 2 — Photos
     '<div class="page-container page-two">' +
-    '<header class="header"><div class="header-brand"><div class="brand-title"><img src="/logo-circular.png" alt="Alabol" style="width:32px;height:32px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(212,175,55,0.4))"><span class="gold-gradient-text">EVIDENCIA FOTOGRAFICA</span></div><div class="report-subtitle">[ IMG.DATABANK.' + esc(v.marca) + '-' + esc(v.modelo) + ' ]</div></div>' +
+    '<header class="header"><div class="header-brand"><div class="brand-title"><img src="/logo-circular.png" alt="Alabol" style="width:32px;height:32px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(212,175,55,0.4))"><span class="gold-gradient-text">EVIDENCIA FOTOGRAFICA</span></div><div class="report-subtitle">Fotos del vehiculo — ' + esc(v.marca) + ' ' + esc(v.modelo) + '</div></div>' +
     '<div class="qr-verification" style="padding:5px 15px"><span style="font-family:var(--font-cyber);font-size:13px;color:var(--brand-gold-start)">REF: ' + esc(v.folio) + '</span></div></header>' +
     '<main class="photo-grid">' + photosHtml + '</main>' +
     '<div style="padding:8px 0;font-size:8px;color:rgba(168,197,184,0.4);line-height:1.5">Las fotografias son evidencia del estado del vehiculo al momento de la verificacion. Alabol Car Broker no garantiza la autenticidad de las imagenes proporcionadas por el solicitante.</div>' +
@@ -359,8 +359,8 @@ var BUCKET = 'verificaciones';
       '<div class="disclaimer-block">' +
       '<h4>AVISO LEGAL IMPORTANTE</h4>' +
       '<p>Este reporte es un <strong>servicio informativo de revision vehicular</strong> proporcionado por Alabol Car Broker y <strong>NO constituye un dictamen legal, pericial ni oficial</strong>. Alabol Car Broker no es una autoridad gubernamental, perito certificado ni institucion regulatoria.</p>' +
-      '<p>La informacion presentada se obtiene mediante consultas a bases de datos publicas (NHTSA, REPUVE), analisis de inteligencia artificial y revision visual de documentos fotograficos. Estos metodos tienen un <strong>margen de error inherente</strong> y no garantizan la deteccion del 100% de irregularidades.</p>' +
-      '<p><strong>Alabol Car Broker no se hace responsable</strong> por decisiones de compra, venta o cualquier transaccion realizada con base en este reporte. Recomendamos complementar esta revision con una verificacion fisica presencial y consulta directa en las dependencias oficiales correspondientes (REPUVE, Fiscalia, Registro Publico).</p>' +
+      '<p>La informacion presentada se obtiene mediante consultas a registros oficiales, revision por peritos especializados y analisis de documentacion fotografica. Estos metodos tienen un <strong>margen de error inherente</strong> y no garantizan la deteccion del 100% de irregularidades.</p>' +
+      '<p><strong>Alabol Car Broker no se hace responsable</strong> por decisiones de compra, venta o cualquier transaccion realizada con base en este reporte. Recomendamos complementar esta revision con una verificacion fisica presencial y consulta directa en las dependencias oficiales correspondientes.</p>' +
       '</div>' +
       '<div class="disclaimer-block">' +
       '<h4>PROTECCION DE DATOS PERSONALES</h4>' +

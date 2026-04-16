@@ -71,9 +71,9 @@
   ];
 
   var TIERS = {
-    basico: { nombre: 'Escudo', precio: 299, features: ['Validacion NIV (checksum + NHTSA)', 'Consulta REPUVE — reporte de robo', 'Sesion de fotos verificada (6 puntos)', 'Dictamen de verificador Alabol'] },
-    verificado: { nombre: 'Escudo Pro', precio: 499, features: ['Todo lo del Escudo', 'Consulta AMIS (historial de seguros)', 'Historial de siniestros', 'Reporte de gravamenes y adeudos'] },
-    plus: { nombre: 'Escudo Total', precio: 799, features: ['Todo lo del Escudo Pro', 'Consulta CARFAX (autos importados)', 'Revision documental profunda', 'Vigencia extendida (60 dias)', 'Prioridad en verificacion (12 hrs)'] }
+    basico: { nombre: 'Escudo', precio: 299, features: ['Verificacion del numero de serie (NIV)', 'Consulta en registros oficiales de robo', 'Revision fotografica por perito especializado', 'Dictamen con resultado y certificado'] },
+    verificado: { nombre: 'Escudo Pro', precio: 499, features: ['Todo lo del Escudo', 'Consulta de historial con aseguradoras', 'Revision de siniestros previos', 'Reporte de gravamenes y adeudos'] },
+    plus: { nombre: 'Escudo Total', precio: 799, features: ['Todo lo del Escudo Pro', 'Historial completo del vehiculo (incluye importados)', 'Revision documental profunda por perito', 'Vigencia extendida (60 dias)', 'Prioridad en verificacion (12 hrs)'] }
   };
 
   // State

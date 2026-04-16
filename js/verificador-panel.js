@@ -392,7 +392,9 @@
           alert('Error: ' + res.error.message);
           return;
         }
-        alert('Verificacion ' + resultado.replace(/_/g, ' ') + ' — Folio: ' + currentFolio);
+        // Notificar al cliente por email
+        sendNotification(currentFolio, 'dictamen');
+        alert('Verificacion ' + resultado.replace(/_/g, ' ') + ' — Folio: ' + currentFolio + '. Se notifico al cliente por correo.');
         backToList();
       });
   }
@@ -415,9 +417,18 @@
           alert('Error: ' + res.error.message);
           return;
         }
-        alert('Verificacion rechazada — Folio: ' + currentFolio);
+        sendNotification(currentFolio, 'dictamen');
+        alert('Verificacion rechazada — Folio: ' + currentFolio + '. Se notifico al cliente por correo.');
         backToList();
       });
+  }
+
+  function sendNotification(folio, tipo) {
+    fetch('/.netlify/functions/send-notification', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ folio: folio, tipo: tipo })
+    }).catch(function () { /* silent — notification is best effort */ });
   }
 
   function runAutoVerify(folio) {

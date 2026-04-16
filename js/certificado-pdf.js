@@ -442,39 +442,49 @@
     var btn = btnEl || null;
     if (btn) { btn.disabled = true; btn.textContent = 'Generando PDF...'; }
 
-    return getSb()
-      .from('verificaciones')
-      .select('*')
-      .eq('folio', folio)
-      .limit(1)
-      .then(function (res) {
-        if (res.error || !res.data || !res.data.length) throw new Error('No encontrado');
-        var v = res.data[0];
+    try {
+      var client = getSb();
+      if (!client) throw new Error('No hay conexion con el servidor. Recarga la pagina.');
+      if (typeof jspdf === 'undefined') throw new Error('El generador de PDF no cargo. Recarga la pagina.');
 
-        // Load photos
-        var fotos = v.fotos || {};
-        var photoKeys = ['niv_tablero', 'niv_chasis', 'numero_motor', 'chip_repuve', 'tarjeta_circulacion', 'factura'];
-        var photoPromises = photoKeys.map(function (key) {
-          if (!fotos[key]) return Promise.resolve({ key: key, data: null });
-          var urlRes = getSb().storage.from(BUCKET).getPublicUrl(fotos[key]);
-          var url = urlRes.data ? urlRes.data.publicUrl : '';
-          if (!url) return Promise.resolve({ key: key, data: null });
-          return loadImageBase64(url).then(function (data) { return { key: key, data: data }; });
-        });
+      client
+        .from('verificaciones')
+        .select('*')
+        .eq('folio', folio)
+        .limit(1)
+        .then(function (res) {
+          if (res.error) throw res.error;
+          if (!res.data || !res.data.length) throw new Error('Reporte no encontrado');
+          var v = res.data[0];
 
-        return Promise.all([generateQR(SITE_URL + '/certificado/' + folio), Promise.all(photoPromises)])
-          .then(function (results) {
-            var qr = results[0];
-            var photos = results[1].filter(function (p) { return p.data; });
-            var doc = generateCertificado(v, qr, photos);
-            doc.save('Alabol-Verificacion-' + folio + '.pdf');
-            if (btn) { btn.disabled = false; btn.textContent = 'Descargar PDF'; }
+          // Load photos
+          var fotos = v.fotos || {};
+          var photoKeys = ['niv_tablero', 'niv_chasis', 'numero_motor', 'chip_repuve', 'tarjeta_circulacion', 'factura'];
+          var photoPromises = photoKeys.map(function (key) {
+            if (!fotos[key]) return Promise.resolve({ key: key, data: null });
+            var urlRes = client.storage.from(BUCKET).getPublicUrl(fotos[key]);
+            var url = urlRes.data ? urlRes.data.publicUrl : '';
+            if (!url) return Promise.resolve({ key: key, data: null });
+            return loadImageBase64(url).then(function (data) { return { key: key, data: data }; });
           });
-      })
-      .catch(function (err) {
-        alert('Error generando PDF: ' + err.message);
-        if (btn) { btn.disabled = false; btn.textContent = 'Descargar PDF'; }
-      });
+
+          return Promise.all([generateQR(SITE_URL + '/certificado/' + folio), Promise.all(photoPromises)])
+            .then(function (results) {
+              var qr = results[0];
+              var photos = results[1].filter(function (p) { return p.data; });
+              var doc = generateCertificado(v, qr, photos);
+              doc.save('Alabol-Verificacion-' + folio + '.pdf');
+              if (btn) { btn.disabled = false; btn.textContent = 'DESCARGAR REPORTE PDF'; }
+            });
+        })
+        .catch(function (err) {
+          alert('Error: ' + (err.message || 'No se pudo generar el PDF'));
+          if (btn) { btn.disabled = false; btn.textContent = 'DESCARGAR REPORTE PDF'; }
+        });
+    } catch (e) {
+      alert('Error: ' + e.message);
+      if (btn) { btn.disabled = false; btn.textContent = 'DESCARGAR REPORTE PDF'; }
+    }
   }
 
   function detectCountry(vin) {

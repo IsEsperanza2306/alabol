@@ -1,7 +1,3 @@
-# Functions
-[functions]
-  directory = "netlify/functions"
-
 # Security headers - anti-scraping + protection
 [[headers]]
   for = "/*"

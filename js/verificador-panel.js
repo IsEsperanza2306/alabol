@@ -70,7 +70,7 @@
       .order('created_at', { ascending: false });
 
     if (filter === 'pendientes') {
-      query = query.in('estatus', ['pagado', 'en_revision']);
+      query = query.in('estatus', ['pendiente_pago', 'pagado', 'en_revision']);
     } else if (filter === 'completados') {
       query = query.in('estatus', ['aprobado', 'aprobado_con_observaciones', 'rechazado']);
     }
@@ -169,6 +169,7 @@
       '<div><strong>Solicitante:</strong> ' + (exp.nombre_solicitante || 'N/A') + '</div>' +
       '<div><strong>Email:</strong> ' + (exp.email_solicitante || 'N/A') + '</div>' +
       '<div><strong>WhatsApp:</strong> ' + (exp.telefono_solicitante || 'N/A') + '</div>' +
+      '<div><strong>Titular tarjeta:</strong> ' + esc(exp.nombre_titular || 'No especificado') + '</div>' +
       '<div><strong>Tier:</strong> ' + (exp.tier || '').toUpperCase() + '</div>' +
       '<div><strong>Checksum NIV:</strong> ' + (exp.vin_checksum_valido ? '<span class="txt-ok">Valido</span>' : '<span class="txt-warn">Fallido</span>') + '</div>' +
       '</div>';
@@ -424,16 +425,20 @@
       });
   }
 
+  var _cachedToken = null;
+
+  function cacheAuthToken() {
+    var sb = getSb();
+    if (sb && sb.auth && sb.auth.getSession) {
+      sb.auth.getSession().then(function (res) {
+        if (res.data && res.data.session) _cachedToken = res.data.session.access_token;
+      });
+    }
+  }
+
   function getAuthHeaders() {
     var h = { 'Content-Type': 'application/json' };
-    // Send session token for function auth
-    var sb = getSb();
-    if (sb && sb.auth) {
-      try {
-        var session = sb.auth.session && sb.auth.session();
-        if (session && session.access_token) h['Authorization'] = 'Bearer ' + session.access_token;
-      } catch (e) { /* no session */ }
-    }
+    if (_cachedToken) h['Authorization'] = 'Bearer ' + _cachedToken;
     return h;
   }
 
@@ -455,7 +460,7 @@
     fetch('/.netlify/functions/send-notification', {
       method: 'POST',
       headers: getAuthHeaders(),
-      body: JSON.stringify({ folio: folio, tipo: 'dictamen' })
+      body: JSON.stringify({ folio: folio, tipo: 'dictamen', preview: true })
     })
     .then(function (res) { return res.json(); })
     .then(function (data) {
@@ -512,7 +517,7 @@
     var activeFilter = document.querySelector('.filter-btn.active');
     var filter = activeFilter ? activeFilter.dataset.filter : 'pendientes';
     loadExpedientes(filter).then(renderList).catch(function (err) {
-      console.error('Error loading expedientes:', err);
+      /* error loading expedientes */
     });
   }
 
@@ -607,6 +612,7 @@
       g('panel-loading').style.display = 'none';
       g('panel-content').style.display = 'block';
       g('verificador-nombre').textContent = verificador.nombre;
+      cacheAuthToken();
 
       loadStats();
       refreshList();

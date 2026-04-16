@@ -11,12 +11,6 @@
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script src="/config.js"></script>
-<script>
-// Ensure Supabase is initialized
-if (!window.supabaseClient && typeof window.supabase !== 'undefined' && window.supabase.createClient) {
-  window.supabaseClient = window.supabase.createClient('https://rgnunjngtsgqgvplawfr.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8');
-}
-</script>
 <script src="/js/certificado-pdf.js"></script>
 <style>
 :root {

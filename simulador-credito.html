@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="logo-circular.png" type="image/png">
-    <title>Simulador de Credito Automotriz | Alabol Car Broker</title>
+    <title>Simulador de Crédito Automotriz | Alabol Car Broker</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -37,6 +37,18 @@
             border: 1px solid var(--glass-border);
             box-shadow: 0 20px 60px rgba(0,0,0,0.4);
         }
+        .sim-banner {
+            display: flex; align-items: flex-start; gap: 10px;
+            padding: 12px 14px; margin-bottom: 18px;
+            background: rgba(212,175,55,0.08);
+            border: 1px solid rgba(212,175,55,0.25);
+            border-left: 3px solid var(--gold);
+            border-radius: 10px;
+            font-size: 11px; line-height: 1.5; color: var(--green-text);
+        }
+        .sim-banner i { color: var(--gold); font-size: 14px; margin-top: 1px; flex-shrink: 0; }
+        .sim-banner strong { color: var(--gold-light); display: block; margin-bottom: 2px; font-size: 12px; }
+
         .form-group { margin-bottom: 16px; }
         .form-group label {
             display: block; margin-bottom: 5px;
@@ -75,6 +87,22 @@
         .slider-labels { display: flex; justify-content: space-between; font-size: 10px; color: rgba(168,197,184,0.4); margin-top: 4px; }
         .enganche-monto { text-align: center; margin-top: 8px; font-size: 13px; color: var(--green-text); opacity: 0.7; }
         .enganche-monto strong { color: var(--gold); }
+        .descuento-badge {
+            display: none; margin-top: 6px; text-align: center;
+            font-size: 10px; font-weight: 700; color: #3ed598; letter-spacing: 0.5px;
+        }
+        .descuento-badge.active { display: block; }
+        .descuento-badge i { margin-right: 4px; }
+
+        .plazo-hint {
+            font-size: 10px; color: rgba(168,197,184,0.5); margin-top: 8px; text-align: center;
+        }
+        .plazo-empty {
+            padding: 16px; text-align: center;
+            font-size: 11px; color: rgba(168,197,184,0.5);
+            background: rgba(255,255,255,0.02); border-radius: 12px;
+            border: 1px dashed rgba(255,255,255,0.08);
+        }
 
         .plazo-grid { display: flex; gap: 6px; flex-wrap: wrap; }
         .plazo-pill {
@@ -204,14 +232,36 @@
 <div class="container">
     <div class="header">
         <img src="logo-circular.png" alt="Alabol">
-        <h1>Simulador de Credito</h1>
-        <p>Estimacion basada en condiciones Hey Banco / Banregio 2026</p>
+        <h1>Simulador de Crédito</h1>
+        <p>Simulación rápida · Para datos reales solicita cotización formal con Alabol</p>
     </div>
 
     <div class="card" id="formCard">
+        <div class="sim-banner">
+            <i class="fa-solid fa-circle-info"></i>
+            <span><strong>Simulación informativa.</strong> Los valores son estimados. Para tu cotización formal y aprobación real, solicítala aquí mismo al terminar.</span>
+        </div>
+
         <div class="form-group">
-            <label>Precio del vehiculo <span>(MXN)</span></label>
+            <label>Precio del vehículo <span>(MXN)</span></label>
             <input type="text" id="precio" placeholder="Ej: 500,000" oninput="formatPrice(this)">
+        </div>
+
+        <div class="form-group">
+            <label>Año del vehículo <span>(define plazo máximo y tasa)</span></label>
+            <select id="anio" onchange="updateYearOptions()">
+                <option value="">Selecciona año…</option>
+                <option value="2026">2026</option>
+                <option value="2025">2025</option>
+                <option value="2024">2024</option>
+                <option value="2023">2023</option>
+                <option value="2022">2022</option>
+                <option value="2021">2021</option>
+                <option value="2020">2020</option>
+                <option value="2019">2019</option>
+                <option value="2018">2018</option>
+                <option value="2017">2017</option>
+            </select>
         </div>
 
         <div class="form-group">
@@ -222,17 +272,17 @@
                 <div class="slider-labels"><span>10%</span><span>70%</span></div>
             </div>
             <div class="enganche-monto">Enganche: <strong id="engancheMonto">$0</strong></div>
+            <div class="descuento-badge" id="descuentoBadge">
+                <i class="fa-solid fa-circle-check"></i>Enganche ≥ 30% · tasa preferencial (-1 punto)
+            </div>
         </div>
 
         <div class="form-group">
-            <label>Plazo <span>(la tasa se ajusta automaticamente)</span></label>
-            <div class="plazo-grid">
-                <div class="plazo-pill selected" data-meses="48" onclick="selectPlazo(this)">48<small>meses</small><span class="tasa-hint">14.99%</span></div>
-                <div class="plazo-pill" data-meses="60" onclick="selectPlazo(this)">60<small>meses</small><span class="tasa-hint">14.99%</span></div>
-                <div class="plazo-pill" data-meses="72" onclick="selectPlazo(this)">72<small>meses</small><span class="tasa-hint">15.24%</span></div>
-                <div class="plazo-pill" data-meses="84" onclick="selectPlazo(this)">84<small>meses</small><span class="tasa-hint">15.24%</span></div>
-                <div class="plazo-pill" data-meses="96" onclick="selectPlazo(this)">96<small>meses</small><span class="tasa-hint">15.74%</span></div>
+            <label>Plazo <span>(la tasa se ajusta al año del auto)</span></label>
+            <div class="plazo-grid" id="plazoGrid">
+                <div class="plazo-empty">Selecciona el año del vehículo para ver los plazos disponibles</div>
             </div>
+            <div class="plazo-hint" id="plazoHint"></div>
         </div>
 
         <button class="btn-calcular" onclick="calcular()">Calcular mensualidad →</button>
@@ -293,15 +343,12 @@
             </div>
 
             <div class="disclaimer">
-                <strong>Simulacion informativa.</strong> Las tasas, mensualidades y condiciones son estimaciones de referencia basadas en el producto Autoregio de Hey Banco (abril 2026). La tasa, CAT y aprobacion final dependen del analisis crediticio de la institucion financiera. No constituye una oferta de credito. CAT para fines informativos y de comparacion exclusivamente.
+                <strong>Esto es solo una simulación.</strong> Las tasas, mensualidades, CAT y condiciones mostradas son estimaciones de referencia para que te hagas una idea. <strong>No es una oferta de crédito ni garantiza aprobación.</strong> Para recibir cifras reales, tasa definitiva y análisis crediticio, solicita tu <strong>cotización formal con Alabol</strong> desde el botón de abajo. Solo nosotros te entregamos los datos duros.
             </div>
 
-            <a href="https://cotizadorhey.azurewebsites.net/Busqueda/Seminuevos?cid=552OH2" target="_blank" class="cta-formal">
-                Cotizar formalmente con Hey Banco →
-            </a>
             <a href="#" id="ctaWhatsApp" target="_blank" class="cta-wa">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
-                Quiero financiar con Alabol
+                Solicitar cotización formal con Alabol
             </a>
             <button class="btn-recalc" onclick="document.getElementById('results').classList.remove('active');window.scrollTo(0,0);">← Recalcular</button>
         </div>
@@ -309,18 +356,44 @@
 </div>
 
 <script>
-    // ── TASAS REALES HEY BANCO 2026 ──
-    const TASAS = {
-        48: 14.99,
-        60: 14.99,
+    // ── TABLA SEMINUEVOS 2026 (referencia Banregio) ──
+    // Tasa por plazo (IVA incluido). Descuento -1 punto si enganche ≥ 30%.
+    const TASA_POR_PLAZO = {
+        12: 14.99, 24: 14.99, 36: 14.99, 48: 14.99, 60: 14.99,
         72: 15.24,
-        84: 15.24,
-        96: 15.74
+        84: 15.49,
+        96: 15.74,
+        108: 15.99
     };
-    const COMISION_APERTURA = 0.0232; // 2.32% del monto a financiar
+    // Plazo máximo permitido según año del vehículo
+    const PLAZO_MAX_POR_ANIO = {
+        2026: 108, 2025: 108,
+        2024: 96,
+        2023: 84,
+        2022: 72,
+        2021: 60, 2020: 60,
+        2019: 48,
+        2018: 36,
+        2017: 24
+    };
+    const COMISION_APERTURA = 0.02;  // 2% CxA seminuevos
     const IVA = 0.16;
+    const DESC_ENGANCHE_ALTO = 1.00; // -1 punto si enganche ≥ 30%
+    const UMBRAL_ENGANCHE_DESC = 30;
 
-    let selectedPlazo = 48;
+    let selectedPlazo = null;
+    let selectedAnio = null;
+
+    function getTasa(meses, enganchePct) {
+        const base = TASA_POR_PLAZO[meses] ?? 14.99;
+        const desc = enganchePct >= UMBRAL_ENGANCHE_DESC ? DESC_ENGANCHE_ALTO : 0;
+        return +(base - desc).toFixed(2);
+    }
+
+    function getPlazosPermitidos(anio) {
+        const max = PLAZO_MAX_POR_ANIO[anio] || 0;
+        return [12, 24, 36, 48, 60, 72, 84, 96, 108].filter(p => p <= max);
+    }
 
     function fmt(n) {
         return new Intl.NumberFormat('es-MX', { style:'currency', currency:'MXN', minimumFractionDigits:2, maximumFractionDigits:2 }).format(n);
@@ -340,9 +413,45 @@
     }
 
     function updateEnganche() {
-        const pct = document.getElementById('enganche').value;
+        const pct = parseInt(document.getElementById('enganche').value);
         document.getElementById('engancheDisplay').textContent = pct + '%';
         document.getElementById('engancheMonto').textContent = fmt0(getPrice() * pct / 100);
+        document.getElementById('descuentoBadge').classList.toggle('active', pct >= UMBRAL_ENGANCHE_DESC);
+        if (selectedAnio) renderPlazos();
+    }
+
+    function updateYearOptions() {
+        const val = document.getElementById('anio').value;
+        selectedAnio = val ? parseInt(val) : null;
+        selectedPlazo = null;
+        renderPlazos();
+    }
+
+    function renderPlazos() {
+        const grid = document.getElementById('plazoGrid');
+        const hint = document.getElementById('plazoHint');
+        if (!selectedAnio) {
+            grid.innerHTML = '<div class="plazo-empty">Selecciona el año del vehículo para ver los plazos disponibles</div>';
+            hint.textContent = '';
+            return;
+        }
+        const pct = parseInt(document.getElementById('enganche').value) || 20;
+        const plazos = getPlazosPermitidos(selectedAnio);
+        if (!plazos.length) {
+            grid.innerHTML = '<div class="plazo-empty">Año no elegible. Contáctanos para opciones especiales.</div>';
+            hint.textContent = '';
+            return;
+        }
+        if (!selectedPlazo || !plazos.includes(selectedPlazo)) {
+            selectedPlazo = plazos[plazos.length - 1];
+        }
+        grid.innerHTML = plazos.map(p => {
+            const tasa = getTasa(p, pct);
+            const sel = p === selectedPlazo ? ' selected' : '';
+            return `<div class="plazo-pill${sel}" data-meses="${p}" onclick="selectPlazo(this)">${p}<small>meses</small><span class="tasa-hint">${tasa.toFixed(2)}%</span></div>`;
+        }).join('');
+        const maxP = PLAZO_MAX_POR_ANIO[selectedAnio];
+        hint.textContent = `Auto ${selectedAnio}: plazo máximo ${maxP} meses`;
     }
 
     function selectPlazo(el) {
@@ -354,13 +463,22 @@
     function calcular() {
         const precio = getPrice();
         if (!precio || precio < 100000) {
-            alert('Ingresa un precio valido (minimo $100,000)');
+            alert('Ingresa un precio válido (mínimo $100,000)');
+            return;
+        }
+        if (!selectedAnio) {
+            alert('Selecciona el año del vehículo');
+            document.getElementById('anio').focus();
+            return;
+        }
+        if (!selectedPlazo) {
+            alert('Selecciona un plazo');
             return;
         }
 
         const enganchePct = parseInt(document.getElementById('enganche').value);
         const meses = selectedPlazo;
-        const tasaAnual = TASAS[meses];
+        const tasaAnual = getTasa(meses, enganchePct);
         const tasaMensual = tasaAnual / 100 / 12;
 
         const enganche = precio * enganchePct / 100;
@@ -433,7 +551,7 @@
 
         // ── Llenar resultados ──
         document.getElementById('resMensualidad').innerHTML = `${fmt(mensualidad)} <small>MXN/mes</small>`;
-        document.getElementById('resCat').textContent = `CAT estimado: ${catEstimado}% sin IVA | Tasa fija: ${tasaAnual}% | ${meses} meses`;
+        document.getElementById('resCat').textContent = `Auto ${selectedAnio} · Tasa ${tasaAnual}% · ${meses} meses · CAT estimado ${catEstimado}% (referencia)`;
         document.getElementById('resPrecio').textContent = fmt0(precio);
         document.getElementById('resEnganche').textContent = `${fmt0(enganche)} (${enganchePct}%)`;
         document.getElementById('resFinanciar').textContent = fmt0(montoFinanciar);

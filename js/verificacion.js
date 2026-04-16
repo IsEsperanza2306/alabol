@@ -96,6 +96,7 @@
     vinValidation: null,
     nhtsaData: null,
     repuveData: null,
+    ocrData: null,
     photos: {}, // { key: { blob: null, preview: '', uploaded: false, storagePath: '' } }
     supabaseId: null
   };
@@ -267,6 +268,7 @@
           if (d.color) g('inp-color').value = d.color;
           if (d.placas) g('inp-placas').value = d.placas;
           if (d.nombre_titular) g('inp-titular').value = d.nombre_titular;
+          state.ocrData = d; // Store raw OCR result
           if (d.estado) {
             // Try to match estado in dropdown
             var sel = g('inp-estado');
@@ -659,6 +661,7 @@
       vin_checksum_valido: state.vinValidation ? state.vinValidation.valid : null,
       nhtsa_data: state.nhtsaData && state.nhtsaData.data ? state.nhtsaData.data : {},
       repuve_status: state.repuveData ? state.repuveData.status : 'pendiente',
+      datos_ocr: state.ocrData || {},
       estatus: 'pendiente_pago',
       paso_actual: 3
     };
@@ -694,6 +697,14 @@
         if (res && res.error) throw res.error;
         clearDraft();
         showConfirmation();
+        // Send confirmation email (fire and forget)
+        try {
+          fetch('/.netlify/functions/send-notification', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer client' },
+            body: JSON.stringify({ folio: state.folio, tipo: 'confirmacion' })
+          });
+        } catch (e) { /* best effort */ }
       })
       .catch(function (err) {
         _submitting = false;

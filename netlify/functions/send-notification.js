@@ -56,8 +56,13 @@ exports.handler = async function (event) {
       htmlBody = buildConfirmacionEmail(exp);
     }
 
+    var isPreview = body.preview === true;
     var RESEND_KEY = process.env.RESEND_API_KEY;
     var RESEND_FROM = process.env.RESEND_FROM || 'Alabol Car Broker <onboarding@resend.dev>';
+
+    if (isPreview) {
+      return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ success: true, preview: true, to: email, subject: subject, html: htmlBody }) };
+    }
 
     if (RESEND_KEY) {
       var emailRes = await fetch('https://api.resend.com/emails', {

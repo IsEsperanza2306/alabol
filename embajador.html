@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="logo-circular.png" type="image/png">
+    <title>Portal Embajador | Alabol Matchmaker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --emerald-deep: #0a1f1a;
+            --emerald-mid: #0f3329;
+            --emerald-light: #143d33;
+            --gold: #d4af37;
+            --gold-glow: rgba(212,175,55,0.3);
+            --glass: rgba(255,255,255,0.04);
+            --glass-border: rgba(255,255,255,0.08);
+            --text-muted: #a8c5b8;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+
+        body {
+            background: var(--emerald-deep);
+            color: white;
+            min-height: 100vh;
+        }
+
+        /* ── LOADING SCREEN ── */
+        #loadingScreen {
+            position: fixed; inset: 0;
+            background: var(--emerald-deep);
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column; gap: 16px; z-index: 9999;
+        }
+        #loadingScreen img { width: 72px; animation: pulse 1.5s ease-in-out infinite; }
+        @keyframes pulse { 0%,100%{opacity:0.6;transform:scale(1)} 50%{opacity:1;transform:scale(1.08)} }
+        #loadingScreen p { color: var(--gold); font-size:14px; font-weight:500; letter-spacing:1px; }
+
+        /* ── NAVBAR ── */
+        nav {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px 24px;
+            background: rgba(10,31,26,0.95);
+            border-bottom: 1px solid rgba(212,175,55,0.15);
+            backdrop-filter: blur(10px);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+        .nav-logo img { width:36px; height:36px; object-fit:contain; }
+        .nav-logo span { font-weight:700; font-size:1rem; color:var(--gold); }
+        .nav-badge {
+            background: linear-gradient(135deg, var(--gold), #b8962e);
+            color: var(--emerald-deep);
+            font-size: 10px; font-weight:800;
+            padding: 3px 10px; border-radius: 20px;
+            text-transform: uppercase; letter-spacing:1px;
+        }
+        .nav-right { display:flex; align-items:center; gap:12px; }
+        #navUserName { font-size:13px; color:var(--text-muted); }
+        .btn-logout {
+            background: none; border: 1px solid rgba(255,255,255,0.15);
+            color: var(--text-muted); padding: 6px 14px;
+            border-radius: 8px; cursor:pointer; font-size:12px;
+            transition: all 0.2s;
+        }
+        .btn-logout:hover { border-color: var(--gold); color: var(--gold); }
+
+        /* ── MAIN LAYOUT ── */
+        main { max-width: 900px; margin: 0 auto; padding: 32px 20px 60px; }
+
+        /* ── WELCOME HERO ── */
+        .welcome-hero {
+            background: linear-gradient(135deg, var(--emerald-mid), #0a2820);
+            border: 1px solid rgba(212,175,55,0.2);
+            border-radius: 20px; padding: 32px;
+            margin-bottom: 28px;
+            display: flex; align-items: center; gap: 20px;
+            position: relative; overflow: hidden;
+        }
+        .welcome-hero::before {
+            content: '';
+            position: absolute; top: -40px; right: -40px;
+            width: 200px; height: 200px;
+            background: radial-gradient(circle, var(--gold-glow) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .hero-avatar {
+            width: 64px; height: 64px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), #b8962e);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem; color: var(--emerald-deep);
+            font-weight: 800; flex-shrink: 0;
+        }
+        .hero-text h1 { font-size: 1.4rem; font-weight:700; margin-bottom:4px; }
+        .hero-text p { font-size:13px; color:var(--text-muted); }
+        .tier-badge {
+            margin-left: auto; flex-shrink: 0;
+            background: linear-gradient(135deg, var(--gold), #b8962e);
+            color: var(--emerald-deep);
+            padding: 8px 18px; border-radius: 30px;
+            font-weight: 800; font-size: 13px;
+            text-transform: uppercase; letter-spacing: 1px;
+            display: flex; align-items: center; gap: 6px;
+        }
+
+        /* ── STATS GRID ── */
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 16px; margin-bottom: 28px;
+        }
+        @media (max-width: 600px) { .stats-grid { grid-template-columns: 1fr 1fr; } }
+        .stat-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px; padding: 20px;
+            text-align: center;
+        }
+        .stat-card .stat-icon { font-size:1.6rem; margin-bottom:8px; }
+        .stat-card .stat-num { font-size:1.8rem; font-weight:800; color:var(--gold); }
+        .stat-card .stat-label { font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-top:2px; }
+
+        /* ── REFERRAL CARD ── */
+        .referral-card {
+            background: var(--glass);
+            border: 1px solid rgba(212,175,55,0.25);
+            border-radius: 20px; padding: 28px;
+            margin-bottom: 28px;
+        }
+        .referral-card h2 { font-size:1rem; color:var(--gold); margin-bottom:6px; display:flex; align-items:center; gap:8px; }
+        .referral-card p { font-size:13px; color:var(--text-muted); margin-bottom:20px; }
+        .link-display {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 12px; padding: 14px 18px;
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 12px; margin-bottom: 14px;
+        }
+        .link-display span { font-size:13px; color:#e8f5f1; word-break:break-all; flex:1; }
+        .btn-copy {
+            background: var(--gold); color: var(--emerald-deep);
+            border: none; border-radius: 8px;
+            padding: 8px 16px; font-size:12px; font-weight:700;
+            cursor:pointer; transition:all 0.2s; white-space:nowrap;
+            display: flex; align-items:center; gap:6px;
+        }
+        .btn-copy:hover { filter:brightness(1.1); transform:translateY(-1px); }
+        .btn-copy.copied { background:#10b981; color:white; }
+        .share-btns { display:flex; gap:10px; flex-wrap:wrap; }
+        .btn-share {
+            display: flex; align-items:center; gap:8px;
+            padding: 10px 18px; border-radius: 10px;
+            font-size:13px; font-weight:600; cursor:pointer;
+            border: none; transition: all 0.2s;
+        }
+        .btn-share.whatsapp { background:#25d366; color:white; }
+        .btn-share.whatsapp:hover { background:#1ebe5d; }
+        .btn-share.copy-msg { background:var(--glass); border:1px solid var(--glass-border); color:white; }
+        .btn-share.copy-msg:hover { border-color:var(--gold); color:var(--gold); }
+
+        /* ── INSTRUCTIONS CARD ── */
+        .instructions-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px; padding: 28px;
+            margin-bottom: 28px;
+        }
+        .instructions-card h2 { font-size:1rem; color:var(--gold); margin-bottom:18px; display:flex; align-items:center; gap:8px; }
+        .step { display:flex; gap:14px; margin-bottom:16px; }
+        .step-num {
+            width:32px; height:32px; border-radius:50%;
+            background: linear-gradient(135deg, var(--gold), #b8962e);
+            color: var(--emerald-deep); font-weight:800;
+            display:flex; align-items:center; justify-content:center;
+            font-size:14px; flex-shrink:0;
+        }
+        .step-text { padding-top:4px; }
+        .step-text strong { font-size:14px; display:block; margin-bottom:2px; }
+        .step-text span { font-size:12px; color:var(--text-muted); }
+
+        /* ── NO ACCESS SCREEN ── */
+        #noAccessScreen {
+            display: none;
+            min-height: 100vh; align-items:center; justify-content:center;
+            flex-direction:column; gap:16px; text-align:center; padding:40px;
+        }
+        #noAccessScreen i { font-size:4rem; color:#ef4444; }
+        #noAccessScreen h2 { font-size:1.4rem; color:white; }
+        #noAccessScreen p { color:var(--text-muted); font-size:14px; max-width:320px; }
+        #noAccessScreen a {
+            margin-top:8px; background:var(--gold); color:var(--emerald-deep);
+            padding:12px 28px; border-radius:12px; text-decoration:none;
+            font-weight:700; font-size:14px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Loading -->
+<div id="loadingScreen">
+    <img src="logo-circular.png" alt="Alabol">
+    <p>VERIFICANDO ACCESO...</p>
+</div>
+
+<!-- No Access -->
+<div id="noAccessScreen" style="display:none;">
+    <i class="fas fa-lock"></i>
+    <h2>Acceso Restringido</h2>
+    <p>Esta área es exclusiva para embajadores Alabol. Si crees que esto es un error, contáctanos por WhatsApp.</p>
+    <a href="index.html"><i class="fas fa-home"></i> Ir al inicio</a>
+</div>
+
+<!-- App (hidden until auth verified) -->
+<div id="appShell" style="display:none;">
+    <nav>
+        <a href="index.html" class="nav-logo">
+            <img src="logo-circular.png" alt="Alabol">
+            <span>Alabol</span>
+        </a>
+        <span class="nav-badge"><i class="fas fa-star"></i> Embajador</span>
+        <div class="nav-right">
+            <span id="navUserName"></span>
+            <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Salir</button>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Welcome Hero -->
+        <div class="welcome-hero">
+            <div class="hero-avatar" id="heroAvatar">?</div>
+            <div class="hero-text">
+                <h1 id="heroName">Cargando...</h1>
+                <p>Bienvenido a tu Panel de Embajador Alabol — el Cupido automotriz de tu comunidad 🚗💛</p>
+            </div>
+            <div class="tier-badge" id="tierBadge">
+                <i class="fas fa-medal"></i> Bronce
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">🔗</div>
+                <div class="stat-num" id="statClicks">—</div>
+                <div class="stat-label">Clics en tu link</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🤝</div>
+                <div class="stat-num" id="statReferidos">—</div>
+                <div class="stat-label">Referidos generados</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-num" id="statConversiones">—</div>
+                <div class="stat-label">Matches cerrados</div>
+            </div>
+        </div>
+
+        <!-- Referral Link -->
+        <div class="referral-card">
+            <h2><i class="fas fa-link"></i> Tu Link de Embajador</h2>
+            <p>Comparte este link único — cada persona que llegue por aquí te da crédito de referido.</p>
+
+            <div class="link-display">
+                <span id="refLink">https://alabol.netlify.app/?ref=...</span>
+                <button class="btn-copy" id="copyLinkBtn" onclick="copyLink()">
+                    <i class="fas fa-copy"></i> Copiar
+                </button>
+            </div>
+
+            <div class="share-btns">
+                <button class="btn-share whatsapp" onclick="shareWhatsApp()">
+                    <i class="fab fa-whatsapp"></i> Compartir por WhatsApp
+                </button>
+                <button class="btn-share copy-msg" onclick="copyMessage()">
+                    <i class="fas fa-comment"></i> Copiar mensaje listo
+                </button>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions-card">
+            <h2><i class="fas fa-rocket"></i> ¿Cómo funciona?</h2>
+            <div class="step">
+                <div class="step-num">1</div>
+                <div class="step-text">
+                    <strong>Comparte tu link</strong>
+                    <span>Mándalo por WhatsApp, Instagram o donde quieras a quienes quieran vender o comprar su auto.</span>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <div class="step-text">
+                    <strong>Ellos se registran</strong>
+                    <span>Cuando alguien entra por tu link y hace un match o pone su auto en venta, se registra como tu referido.</span>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <div class="step-text">
+                    <strong>Tú ganas comisión</strong>
+                    <span>Cada auto vendido o match cerrado que llegó por tu link te genera una comisión. Alabol te contacta directo.</span>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">4</div>
+                <div class="step-text">
+                    <strong>Sube de tier</strong>
+                    <span>Bronce → Plata (4+ referidos/mes) → Oro (11+/mes). Más tier = más comisión por match.</span>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function () {
+    var SU = 'https://rgnunjngtsgqgvplawfr.supabase.co';
+    var SK = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8';
+    if (window.supabase && !window.supabaseClient) {
+        window.supabaseClient = window.supabase.createClient(SU, SK);
+    }
+})();
+
+var _embajador = null;
+
+(function init() {
+    var sb = window.supabaseClient;
+    if (!sb) { setTimeout(init, 100); return; }
+
+    sb.auth.getSession().then(function (r) {
+        var session = r.data && r.data.session;
+        if (!session) {
+            window.location.href = 'login.html?redirect=embajador.html';
+            return;
+        }
+        checkEmbajador(session.user);
+    });
+})();
+
+function checkEmbajador(user) {
+    var sb = window.supabaseClient;
+    sb.from('embajadores')
+        .select('*')
+        .eq('email', user.email)
+        .eq('activo', true)
+        .limit(1)
+        .then(function (r) {
+            document.getElementById('loadingScreen').style.display = 'none';
+            if (r.error || !r.data || r.data.length === 0) {
+                document.getElementById('noAccessScreen').style.display = 'flex';
+                return;
+            }
+            _embajador = r.data[0];
+            renderDashboard(user, _embajador);
+            document.getElementById('appShell').style.display = 'block';
+            loadStats(_embajador.codigo);
+        });
+}
+
+function renderDashboard(user, emb) {
+    var nombre = emb.nombre || user.user_metadata && user.user_metadata.full_name || user.email.split('@')[0];
+    var inicial = nombre.charAt(0).toUpperCase();
+    var refUrl = 'https://alabol.netlify.app/?ref=' + emb.codigo;
+
+    document.getElementById('navUserName').textContent = nombre;
+    document.getElementById('heroAvatar').textContent = inicial;
+    document.getElementById('heroName').textContent = '¡Hola, ' + nombre + '!';
+    document.getElementById('refLink').textContent = refUrl;
+
+    var tierMap = { bronce: '🥉 Bronce', plata: '🥈 Plata', oro: '🥇 Oro' };
+    document.getElementById('tierBadge').innerHTML = '<i class="fas fa-medal"></i> ' + (tierMap[emb.tier] || 'Bronce');
+}
+
+function loadStats(codigo) {
+    var sb = window.supabaseClient;
+    sb.from('link_clicks')
+        .select('id', { count: 'exact', head: true })
+        .eq('ref', codigo)
+        .then(function (r) {
+            document.getElementById('statClicks').textContent = r.count !== null ? r.count : 0;
+        });
+    // referidos: leads que llegaron con este código
+    sb.from('leads_matchmaker')
+        .select('id', { count: 'exact', head: true })
+        .eq('ref', codigo)
+        .then(function (r) {
+            document.getElementById('statReferidos').textContent = r.count !== null ? r.count : 0;
+        });
+    document.getElementById('statConversiones').textContent = '0';
+}
+
+function getRefUrl() {
+    return _embajador ? 'https://alabol.netlify.app/?ref=' + _embajador.codigo : '';
+}
+
+function copyLink() {
+    var url = getRefUrl();
+    if (!url) return;
+    navigator.clipboard.writeText(url).then(function () {
+        var btn = document.getElementById('copyLinkBtn');
+        btn.innerHTML = '<i class="fas fa-check"></i> ¡Copiado!';
+        btn.classList.add('copied');
+        setTimeout(function () {
+            btn.innerHTML = '<i class="fas fa-copy"></i> Copiar';
+            btn.classList.remove('copied');
+        }, 2500);
+    });
+}
+
+function shareWhatsApp() {
+    var msg = encodeURIComponent(
+        '🚗✨ ¡Checa Alabol! El Tinder de los Autos en CDMX — autos verificados, matches reales.\n\n' +
+        '¿Quieres vender o encontrar tu auto ideal? Entra aquí:\n' +
+        getRefUrl()
+    );
+    window.open('https://wa.me/?text=' + msg, '_blank');
+}
+
+function copyMessage() {
+    var msg = '🚗✨ ¡Checa Alabol! El Tinder de los Autos en CDMX — autos verificados, matches reales.\n\n' +
+        '¿Quieres vender o encontrar tu auto ideal? Entra aquí:\n' +
+        getRefUrl();
+    navigator.clipboard.writeText(msg).then(function () {
+        alert('✅ Mensaje copiado al portapapeles. ¡Ya puedes pegarlo donde quieras!');
+    });
+}
+
+function logout() {
+    window.supabaseClient.auth.signOut().then(function () {
+        window.location.href = 'index.html';
+    });
+}
+</script>
+</body>
+</html>

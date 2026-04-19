@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="logo-circular.png" type="image/png">
+  <meta name="theme-color" content="#0a1f1a">
+  <title>Studio Reels | Alabol</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script>
+  (async function(){
+    var sb=window.supabaseClient;
+    if(!sb){window.location.href='./login.html?redirect=reels.html';return;}
+    var{data:{session}}=await sb.auth.getSession();
+    if(!session){window.location.href='./login.html?redirect=reels.html';return;}
+    var{data:perfil}=await sb.from('perfiles').select('rol').eq('id',session.user.id).eq('activo',true).single();
+    if(!perfil||perfil.rol!=='admin'){
+      document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:Poppins,sans-serif;background:#0a1f1a;color:white;text-align:center;padding:40px;"><div><div style="font-size:64px;margin-bottom:20px;">🔒</div><h1 style="color:#d4af37;">Acceso Restringido</h1><p style="color:#a8c5b8;margin-top:10px;">Solo administradores.</p><a href="./index.html" style="color:#d4af37;">Volver</a></div></div>';
+      return;
+    }
+  })();
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a1f1a; --bg2: #0d2921; --bg3: #0f3329;
+      --gold: #d4af37; --gold-light: #f4e5b0; --gold-dim: rgba(212,175,55,0.12);
+      --green: #a8c5b8; --glass: rgba(13,41,33,0.75); --border: rgba(212,175,55,0.15);
+      --emerald: #34d399; --danger: #ef4444; --wa: #25D366;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Poppins',sans-serif; background:var(--bg); min-height:100vh; color:white; }
+
+    body::before {
+      content:''; position:fixed; inset:0; z-index:-1;
+      background: radial-gradient(ellipse 80% 50% at 20% 20%, rgba(212,175,55,0.04) 0%, transparent 60%),
+                  radial-gradient(ellipse 60% 40% at 80% 80%, rgba(52,211,153,0.03) 0%, transparent 60%);
+    }
+
+    .header {
+      padding: 20px 24px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10,31,26,0.9); backdrop-filter: blur(20px);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .header-left { display:flex; align-items:center; gap:14px; }
+    .header-logo { width:42px; height:42px; border-radius:50%; border:1.5px solid var(--gold); }
+    .header-title { font-size:20px; font-weight:800; color:white; letter-spacing:1px; }
+    .header-title span { color:var(--gold); }
+    .back-btn {
+      padding:8px 18px; background:var(--glass); border:1px solid var(--border);
+      border-radius:20px; color:var(--green); font-size:13px; font-family:'Poppins',sans-serif;
+      cursor:pointer; text-decoration:none; transition:all .2s;
+    }
+    .back-btn:hover { border-color:var(--gold); color:var(--gold); }
+
+    .stats-row {
+      display:flex; gap:12px; padding:20px 24px;
+      overflow-x:auto; -webkit-overflow-scrolling:touch;
+    }
+    .stat-card {
+      flex-shrink:0; background:var(--glass); border:1px solid var(--border);
+      border-radius:16px; padding:16px 24px; min-width:130px; text-align:center;
+      backdrop-filter:blur(10px);
+    }
+    .stat-num { font-size:32px; font-weight:800; color:var(--gold); }
+    .stat-label { font-size:12px; color:var(--green); margin-top:2px; font-weight:500; }
+
+    .filters {
+      padding:0 24px 20px;
+      display:flex; gap:8px; flex-wrap:wrap;
+    }
+    .filter-btn {
+      padding:8px 20px; border-radius:20px; border:1px solid var(--border);
+      background:transparent; color:var(--green); font-size:13px; font-family:'Poppins',sans-serif;
+      cursor:pointer; transition:all .2s; font-weight:500;
+    }
+    .filter-btn.active { background:var(--gold); border-color:var(--gold); color:#0a1f1a; font-weight:700; }
+    .filter-btn:hover:not(.active) { border-color:var(--gold); color:var(--gold); }
+
+    .grid {
+      display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));
+      gap:16px; padding:0 24px 40px;
+    }
+
+    .vehicle-card {
+      background:var(--glass); border:1px solid var(--border); border-radius:20px;
+      overflow:hidden; backdrop-filter:blur(10px); transition:border-color .2s, transform .2s;
+    }
+    .vehicle-card:hover { border-color:rgba(212,175,55,0.35); transform:translateY(-2px); }
+
+    .card-photo {
+      width:100%; height:200px; object-fit:cover; display:block;
+      background:#0d2921;
+    }
+    .card-photo-placeholder {
+      width:100%; height:200px; background:var(--bg3);
+      display:flex; align-items:center; justify-content:center;
+      font-size:48px; color:rgba(255,255,255,0.1);
+    }
+
+    .card-body { padding:16px; }
+    .card-brand { font-size:13px; color:var(--green); font-weight:500; text-transform:uppercase; letter-spacing:1px; }
+    .card-model { font-size:18px; font-weight:700; color:white; margin-top:2px; }
+    .card-year { font-size:13px; color:var(--green); }
+    .card-price { font-size:22px; font-weight:800; color:var(--gold); margin-top:8px; }
+
+    .card-status { margin-top:12px; }
+    .status-badge {
+      display:inline-flex; align-items:center; gap:6px;
+      padding:5px 14px; border-radius:20px; font-size:12px; font-weight:600;
+    }
+    .status-badge.no-video { background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#f87171; }
+    .status-badge.pending { background:rgba(251,191,36,0.15); border:1px solid rgba(251,191,36,0.3); color:#fbbf24; }
+    .status-badge.rendering { background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.3); color:#60a5fa; }
+    .status-badge.ready { background:rgba(52,211,153,0.15); border:1px solid rgba(52,211,153,0.3); color:#34d399; }
+    .status-badge.approved { background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.3); color:var(--gold); }
+    .status-badge.published { background:rgba(37,211,102,0.15); border:1px solid rgba(37,211,102,0.3); color:#25D366; }
+
+    .status-date { font-size:11px; color:var(--green); margin-top:4px; opacity:.7; }
+
+    .card-actions { margin-top:14px; display:flex; gap:8px; flex-wrap:wrap; }
+    .btn {
+      flex:1; padding:10px 16px; border-radius:12px; border:none;
+      font-size:13px; font-weight:600; font-family:'Poppins',sans-serif;
+      cursor:pointer; transition:all .2s; text-align:center;
+    }
+    .btn-generate { background:var(--gold-dim); border:1px solid var(--gold); color:var(--gold); }
+    .btn-generate:hover { background:var(--gold); color:#0a1f1a; }
+    .btn-preview { background:rgba(52,211,153,0.12); border:1px solid rgba(52,211,153,0.3); color:#34d399; }
+    .btn-preview:hover { background:rgba(52,211,153,0.25); }
+    .btn-publish { background:var(--wa); color:white; border:none; }
+    .btn-publish:hover { background:#1ea952; }
+    .btn-disabled { opacity:.4; cursor:not-allowed; }
+    .btn-spin { animation:spin .8s linear infinite; }
+
+    .price-warn {
+      font-size:11px; color:#f87171; margin-top:6px;
+      display:flex; align-items:center; gap:4px;
+    }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display:none; position:fixed; inset:0; z-index:200;
+      background:rgba(0,0,0,0.85); backdrop-filter:blur(8px);
+      align-items:center; justify-content:center; padding:20px;
+    }
+    .modal-overlay.open { display:flex; }
+    .modal {
+      background:var(--bg2); border:1px solid var(--border); border-radius:24px;
+      width:100%; max-width:480px; max-height:90vh; overflow-y:auto;
+    }
+    .modal-header {
+      padding:20px 24px 16px;
+      border-bottom:1px solid var(--border);
+      display:flex; justify-content:space-between; align-items:center;
+    }
+    .modal-title { font-size:18px; font-weight:700; color:white; }
+    .modal-close {
+      width:32px; height:32px; border-radius:50%; background:var(--glass);
+      border:1px solid var(--border); color:var(--green); cursor:pointer;
+      display:flex; align-items:center; justify-content:center; font-size:18px;
+    }
+    .modal-body { padding:24px; }
+    .video-preview {
+      width:100%; border-radius:16px; aspect-ratio:9/16;
+      background:#000; display:block; max-height:60vh; object-fit:contain;
+    }
+    .modal-info { margin-top:16px; }
+    .modal-car-name { font-size:20px; font-weight:700; color:white; }
+    .modal-price { font-size:24px; font-weight:800; color:var(--gold); margin-top:4px; }
+    .modal-copy {
+      margin-top:16px; background:var(--bg3); border-radius:12px; padding:14px;
+      font-size:12px; color:var(--green); line-height:1.7; white-space:pre-wrap;
+      max-height:160px; overflow-y:auto; border:1px solid var(--border);
+    }
+    .copy-label { font-size:11px; color:var(--gold); font-weight:600; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px; }
+    .modal-actions { margin-top:20px; display:flex; gap:10px; }
+    .modal-actions .btn { font-size:14px; padding:12px 20px; }
+
+    .toast {
+      position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+      background:#1a3a30; border:1px solid var(--gold); border-radius:12px;
+      padding:12px 24px; color:white; font-size:14px; font-weight:500;
+      z-index:300; opacity:0; transition:opacity .3s; pointer-events:none;
+      white-space:nowrap;
+    }
+    .toast.show { opacity:1; }
+
+    @keyframes spin { to { transform:rotate(360deg); } }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+    .rendering-pulse { animation:pulse 1.5s ease-in-out infinite; }
+
+    .empty-state {
+      text-align:center; padding:60px 24px; color:var(--green);
+      font-size:15px; opacity:.6;
+    }
+    .empty-state div { font-size:48px; margin-bottom:16px; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <img src="logo-circular.png" class="header-logo" alt="Alabol">
+    <div class="header-title">Studio <span>Reels</span></div>
+  </div>
+  <a href="admin.html" class="back-btn">← HQ</a>
+</div>
+
+<div class="stats-row" id="statsRow">
+  <div class="stat-card"><div class="stat-num" id="statTotal">—</div><div class="stat-label">Total autos</div></div>
+  <div class="stat-card"><div class="stat-num" id="statNoVideo" style="color:#f87171">—</div><div class="stat-label">Sin video</div></div>
+  <div class="stat-card"><div class="stat-num" id="statReady" style="color:#34d399">—</div><div class="stat-label">Listos</div></div>
+  <div class="stat-card"><div class="stat-num" id="statPublished" style="color:#25D366">—</div><div class="stat-label">Publicados</div></div>
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" data-filter="all" onclick="setFilter(this,'all')">Todos</button>
+  <button class="filter-btn" data-filter="none" onclick="setFilter(this,'none')">❌ Sin video</button>
+  <button class="filter-btn" data-filter="pending" onclick="setFilter(this,'pending')">⏳ Pendiente</button>
+  <button class="filter-btn" data-filter="ready" onclick="setFilter(this,'ready')">✅ Listos</button>
+  <button class="filter-btn" data-filter="published" onclick="setFilter(this,'published')">📲 Publicados</button>
+</div>
+
+<div class="grid" id="vehicleGrid">
+  <div class="empty-state"><div>⏳</div>Cargando inventario...</div>
+</div>
+
+<!-- Modal de preview -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalIf(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Vista previa</div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <video id="modalVideo" class="video-preview" controls playsinline></video>
+      <div class="modal-info">
+        <div class="modal-car-name" id="modalCarName"></div>
+        <div class="modal-price" id="modalPrice"></div>
+      </div>
+      <div class="modal-info" id="modalCopyWrap" style="display:none">
+        <div class="copy-label">Copy para redes</div>
+        <div class="modal-copy" id="modalCopy"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-preview" onclick="copyCopy()">📋 Copiar copy</button>
+        <button class="btn btn-publish" id="modalPublishBtn" onclick="publishReel()">📲 Publicar en Instagram</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const sb = window.supabaseClient;
+let vehicles = [];
+let reelsByVehicle = {};
+let currentFilter = 'all';
+let activeReelId = null;
+let activeVehicle = null;
+let pollTimer = null;
+
+const fmt = n => '$' + Number(n).toLocaleString('es-MX') + ' MXN';
+const fmtDate = d => d ? new Date(d).toLocaleDateString('es-MX', {day:'2-digit',month:'short',year:'numeric'}) : '';
+
+function toast(msg, dur=3000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), dur);
+}
+
+async function loadData() {
+  const [{ data: invData }, { data: reelData }] = await Promise.all([
+    sb.from('inventario')
+      .select('id, marca, modelo, anio, precio_venta, kilometraje, transmision, tipo_vehiculo, fotos')
+      .eq('estatus', 'disponible')
+      .order('created_at', { ascending: false }),
+    sb.from('video_reels')
+      .select('*')
+      .order('created_at', { ascending: false })
+  ]);
+
+  vehicles = invData || [];
+
+  // Latest reel per vehicle
+  reelsByVehicle = {};
+  for (const r of (reelData || [])) {
+    if (!reelsByVehicle[r.vehicle_id]) reelsByVehicle[r.vehicle_id] = r;
+  }
+
+  updateStats();
+  renderGrid();
+  startPoll();
+}
+
+function updateStats() {
+  const total = vehicles.length;
+  let noVideo=0, ready=0, published=0;
+  for (const v of vehicles) {
+    const r = reelsByVehicle[v.id];
+    if (!r) { noVideo++; continue; }
+    if (r.status === 'published') published++;
+    else if (r.status === 'ready' || r.status === 'approved') ready++;
+    else if (!r) noVideo++;
+  }
+  noVideo = vehicles.filter(v => !reelsByVehicle[v.id]).length;
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statNoVideo').textContent = noVideo;
+  document.getElementById('statReady').textContent = ready;
+  document.getElementById('statPublished').textContent = published;
+}
+
+function setFilter(el, f) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderGrid();
+}
+
+function filterVehicles() {
+  if (currentFilter === 'all') return vehicles;
+  return vehicles.filter(v => {
+    const r = reelsByVehicle[v.id];
+    if (currentFilter === 'none') return !r;
+    if (currentFilter === 'pending') return r && (r.status === 'pending' || r.status === 'rendering');
+    if (currentFilter === 'ready') return r && (r.status === 'ready' || r.status === 'approved');
+    if (currentFilter === 'published') return r && r.status === 'published';
+    return true;
+  });
+}
+
+function statusBadge(r, v) {
+  if (!r) return `<span class="status-badge no-video">❌ Sin video</span>`;
+  const priceMismatch = r.precio_en_video && Number(r.precio_en_video) !== Number(v.precio_venta);
+  let badge = '';
+  if (r.status === 'pending')   badge = `<span class="status-badge pending">⏳ Pendiente render</span>`;
+  else if (r.status === 'rendering') badge = `<span class="status-badge rendering rendering-pulse">🎬 Renderizando...</span>`;
+  else if (r.status === 'ready')    badge = `<span class="status-badge ready">✅ Listo para revisar</span>`;
+  else if (r.status === 'approved') badge = `<span class="status-badge approved">👍 Aprobado</span>`;
+  else if (r.status === 'published') badge = `<span class="status-badge published">📲 Publicado</span>`;
+  else if (r.status === 'error')    badge = `<span class="status-badge no-video">⚠️ Error</span>`;
+
+  const dateStr = r.published_at ? `Publicado ${fmtDate(r.published_at)}` :
+                  r.ready_at ? `Generado ${fmtDate(r.ready_at)}` :
+                  `Solicitado ${fmtDate(r.created_at)}`;
+
+  const warn = priceMismatch ? `<div class="price-warn">⚠️ Precio cambió (video: ${fmt(r.precio_en_video)})</div>` : '';
+
+  return badge + `<div class="status-date">${dateStr}</div>` + warn;
+}
+
+function actionButtons(r, v) {
+  if (!r) {
+    return `<button class="btn btn-generate" onclick="generateReel('${v.id}')">🎬 Generar Reel</button>`;
+  }
+  if (r.status === 'pending' || r.status === 'rendering') {
+    return `<button class="btn btn-generate btn-disabled" disabled>⏳ Generando...</button>`;
+  }
+  if (r.status === 'ready' || r.status === 'approved') {
+    const priceMismatch = r.precio_en_video && Number(r.precio_en_video) !== Number(v.precio_venta);
+    return `
+      <button class="btn btn-preview" onclick="openModal('${r.id}','${v.id}')">▶ Ver video</button>
+      ${priceMismatch ? `<button class="btn btn-generate" onclick="generateReel('${v.id}')">🔄 Regenerar</button>` : ''}
+    `;
+  }
+  if (r.status === 'published') {
+    return `
+      <button class="btn btn-preview" onclick="openModal('${r.id}','${v.id}')">▶ Ver video</button>
+      <button class="btn btn-generate" onclick="generateReel('${v.id}')">🔄 Nuevo reel</button>
+    `;
+  }
+  return `<button class="btn btn-generate" onclick="generateReel('${v.id}')">🎬 Generar Reel</button>`;
+}
+
+function renderGrid() {
+  const list = filterVehicles();
+  const grid = document.getElementById('vehicleGrid');
+  if (!list.length) {
+    grid.innerHTML = '<div class="empty-state"><div>🚗</div>No hay autos en este filtro</div>';
+    return;
+  }
+  grid.innerHTML = list.map(v => {
+    const r = reelsByVehicle[v.id];
+    const foto = v.fotos && v.fotos[0] ? v.fotos[0] : null;
+    const photoEl = foto
+      ? `<img class="card-photo" src="${foto}" alt="${v.marca} ${v.modelo}" loading="lazy">`
+      : `<div class="card-photo-placeholder">🚗</div>`;
+    return `
+      <div class="vehicle-card" id="card-${v.id}">
+        ${photoEl}
+        <div class="card-body">
+          <div class="card-brand">${v.marca}</div>
+          <div class="card-model">${v.modelo} <span class="card-year">${v.anio}</span></div>
+          <div class="card-price">${fmt(v.precio_venta)}</div>
+          <div class="card-status">${statusBadge(r, v)}</div>
+          <div class="card-actions">${actionButtons(r, v)}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+async function generateReel(vehicleId) {
+  const v = vehicles.find(x=>x.id===vehicleId);
+  if (!v) return;
+
+  // Insert pending job in Supabase — el watcher local lo toma y renderiza
+  const { data, error } = await sb.from('video_reels').insert({
+    vehicle_id: vehicleId,
+    status: 'pending',
+    precio_en_video: v.precio_venta,
+    composition: 'ReelUnidad'
+  }).select().single();
+
+  if (error) { toast('❌ Error al crear trabajo: ' + error.message); return; }
+
+  reelsByVehicle[vehicleId] = data;
+  renderGrid();
+  updateStats();
+  toast('⏳ Reel en cola. Inicia el watcher local para renderizar.');
+}
+
+async function openModal(reelId, vehicleId) {
+  const r = reelId === 'null' ? null : Object.values(reelsByVehicle).find(x=>x.id===reelId);
+  const v = vehicles.find(x=>x.id===vehicleId);
+  if (!r || !v) return;
+
+  activeReelId = reelId;
+  activeVehicle = vehicleId;
+
+  document.getElementById('modalTitle').textContent = `${v.marca} ${v.modelo} ${v.anio}`;
+  document.getElementById('modalCarName').textContent = `${v.marca} ${v.modelo} ${v.anio}`;
+  document.getElementById('modalPrice').textContent = fmt(v.precio_venta);
+
+  const video = document.getElementById('modalVideo');
+  if (r.video_url) {
+    video.src = r.video_url;
+    video.style.display = 'block';
+  } else {
+    video.style.display = 'none';
+  }
+
+  if (r.copy_text) {
+    document.getElementById('modalCopy').textContent = r.copy_text;
+    document.getElementById('modalCopyWrap').style.display = 'block';
+  } else {
+    document.getElementById('modalCopyWrap').style.display = 'none';
+  }
+
+  const pub = document.getElementById('modalPublishBtn');
+  pub.disabled = r.status === 'published';
+  pub.textContent = r.status === 'published' ? '✅ Ya publicado' : '📲 Publicar en Instagram';
+
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.getElementById('modalVideo').pause();
+  document.getElementById('modalVideo').src = '';
+  activeReelId = null; activeVehicle = null;
+}
+
+function closeModalIf(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+async function copyCopy() {
+  const copy = document.getElementById('modalCopy').textContent;
+  if (!copy) { toast('No hay copy generado aún'); return; }
+  await navigator.clipboard.writeText(copy);
+  toast('✅ Copy copiado al portapapeles');
+}
+
+async function publishReel() {
+  if (!activeReelId) return;
+  const r = Object.values(reelsByVehicle).find(x=>x.id===activeReelId);
+  if (!r || !r.video_url) { toast('❌ El video no tiene URL pública aún'); return; }
+
+  const btn = document.getElementById('modalPublishBtn');
+  btn.disabled = true; btn.textContent = '⏳ Publicando...';
+
+  try {
+    const res = await fetch('/.netlify/functions/publish-reel', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ reel_id: activeReelId, video_url: r.video_url, copy_text: r.copy_text })
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || 'Error en servidor');
+
+    await sb.from('video_reels').update({ status:'published', published_at: new Date().toISOString(), instagram_post_id: json.post_id }).eq('id', activeReelId);
+    reelsByVehicle[activeVehicle].status = 'published';
+    renderGrid(); updateStats();
+    btn.textContent = '✅ Publicado';
+    toast('🎉 Reel publicado en Instagram');
+    setTimeout(closeModal, 2000);
+  } catch(err) {
+    btn.disabled = false; btn.textContent = '📲 Publicar en Instagram';
+    toast('❌ ' + err.message);
+  }
+}
+
+// Polling para detectar renders completados (status pending/rendering → ready)
+function startPoll() {
+  clearInterval(pollTimer);
+  const hasPending = Object.values(reelsByVehicle).some(r => r.status === 'pending' || r.status === 'rendering');
+  if (!hasPending) return;
+
+  pollTimer = setInterval(async () => {
+    const { data } = await sb.from('video_reels').select('*').in('status', ['pending','rendering']).order('created_at', { ascending: false });
+    if (!data || !data.length) { clearInterval(pollTimer); return; }
+
+    let changed = false;
+    for (const r of data) {
+      const prev = reelsByVehicle[r.vehicle_id];
+      if (prev && prev.status !== r.status) {
+        reelsByVehicle[r.vehicle_id] = r; changed = true;
+        if (r.status === 'ready') toast(`✅ Reel listo: ${vehicles.find(v=>v.id===r.vehicle_id)?.marca || ''}`);
+      }
+    }
+    if (changed) { renderGrid(); updateStats(); }
+  }, 5000);
+}
+
+loadData();
+</script>
+</body>
+</html>

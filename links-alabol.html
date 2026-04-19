@@ -8,403 +8,425 @@
     <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RMENV8G466');</script>
     <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','1921374571843729');fbq('track','PageView');</script>
     <title>Alabol Car Broker | El Tinder de los Autos</title>
-    <meta name="description" content="El Tinder de los Autos — encuentra tu media naranja con llantas.">
+    <meta name="description" content="El Tinder de los Autos — encuentra tu media naranja con llantas. Autos verificados en CDMX.">
     <meta property="og:title" content="Alabol Car Broker | El Tinder de los Autos">
     <meta property="og:description" content="Encuentra tu media naranja con llantas. Compra y vende autos verificados.">
-    <meta property="og:image" content="https://alabolcar.com.mx/logo-circular.png">
-    <meta property="og:url" content="https://alabolcar.com.mx/links-alabol.html">
+    <meta property="og:image" content="https://alabol.netlify.app/logo-circular.png">
+    <meta property="og:url" content="https://alabol.netlify.app/links-alabol.html">
     <meta property="og:type" content="website">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin:0; padding:0; box-sizing:border-box; }
 
         body {
             font-family: 'Poppins', sans-serif;
             background: #060e0a;
             min-height: 100vh;
-            overflow-x: hidden;
             color: white;
+            overflow-x: hidden;
         }
 
-        /* Fondo tech: grid sutil + gradientes */
+        /* Fondo grid tech */
         body::before {
             content: '';
             position: fixed; inset: 0; z-index: 0;
             background:
-                linear-gradient(rgba(212,175,55,0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(212,175,55,0.03) 1px, transparent 1px);
+                linear-gradient(rgba(212,175,55,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(212,175,55,0.025) 1px, transparent 1px);
             background-size: 32px 32px;
+            pointer-events: none;
         }
 
-        /* Ambient glows */
-        .glow-1 {
-            position: fixed; top: -20%; left: -15%; width: 50vw; height: 50vw;
-            background: radial-gradient(circle, rgba(212,175,55,0.12) 0%, transparent 60%);
-            border-radius: 50%; z-index: 0; filter: blur(60px);
-            animation: drift1 14s ease-in-out infinite alternate;
+        .glow-top {
+            position: fixed; top: -20%; left: 50%; transform: translateX(-50%);
+            width: 70vw; height: 50vh;
+            background: radial-gradient(ellipse, rgba(212,175,55,0.10) 0%, transparent 65%);
+            filter: blur(40px); z-index: 0; pointer-events: none;
         }
-        .glow-2 {
-            position: fixed; bottom: -20%; right: -15%; width: 45vw; height: 45vw;
-            background: radial-gradient(circle, rgba(52,211,153,0.08) 0%, transparent 60%);
-            border-radius: 50%; z-index: 0; filter: blur(60px);
-            animation: drift2 12s ease-in-out infinite alternate;
+        .glow-bot {
+            position: fixed; bottom: -15%; right: -10%;
+            width: 50vw; height: 40vh;
+            background: radial-gradient(ellipse, rgba(52,211,153,0.07) 0%, transparent 65%);
+            filter: blur(40px); z-index: 0; pointer-events: none;
         }
-        @keyframes drift1 { to { transform: translate(30px, 40px) scale(1.1); } }
-        @keyframes drift2 { to { transform: translate(-25px, -30px) scale(1.05); } }
 
         .container {
-            max-width: 440px;
+            max-width: 420px;
             margin: 0 auto;
-            padding: 48px 20px 36px;
-            position: relative;
-            z-index: 1;
+            padding: 44px 18px 48px;
+            position: relative; z-index: 1;
         }
 
         /* ── PROFILE ── */
         .profile {
             text-align: center;
-            margin-bottom: 36px;
+            margin-bottom: 32px;
         }
 
-        .logo-area {
+        .logo-wrap {
             position: relative;
-            width: 110px; height: 110px;
-            margin: 0 auto 20px;
+            width: 100px; height: 100px;
+            margin: 0 auto 18px;
         }
-
-        /* Anillo exterior animado (orbital ring) */
         .logo-ring {
             position: absolute; inset: -8px;
             border: 2px solid transparent;
-            border-top-color: rgba(212,175,55,0.6);
-            border-right-color: rgba(212,175,55,0.2);
+            border-top-color: rgba(212,175,55,0.55);
+            border-right-color: rgba(212,175,55,0.15);
             border-radius: 50%;
-            animation: orbitSpin 4s linear infinite;
+            animation: spin 4s linear infinite;
         }
         .logo-ring-2 {
             position: absolute; inset: -14px;
-            border: 1px solid transparent;
-            border-bottom-color: rgba(52,211,153,0.3);
-            border-left-color: rgba(52,211,153,0.1);
+            border: 1.5px solid transparent;
+            border-bottom-color: rgba(52,211,153,0.25);
+            border-left-color: rgba(52,211,153,0.08);
             border-radius: 50%;
-            animation: orbitSpin 7s linear infinite reverse;
+            animation: spin 7s linear infinite reverse;
         }
-        @keyframes orbitSpin { to { transform: rotate(360deg); } }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Glow detrás del logo — proporcional */
         .logo-glow {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 130px; height: 130px;
-            background: radial-gradient(circle, rgba(212,175,55,0.35) 0%, transparent 65%);
+            position: absolute; top:50%; left:50%;
+            transform: translate(-50%,-50%);
+            width: 120px; height: 120px;
+            background: radial-gradient(circle, rgba(212,175,55,0.32) 0%, transparent 65%);
             border-radius: 50%;
-            animation: glowPulse 3s ease-in-out infinite;
+            animation: pulse 3s ease-in-out infinite;
         }
-        @keyframes glowPulse { 0%,100% { opacity:0.5; transform: translate(-50%,-50%) scale(0.95); } 50% { opacity:1; transform: translate(-50%,-50%) scale(1.05); } }
+        @keyframes pulse { 0%,100%{opacity:0.5;transform:translate(-50%,-50%) scale(0.95)} 50%{opacity:1;transform:translate(-50%,-50%) scale(1.08)} }
 
         .logo-img {
             position: relative; z-index: 2;
-            width: 110px; height: 110px;
+            width: 100px; height: 100px;
             object-fit: contain;
-            filter: drop-shadow(0 0 12px rgba(212,175,55,0.4));
+            filter: drop-shadow(0 0 14px rgba(212,175,55,0.4));
         }
 
-        .profile h1 {
-            font-size: 22px; font-weight: 900; letter-spacing: 3px;
+        .profile-name {
+            font-size: 21px; font-weight: 900; letter-spacing: 2.5px;
             text-transform: uppercase;
-            background: linear-gradient(135deg, #d4af37 0%, #f4e5b0 40%, #d4af37 70%, #c9a961 100%);
+            background: linear-gradient(135deg, #d4af37 0%, #f4e5b0 45%, #d4af37 75%, #c9a961 100%);
             background-size: 200% auto;
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            background-clip: text;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
             animation: shimmer 4s linear infinite;
             margin-bottom: 6px;
         }
         @keyframes shimmer { to { background-position: 200% center; } }
 
-        .profile .tagline {
-            font-size: 15px; color: #a8c5b8; font-weight: 400; line-height: 1.5;
+        .profile-tag {
+            font-size: 14px; color: #a8c5b8; font-weight: 400; line-height: 1.5;
+            margin-bottom: 12px;
         }
 
-        .profile .badge {
+        .live-badge {
             display: inline-flex; align-items: center; gap: 6px;
-            margin-top: 12px;
-            font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+            font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
             color: #d4af37;
-            background: rgba(212,175,55,0.08);
+            background: rgba(212,175,55,0.07);
             border: 1px solid rgba(212,175,55,0.2);
-            padding: 5px 14px; border-radius: 20px;
+            padding: 4px 12px; border-radius: 20px;
         }
-        .badge-dot {
+        .live-dot {
             width: 6px; height: 6px; background: #34d399; border-radius: 50%;
-            box-shadow: 0 0 8px #34d399;
+            box-shadow: 0 0 7px #34d399;
             animation: blink 2s infinite;
         }
-        @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
 
-        /* ── LINKS ── */
-        .links { display: flex; flex-direction: column; gap: 12px; }
-
-        .link {
-            position: relative;
-            background: rgba(13,38,28,0.5);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(212,175,55,0.15);
-            border-radius: 14px;
-            padding: 16px 18px;
-            text-decoration: none; color: white;
-            display: flex; align-items: center; gap: 14px;
-            transition: all 0.35s cubic-bezier(0.25,0.46,0.45,0.94);
-            overflow: hidden;
+        /* ── PREGUNTA HERO ── */
+        .hero-question {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .hero-question p {
+            font-size: 13px; font-weight: 600; letter-spacing: 0.5px;
+            color: #7a9e8c; text-transform: uppercase;
         }
 
-        /* Shine sweep on hover */
+        /* ── DOS CTAs PRINCIPALES ── */
+        .cta-duo {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .cta-card {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; text-decoration: none;
+            padding: 22px 12px;
+            border-radius: 18px;
+            border: 1px solid;
+            transition: all 0.35s cubic-bezier(0.25,0.46,0.45,0.94);
+            position: relative; overflow: hidden;
+            gap: 10px;
+        }
+        .cta-card::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .cta-card:active { transform: scale(0.97); }
+
+        /* Matchmaker — dorado */
+        .cta-match {
+            background: linear-gradient(145deg, rgba(212,175,55,0.14) 0%, rgba(212,175,55,0.04) 100%);
+            border-color: rgba(212,175,55,0.45);
+            box-shadow: 0 0 28px rgba(212,175,55,0.08), inset 0 1px 0 rgba(212,175,55,0.15);
+        }
+        .cta-match:hover {
+            border-color: #d4af37;
+            box-shadow: 0 8px 36px rgba(212,175,55,0.22);
+            transform: translateY(-3px);
+        }
+        .cta-match .cta-emoji { font-size: 2.4rem; }
+        .cta-match .cta-label { font-size: 13px; font-weight: 800; color: #f4e5b0; line-height: 1.3; }
+        .cta-match .cta-sub { font-size: 10px; color: rgba(212,175,55,0.7); font-weight: 500; }
+
+        /* Inventario — verde */
+        .cta-inv {
+            background: linear-gradient(145deg, rgba(52,211,153,0.10) 0%, rgba(52,211,153,0.02) 100%);
+            border-color: rgba(52,211,153,0.3);
+            box-shadow: 0 0 28px rgba(52,211,153,0.05);
+        }
+        .cta-inv:hover {
+            border-color: rgba(52,211,153,0.6);
+            box-shadow: 0 8px 36px rgba(52,211,153,0.15);
+            transform: translateY(-3px);
+        }
+        .cta-inv .cta-emoji { font-size: 2.4rem; }
+        .cta-inv .cta-label { font-size: 13px; font-weight: 800; color: #a7f3d0; line-height: 1.3; }
+        .cta-inv .cta-sub { font-size: 10px; color: rgba(52,211,153,0.6); font-weight: 500; }
+
+        /* ── DIVISOR ── */
+        .divider {
+            display: flex; align-items: center; gap: 10px;
+            margin: 18px 0 14px;
+            font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+            text-transform: uppercase; color: #3a5a4a;
+        }
+        .divider::before, .divider::after {
+            content: ''; flex: 1; height: 1px; background: rgba(212,175,55,0.12);
+        }
+
+        /* ── LINKS SECUNDARIOS ── */
+        .links { display: flex; flex-direction: column; gap: 10px; }
+
+        .link {
+            display: flex; align-items: center; gap: 13px;
+            padding: 14px 16px;
+            background: rgba(13,38,28,0.45);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212,175,55,0.12);
+            border-radius: 14px;
+            text-decoration: none; color: white;
+            transition: all 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+            position: relative; overflow: hidden;
+        }
         .link::after {
-            content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(212,175,55,0.08), transparent);
+            content: ''; position: absolute; top:0; left:-100%; width:55%; height:100%;
+            background: linear-gradient(90deg, transparent, rgba(212,175,55,0.06), transparent);
             transition: left 0.5s;
         }
         .link:hover::after { left: 120%; }
-
         .link:hover {
-            border-color: rgba(212,175,55,0.5);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(212,175,55,0.15), 0 0 0 1px rgba(212,175,55,0.1);
+            border-color: rgba(212,175,55,0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(212,175,55,0.1);
         }
-
-        .link:active { transform: translateY(-1px); }
+        .link:active { transform: translateY(0); }
 
         .link-icon {
-            width: 44px; height: 44px; min-width: 44px;
+            width: 40px; height: 40px; min-width: 40px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 22px;
-            background: rgba(212,175,55,0.08);
-            border: 1px solid rgba(212,175,55,0.15);
-            border-radius: 12px;
+            font-size: 20px;
+            background: rgba(212,175,55,0.07);
+            border: 1px solid rgba(212,175,55,0.12);
+            border-radius: 10px;
             transition: all 0.3s;
         }
-        .link:hover .link-icon {
-            background: rgba(212,175,55,0.15);
-            border-color: rgba(212,175,55,0.3);
-            transform: scale(1.05);
-        }
+        .link:hover .link-icon { background: rgba(212,175,55,0.13); border-color: rgba(212,175,55,0.28); }
 
-        .link-content { flex: 1; min-width: 0; }
-        .link-title { font-size: 14px; font-weight: 700; line-height: 1.3; }
-        .link-sub { font-size: 11px; color: #7a9e8c; margin-top: 2px; }
+        .link-text { flex: 1; }
+        .link-title { font-size: 13px; font-weight: 700; }
+        .link-sub { font-size: 10px; color: #6a8e7e; margin-top: 1px; }
 
-        .link-arrow {
-            color: rgba(212,175,55,0.3);
-            font-size: 14px;
-            transition: all 0.3s;
-        }
+        .link-arrow { color: rgba(212,175,55,0.28); font-size: 13px; transition: all 0.3s; }
         .link:hover .link-arrow { color: #d4af37; transform: translateX(3px); }
-
-        /* CTA Principal — dorado */
-        .link-cta {
-            background: linear-gradient(135deg, rgba(212,175,55,0.15) 0%, rgba(212,175,55,0.05) 100%);
-            border-color: rgba(212,175,55,0.4);
-            box-shadow: 0 0 20px rgba(212,175,55,0.08);
-        }
-        .link-cta .link-icon {
-            background: linear-gradient(135deg, #d4af37, #c9a961);
-            border: none;
-            color: #0a1f1a; font-size: 20px;
-            box-shadow: 0 4px 12px rgba(212,175,55,0.3);
-        }
-        .link-cta .link-title { color: #f4e5b0; }
-        .link-cta:hover {
-            border-color: #d4af37;
-            box-shadow: 0 8px 35px rgba(212,175,55,0.25);
-        }
 
         /* WhatsApp */
         .link-wa {
-            background: rgba(37,211,102,0.08);
-            border-color: rgba(37,211,102,0.25);
+            background: rgba(37,211,102,0.07);
+            border-color: rgba(37,211,102,0.2);
         }
-        .link-wa .link-icon {
-            background: #25D366;
-            border: none; color: white;
-            box-shadow: 0 4px 12px rgba(37,211,102,0.3);
-        }
-        .link-wa:hover {
-            border-color: #25D366;
-            box-shadow: 0 8px 30px rgba(37,211,102,0.2);
-        }
+        .link-wa .link-icon { background: #25D366; border-color: transparent; color: white; }
+        .link-wa:hover { border-color: rgba(37,211,102,0.5); box-shadow: 0 6px 24px rgba(37,211,102,0.12); }
 
-        /* Social proof counter */
-        .social-proof {
-            text-align: center;
-            margin-top: 24px;
-            font-size: 11px; color: #5a7a6a;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-        .sp-bar { width: 20px; height: 1px; background: rgba(212,175,55,0.2); }
+        /* Vender */
+        .link-sell .link-icon { background: rgba(251,191,36,0.1); border-color: rgba(251,191,36,0.2); }
 
-        /* Footer */
-        .footer-mini {
-            text-align: center; margin-top: 28px; padding: 16px;
-            font-size: 11px; color: #3a5a4a;
+        /* ── SOCIAL ICONS ── */
+        .socials {
+            display: flex; justify-content: center; gap: 14px;
+            margin-top: 26px;
         }
-        .footer-mini a { color: rgba(212,175,55,0.5); text-decoration: none; }
-        .footer-mini a:hover { color: #d4af37; }
+        .social-btn {
+            width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.03);
+            color: #7a9e8c; font-size: 16px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .social-btn:hover { border-color: rgba(212,175,55,0.4); color: #d4af37; transform: translateY(-2px); }
+        .social-btn.tiktok:hover { border-color: rgba(255,0,80,0.5); color: #ff0050; }
+        .social-btn.instagram:hover { border-color: rgba(225,48,108,0.5); color: #e1306c; }
+        .social-btn.facebook:hover { border-color: rgba(24,119,242,0.5); color: #1877f2; }
 
-        /* Responsive */
-        @media (max-width: 480px) {
-            .container { padding: 36px 16px 28px; }
-            .profile h1 { font-size: 19px; letter-spacing: 2px; }
-            .logo-area { width: 95px; height: 95px; }
-            .logo-img { width: 95px; height: 95px; }
-            .logo-glow { width: 110px; height: 110px; }
-            .link { padding: 14px 16px; }
-            .link-icon { width: 40px; height: 40px; min-width: 40px; font-size: 20px; }
-            .link-title { font-size: 13px; }
+        /* ── FOOTER ── */
+        .footer {
+            text-align: center; margin-top: 20px;
+            font-size: 10px; color: #2a4a3a; letter-spacing: 0.5px;
+        }
+        .footer a { color: rgba(212,175,55,0.35); text-decoration: none; }
+        .footer a:hover { color: #d4af37; }
+
+        /* Animación entrada */
+        .fade-in { opacity: 0; transform: translateY(18px); }
+
+        @media (max-width: 380px) {
+            .container { padding: 36px 14px 40px; }
+            .cta-card { padding: 18px 10px; }
+            .cta-match .cta-emoji, .cta-inv .cta-emoji { font-size: 2rem; }
         }
     </style>
-<style id="alabol-nav-styles">
-  .alabol-nav { position:fixed;top:0;left:0;right:0;z-index:999;background:rgba(10,31,26,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(212,175,55,0.2);height:64px;display:flex;align-items:center;padding:0 24px;gap:0; }
-  .nav-logo { display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0; }
-  .nav-logo img { width:38px;height:38px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(212,175,55,0.5));transition:transform 0.3s ease; }
-  .nav-logo:hover img { transform:scale(1.08) rotate(5deg); }
-  .nav-logo-text { font-family:'Poppins',sans-serif;font-weight:800;font-size:18px;color:#d4af37;letter-spacing:-0.5px;text-shadow:0 0 12px rgba(212,175,55,0.4); }
-  .nav-links { display:flex;align-items:center;gap:4px;margin-left:auto;list-style:none;padding:0;margin-right:0; }
-  .nav-links a { font-family:'Poppins',sans-serif;font-size:13px;font-weight:500;color:#a8c5b8;text-decoration:none;padding:7px 14px;border-radius:20px;transition:all 0.25s ease;white-space:nowrap;border:1px solid transparent; }
-  .nav-links a:hover { color:#d4af37;background:rgba(212,175,55,0.08);border-color:rgba(212,175,55,0.2); }
-  .nav-links a.active { color:#d4af37;background:rgba(212,175,55,0.12);border-color:rgba(212,175,55,0.3); }
-  .nav-cta { font-family:'Poppins',sans-serif;font-size:13px;font-weight:700;color:#0a1f1a !important;background:linear-gradient(135deg,#d4af37 0%,#f4e5b0 100%) !important;padding:8px 18px !important;border-radius:20px !important;border:none !important;margin-left:8px;box-shadow:0 4px 12px rgba(212,175,55,0.35);transition:all 0.25s ease !important; }
-  .nav-cta:hover { transform:translateY(-1px);box-shadow:0 6px 18px rgba(212,175,55,0.5) !important;filter:brightness(1.05); }
-  .nav-hamburger { display:none;flex-direction:column;gap:5px;cursor:pointer;margin-left:auto;padding:8px;background:none;border:none; }
-  .nav-hamburger span { display:block;width:22px;height:2px;background:#d4af37;border-radius:2px;transition:all 0.3s ease; }
-  .nav-hamburger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
-  .nav-hamburger.open span:nth-child(2) { opacity:0; }
-  .nav-hamburger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
-  @media (max-width:768px) {
-    .nav-links { display:none;flex-direction:column;position:absolute;top:64px;left:0;right:0;background:rgba(10,31,26,0.98);border-bottom:1px solid rgba(212,175,55,0.2);padding:16px 24px 24px;gap:8px; }
-    .nav-links.open { display:flex; }
-    .nav-hamburger { display:flex; }
-    .nav-links a { padding:10px 16px;border-radius:12px;border:1px solid rgba(212,175,55,0.1); }
-    .nav-cta { margin-left:0; }
-  }
-  body { padding-top:64px; }
-</style>
 </head>
 <body>
 
-<nav class="alabol-nav" role="navigation" aria-label="Navegación principal">
-  <a href="/" class="nav-logo" aria-label="Ir al inicio">
-    <img src="logo-circular.png" alt="Alabol">
-    <span class="nav-logo-text">Alabol</span>
-  </a>
-  <button class="nav-hamburger" id="navHamburger" aria-label="Menú" aria-expanded="false">
-    <span></span><span></span><span></span>
-  </button>
-  <ul class="nav-links" id="navLinks" role="list">
-    <li><a href="/inventario.html">🚗 Inventario</a></li>
-    <li><a href="/vip/">💘 Matchmaker</a></li>
-    <li><a href="/vendedor.html">🏷️ Vender Auto</a></li>
-    <li><a href="/oportunidades/">🔥 Subastas</a></li>
-    <li><a href="/portal-agencias.html">🏢 Agencias</a></li>
-    <li><a href="/vip/" class="nav-cta">Buscar mi Auto →</a></li>
-  </ul>
-</nav>
-
-<!-- Floating WhatsApp Button -->
-<a href="https://api.whatsapp.com/send?phone=525568667571&text=Hola%20Alabol!" target="_blank" style="position:fixed;bottom:20px;right:20px;width:56px;height:56px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 15px rgba(37,211,102,0.4);z-index:998;text-decoration:none;font-size:28px;transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'"><svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg></a>
-
-<div class="glow-1"></div>
-<div class="glow-2"></div>
+<div class="glow-top"></div>
+<div class="glow-bot"></div>
 
 <div class="container">
 
-    <div class="profile">
-        <div class="logo-area">
+    <!-- Perfil -->
+    <div class="profile fade-in">
+        <div class="logo-wrap">
             <div class="logo-ring"></div>
             <div class="logo-ring-2"></div>
             <div class="logo-glow"></div>
             <img src="logo-circular.png" alt="Alabol" class="logo-img">
         </div>
-        <h1>Alabol Car Broker</h1>
-        <p class="tagline">El Tinder de los Autos<br>Tu media naranja con llantas te espera</p>
-        <div class="badge"><span class="badge-dot"></span> Plataforma activa</div>
+        <div class="profile-name">Alabol Car Broker</div>
+        <p class="profile-tag">El Tinder de los Autos 🚗💛<br>Tu media naranja con llantas te espera</p>
+        <div class="live-badge"><span class="live-dot"></span> Plataforma activa · CDMX</div>
     </div>
 
+    <!-- Pregunta -->
+    <div class="hero-question fade-in">
+        <p>¿Qué estás buscando?</p>
+    </div>
+
+    <!-- CTAs principales -->
+    <div class="cta-duo fade-in">
+        <a href="./vip/index.html" class="cta-card cta-match">
+            <span class="cta-emoji">💘</span>
+            <span class="cta-label">Quiero mi auto ideal</span>
+            <span class="cta-sub">Hacer match →</span>
+        </a>
+        <a href="./inventario.html" class="cta-card cta-inv">
+            <span class="cta-emoji">🚗</span>
+            <span class="cta-label">Ver autos disponibles</span>
+            <span class="cta-sub">Ver inventario →</span>
+        </a>
+    </div>
+
+    <!-- Divisor -->
+    <div class="divider fade-in">también puedes</div>
+
+    <!-- Links secundarios -->
     <div class="links">
 
-        <a href="./vip/index.html" class="link link-cta">
-            <div class="link-icon">💘</div>
-            <div class="link-content">
-                <div class="link-title">Hacer Match con tu Auto Ideal</div>
-                <div class="link-sub">Nuestro algoritmo encuentra tu match perfecto</div>
+        <a href="https://wa.me/525568667571?text=Hola%20Alabol%2C%20vengo%20de%20redes%20sociales%20y%20me%20interesa%20un%20auto" class="link link-wa fade-in" target="_blank" rel="noopener">
+            <div class="link-icon"><i class="fab fa-whatsapp"></i></div>
+            <div class="link-text">
+                <div class="link-title">Hablar con un asesor</div>
+                <div class="link-sub">Respuesta inmediata por WhatsApp</div>
             </div>
-            <span class="link-arrow">›</span>
+            <span class="link-arrow"><i class="fas fa-chevron-right"></i></span>
         </a>
 
-        <a href="./inventario.html" class="link">
-            <div class="link-icon">🚗</div>
-            <div class="link-content">
-                <div class="link-title">Explorar Inventario</div>
-                <div class="link-sub">Desliza entre autos verificados</div>
+        <a href="./vendedor.html" class="link link-sell fade-in">
+            <div class="link-icon">🏷️</div>
+            <div class="link-text">
+                <div class="link-title">Quiero vender mi auto</div>
+                <div class="link-sub">Publica gratis y encuentra comprador</div>
             </div>
-            <span class="link-arrow">›</span>
+            <span class="link-arrow"><i class="fas fa-chevron-right"></i></span>
         </a>
 
-        <a href="https://alabolcar-hwh56g8k.manus.space/calculators" class="link" target="_blank" rel="noopener">
+        <a href="https://alabolcar-hwh56g8k.manus.space/calculators" class="link fade-in" target="_blank" rel="noopener">
             <div class="link-icon">🧮</div>
-            <div class="link-content">
+            <div class="link-text">
                 <div class="link-title">Calculadora de Costos</div>
-                <div class="link-sub">Inversión, fletes y aranceles al instante</div>
+                <div class="link-sub">Inversión, fletes y aranceles</div>
             </div>
-            <span class="link-arrow">›</span>
-        </a>
-
-        <a href="https://wa.me/525568667571?text=Hola%20Alabol%2C%20vengo%20de%20redes%20sociales%20y%20me%20interesa%20un%20auto" class="link link-wa" target="_blank" rel="noopener">
-            <div class="link-icon">💬</div>
-            <div class="link-content">
-                <div class="link-title">Escríbenos por WhatsApp</div>
-                <div class="link-sub">Respuesta inmediata de un asesor</div>
-            </div>
-            <span class="link-arrow">›</span>
-        </a>
-
-        <a href="./index.html" class="link">
-            <div class="link-icon">🌐</div>
-            <div class="link-content">
-                <div class="link-title">Conoce Alabol</div>
-                <div class="link-sub">Todo sobre el Tinder de los Autos</div>
-            </div>
-            <span class="link-arrow">›</span>
+            <span class="link-arrow"><i class="fas fa-chevron-right"></i></span>
         </a>
 
     </div>
 
-    <div class="social-proof">
-        <span class="sp-bar"></span>
-        Autos verificados y certificados
-        <span class="sp-bar"></span>
+    <!-- Redes sociales -->
+    <div class="socials fade-in">
+        <a href="https://www.tiktok.com/@alabol" class="social-btn tiktok" target="_blank" rel="noopener" aria-label="TikTok">
+            <i class="fab fa-tiktok"></i>
+        </a>
+        <a href="https://www.instagram.com/alabol" class="social-btn instagram" target="_blank" rel="noopener" aria-label="Instagram">
+            <i class="fab fa-instagram"></i>
+        </a>
+        <a href="https://www.facebook.com/alabol" class="social-btn facebook" target="_blank" rel="noopener" aria-label="Facebook">
+            <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="https://wa.me/525568667571" class="social-btn" target="_blank" rel="noopener" aria-label="WhatsApp" style="color:#25d366;">
+            <i class="fab fa-whatsapp"></i>
+        </a>
     </div>
 
-    <div class="footer-mini">
+    <div class="footer fade-in">
         <a href="./index.html">alabolcar.com.mx</a>
     </div>
 
 </div>
 
 <script>
-// Entrada escalonada de links
-document.querySelectorAll('.link').forEach((el, i) => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(20px)';
-    setTimeout(() => {
-        el.style.transition = 'all 0.5s cubic-bezier(0.25,0.46,0.45,0.94)';
-        el.style.opacity = '1';
-        el.style.transform = 'translateY(0)';
-    }, 300 + i * 100);
-});
-</script>
+(function () {
+    // Entrada escalonada
+    var els = document.querySelectorAll('.fade-in');
+    els.forEach(function (el, i) {
+        el.style.transition = 'opacity 0.55s ease, transform 0.55s cubic-bezier(0.25,0.46,0.45,0.94)';
+        setTimeout(function () {
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+        }, 120 + i * 90);
+    });
 
-<script>
-(function(){var btn=document.getElementById('navHamburger');var links=document.getElementById('navLinks');if(!btn||!links)return;btn.addEventListener('click',function(){var isOpen=links.classList.toggle('open');btn.classList.toggle('open',isOpen);btn.setAttribute('aria-expanded',isOpen);});links.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){links.classList.remove('open');btn.classList.remove('open');});});})();
+    // Tracking de clicks para GA4
+    document.querySelectorAll('.cta-card, .link').forEach(function (el) {
+        el.addEventListener('click', function () {
+            var label = el.querySelector('.cta-label, .link-title');
+            if (label && typeof gtag === 'function') {
+                gtag('event', 'link_click', {
+                    event_category: 'linktree',
+                    event_label: label.textContent.trim()
+                });
+            }
+        });
+    });
+})();
 </script>
 
 </body>

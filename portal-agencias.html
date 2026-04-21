@@ -965,10 +965,20 @@ textarea.fi { resize: vertical; min-height: 80px; }
         </div>
       </div>
       <div id="fr" class="dn">
-        <input class="inp" id="rcode" placeholder="Codigo de invitacion" style="text-transform:uppercase;letter-spacing:0.1em;text-align:center;border-color:var(--gold-dim);">
+        <div style="font-size:12px;color:#a8c5b8;margin-bottom:12px;line-height:1.5;text-align:left;">
+          Completa tus datos y activa tu cuenta con el codigo que te dio tu contacto Alabol.
+        </div>
         <input class="inp" id="rn" placeholder="Nombre de la agencia">
         <input class="inp" id="re" type="email" placeholder="tu@email.com">
         <input class="inp" id="rp" type="password" placeholder="Contrasena (min 10)">
+        <div style="margin:14px 0 6px;">
+          <div style="font-size:11px;color:var(--gold-dim);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;">Codigo de acceso</div>
+          <input class="inp" id="rcode" placeholder="Ej. ALABOL-RED-2026" style="text-transform:uppercase;letter-spacing:0.12em;text-align:center;border-color:var(--gold-dim);">
+          <div style="text-align:center;margin-top:7px;font-size:11px;color:#a8c5b8;">
+            &iquest;No tienes codigo?
+            <a href="https://api.whatsapp.com/send?phone=525568667571&text=Hola%20Alabol%2C%20quiero%20registrar%20mi%20agencia%20y%20necesito%20un%20codigo%20de%20acceso." target="_blank" style="color:#d4af37;text-decoration:underline;">Solicítalo por WhatsApp</a>
+          </div>
+        </div>
         <div style="margin:10px 0;">
           <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;font-size:11px;line-height:1.5;color:#a8c5b8;">
             <input type="checkbox" id="acceptTermsAgencia" style="margin-top:3px;accent-color:#d4af37;min-width:16px;">

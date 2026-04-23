@@ -705,6 +705,12 @@
             body: JSON.stringify({ folio: state.folio, tipo: 'confirmacion' })
           });
         } catch (e) { /* best effort */ }
+        // Notificar internamente a Israel
+        fetch('/.netlify/functions/send-notification', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer internal' },
+          body: JSON.stringify({ folio: state.folio, tipo: 'nueva_solicitud_interna' })
+        }).catch(function(){}); // silencioso — no bloquear al cliente si falla
       })
       .catch(function (err) {
         _submitting = false;

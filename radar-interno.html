@@ -169,6 +169,7 @@ body{background:var(--bg);color:var(--white);min-height:100vh;display:flex;backg
     <button class="nav-item" onclick="switchTab('leads')" data-tab="leads"><i class="fa-solid fa-users"></i>Leads & Pipeline</button>
     <button class="nav-item" onclick="switchTab('inventario')" data-tab="inventario"><i class="fa-solid fa-warehouse"></i>Inventario</button>
     <button class="nav-item" onclick="switchTab('agencias')" data-tab="agencias"><i class="fa-solid fa-building"></i>Agencias</button>
+    <button class="nav-item" onclick="switchTab('verificaciones')" data-tab="verificaciones"><i class="fa-solid fa-shield-check"></i>Verificaciones</button>
     <button class="nav-item" onclick="switchTab('trafico')" data-tab="trafico"><i class="fa-solid fa-chart-line"></i>Trafico & Reportes</button>
     <button class="nav-item" onclick="switchTab('reportes')" data-tab="reportes"><i class="fa-solid fa-file-chart-column"></i>Reportes BI</button>
     <button class="nav-item" onclick="switchTab('herramientas')" data-tab="herramientas"><i class="fa-solid fa-gear"></i>Herramientas</button>
@@ -309,6 +310,61 @@ body{background:var(--bg);color:var(--white);min-height:100vh;display:flex;backg
     <div class="section-title"><i class="fa-solid fa-inbox"></i>Solicitudes pendientes</div>
     <div id="agAppsBody"></div>
   </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- TAB VERIFICACIONES -->
+<!-- ══════════════════════════════════════════ -->
+<div class="tab" id="tab-verificaciones">
+
+  <!-- KPIs por estatus -->
+  <div class="kpi-row" id="verifKpis"></div>
+
+  <!-- Tabla de verificaciones -->
+  <div class="section">
+    <div class="section-title"><i class="fa-solid fa-shield-check"></i>Solicitudes de verificación</div>
+    <div style="overflow-x:auto;">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>Folio</th>
+            <th>Vehículo</th>
+            <th>Solicitante</th>
+            <th>Tier + Precio</th>
+            <th>Estatus</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="verifTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Sección Peritos -->
+  <div class="section" id="verifPeritosSection">
+    <div class="section-title"><i class="fa-solid fa-user-shield"></i>Peritos Verificadores</div>
+    <div style="overflow-x:auto;">
+      <table class="tbl">
+        <thead>
+          <tr><th>Nombre</th><th>Email</th><th>Activo</th><th>Acciones</th></tr>
+        </thead>
+        <tbody id="verifPeritosBody"></tbody>
+      </table>
+    </div>
+    <div style="margin-top:14px;">
+      <button class="btn btn-sm" style="background:var(--gold);color:#000;border:none;" onclick="togglePeritForm()"><i class="fa-solid fa-user-plus"></i> Agregar Perito</button>
+    </div>
+    <div id="peritForm" style="display:none;margin-top:12px;background:rgba(0,0,0,0.25);border:1px solid var(--border);border-radius:10px;padding:14px;">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <input class="search-input" id="peritNombre" placeholder="Nombre completo" style="flex:1;min-width:160px;">
+        <input class="search-input" id="peritEmail" placeholder="Email" style="flex:1;min-width:160px;">
+        <button class="btn btn-sm" style="background:var(--emerald);color:#000;border:none;" onclick="agregarPerito()"><i class="fa-solid fa-check"></i> Guardar</button>
+      </div>
+      <div id="peritMsg" style="margin-top:8px;font-size:12px;color:var(--txt);"></div>
+    </div>
+  </div>
+
 </div>
 
 <!-- ══════════════════════════════════════════ -->
@@ -465,7 +521,7 @@ async function loadAll(){
 // TAB SWITCHING
 // ══════════════════════════════════════════
 var currentTab = 'dashboard';
-var tabTitles = {dashboard:'📊 <span>Dashboard</span>',leads:'👥 <span>Leads & Pipeline</span>',inventario:'🚘 <span>Inventario</span>',agencias:'🏢 <span>Agencias</span>',trafico:'📈 <span>Trafico & Analitica</span>',reportes:'📋 <span>Reportes BI</span>',herramientas:'⚙️ <span>Herramientas</span>'};
+var tabTitles = {dashboard:'📊 <span>Dashboard</span>',leads:'👥 <span>Leads & Pipeline</span>',inventario:'🚘 <span>Inventario</span>',agencias:'🏢 <span>Agencias</span>',verificaciones:'🛡️ <span>Verificaciones</span>',trafico:'📈 <span>Trafico & Analitica</span>',reportes:'📋 <span>Reportes BI</span>',herramientas:'⚙️ <span>Herramientas</span>'};
 var asesores = [];
 
 function switchTab(id){
@@ -487,6 +543,7 @@ function renderCurrentTab(){
   else if(currentTab==='trafico')renderTrafico();
   else if(currentTab==='reportes')renderReportes();
   else if(currentTab==='herramientas')renderHerramientas();
+  else if(currentTab==='verificaciones')renderVerificaciones();
 }
 
 // ══════════════════════════════════════════
@@ -1132,6 +1189,130 @@ async function runScraper(){
     var d=await r.json();
     st.innerHTML='<span style="color:var(--emerald);">✅ '+JSON.stringify(d)+'</span>';
   }catch(e){st.textContent='Error: '+e.message}
+}
+
+// ══════════════════════════════════════════
+// TAB VERIFICACIONES
+// ══════════════════════════════════════════
+var verifData = [];
+var verifPeritosData = [];
+
+function verifStatusBadge(s){
+  var map = {
+    pendiente_pago:  {label:'Pendiente Pago', bg:'#b8860b', color:'#fff'},
+    pagado:          {label:'Pagado',          bg:'#1565c0', color:'#fff'},
+    en_revision:     {label:'En Revisión',     bg:'#e65100', color:'#fff'},
+    aprobado:        {label:'Aprobado',        bg:'#1b5e20', color:'#fff'},
+    aprobado_con_observaciones: {label:'Aprobado c/Obs', bg:'#2e7d32', color:'#fff'},
+    rechazado:       {label:'Rechazado',       bg:'#b71c1c', color:'#fff'}
+  };
+  var m = map[s] || {label: s||'—', bg:'#444', color:'#fff'};
+  return '<span style="display:inline-block;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700;background:'+m.bg+';color:'+m.color+';">'+m.label+'</span>';
+}
+
+async function renderVerificaciones(){
+  if(!sb) initSB();
+  var [vR, pR] = await Promise.all([
+    sb.from('verificaciones').select('*').order('created_at',{ascending:false}).limit(100),
+    sb.from('verificadores').select('*').order('nombre',{ascending:true})
+  ]);
+  verifData    = vR.data || [];
+  verifPeritosData = pR.data || [];
+
+  // KPIs
+  var counts = {pendiente_pago:0, pagado:0, en_revision:0, aprobado:0, rechazado:0};
+  verifData.forEach(function(v){
+    if(v.estatus === 'aprobado' || v.estatus === 'aprobado_con_observaciones') counts.aprobado++;
+    else if(counts[v.estatus] !== undefined) counts[v.estatus]++;
+  });
+  document.getElementById('verifKpis').innerHTML =
+    kpiCard('Pendiente Pago', counts.pendiente_pago, '', 'warn')
+    + kpiCard('Pagado',       counts.pagado,         '', 'teal')
+    + kpiCard('En Revisión',  counts.en_revision,    '', 'purple')
+    + kpiCard('Aprobados',    counts.aprobado,       '', 'emerald')
+    + kpiCard('Rechazados',   counts.rechazado,      '', 'danger');
+
+  // Tabla
+  document.getElementById('verifTableBody').innerHTML = verifData.length === 0
+    ? '<tr><td colspan="7" style="text-align:center;opacity:0.5;">Sin registros</td></tr>'
+    : verifData.map(function(v){
+        var vehiculo = [v.anio, v.marca, v.modelo].filter(Boolean).join(' ') || '—';
+        var solicitante = (v.nombre_solicitante||'—') + '<br><span style="font-size:10px;color:var(--txt);">' + (v.telefono_solicitante||'') + '</span>';
+        var tierPrecio = (v.tier||'—') + '<br><span style="font-size:10px;color:var(--gold);">' + (v.pago_monto ? fmt(v.pago_monto) : '—') + '</span>';
+        var fecha = fmtDate(v.created_at);
+
+        var acciones = '';
+        if(v.estatus === 'pendiente_pago'){
+          acciones += '<button class="btn btn-sm" style="background:var(--emerald);color:#000;border:none;margin-right:4px;" onclick="confirmarPagoVerif(\''+v.folio+'\',\''+v.id+'\')"><i class="fa-solid fa-check"></i> Confirmar Pago</button>';
+        }
+        acciones += '<button class="btn btn-sm btn-outline" style="margin-right:4px;" onclick="window.open(\'https://alabol.netlify.app/certificado/'+v.folio+'\',\'_blank\')">Ver Cert</button>';
+        if(v.estatus === 'pagado' || v.estatus === 'en_revision'){
+          acciones += '<button class="btn btn-sm btn-outline" onclick="window.open(\'/verificacion/verificar/\',\'_blank\')">→ Panel Perito</button>';
+        }
+
+        return '<tr>'
+          +'<td style="color:var(--gold);font-weight:700;">'+(v.folio||'—')+'</td>'
+          +'<td>'+vehiculo+'<br><span style="font-size:9px;color:var(--txt);">'+(v.vin||'')+'</span></td>'
+          +'<td>'+solicitante+'</td>'
+          +'<td>'+tierPrecio+'</td>'
+          +'<td>'+verifStatusBadge(v.estatus)+'</td>'
+          +'<td>'+fecha+'</td>'
+          +'<td style="white-space:nowrap;">'+acciones+'</td>'
+        +'</tr>';
+      }).join('');
+
+  // Peritos
+  document.getElementById('verifPeritosBody').innerHTML = verifPeritosData.length === 0
+    ? '<tr><td colspan="4" style="text-align:center;opacity:0.5;">Sin peritos registrados</td></tr>'
+    : verifPeritosData.map(function(p){
+        var activoLabel = p.activo
+          ? '<span style="color:var(--emerald);font-weight:700;">Activo</span>'
+          : '<span style="color:var(--danger);">Inactivo</span>';
+        var btnToggle = p.activo
+          ? '<button class="btn btn-sm" style="background:var(--danger);color:#fff;border:none;" onclick="togglePerito(\''+p.id+'\',false)">Desactivar</button>'
+          : '<button class="btn btn-sm" style="background:var(--emerald);color:#000;border:none;" onclick="togglePerito(\''+p.id+'\',true)">Activar</button>';
+        return '<tr>'
+          +'<td style="color:white;font-weight:600;">'+(p.nombre||'—')+'</td>'
+          +'<td>'+(p.email||'—')+'</td>'
+          +'<td>'+activoLabel+'</td>'
+          +'<td>'+btnToggle+'</td>'
+        +'</tr>';
+      }).join('');
+}
+
+async function confirmarPagoVerif(folio, id){
+  if(!window.confirm('¿Confirmar pago del expediente '+folio+'?')) return;
+  var {error} = await sb.from('verificaciones').update({estatus:'pagado'}).eq('id', id);
+  if(error){ alert('Error al actualizar: '+error.message); return; }
+  var tel = '525568667571';
+  var msg = encodeURIComponent('Nuevo expediente pagado: '+folio+' - revisar panel perito');
+  window.open('https://wa.me/'+tel+'?text='+msg, '_blank');
+  renderVerificaciones();
+}
+
+async function agregarPerito(){
+  var nombre = (document.getElementById('peritNombre').value||'').trim();
+  var email  = (document.getElementById('peritEmail').value||'').trim();
+  var msg = document.getElementById('peritMsg');
+  if(!nombre || !email){ msg.style.color='var(--danger)'; msg.textContent='Nombre y email son requeridos.'; return; }
+  var {error} = await sb.from('verificadores').insert({nombre: nombre, email: email, activo: true, user_id: null});
+  if(error){ msg.style.color='var(--danger)'; msg.textContent='Error: '+error.message; return; }
+  msg.style.color='var(--emerald)';
+  msg.textContent='Perito agregado correctamente.';
+  document.getElementById('peritNombre').value='';
+  document.getElementById('peritEmail').value='';
+  setTimeout(function(){ renderVerificaciones(); }, 800);
+}
+
+async function togglePerito(id, activo){
+  await sb.from('verificadores').update({activo: activo}).eq('id', id);
+  renderVerificaciones();
+}
+
+function togglePeritForm(){
+  var f = document.getElementById('peritForm');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+  document.getElementById('peritMsg').textContent = '';
 }
 
 // ══════════════════════════════════════════

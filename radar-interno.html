@@ -1281,12 +1281,34 @@ async function renderVerificaciones(){
 }
 
 async function confirmarPagoVerif(folio, id){
-  if(!window.confirm('¿Confirmar pago del expediente '+folio+'?')) return;
-  var {error} = await sb.from('verificaciones').update({estatus:'pagado'}).eq('id', id);
-  if(error){ alert('Error al actualizar: '+error.message); return; }
-  var tel = '525568667571';
-  var msg = encodeURIComponent('Nuevo expediente pagado: '+folio+' - revisar panel perito');
-  window.open('https://wa.me/'+tel+'?text='+msg, '_blank');
+  if(!confirm('¿Confirmar pago del folio ' + folio + '? Esto notificará al perito por WhatsApp.')) return;
+
+  // 1. Cargar datos del vehículo para el mensaje
+  var {data, error} = await sb.from('verificaciones').select('marca,modelo,anio,vin,placas,nombre_solicitante,tier,pago_monto').eq('id', id).limit(1);
+  if(error || !data || !data.length){ alert('Error cargando datos'); return; }
+  var v = data[0];
+
+  // 2. Actualizar estatus a pagado
+  var {error: updErr} = await sb.from('verificaciones').update({estatus:'pagado'}).eq('id', id);
+  if(updErr){ alert('Error: ' + updErr.message); return; }
+
+  // 3. Construir mensaje WhatsApp para el perito
+  var vehiculo = (v.marca||'') + ' ' + (v.modelo||'') + ' ' + (v.anio||'');
+  var link = 'https://alabolcar.com.mx/verificacion/peritar/?folio=' + folio;
+  var msg = '🚗 *Nuevo vehículo para peritaje*\n\n'
+    + '*' + vehiculo.trim() + '*\n'
+    + 'Folio: ' + folio + '\n'
+    + 'NIV: ' + (v.vin||'N/A') + '\n'
+    + 'Placas: ' + (v.placas||'N/A') + '\n'
+    + 'Solicitante: ' + (v.nombre_solicitante||'N/A') + '\n'
+    + 'Tier: ' + (v.tier||'').toUpperCase() + '\n\n'
+    + '👉 Revisar y emitir dictamen:\n' + link;
+
+  // 4. Abrir WhatsApp al perito
+  var waUrl = 'https://wa.me/525537213014?text=' + encodeURIComponent(msg);
+  window.open(waUrl, '_blank');
+
+  // 5. Recargar tab
   renderVerificaciones();
 }
 

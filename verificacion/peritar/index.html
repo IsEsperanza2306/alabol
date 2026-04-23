@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="/logo-circular.png" type="image/png">
+<title>Panel Perito | Alabol Car Broker</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --bg: #0a1f1a;
+  --bg-secondary: #0d2921;
+  --bg-card: rgba(13, 38, 28, 0.65);
+  --gold: #d4af37;
+  --gold-light: #f4e5b0;
+  --gold-dim: rgba(212, 175, 55, 0.25);
+  --gold-glow: rgba(212, 175, 55, 0.15);
+  --emerald: #34d399;
+  --green-text: #a8c5b8;
+  --green-muted: rgba(148, 184, 167, 0.5);
+  --glass-bg: rgba(13, 38, 28, 0.65);
+  --glass-border: rgba(212, 175, 55, 0.18);
+  --danger: #ef4444;
+  --success: #10b981;
+  --warning: #f59e0b;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100vh; font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--green-text); }
+body {
+  background-image:
+    linear-gradient(rgba(13, 148, 136, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(13, 148, 136, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+button, input, select, textarea { font-family: inherit; outline: none; }
+a { color: var(--gold); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Ambient Glows */
+.ambient-glow-1 {
+  position: fixed; top: -10%; left: -10%; width: 50vw; height: 50vw;
+  background: radial-gradient(circle, rgba(13, 148, 136, 0.2) 0%, transparent 60%);
+  border-radius: 50%; z-index: 0; filter: blur(90px); pointer-events: none;
+  animation: ambFloat 12s ease-in-out infinite alternate;
+}
+.ambient-glow-2 {
+  position: fixed; bottom: -10%; right: -10%; width: 50vw; height: 50vw;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.12) 0%, transparent 60%);
+  border-radius: 50%; z-index: 0; filter: blur(90px); pointer-events: none;
+  animation: ambFloat 10s ease-in-out infinite alternate-reverse;
+}
+@keyframes ambFloat {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(40px, 40px) scale(1.1); }
+}
+
+/* Header */
+.hdr {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(10, 31, 26, 0.92);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.hdr-left { display: flex; align-items: center; gap: 12px; }
+.hdr-logo { width: 40px; height: 40px; object-fit: contain; filter: drop-shadow(0 0 10px rgba(212,175,55,0.5)); border-radius: 50%; }
+.hdr-title { font-size: 16px; font-weight: 800; color: var(--gold); text-shadow: 0 0 14px rgba(212,175,55,0.3); }
+.hdr-sub { font-size: 10px; color: var(--green-text); text-transform: uppercase; letter-spacing: .1em; opacity: 0.6; }
+.hdr-badge {
+  display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;
+  padding: 6px 12px; border-radius: 20px;
+  background: rgba(212,175,55,0.1); border: 1px solid var(--gold-dim);
+  color: var(--gold); font-size: 11px; font-weight: 700; letter-spacing: 0.05em;
+}
+
+/* Main */
+.main {
+  max-width: 720px; margin: 0 auto; padding: 24px 16px 80px;
+  position: relative; z-index: 1;
+}
+
+/* Cards */
+.card {
+  background: var(--glass-bg); border: 1px solid var(--glass-border);
+  border-radius: 20px; padding: 20px; margin-bottom: 20px;
+  backdrop-filter: blur(10px);
+}
+.card-title {
+  font-size: 13px; font-weight: 700; color: var(--gold);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+}
+.card-title i { font-size: 14px; }
+
+/* Vehicle info grid */
+.veh-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 480px) { .veh-grid { grid-template-columns: 1fr; } }
+.veh-field label {
+  display: block; font-size: 9px; font-weight: 700; color: var(--gold);
+  text-transform: uppercase; letter-spacing: .1em; margin-bottom: 3px; opacity: 0.8;
+}
+.veh-field span { font-size: 14px; color: white; font-weight: 600; }
+.veh-field.full { grid-column: 1 / -1; }
+.veh-vin { font-family: 'Courier New', monospace; font-size: 16px; letter-spacing: 2px; color: var(--emerald); }
+.tier-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700;
+  background: rgba(212,175,55,0.12); color: var(--gold); border: 1px solid var(--gold-dim);
+  text-transform: uppercase;
+}
+
+/* Photo grid */
+.photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 480px) { .photo-grid { grid-template-columns: 1fr; } }
+.photo-item {
+  border-radius: 12px; overflow: hidden; cursor: pointer; position: relative;
+  background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
+  transition: border-color 0.3s;
+}
+.photo-item:hover { border-color: var(--gold); }
+.photo-item img {
+  width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block;
+}
+.photo-label {
+  padding: 8px 10px; font-size: 11px; font-weight: 600; color: var(--green-text);
+  background: rgba(10,31,26,0.8); text-align: center;
+}
+.photo-placeholder {
+  width: 100%; aspect-ratio: 4/3;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  background: rgba(0,0,0,0.2); color: var(--green-muted);
+}
+.photo-placeholder i { font-size: 28px; }
+.photo-placeholder span { font-size: 11px; }
+
+/* Semaforo */
+.semaforo-list { display: flex; flex-direction: column; gap: 10px; }
+.semaforo-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 14px; border-radius: 12px;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+  transition: border-color 0.2s;
+}
+.semaforo-row.has-value { border-color: rgba(255,255,255,0.12); }
+.semaforo-row-label {
+  font-size: 13px; color: var(--green-text); display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0;
+}
+.semaforo-row-label i { color: var(--gold); font-size: 13px; flex-shrink: 0; }
+.semaforo-row-label span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 480px) {
+  .semaforo-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .semaforo-row-label span { white-space: normal; }
+}
+.sem-btns { display: flex; gap: 6px; flex-shrink: 0; }
+.sem-btn {
+  width: 44px; height: 44px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.4);
+  font-size: 16px; cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+}
+.sem-btn:hover { border-color: rgba(255,255,255,0.25); color: white; }
+.sem-btn.verde.active { background: #10b981; border-color: #10b981; color: white; box-shadow: 0 0 12px rgba(16,185,129,0.4); }
+.sem-btn.amarillo.active { background: #f59e0b; border-color: #f59e0b; color: white; box-shadow: 0 0 12px rgba(245,158,11,0.4); }
+.sem-btn.rojo.active { background: #ef4444; border-color: #ef4444; color: white; box-shadow: 0 0 12px rgba(239,68,68,0.4); }
+
+/* Notes */
+.notas-textarea {
+  width: 100%; min-height: 120px; padding: 14px;
+  background: rgba(10,31,26,0.6); border: 1px solid var(--glass-border);
+  border-radius: 12px; color: white; font-size: 14px; line-height: 1.6;
+  resize: vertical; transition: border-color 0.3s;
+}
+.notas-textarea:focus { border-color: var(--gold); box-shadow: 0 0 16px rgba(212,175,55,0.12); }
+.notas-textarea::placeholder { color: var(--green-muted); }
+
+/* Submit button */
+.btn-submit {
+  width: 100%; padding: 18px; border-radius: 14px; border: none; cursor: pointer;
+  background: linear-gradient(135deg, var(--gold), #c9a961, var(--gold-light));
+  background-size: 200% 200%; animation: goldShimmer 3s ease infinite;
+  color: var(--bg); font-size: 16px; font-weight: 800;
+  box-shadow: 0 4px 24px rgba(212,175,55,0.35); transition: all 0.3s;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(212,175,55,0.5); }
+.btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; animation: none; }
+@keyframes goldShimmer { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+
+/* Full-page states */
+.fullscreen-state {
+  display: none; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 60vh; text-align: center; padding: 40px 20px;
+}
+.fullscreen-state.visible { display: flex; }
+.state-icon { font-size: 64px; margin-bottom: 20px; }
+.state-title { font-size: 24px; font-weight: 800; color: white; margin-bottom: 10px; }
+.state-sub { font-size: 14px; color: var(--green-text); opacity: 0.8; line-height: 1.7; max-width: 380px; }
+
+/* Result screen */
+.result-screen {
+  display: none; flex-direction: column; align-items: center; justify-content: center;
+  padding: 48px 20px; text-align: center;
+}
+.result-screen.visible { display: flex; }
+.result-icon-big { font-size: 80px; margin-bottom: 16px; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+@keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.result-label {
+  font-size: 22px; font-weight: 800; margin-bottom: 8px;
+}
+.result-label.aprobado { color: var(--emerald); }
+.result-label.observaciones { color: var(--warning); }
+.result-label.rechazado { color: var(--danger); }
+.result-folio {
+  font-size: 16px; color: var(--gold); margin-bottom: 20px;
+  background: rgba(212,175,55,0.08); border: 1px solid var(--gold-dim);
+  display: inline-block; padding: 8px 20px; border-radius: 12px;
+}
+.result-desc { font-size: 14px; color: var(--green-text); line-height: 1.7; max-width: 420px; margin: 0 auto; }
+
+/* Lightbox */
+.lightbox {
+  display: none; position: fixed; inset: 0; z-index: 999;
+  background: rgba(0,0,0,0.92); align-items: center; justify-content: center;
+  padding: 16px;
+}
+.lightbox.visible { display: flex; }
+.lightbox img { max-width: 100%; max-height: 90vh; object-fit: contain; border-radius: 8px; }
+.lightbox-close {
+  position: absolute; top: 16px; right: 16px;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+  color: white; font-size: 20px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s;
+}
+.lightbox-close:hover { background: rgba(255,255,255,0.2); }
+
+/* Spinner */
+.spinner { display: inline-block; }
+.spinner i { animation: spin 0.8s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* Progress bar semaforo */
+.sem-progress {
+  margin-top: 14px; display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--green-muted);
+}
+.sem-progress-bar {
+  flex: 1; height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden;
+}
+.sem-progress-fill {
+  height: 100%; background: linear-gradient(90deg, var(--gold), var(--emerald));
+  border-radius: 2px; transition: width 0.4s ease; width: 0;
+}
+
+/* Disclaimer */
+.disclaimer {
+  font-size: 10px; color: var(--green-muted); line-height: 1.6;
+  padding: 12px; border-radius: 10px; background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05); margin-top: 16px;
+}
+</style>
+</head>
+<body>
+
+<div class="ambient-glow-1"></div>
+<div class="ambient-glow-2"></div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+  <img id="lightbox-img" src="" alt="Foto">
+</div>
+
+<!-- Header -->
+<header class="hdr">
+  <div class="hdr-left">
+    <img src="/logo-circular.png" class="hdr-logo" alt="Alabol">
+    <div>
+      <div class="hdr-title">Panel Perito</div>
+      <div class="hdr-sub">Alabol Car Broker</div>
+    </div>
+  </div>
+  <div class="hdr-badge" id="folio-badge">
+    <i class="fas fa-file-shield"></i> <span id="hdr-folio">Cargando...</span>
+  </div>
+</header>
+
+<!-- Main -->
+<div class="main" id="main-content" style="display:none">
+
+  <!-- Datos del vehículo -->
+  <div class="card" id="card-vehiculo">
+    <div class="card-title"><i class="fas fa-car-side"></i> Datos del Vehículo</div>
+    <div class="veh-grid" id="veh-grid">
+      <!-- Renderizado por JS -->
+    </div>
+  </div>
+
+  <!-- Fotos -->
+  <div class="card">
+    <div class="card-title"><i class="fas fa-camera"></i> Fotografías del Peritaje</div>
+    <div class="photo-grid" id="photo-grid">
+      <!-- Renderizado por JS -->
+    </div>
+  </div>
+
+  <!-- Semáforo -->
+  <div class="card">
+    <div class="card-title"><i class="fas fa-traffic-light"></i> Semáforo de Verificación</div>
+    <div class="semaforo-list" id="semaforo-list">
+      <!-- Renderizado por JS -->
+    </div>
+    <div class="sem-progress">
+      <span id="sem-count">0 / 12</span>
+      <div class="sem-progress-bar"><div class="sem-progress-fill" id="sem-progress-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- Notas -->
+  <div class="card">
+    <div class="card-title"><i class="fas fa-pen-to-square"></i> Observaciones del Peritaje</div>
+    <textarea class="notas-textarea" id="notas" placeholder="Observaciones, notas del peritaje físico. Describe cualquier anomalía detectada, condición del vehículo, estado de documentos, etc."></textarea>
+  </div>
+
+  <!-- Submit -->
+  <button class="btn-submit" id="btn-submit" onclick="emitirDictamen()">
+    <i class="fas fa-gavel"></i> Emitir Dictamen
+  </button>
+
+  <div class="disclaimer">
+    <i class="fas fa-info-circle"></i> Al emitir el dictamen, el resultado quedará registrado y el cliente recibirá notificación inmediata. Esta acción no puede revertirse.
+  </div>
+
+</div>
+
+<!-- Estado: Cargando -->
+<div class="fullscreen-state visible" id="state-loading">
+  <div class="state-icon"><i class="fas fa-circle-notch fa-spin" style="color:var(--gold)"></i></div>
+  <div class="state-title">Cargando expediente...</div>
+  <div class="state-sub">Obteniendo información de la verificación.</div>
+</div>
+
+<!-- Estado: Error link inválido -->
+<div class="fullscreen-state" id="state-invalid">
+  <div class="state-icon" style="color:var(--danger)"><i class="fas fa-link-slash"></i></div>
+  <div class="state-title">Link inválido</div>
+  <div class="state-sub">Este enlace no es válido o no contiene un folio de verificación. Solicita un nuevo link al equipo Alabol.</div>
+</div>
+
+<!-- Estado: No encontrado -->
+<div class="fullscreen-state" id="state-notfound">
+  <div class="state-icon" style="color:var(--warning)"><i class="fas fa-file-circle-xmark"></i></div>
+  <div class="state-title">Expediente no encontrado</div>
+  <div class="state-sub" id="state-notfound-msg">No se encontró una verificación con este folio.</div>
+</div>
+
+<!-- Estado: Ya emitido -->
+<div class="fullscreen-state" id="state-emitido">
+  <div class="state-icon" style="color:var(--emerald)"><i class="fas fa-circle-check"></i></div>
+  <div class="state-title">Dictamen ya emitido</div>
+  <div class="state-sub" id="state-emitido-msg">Este expediente ya tiene un dictamen registrado.</div>
+  <div style="margin-top:24px;background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:16px;padding:20px;max-width:360px;width:100%;text-align:center">
+    <div style="font-size:11px;color:var(--green-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Resultado</div>
+    <div id="emitido-resultado" style="font-size:20px;font-weight:800;color:white"></div>
+    <div id="emitido-folio" style="font-size:14px;color:var(--gold);margin-top:6px"></div>
+  </div>
+</div>
+
+<!-- Estado: Resultado final -->
+<div class="result-screen" id="state-result">
+  <div class="result-icon-big" id="result-icon"></div>
+  <div class="result-label" id="result-label"></div>
+  <div class="result-folio" id="result-folio"></div>
+  <div class="result-desc" id="result-desc"></div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var SK = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8';
+  var SB_URL = 'https://rgnunjngtsgqgvplawfr.supabase.co';
+  var STORAGE_URL = SB_URL + '/storage/v1/object/public/verificaciones/';
+
+  var SEMAFORO_PUNTOS = [
+    { key: 'documentos_completos', label: 'Documentos completos', icon: 'fa-folder-open' },
+    { key: 'vin_valido', label: 'NIV válido y consistente', icon: 'fa-fingerprint' },
+    { key: 'vin_no_remarcado', label: 'NIV sin indicios de remarcado', icon: 'fa-magnifying-glass' },
+    { key: 'placas_vigentes', label: 'Placas vigentes', icon: 'fa-rectangle-list' },
+    { key: 'sin_reporte_robo', label: 'Sin reporte de robo', icon: 'fa-shield-halved' },
+    { key: 'factura_original', label: 'Factura original o endoso correcto', icon: 'fa-file-invoice' },
+    { key: 'tarjeta_circulacion', label: 'Tarjeta de circulación válida', icon: 'fa-id-card' },
+    { key: 'chip_repuve', label: 'Chip REPUVE presente y legible', icon: 'fa-microchip' },
+    { key: 'numero_motor', label: 'Número de motor legible', icon: 'fa-gears' },
+    { key: 'condicion_exterior', label: 'Condición exterior aceptable', icon: 'fa-car' },
+    { key: 'pintura_original', label: 'Pintura sin indicios de reparación', icon: 'fa-paintbrush' },
+    { key: 'estructura_integra', label: 'Estructura sin soldaduras sospechosas', icon: 'fa-wrench' }
+  ];
+
+  var FOTO_KEYS = ['niv_tablero', 'niv_chasis', 'numero_motor', 'chip_repuve', 'tarjeta_circulacion', 'factura'];
+  var FOTO_NAMES = {
+    niv_tablero: 'NIV en tablero',
+    niv_chasis: 'NIV en chasis',
+    numero_motor: 'Número de motor',
+    chip_repuve: 'Chip REPUVE',
+    tarjeta_circulacion: 'Tarjeta de circulación',
+    factura: 'Factura'
+  };
+
+  var semaforo = {};
+  var folioActual = null;
+
+  function g(id) { return document.getElementById(id); }
+
+  function esc(s) {
+    return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function showState(name) {
+    var ids = ['state-loading', 'state-invalid', 'state-notfound', 'state-emitido', 'state-result'];
+    ids.forEach(function (id) {
+      var el = g(id);
+      if (el) el.classList.remove('visible');
+    });
+    var target = g(name);
+    if (target) target.classList.add('visible');
+    g('main-content').style.display = 'none';
+  }
+
+  function showMain() {
+    var ids = ['state-loading', 'state-invalid', 'state-notfound', 'state-emitido', 'state-result'];
+    ids.forEach(function (id) {
+      var el = g(id);
+      if (el) el.classList.remove('visible');
+    });
+    g('main-content').style.display = 'block';
+  }
+
+  // ── SEMÁFORO ──
+
+  function setSemaforo(key, valor) {
+    semaforo[key] = valor;
+    var row = document.querySelector('.semaforo-row[data-key="' + key + '"]');
+    if (row) {
+      row.classList.add('has-value');
+      row.querySelectorAll('.sem-btn').forEach(function (btn) { btn.classList.remove('active'); });
+      var activeBtn = row.querySelector('.sem-btn.' + valor);
+      if (activeBtn) activeBtn.classList.add('active');
+    }
+    updateSemProgress();
+  }
+
+  function updateSemProgress() {
+    var filled = SEMAFORO_PUNTOS.filter(function (p) { return semaforo[p.key]; }).length;
+    var total = SEMAFORO_PUNTOS.length;
+    g('sem-count').textContent = filled + ' / ' + total;
+    g('sem-progress-fill').style.width = Math.round((filled / total) * 100) + '%';
+  }
+
+  // ── RENDER ──
+
+  function renderVehiculo(exp) {
+    var tierColors = { basico: 'rgba(212,175,55,0.12)', verificado: 'rgba(16,185,129,0.12)', plus: 'rgba(124,58,237,0.12)' };
+    var tierBorderColors = { basico: 'rgba(212,175,55,0.3)', verificado: 'rgba(16,185,129,0.3)', plus: 'rgba(124,58,237,0.3)' };
+    var tierTextColors = { basico: 'var(--gold)', verificado: 'var(--emerald)', plus: '#a78bfa' };
+    var tier = exp.tier || 'basico';
+    var tierBg = tierColors[tier] || tierColors.basico;
+    var tierBorder = tierBorderColors[tier] || tierBorderColors.basico;
+    var tierColor = tierTextColors[tier] || tierTextColors.basico;
+
+    g('veh-grid').innerHTML =
+      '<div class="veh-field">' +
+        '<label>Marca / Modelo / Año</label>' +
+        '<span>' + esc((exp.marca || '') + ' ' + (exp.modelo || '') + ' ' + (exp.anio || '')) + '</span>' +
+      '</div>' +
+      '<div class="veh-field">' +
+        '<label>Color</label>' +
+        '<span>' + esc(exp.color || 'N/A') + '</span>' +
+      '</div>' +
+      '<div class="veh-field full">' +
+        '<label>NIV / VIN</label>' +
+        '<span class="veh-vin">' + esc(exp.vin || 'N/A') + '</span>' +
+      '</div>' +
+      '<div class="veh-field">' +
+        '<label>Placas</label>' +
+        '<span>' + esc(exp.placas || 'N/A') + '</span>' +
+      '</div>' +
+      '<div class="veh-field">' +
+        '<label>Solicitante</label>' +
+        '<span>' + esc(exp.nombre_solicitante || 'N/A') + '</span>' +
+      '</div>' +
+      '<div class="veh-field">' +
+        '<label>Plan</label>' +
+        '<span style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;background:' + tierBg + ';color:' + tierColor + ';border:1px solid ' + tierBorder + '">' +
+          '<i class="fas fa-shield"></i> ' + tier.toUpperCase() +
+        '</span>' +
+      '</div>';
+  }
+
+  function renderFotos(exp) {
+    var fotos = exp.fotos || {};
+    var html = '';
+    FOTO_KEYS.forEach(function (key) {
+      var path = fotos[key];
+      var label = FOTO_NAMES[key] || key;
+      if (path) {
+        var url = STORAGE_URL + path;
+        html +=
+          '<div class="photo-item" onclick="openLightbox(\'' + url.replace(/'/g, "\\'") + '\')">' +
+            '<img src="' + esc(url) + '" alt="' + esc(label) + '" loading="lazy">' +
+            '<div class="photo-label"><i class="fas fa-search-plus" style="opacity:0.5;margin-right:4px"></i>' + esc(label) + '</div>' +
+          '</div>';
+      } else {
+        html +=
+          '<div class="photo-item">' +
+            '<div class="photo-placeholder">' +
+              '<i class="fas fa-image"></i>' +
+              '<span>Sin foto</span>' +
+            '</div>' +
+            '<div class="photo-label" style="color:var(--green-muted)">' + esc(label) + '</div>' +
+          '</div>';
+      }
+    });
+    g('photo-grid').innerHTML = html;
+  }
+
+  function renderSemaforo() {
+    var html = SEMAFORO_PUNTOS.map(function (punto) {
+      return (
+        '<div class="semaforo-row" data-key="' + punto.key + '">' +
+          '<div class="semaforo-row-label">' +
+            '<i class="fas ' + punto.icon + '"></i>' +
+            '<span>' + esc(punto.label) + '</span>' +
+          '</div>' +
+          '<div class="sem-btns">' +
+            '<button class="sem-btn verde" title="Aprobado" onclick="setSemaforo(\'' + punto.key + '\',\'verde\')">' +
+              '<i class="fas fa-check"></i>' +
+            '</button>' +
+            '<button class="sem-btn amarillo" title="Con observaciones" onclick="setSemaforo(\'' + punto.key + '\',\'amarillo\')">' +
+              '<i class="fas fa-exclamation"></i>' +
+            '</button>' +
+            '<button class="sem-btn rojo" title="No aprobado" onclick="setSemaforo(\'' + punto.key + '\',\'rojo\')">' +
+              '<i class="fas fa-times"></i>' +
+            '</button>' +
+          '</div>' +
+        '</div>'
+      );
+    }).join('');
+    g('semaforo-list').innerHTML = html;
+    updateSemProgress();
+  }
+
+  // ── LIGHTBOX ──
+
+  function openLightbox(url) {
+    g('lightbox-img').src = url;
+    g('lightbox').classList.add('visible');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    g('lightbox').classList.remove('visible');
+    g('lightbox-img').src = '';
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeLightbox();
+  });
+
+  // ── EMIT DICTAMEN ──
+
+  function emitirDictamen() {
+    var incompletos = SEMAFORO_PUNTOS.filter(function (p) { return !semaforo[p.key]; });
+    if (incompletos.length > 0) {
+      var nombres = incompletos.slice(0, 3).map(function (p) { return p.label; }).join(', ');
+      var mas = incompletos.length > 3 ? ' y ' + (incompletos.length - 3) + ' más.' : '.';
+      alert('Evalúa todos los puntos del semáforo antes de emitir el dictamen.\n\nFaltan: ' + nombres + mas);
+      return;
+    }
+
+    var hasRojo = SEMAFORO_PUNTOS.some(function (p) { return semaforo[p.key] === 'rojo'; });
+    var hasAmarillo = SEMAFORO_PUNTOS.some(function (p) { return semaforo[p.key] === 'amarillo'; });
+    var resultado;
+
+    if (hasRojo) {
+      if (!confirm('Hay puntos en ROJO. El dictamen será NO APROBADO.\n\n¿Confirmas emitir el dictamen?')) return;
+      resultado = 'no_aprobado';
+    } else if (hasAmarillo) {
+      if (!confirm('Hay puntos en AMARILLO. El dictamen será APROBADO CON OBSERVACIONES.\n\n¿Confirmas emitir el dictamen?')) return;
+      resultado = 'aprobado_con_observaciones';
+    } else {
+      if (!confirm('Todos los puntos están en VERDE. El dictamen será APROBADO.\n\n¿Confirmas emitir el dictamen?')) return;
+      resultado = 'aprobado';
+    }
+
+    var notas = g('notas').value.trim();
+    var btn = g('btn-submit');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"><i class="fas fa-circle-notch fa-spin"></i></span> Procesando...';
+
+    fetch('/.netlify/functions/emitir-dictamen', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ folio: folioActual, semaforo: semaforo, notas: notas, resultado: resultado })
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+      if (data.error) {
+        alert('Error al emitir dictamen: ' + data.error);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-gavel"></i> Emitir Dictamen';
+        return;
+      }
+      showResultScreen(resultado, folioActual);
+    })
+    .catch(function (err) {
+      alert('Error de conexión: ' + (err.message || 'Intenta de nuevo'));
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-gavel"></i> Emitir Dictamen';
+    });
+  }
+
+  function showResultScreen(resultado, folio) {
+    showState('state-result');
+    var icons = { aprobado: '✅', aprobado_con_observaciones: '⚠️', no_aprobado: '🚫' };
+    var labels = { aprobado: 'Aprobado', aprobado_con_observaciones: 'Aprobado con Observaciones', no_aprobado: 'No Aprobado' };
+    var classes = { aprobado: 'aprobado', aprobado_con_observaciones: 'observaciones', no_aprobado: 'rechazado' };
+    var descs = {
+      aprobado: 'El vehículo pasó todos los puntos de verificación sin observaciones. El certificado ha sido generado y el cliente fue notificado.',
+      aprobado_con_observaciones: 'El vehículo fue aprobado pero con algunas observaciones. El cliente fue notificado con el detalle de los puntos amarillos.',
+      no_aprobado: 'El vehículo no pasó la verificación. El cliente fue notificado sobre los puntos críticos encontrados.'
+    };
+    g('result-icon').textContent = icons[resultado] || '📋';
+    g('result-label').textContent = labels[resultado] || resultado;
+    g('result-label').className = 'result-label ' + (classes[resultado] || '');
+    g('result-folio').textContent = folio;
+    g('result-desc').textContent = descs[resultado] || 'Dictamen emitido correctamente.';
+  }
+
+  // ── FETCH & INIT ──
+
+  function fetchVerificacion(folio) {
+    return fetch(SB_URL + '/rest/v1/verificaciones?folio=eq.' + encodeURIComponent(folio) + '&limit=1', {
+      headers: {
+        'apikey': SK,
+        'Authorization': 'Bearer ' + SK,
+        'Accept': 'application/json'
+      }
+    })
+    .then(function (res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    });
+  }
+
+  function init() {
+    var params = new URLSearchParams(window.location.search);
+    var folio = params.get('folio');
+
+    if (!folio) {
+      showState('state-invalid');
+      return;
+    }
+
+    folio = folio.replace(/[^A-Z0-9\-]/gi, '').substring(0, 20).toUpperCase();
+    if (!folio) {
+      showState('state-invalid');
+      return;
+    }
+
+    folioActual = folio;
+    g('hdr-folio').textContent = folio;
+
+    fetchVerificacion(folio)
+    .then(function (rows) {
+      if (!rows || !rows.length) {
+        showState('state-notfound');
+        g('state-notfound-msg').textContent = 'No se encontró ninguna verificación con folio ' + folio + '.';
+        return;
+      }
+
+      var exp = rows[0];
+
+      // Si ya tiene dictamen emitido
+      if (exp.resultado_final) {
+        showState('state-emitido');
+        var resultadoLabels = {
+          aprobado: 'Aprobado',
+          aprobado_con_observaciones: 'Aprobado con Observaciones',
+          no_aprobado: 'No Aprobado'
+        };
+        var resultadoColors = {
+          aprobado: 'var(--emerald)',
+          aprobado_con_observaciones: 'var(--warning)',
+          no_aprobado: 'var(--danger)'
+        };
+        var res = exp.resultado_final;
+        var el = g('emitido-resultado');
+        el.textContent = resultadoLabels[res] || res;
+        el.style.color = resultadoColors[res] || 'white';
+        g('emitido-folio').textContent = folio;
+        g('state-emitido-msg').textContent = 'Este expediente ya tiene un dictamen registrado. Folio: ' + folio + '.';
+        return;
+      }
+
+      // Mostrar panel
+      renderVehiculo(exp);
+      renderFotos(exp);
+      renderSemaforo();
+      showMain();
+    })
+    .catch(function (err) {
+      showState('state-notfound');
+      g('state-notfound-msg').textContent = 'Error al cargar el expediente: ' + (err.message || 'Intenta de nuevo más tarde.');
+    });
+  }
+
+  // Exponer para onclick inline
+  window.setSemaforo = setSemaforo;
+  window.openLightbox = openLightbox;
+  window.closeLightbox = closeLightbox;
+  window.emitirDictamen = emitirDictamen;
+
+  init();
+})();
+</script>
+</body>
+</html>

@@ -1247,7 +1247,8 @@ async function renderVerificaciones(){
         }
         acciones += '<button class="btn btn-sm btn-outline" style="margin-right:4px;" onclick="window.open(\'https://alabolcar.com.mx/certificado/'+v.folio+'\',\'_blank\')">Ver Cert</button>';
         if(v.estatus === 'pagado' || v.estatus === 'en_revision'){
-          acciones += '<button class="btn btn-sm btn-outline" onclick="window.open(\'/verificacion/verificar/\',\'_blank\')">→ Panel Perito</button>';
+          acciones += '<button class="btn btn-sm btn-outline" style="margin-right:4px;" onclick="window.open(\'https://alabolcar.com.mx/verificacion/peritar/?folio='+v.folio+'\',\'_blank\')">🔍 Ver Expediente</button>';
+          acciones += '<button class="btn btn-sm" style="background:#25D366;color:#fff;border:none;" onclick="enviarPerito(\''+v.folio+'\',\''+v.id+'\')">📱 Enviar al Perito</button>';
         }
 
         return '<tr>'
@@ -1310,6 +1311,23 @@ async function confirmarPagoVerif(folio, id){
 
   // 5. Recargar tab
   renderVerificaciones();
+}
+
+async function enviarPerito(folio, id){
+  var {data, error} = await sb.from('verificaciones').select('marca,modelo,anio,vin,placas,nombre_solicitante,tier').eq('id', id).limit(1);
+  if(error || !data || !data.length){ alert('Error cargando datos'); return; }
+  var v = data[0];
+  var vehiculo = (v.marca||'') + ' ' + (v.modelo||'') + ' ' + (v.anio||'');
+  var link = 'https://alabolcar.com.mx/verificacion/peritar/?folio=' + folio;
+  var msg = '🚗 *Vehículo para peritaje*\n\n'
+    + '*' + vehiculo.trim() + '*\n'
+    + 'Folio: ' + folio + '\n'
+    + 'NIV: ' + (v.vin||'N/A') + '\n'
+    + 'Placas: ' + (v.placas||'N/A') + '\n'
+    + 'Solicitante: ' + (v.nombre_solicitante||'N/A') + '\n'
+    + 'Tier: ' + (v.tier||'').toUpperCase() + '\n\n'
+    + '👉 Revisar y emitir dictamen:\n' + link;
+  window.open('https://wa.me/525537213014?text=' + encodeURIComponent(msg), '_blank');
 }
 
 async function agregarPerito(){

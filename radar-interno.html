@@ -280,6 +280,7 @@ body{background:var(--bg);color:var(--white);min-height:100vh;display:flex;backg
 <!-- ══════════════════════════════════════════ -->
 <div class="tab" id="tab-inventario">
   <div class="kpi-row" id="invKpis"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;" id="invAlerts"></div>
   <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
     <input class="search-input" style="max-width:250px;" id="invSearch" placeholder="Buscar auto..." oninput="renderInvTable()">
     <select id="invStatusFilter" onchange="renderInvTable()" style="padding:8px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:10px;color:var(--white);font-size:12px;">
@@ -303,12 +304,12 @@ body{background:var(--bg);color:var(--white);min-height:100vh;display:flex;backg
 <div class="tab" id="tab-agencias">
   <div class="kpi-row" id="agKpis"></div>
   <div class="section">
-    <div class="section-title"><i class="fa-solid fa-building"></i>Red de agencias aliadas</div>
-    <div style="overflow-x:auto;"><table class="tbl"><thead><tr><th>Agencia</th><th>Total</th><th>Disponibles</th><th>Vendidos</th><th>Dias Prom.</th></tr></thead><tbody id="agTableBody"></tbody></table></div>
+    <div class="section-title"><i class="fa-solid fa-users"></i>Usuarios registrados</div>
+    <div style="overflow-x:auto;"><table class="tbl"><thead><tr><th>Nombre</th><th>Email</th><th>Ciudad</th><th>Rol</th><th>Registro</th><th>Estado</th><th>Acción</th></tr></thead><tbody id="agUsersBody"></tbody></table></div>
   </div>
   <div class="section">
-    <div class="section-title"><i class="fa-solid fa-inbox"></i>Solicitudes pendientes</div>
-    <div id="agAppsBody"></div>
+    <div class="section-title"><i class="fa-solid fa-building"></i>Inventario por agencia</div>
+    <div style="overflow-x:auto;"><table class="tbl"><thead><tr><th>Agencia</th><th>Total</th><th>Disponibles</th><th>Vendidos</th><th>Dias Prom.</th></tr></thead><tbody id="agTableBody"></tbody></table></div>
   </div>
 </div>
 
@@ -496,23 +497,22 @@ async function loadAll(){
   if(!sb) initSB();
   if(!sb) { setTimeout(loadAll, 500); return; }
   try {
-    var [leadsR, invR, visitsR, funnelR, citasR, appsR] = await Promise.all([
+    var [leadsR, invR, visitsR, funnelR, citasR, perfilesR] = await Promise.all([
       sb.from('leads_matchmaker').select('*').order('created_at',{ascending:false}),
       sb.from('inventario').select('*').order('destacado',{ascending:false}).order('created_at',{ascending:false}),
       sb.from('page_visits').select('*').order('created_at',{ascending:false}).limit(500),
       sb.from('funnel_events').select('*').order('created_at',{ascending:false}).limit(1000),
       sb.from('citas').select('*').order('created_at',{ascending:false}),
-      sb.from('agency_applications').select('*').eq('status','pendiente').order('created_at',{ascending:false})
+      sb.from('perfiles').select('*').order('created_at',{ascending:false})
     ]);
     G.leads = leadsR.data || [];
     G.inv = invR.data || [];
     G.visits = visitsR.data || [];
     G.funnel = funnelR.data || [];
     G.citas = citasR.data || [];
-    G.apps = appsR.data || [];
-    // Load asesores
-    var asrR = await sb.from('perfiles').select('id,nombre,email,rol').eq('activo',true);
-    asesores = (asrR.data||[]).filter(function(a){return a.rol==='admin'||a.rol==='asesor'});
+    G.apps = [];
+    G.perfiles = perfilesR.data || [];
+    asesores = G.perfiles.filter(function(a){return (a.rol==='admin'||a.rol==='asesor')&&a.activo});
   } catch(e){ console.error('Load error:',e); }
   renderCurrentTab();
 }
@@ -813,6 +813,31 @@ function renderInventario(){
     + kpiCard('Dias prom.',avgDays,'en inventario','warn')
     + kpiCard('Destacados',inv.filter(function(i){return i.destacado}).length,'','');
 
+  // Alert panels: recent + oldest
+  var now=Date.now();
+  var recientes=disp.filter(function(i){return now-new Date(i.created_at).getTime()<7*86400000}).slice(0,6);
+  var viejos=disp.slice().sort(function(a,b){return new Date(a.created_at)-new Date(b.created_at)}).slice(0,6);
+  var alertRowFn=function(i,showAge){
+    var d=daysSince(i.created_at);
+    var ageColor=d>30?'var(--danger)':d>14?'var(--gold)':'var(--emerald)';
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);">'
+      +'<div style="font-size:12px;color:white;font-weight:600;">'+i.marca+' '+i.modelo+' '+(i.anio||'')+'<br><span style="font-size:10px;color:var(--txt);">'+(i.agencia_id||'—')+'</span></div>'
+      +'<div style="text-align:right;">'
+        +(showAge?'<div style="font-size:11px;color:'+ageColor+';font-weight:700;">'+d+' días</div>':'<div style="font-size:11px;color:var(--emerald);">Nuevo</div>')
+        +'<div style="font-size:11px;color:var(--gold);">$'+fmt(i.precio_venta)+'</div>'
+      +'</div>'
+    +'</div>';
+  };
+  document.getElementById('invAlerts').innerHTML=
+    '<div class="section" style="margin:0;">'
+      +'<div class="section-title" style="color:var(--emerald);"><i class="fa-solid fa-circle-plus"></i> Recién agregados (7 días)</div>'
+      +(recientes.length?recientes.map(function(i){return alertRowFn(i,false)}).join(''):'<p style="font-size:12px;opacity:0.5;">Sin autos nuevos esta semana</p>')
+    +'</div>'
+    +'<div class="section" style="margin:0;">'
+      +'<div class="section-title" style="color:var(--danger);"><i class="fa-solid fa-clock"></i> Más tiempo en inventario</div>'
+      +(viejos.length?viejos.map(function(i){return alertRowFn(i,true)}).join(''):'<p style="font-size:12px;opacity:0.5;">Sin datos</p>')
+    +'</div>';
+
   // Populate agency filter
   var agencies=[...new Set(inv.map(function(i){return i.agencia_id}).filter(Boolean))].sort();
   var sel=document.getElementById('invAgencyFilter');
@@ -933,6 +958,8 @@ async function saveEditModal(id){
 // ══════════════════════════════════════════
 function renderAgencias(){
   var inv=G.inv.filter(function(i){return i.origen!=='canario'});
+  var usuarios=G.perfiles.filter(function(p){return p.rol!=='admin'});
+  var agenciaUsers=G.perfiles.filter(function(p){return p.rol==='vendedor'||p.rol==='comprador'});
   var agencies={};
   inv.forEach(function(i){
     var a=i.agencia_id||'sin_agencia';
@@ -944,29 +971,51 @@ function renderAgencias(){
   var agList=Object.keys(agencies).sort(function(a,b){return agencies[b].total-agencies[a].total});
 
   document.getElementById('agKpis').innerHTML =
-    kpiCard('Agencias',agList.length,'')
-    + kpiCard('Autos en red',inv.length,'','emerald')
-    + kpiCard('Solicitudes',G.apps.length,'pendientes','warn');
+    kpiCard('Usuarios',usuarios.length,'registrados','')
+    + kpiCard('Vendedores',agenciaUsers.filter(function(u){return u.rol==='vendedor'}).length,'con acceso','emerald')
+    + kpiCard('Autos en red',inv.filter(function(i){return i.estatus==='disponible'}).length,'disponibles','teal')
+    + kpiCard('Agencias',agList.length,'con inventario','warn');
+
+  var rolBadge=function(r){
+    var colors={admin:'var(--gold)',vendedor:'var(--emerald)',comprador:'var(--teal)'};
+    return '<span style="background:'+( colors[r]||'var(--txt)')+';color:#000;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;">'+r+'</span>';
+  };
+
+  document.getElementById('agUsersBody').innerHTML=usuarios.length===0
+    ?'<tr><td colspan="7" style="text-align:center;opacity:0.5;font-size:12px;">Sin usuarios registrados</td></tr>'
+    :usuarios.map(function(u){
+      var dias=daysSince(u.created_at);
+      var fechaStr=u.created_at?u.created_at.substring(0,10):'—';
+      return '<tr>'
+        +'<td style="color:white;font-weight:600;">'+(u.nombre||'—')+'</td>'
+        +'<td style="font-size:11px;color:var(--txt);">'+(u.email||'—')+'</td>'
+        +'<td style="font-size:11px;">'+(u.ciudad||'—')+'</td>'
+        +'<td>'+rolBadge(u.rol)+'</td>'
+        +'<td style="font-size:11px;color:var(--txt);">'+fechaStr+' <span style="opacity:0.5;">('+dias+'d)</span></td>'
+        +'<td>'+(u.activo?'<span style="color:var(--emerald);font-size:11px;">● Activo</span>':'<span style="color:var(--danger);font-size:11px;">● Inactivo</span>')+'</td>'
+        +'<td><div style="display:flex;gap:4px;">'
+          +(u.rol==='vendedor'?'':'<button onclick="setRol(\''+u.id+'\',\'vendedor\')" class="btn btn-sm btn-emerald" title="Promover a vendedor">↑ Vendedor</button>')
+          +'<button onclick="toggleActivo(\''+u.id+'\','+u.activo+')" class="btn btn-sm '+(u.activo?'btn-outline':'btn-gold')+'">'+(u.activo?'Desactivar':'Activar')+'</button>'
+        +'</div></td>'
+      +'</tr>';
+    }).join('');
 
   document.getElementById('agTableBody').innerHTML=agList.map(function(a){
     var ag=agencies[a];
     var avgD=ag.days.length?Math.round(ag.days.reduce(function(s,d){return s+d},0)/ag.days.length):0;
     return '<tr><td style="color:white;font-weight:600;">'+a+'</td><td>'+ag.total+'</td><td style="color:var(--emerald);">'+ag.disp+'</td><td>'+ag.vend+'</td><td>'+avgD+' dias</td></tr>';
   }).join('');
-
-  document.getElementById('agAppsBody').innerHTML=(G.apps||[]).length===0
-    ?'<p style="font-size:12px;color:var(--txt);opacity:0.5;">Sin solicitudes pendientes</p>'
-    :G.apps.map(function(a){
-      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">'
-        +'<div><div style="color:white;font-weight:600;font-size:12px;">'+(a.agency_name||'Sin nombre')+'</div><div style="font-size:10px;color:var(--txt);">'+(a.contact_name||'')+' · '+(a.email||'')+' · '+(a.city||'')+'</div></div>'
-        +'<button onclick="approveApp(\''+a.id+'\')" class="btn btn-sm btn-emerald">Aprobar</button>'
-      +'</div>';
-    }).join('');
 }
 
-async function approveApp(id){
-  await sb.from('agency_applications').update({status:'aprobada'}).eq('id',id);
-  G.apps=G.apps.filter(function(a){return a.id!==id});
+async function setRol(id, rol){
+  await sb.from('perfiles').update({rol:rol}).eq('id',id);
+  var p=G.perfiles.find(function(x){return x.id===id});if(p)p.rol=rol;
+  renderAgencias();
+}
+
+async function toggleActivo(id, current){
+  await sb.from('perfiles').update({activo:!current}).eq('id',id);
+  var p=G.perfiles.find(function(x){return x.id===id});if(p)p.activo=!current;
   renderAgencias();
 }
 

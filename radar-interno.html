@@ -1294,10 +1294,11 @@ async function renderVerificaciones(){
         if(v.estatus === 'pendiente_pago'){
           acciones += '<button class="btn btn-sm" style="background:var(--emerald);color:#000;border:none;margin-right:4px;" onclick="confirmarPagoVerif(\''+v.folio+'\',\''+v.id+'\')"><i class="fa-solid fa-check"></i> Confirmar Pago</button>';
         }
+        acciones += '<button class="btn btn-sm btn-gold" style="margin-right:4px;" onclick="window.open(\'https://alabolcar.com.mx/verificacion/verificar/?folio='+v.folio+'\',\'_blank\')" title="Abrir panel verificador">📂 Abrir</button>';
         acciones += '<button class="btn btn-sm btn-outline" style="margin-right:4px;" onclick="window.open(\'https://alabolcar.com.mx/certificado/'+v.folio+'\',\'_blank\')">Ver Cert</button>';
         if(v.estatus === 'pagado' || v.estatus === 'en_revision'){
-          acciones += '<button class="btn btn-sm btn-outline" style="margin-right:4px;" onclick="window.open(\'https://alabolcar.com.mx/verificacion/peritar/?folio='+v.folio+'\',\'_blank\')">🔍 Ver Expediente</button>';
-          acciones += '<button class="btn btn-sm" style="background:#25D366;color:#fff;border:none;" onclick="enviarPerito(\''+v.folio+'\',\''+v.id+'\')">📱 Enviar al Perito</button>';
+          acciones += '<button class="btn btn-sm btn-outline" style="margin-right:4px;" onclick="window.open(\'https://alabolcar.com.mx/verificacion/peritar/?folio='+v.folio+'\',\'_blank\')">🔍 Perito</button>';
+          acciones += '<button class="btn btn-sm" style="background:#25D366;color:#fff;border:none;" onclick="enviarPerito(\''+v.folio+'\',\''+v.id+'\')">📱 Enviar</button>';
         }
 
         return '<tr>'

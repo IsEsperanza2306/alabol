@@ -616,6 +616,8 @@
 
       loadStats();
       refreshList();
+      var folioParam = new URLSearchParams(location.search).get('folio');
+      if(folioParam) openDetail(folioParam);
     });
   }
 

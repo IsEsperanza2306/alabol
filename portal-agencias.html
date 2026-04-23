@@ -1628,7 +1628,7 @@ function doReg() {
 function doRegSubmit(n, e, p, codeId) {
   fetch(S + '/auth/v1/signup', {
     method: 'POST', headers: ah(),
-    body: JSON.stringify({ email: e, password: p, data: { full_name: n } })
+    body: JSON.stringify({ email: e, password: p, data: { full_name: n, rol: 'vendedor' } })
   })
     .then(function(r) { return r.json(); })
     .then(function(d) {

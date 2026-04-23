@@ -181,6 +181,7 @@ button, input, select, textarea { font-family: inherit; outline: none; }
     </div>
   </a>
   <div class="hdr-right">
+    <a href="/radar-interno.html" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:20px;border:1px solid rgba(212,175,55,0.3);color:#a8c5b8;font-size:12px;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.borderColor='#d4af37';this.style.color='#d4af37';" onmouseout="this.style.borderColor='rgba(212,175,55,0.3)';this.style.color='#a8c5b8';"><i class="fas fa-arrow-left"></i> Panel Admin</a>
     <span class="hdr-user"><i class="fas fa-user-shield"></i> <span id="verificador-nombre"></span></span>
     <button class="bout" onclick="window.supabaseClient.auth.signOut().then(function(){location.href='/login.html'})">Salir</button>
   </div>

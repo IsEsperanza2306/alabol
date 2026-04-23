@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" href="logo-circular.png" type="image/png">
-<title>Alabol HQ | Centro de Operaciones</title>
+<title>Alabol | Panel Administrador</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -162,7 +162,7 @@ body{background:var(--bg);color:var(--white);min-height:100vh;display:flex;backg
 <nav class="sidebar">
   <div class="sidebar-logo">
     <img src="logo-circular.png" alt="Alabol">
-    <div><span>ALABOL HQ</span><small>Centro de Operaciones</small></div>
+    <div><span>ALABOL</span><small>Panel Administrador</small></div>
   </div>
   <div class="nav-items">
     <button class="nav-item active" onclick="switchTab('dashboard')" data-tab="dashboard"><i class="fa-solid fa-gauge-high"></i>Dashboard</button>
@@ -1245,7 +1245,7 @@ async function renderVerificaciones(){
         if(v.estatus === 'pendiente_pago'){
           acciones += '<button class="btn btn-sm" style="background:var(--emerald);color:#000;border:none;margin-right:4px;" onclick="confirmarPagoVerif(\''+v.folio+'\',\''+v.id+'\')"><i class="fa-solid fa-check"></i> Confirmar Pago</button>';
         }
-        acciones += '<button class="btn btn-sm btn-outline" style="margin-right:4px;" onclick="window.open(\'https://alabol.netlify.app/certificado/'+v.folio+'\',\'_blank\')">Ver Cert</button>';
+        acciones += '<button class="btn btn-sm btn-outline" style="margin-right:4px;" onclick="window.open(\'https://alabolcar.com.mx/certificado/'+v.folio+'\',\'_blank\')">Ver Cert</button>';
         if(v.estatus === 'pagado' || v.estatus === 'en_revision'){
           acciones += '<button class="btn btn-sm btn-outline" onclick="window.open(\'/verificacion/verificar/\',\'_blank\')">→ Panel Perito</button>';
         }

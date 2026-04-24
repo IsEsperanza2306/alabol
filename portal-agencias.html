@@ -2105,50 +2105,54 @@ function handlePhotos(files) {
 function compressAndUpload(file) {
   photoUploading++;
   renderPhotoGrid();
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    var img = new Image();
-    img.onload = function() {
-      var canvas = document.createElement('canvas');
-      var maxDim = 1200;
-      var w = img.width, h = img.height;
-      if (w > maxDim || h > maxDim) {
-        if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
-        else { w = Math.round(w * maxDim / h); h = maxDim; }
-      }
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      canvas.toBlob(function(blob) {
-        var folder = (uid || 'anon').substring(0, 8);
-        var fileName = folder + '/' + Date.now() + '-' + Math.random().toString(36).substring(2, 6) + '.webp';
-        fetch(S + '/storage/v1/object/vehicle_photos/' + fileName, {
-          method: 'POST',
-          headers: {
-            'apikey': K,
-            'Authorization': 'Bearer ' + (tok || K),
-            'Content-Type': 'image/webp',
-            'x-upsert': 'true'
-          },
-          body: blob
-        })
-        .then(function(r) {
-          if (!r.ok) throw new Error('Upload failed: ' + r.status);
-          var publicUrl = S + '/storage/v1/object/public/vehicle_photos/' + fileName;
-          uploadedPhotos.push(publicUrl);
-          photoUploading--;
-          renderPhotoGrid();
-          updateTrustSummary();
-        })
-        .catch(function(err) {
-          console.error('Photo upload error:', err);
-          photoUploading--;
-          renderPhotoGrid();
-        });
-      }, 'image/webp', 0.75);
-    };
-    img.src = e.target.result;
+  var img = new Image();
+  var objectUrl = URL.createObjectURL(file);
+  img.onerror = function() {
+    URL.revokeObjectURL(objectUrl);
+    photoUploading--;
+    renderPhotoGrid();
   };
-  reader.readAsDataURL(file);
+  img.onload = function() {
+    URL.revokeObjectURL(objectUrl);
+    var canvas = document.createElement('canvas');
+    var maxDim = 1200;
+    var w = img.width, h = img.height;
+    if (w > maxDim || h > maxDim) {
+      if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
+      else { w = Math.round(w * maxDim / h); h = maxDim; }
+    }
+    canvas.width = w; canvas.height = h;
+    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+    canvas.toBlob(function(blob) {
+      if (!blob) { photoUploading--; renderPhotoGrid(); return; }
+      var folder = (uid || 'anon').substring(0, 8);
+      var fileName = folder + '/' + Date.now() + '-' + Math.random().toString(36).substring(2, 6) + '.webp';
+      fetch(S + '/storage/v1/object/vehicle_photos/' + fileName, {
+        method: 'POST',
+        headers: {
+          'apikey': K,
+          'Authorization': 'Bearer ' + (tok || K),
+          'Content-Type': 'image/webp',
+          'x-upsert': 'true'
+        },
+        body: blob
+      })
+      .then(function(r) {
+        if (!r.ok) throw new Error('Upload failed: ' + r.status);
+        var publicUrl = S + '/storage/v1/object/public/vehicle_photos/' + fileName;
+        uploadedPhotos.push(publicUrl);
+        photoUploading--;
+        renderPhotoGrid();
+        updateTrustSummary();
+      })
+      .catch(function(err) {
+        console.error('Photo upload error:', err);
+        photoUploading--;
+        renderPhotoGrid();
+      });
+    }, 'image/webp', 0.75);
+  };
+  img.src = objectUrl;
 }
 
 var wizSelectedPhoto = -1;
@@ -2209,35 +2213,32 @@ function quickUploadPhotos(carId, files) {
   if (btn) { btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Subiendo ' + total + '...'; btn.disabled = true; }
 
   toProcess.forEach(function(file) {
-    if (!file.type.startsWith('image/')) { uploaded++; return; }
-    var reader = new FileReader();
-    reader.onerror = function() { checkDone(); };
-    reader.onload = function(e) {
-      var img = new Image();
-      img.onerror = function() { checkDone(); };
-      img.onload = function() {
-        var canvas = document.createElement('canvas');
-        var maxDim = 1200, w = img.width, h = img.height;
-        if (w > maxDim || h > maxDim) { if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; } else { w = Math.round(w * maxDim / h); h = maxDim; } }
-        canvas.width = w; canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        canvas.toBlob(function(blob) {
-          if (!blob) { checkDone(); return; }
-          var folder = (uid || 'anon').substring(0, 8);
-          var fileName = folder + '/' + Date.now() + '-' + Math.random().toString(36).substring(2, 6) + '.webp';
-          fetch(S + '/storage/v1/object/vehicle_photos/' + fileName, {
-            method: 'POST',
-            headers: { 'apikey': K, 'Authorization': 'Bearer ' + (tok || K), 'Content-Type': 'image/webp', 'x-upsert': 'true' },
-            body: blob
-          }).then(function(r) {
-            if (r.ok) existing.push(S + '/storage/v1/object/public/vehicle_photos/' + fileName);
-            checkDone();
-          }).catch(function() { checkDone(); });
-        }, 'image/webp', 0.75);
-      };
-      img.src = e.target.result;
+    if (!file.type.startsWith('image/')) { checkDone(); return; }
+    var img = new Image();
+    var objectUrl = URL.createObjectURL(file);
+    img.onerror = function() { URL.revokeObjectURL(objectUrl); checkDone(); };
+    img.onload = function() {
+      URL.revokeObjectURL(objectUrl);
+      var canvas = document.createElement('canvas');
+      var maxDim = 1200, w = img.width, h = img.height;
+      if (w > maxDim || h > maxDim) { if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; } else { w = Math.round(w * maxDim / h); h = maxDim; } }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      canvas.toBlob(function(blob) {
+        if (!blob) { checkDone(); return; }
+        var folder = (uid || 'anon').substring(0, 8);
+        var fileName = folder + '/' + Date.now() + '-' + Math.random().toString(36).substring(2, 6) + '.webp';
+        fetch(S + '/storage/v1/object/vehicle_photos/' + fileName, {
+          method: 'POST',
+          headers: { 'apikey': K, 'Authorization': 'Bearer ' + (tok || K), 'Content-Type': 'image/webp', 'x-upsert': 'true' },
+          body: blob
+        }).then(function(r) {
+          if (r.ok) existing.push(S + '/storage/v1/object/public/vehicle_photos/' + fileName);
+          checkDone();
+        }).catch(function() { checkDone(); });
+      }, 'image/webp', 0.75);
     };
-    reader.readAsDataURL(file);
+    img.src = objectUrl;
   });
 
   function checkDone() {

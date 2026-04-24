@@ -936,24 +936,23 @@ function handleAdminPhotos(files){
   Array.from(files).slice(0,8-adminPhotos.length).forEach(function(file){
     if(!file.type.startsWith('image/'))return;
     adminPhotoUploading++;renderAdminPhotos();
-    var reader=new FileReader();
-    reader.onload=function(e){
-      var img=new Image();
-      img.onload=function(){
-        var canvas=document.createElement('canvas'),maxDim=1200,w=img.width,h=img.height;
-        if(w>maxDim||h>maxDim){if(w>h){h=Math.round(h*maxDim/w);w=maxDim}else{w=Math.round(w*maxDim/h);h=maxDim}}
-        canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(img,0,0,w,h);
-        canvas.toBlob(function(blob){
-          if(!blob){adminPhotoUploading--;renderAdminPhotos();return}
-          var fn='admin/'+Date.now()+'-'+Math.random().toString(36).substring(2,6)+'.webp';
-          fetch(SU+'/storage/v1/object/vehicle_photos/'+fn,{method:'POST',headers:{'apikey':SK,'Authorization':'Bearer '+SK,'Content-Type':'image/webp','x-upsert':'true'},body:blob})
-          .then(function(r){if(!r.ok)throw new Error();adminPhotos.push(SU+'/storage/v1/object/public/vehicle_photos/'+fn);adminPhotoUploading--;renderAdminPhotos()})
-          .catch(function(){adminPhotoUploading--;renderAdminPhotos()});
-        },'image/webp',0.75);
-      };img.onerror=function(){adminPhotoUploading--;renderAdminPhotos()};
-      img.src=e.target.result;
-    };reader.onerror=function(){adminPhotoUploading--;renderAdminPhotos()};
-    reader.readAsDataURL(file);
+    var img=new Image();
+    var objectUrl=URL.createObjectURL(file);
+    img.onerror=function(){URL.revokeObjectURL(objectUrl);adminPhotoUploading--;renderAdminPhotos()};
+    img.onload=function(){
+      URL.revokeObjectURL(objectUrl);
+      var canvas=document.createElement('canvas'),maxDim=1200,w=img.width,h=img.height;
+      if(w>maxDim||h>maxDim){if(w>h){h=Math.round(h*maxDim/w);w=maxDim}else{w=Math.round(w*maxDim/h);h=maxDim}}
+      canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(img,0,0,w,h);
+      canvas.toBlob(function(blob){
+        if(!blob){adminPhotoUploading--;renderAdminPhotos();return}
+        var fn='admin/'+Date.now()+'-'+Math.random().toString(36).substring(2,6)+'.webp';
+        fetch(SU+'/storage/v1/object/vehicle_photos/'+fn,{method:'POST',headers:{'apikey':SK,'Authorization':'Bearer '+SK,'Content-Type':'image/webp','x-upsert':'true'},body:blob})
+        .then(function(r){if(!r.ok)throw new Error();adminPhotos.push(SU+'/storage/v1/object/public/vehicle_photos/'+fn);adminPhotoUploading--;renderAdminPhotos()})
+        .catch(function(){adminPhotoUploading--;renderAdminPhotos()});
+      },'image/webp',0.75);
+    };
+    img.src=objectUrl;
   });
 }
 

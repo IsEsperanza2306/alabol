@@ -765,6 +765,16 @@ textarea.fi { resize: vertical; min-height: 80px; }
   .progress-label { font-size: 9px; }
   .wiz-step-title { font-size: 18px; }
 }
+/* ── Toast ── */
+#toast-container { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); z-index:9999; display:flex; flex-direction:column; gap:10px; pointer-events:none; }
+.toast { display:flex; align-items:center; gap:10px; padding:12px 20px; border-radius:12px; font-size:14px; font-weight:600; font-family:inherit; min-width:240px; max-width:340px; box-shadow:0 8px 32px rgba(0,0,0,0.4); pointer-events:auto; animation:toastIn 0.25s ease; }
+.toast.success { background:#0d3d2e; border:1px solid #22c55e; color:#bbf7d0; }
+.toast.error   { background:#3d0d0d; border:1px solid #ef4444; color:#fecaca; }
+.toast.info    { background:#1a2e1a; border:1px solid rgba(212,175,55,0.5); color:#fef9c3; }
+.toast-icon { font-size:16px; }
+.toast-out { animation:toastOut 0.2s ease forwards; }
+@keyframes toastIn  { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+@keyframes toastOut { from { opacity:1; transform:translateY(0); } to { opacity:0; transform:translateY(12px); } }
 </style>
 <style id="alabol-nav-styles">
   .alabol-nav { position:fixed;top:0;left:0;right:0;z-index:999;background:rgba(10,31,26,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(212,175,55,0.2);height:64px;display:flex;align-items:center;padding:0 24px; }
@@ -1498,9 +1508,10 @@ textarea.fi { resize: vertical; min-height: 80px; }
 <div class="mbg" id="mC">
   <div class="modal-confirm">
     <div class="mtit"><i class="fa-solid fa-triangle-exclamation" style="margin-right:6px;color:var(--danger);"></i> Eliminar Auto</div>
+    <div id="delCarName" style="font-weight:700;font-size:15px;color:white;margin-bottom:6px;"></div>
     <div class="cmsg">Este auto sera eliminado de tu inventario permanentemente. No se puede deshacer.</div>
     <div class="cbts">
-      <button class="bcan" onclick="closeConfirm()">Cancelar</button>
+      <button class="bcan" id="bcan" onclick="closeConfirm()">Cancelar</button>
       <button class="bdanger" id="bdd" onclick="doDelete()">Si, eliminar</button>
     </div>
   </div>
@@ -2144,11 +2155,13 @@ function compressAndUpload(file) {
         photoUploading--;
         renderPhotoGrid();
         updateTrustSummary();
+        if (photoUploading === 0) showToast('Foto subida correctamente', 'success');
       })
       .catch(function(err) {
         console.error('Photo upload error:', err);
         photoUploading--;
         renderPhotoGrid();
+        showToast('Error al subir foto. Intenta de nuevo.', 'error');
       });
     }, 'image/webp', 0.75);
   };
@@ -2331,18 +2344,65 @@ function submitForm() {
 }
 
 // ══════════════════════════════════════════
+// ══════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════
+function showToast(msg, type) {
+  var icons = { success: '✅', error: '❌', info: 'ℹ️' };
+  var tc = g('toast-container');
+  if (!tc) return;
+  var t = document.createElement('div');
+  t.className = 'toast ' + (type || 'info');
+  t.innerHTML = '<span class="toast-icon">' + (icons[type] || icons.info) + '</span><span>' + msg + '</span>';
+  tc.appendChild(t);
+  setTimeout(function() {
+    t.classList.add('toast-out');
+    setTimeout(function() { if (t.parentNode) t.parentNode.removeChild(t); }, 220);
+  }, 3500);
+}
+
+// ══════════════════════════════════════════
 // DELETE
 // ══════════════════════════════════════════
-function openDel(id) { did = id; g('mC').classList.add('open'); document.body.style.overflow = 'hidden'; }
-function closeConfirm() { g('mC').classList.remove('open'); document.body.style.overflow = ''; did = null; }
+function openDel(id) {
+  did = id;
+  var car = cars.find(function(c) { return c.id === id; });
+  var nameEl = g('delCarName');
+  if (nameEl) nameEl.textContent = car ? (car.marca || '') + ' ' + (car.modelo || '') + ' ' + (car.anio || '') : '';
+  g('mC').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeConfirm() {
+  g('mC').classList.remove('open');
+  document.body.style.overflow = '';
+  did = null;
+  var bdd = g('bdd'), bcan = g('bcan');
+  if (bdd) { bdd.textContent = 'Si, eliminar'; bdd.disabled = false; }
+  if (bcan) bcan.disabled = false;
+}
 function doDelete() {
   if (!did) return;
-  g('bdd').textContent = 'Eliminando...';
-  fetch(S + '/rest/v1/inventario?id=eq.' + did + '&user_id=eq.' + uid, {
-    method: 'DELETE', headers: ah(tok)
+  var bdd = g('bdd'), bcan = g('bcan');
+  bdd.textContent = 'Eliminando...';
+  bdd.disabled = true;
+  if (bcan) bcan.disabled = true;
+  fetch(S + '/rest/v1/inventario?id=eq.' + did, {
+    method: 'DELETE',
+    headers: Object.assign({}, ah(tok), { 'Prefer': 'return=minimal' })
   })
-    .then(function() { closeConfirm(); loadCars(); })
-    .catch(function() { closeConfirm(); loadCars(); });
+  .then(function(r) {
+    if (!r.ok) throw new Error('Error ' + r.status);
+    closeConfirm();
+    cars = cars.filter(function(c) { return c.id !== did; });
+    renderCars();
+    showToast('Auto eliminado correctamente', 'success');
+    loadCars();
+  })
+  .catch(function(err) {
+    closeConfirm();
+    showToast('No se pudo eliminar. Intenta de nuevo.', 'error');
+    console.error('Delete error:', err);
+  });
 }
 
 // Close modals on click outside
@@ -2928,5 +2988,6 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 <script>(function(){var b=document.getElementById('pNavHamburger'),l=document.getElementById('pNavLinks');if(!b||!l)return;b.addEventListener('click',function(){var o=l.classList.toggle('open');b.classList.toggle('open',o);});l.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){l.classList.remove('open');b.classList.remove('open');});});})();</script>
+<div id="toast-container"></div>
 </body>
 </html>

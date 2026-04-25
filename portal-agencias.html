@@ -812,6 +812,8 @@ textarea.fi { resize: vertical; min-height: 80px; }
 .car-action-lbl-photos { color:#22c55e; }
 .car-action-lbl-delete { color:#f87171; }
 .car-action-btn-dash { background:none; border:none; cursor:pointer; padding:0; display:flex; align-items:center; }
+.kpi-filter { transition:all 0.2s; }
+.kpi-filter:hover { border-color:rgba(212,175,55,0.5) !important; transform:translateY(-2px); }
 
 /* ── Toast ── */
 #toast-container { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); z-index:9999; display:flex; flex-direction:column; gap:10px; pointer-events:none; }
@@ -972,17 +974,11 @@ textarea.fi { resize: vertical; min-height: 80px; }
       </div>
     </div>
     <div class="sidebar-nav">
-      <button class="sidebar-nav-item active" onclick="switchView('dashView')" data-view="dashView">
-        <i class="fa-solid fa-gauge-high"></i> Dashboard
-      </button>
-      <button class="sidebar-nav-item" onclick="switchView('invView')" data-view="invView">
-        <i class="fa-solid fa-warehouse"></i> Mi Inventario
-      </button>
-      <button class="sidebar-nav-item" onclick="switchView('pubView')" data-view="pubView">
-        <i class="fa-solid fa-circle-plus"></i> Publicar Auto
+      <button class="sidebar-nav-item active" onclick="switchView('mainView')" data-view="mainView">
+        <i class="fa-solid fa-car-side"></i> Mis Autos
       </button>
       <button class="sidebar-nav-item" onclick="switchView('syncView')" data-view="syncView">
-        <i class="fa-solid fa-cloud-arrow-up"></i> Sincronizar Inventario
+        <i class="fa-solid fa-cloud-arrow-up"></i> Sincronizar
       </button>
       <button class="sidebar-nav-item" onclick="switchView('profileView')" data-view="profileView">
         <i class="fa-solid fa-user-tie"></i> Mi Perfil
@@ -1013,67 +1009,55 @@ textarea.fi { resize: vertical; min-height: 80px; }
       <div style="width:38px;"></div>
     </div>
 
-    <!-- DASHBOARD VIEW -->
-    <div class="view active" id="dashView">
-      <div class="dash-welcome">
-        <div class="sub">Bienvenido a tu showroom digital,</div>
-        <div class="name" id="dashName">...</div>
+    <!-- MAIN VIEW (unified command center) -->
+    <div class="view active" id="mainView">
+
+      <!-- Header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div style="font-size:12px;color:var(--green-text);opacity:0.7;margin-bottom:2px;">Hola de nuevo,</div>
+          <div style="font-size:22px;font-weight:800;color:white;" id="dashName">...</div>
+        </div>
+        <button class="bnew" onclick="openForm(null)"><i class="fa-solid fa-plus"></i> Agregar auto</button>
       </div>
 
-      <div class="kpi-grid">
-        <div class="kpi-card">
+      <!-- KPI filter cards -->
+      <div class="kpi-grid" style="margin-bottom:20px;">
+        <div class="kpi-card kpi-filter" id="kpiAll" onclick="setFilter(null)" style="cursor:pointer;">
           <div class="kpi-icon"><i class="fa-solid fa-car-side" style="color:var(--gold);"></i></div>
           <div class="kpi-num" id="kpi0">-</div>
-          <div class="kpi-label">Total Publicados</div>
+          <div class="kpi-label">Total</div>
         </div>
-        <div class="kpi-card">
-          <div class="kpi-icon"><i class="fa-solid fa-heart" style="color:var(--emerald);"></i></div>
+        <div class="kpi-card kpi-filter" id="kpiDisp" onclick="setFilter('disponible')" style="cursor:pointer;">
+          <div class="kpi-icon"><i class="fa-solid fa-circle-check" style="color:var(--emerald);"></i></div>
           <div class="kpi-num" id="kpi1">-</div>
           <div class="kpi-label">Disponibles</div>
         </div>
-        <div class="kpi-card">
+        <div class="kpi-card kpi-filter" id="kpiRes" onclick="setFilter('reservado')" style="cursor:pointer;">
           <div class="kpi-icon"><i class="fa-solid fa-fire" style="color:var(--warning);"></i></div>
           <div class="kpi-num" id="kpi2">-</div>
           <div class="kpi-label">Reservados</div>
         </div>
-        <div class="kpi-card">
-          <div class="kpi-icon"><i class="fa-solid fa-circle-check" style="color:#60a5fa;"></i></div>
+        <div class="kpi-card kpi-filter" id="kpiVend" onclick="setFilter('vendido')" style="cursor:pointer;">
+          <div class="kpi-icon"><i class="fa-solid fa-handshake" style="color:#60a5fa;"></i></div>
           <div class="kpi-num" id="kpi3">-</div>
           <div class="kpi-label">Vendidos</div>
         </div>
       </div>
 
-      <div class="recent-section">
-        <div class="recent-title"><i class="fa-solid fa-clock-rotate-left" style="color:var(--gold);"></i> Actividad Reciente</div>
-        <div class="recent-list" id="recentList">
-          <div class="empty-recent"><div class="sp" style="margin:0 auto;width:28px;height:28px;"></div></div>
+      <!-- Search bar -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+        <div class="search-wrap" style="flex:1;min-width:200px;">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input class="inv-search" id="searchInput" type="text" placeholder="Buscar marca, modelo, ciudad..." oninput="renderMainCars()">
+        </div>
+        <div id="filterBadge" style="display:none;padding:6px 14px;border-radius:20px;background:rgba(212,175,55,0.12);border:1px solid rgba(212,175,55,0.3);color:var(--gold);font-size:12px;font-weight:700;cursor:pointer;" onclick="setFilter(null)">
+          <i class="fa-solid fa-xmark" style="margin-right:5px;"></i><span id="filterBadgeText"></span>
         </div>
       </div>
-    </div>
 
-    <!-- INVENTORY VIEW -->
-    <div class="view" id="invView">
-      <div class="inv-header">
-        <div class="inv-title"><i class="fa-solid fa-warehouse" style="color:var(--gold);margin-right:8px;"></i>Mi Inventario</div>
-        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-          <div class="search-wrap">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input class="inv-search" id="searchInput" type="text" placeholder="Buscar marca, modelo..." oninput="filterCars()">
-          </div>
-          <button class="bnew" onclick="openForm(null)"><i class="fa-solid fa-plus"></i> Publicar</button>
-        </div>
-      </div>
+      <!-- Cars grid -->
       <div id="carGrid"></div>
-    </div>
-
-    <!-- PUBLISH VIEW (redirects to wizard) -->
-    <div class="view" id="pubView">
-      <div style="text-align:center;padding:60px 20px;">
-        <div style="font-size:56px;margin-bottom:16px;"><i class="fa-solid fa-heart-circle-plus" style="color:var(--gold);"></i></div>
-        <div style="font-size:20px;font-weight:700;color:white;margin-bottom:8px;">Publica un nuevo auto</div>
-        <p style="font-size:13px;opacity:0.7;margin-bottom:24px;line-height:1.6;">Cada auto publicado entra al radar de nuestro algoritmo.<br>Conecta tu inventario con compradores verificados.</p>
-        <button class="bnew" style="margin:0 auto;" onclick="openForm(null)"><i class="fa-solid fa-plus"></i> Iniciar Publicacion</button>
-      </div>
     </div>
 
     <!-- SYNC VIEW -->
@@ -1481,8 +1465,10 @@ var K = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6In
 
 var tok = localStorage.getItem('alabol_token') || null;
 var uid = null, userEmail = '', userName = '', userPic = '';
+var isAdmin = false;
 var cars = [], eid = null, did = null;
-var currentView = 'dashView';
+var currentView = 'mainView';
+var activeFilter = null;
 
 function g(id) { return document.getElementById(id); }
 
@@ -1530,6 +1516,12 @@ function boot() {
       userName = m.full_name || m.name || u.email || 'Agencia';
       userEmail = u.email || '';
       userPic = m.avatar_url || m.picture || '';
+      return fetch(S + '/rest/v1/perfiles?id=eq.' + uid + '&select=rol', { headers: ah(tok) })
+        .then(function(r) { return r.json(); })
+        .then(function(d) { isAdmin = d && d[0] && d[0].rol === 'admin'; })
+        .catch(function() { isAdmin = false; });
+    })
+    .then(function() {
       setupDashboard();
       showScreen('dashboard');
       loadCars();
@@ -1719,9 +1711,6 @@ function switchView(viewId) {
     btn.classList.toggle('active', btn.getAttribute('data-view') === viewId);
   });
   closeSidebar();
-  if (viewId === 'pubView') {
-    openForm(null);
-  }
 }
 
 function toggleSidebar() {
@@ -1742,17 +1731,95 @@ function fmt(n) {
 }
 
 function loadCars() {
-  fetch(S + '/rest/v1/inventario?user_id=eq.' + uid + '&order=created_at.desc', { headers: ah(tok) })
+  var q = isAdmin
+    ? S + '/rest/v1/inventario?order=created_at.desc'
+    : S + '/rest/v1/inventario?user_id=eq.' + uid + '&order=created_at.desc';
+  fetch(q, { headers: ah(tok) })
     .then(function(r) { return r.json(); })
-    .then(function(d) { cars = d || []; renderAll(); })
+    .then(function(d) { cars = Array.isArray(d) ? d : []; renderAll(); })
     .catch(function() { cars = []; renderAll(); });
 }
 
 function renderAll() {
   renderKPIs();
-  renderRecent();
-  renderInventory();
+  renderMainCars();
   renderProfile();
+}
+
+function setFilter(status) {
+  activeFilter = status;
+  // Update KPI card active styles
+  ['kpiAll','kpiDisp','kpiRes','kpiVend'].forEach(function(id) { var el = g(id); if (el) el.style.borderColor = ''; });
+  var activeId = status === 'disponible' ? 'kpiDisp' : status === 'reservado' ? 'kpiRes' : status === 'vendido' ? 'kpiVend' : 'kpiAll';
+  var activeEl = g(activeId);
+  if (activeEl) activeEl.style.borderColor = 'rgba(212,175,55,0.6)';
+  // Badge
+  var badge = g('filterBadge');
+  if (badge) {
+    if (status) {
+      badge.style.display = 'flex';
+      var labels = { disponible: 'Disponibles', reservado: 'Reservados', vendido: 'Vendidos' };
+      g('filterBadgeText').textContent = labels[status] || status;
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+  renderMainCars();
+}
+
+function renderMainCars() {
+  var q = (g('searchInput') ? g('searchInput').value : '').toLowerCase().trim();
+  var filtered = cars.filter(function(a) {
+    var matchStatus = !activeFilter || a.estatus === activeFilter;
+    var matchSearch = !q || ((a.marca||'') + ' ' + (a.modelo||'') + ' ' + (a.anio||'') + ' ' + (a.ciudad||'')).toLowerCase().indexOf(q) >= 0;
+    return matchStatus && matchSearch;
+  });
+  if (!cars.length) {
+    g('carGrid').innerHTML = '<div class="empty">'
+      + '<div class="empty-icon"><i class="fa-solid fa-car-side"></i></div>'
+      + '<div class="empty-title">Tu inventario esta vacio</div>'
+      + '<div class="empty-sub">Publica tu primer auto y conéctalo con compradores verificados.</div>'
+      + '<button class="empty-cta" onclick="openForm(null)"><i class="fa-solid fa-plus"></i> Agregar mi primer auto</button>'
+      + '</div>';
+    return;
+  }
+  if (!filtered.length) {
+    g('carGrid').innerHTML = '<div class="empty-recent">No se encontraron autos con ese filtro.</div>';
+    return;
+  }
+  g('carGrid').innerHTML = '<div class="car-grid">' + filtered.map(function(a) {
+    var hasFoto = a.fotos && a.fotos.length && a.fotos[0] && a.fotos[0].startsWith('http');
+    var photoCount = (a.fotos||[]).filter(function(f){return f&&f.startsWith('http')}).length;
+    var statusClass = 'status-' + (a.estatus || 'disponible');
+    var statusLabel = a.estatus === 'disponible' ? 'Disponible' : a.estatus === 'vendido' ? 'Vendido' : a.estatus === 'reservado' ? 'Reservado' : 'Pausado';
+    var photoLabel = photoCount > 0 ? photoCount + ' fotos' : 'Agregar fotos';
+    var bannerContent = hasFoto ? '<img src="' + a.fotos[0] + '" alt="">' : '<i class="fa-solid fa-car"></i>';
+    return '<div class="car-card">'
+      + '<div class="car-card-banner">' + bannerContent
+      + '<div class="car-card-banner-overlay"></div>'
+      + '<span class="car-card-status car-card-banner-status ' + statusClass + '">' + statusLabel + '</span>'
+      + '<div class="car-card-banner-info">'
+      + '<div><div class="car-card-banner-name">' + (a.marca||'') + ' ' + (a.modelo||'') + ' ' + (a.anio||'') + '</div>'
+      + '<div class="car-card-banner-km">' + new Intl.NumberFormat('es-MX').format(a.kilometraje||0) + ' km &middot; ' + (a.ciudad||'') + '</div></div>'
+      + '<div class="car-card-banner-price">' + fmt(a.precio_venta) + '</div>'
+      + '</div></div>'
+      + '<input type="file" id="qp-' + a.id + '" accept="image/*" multiple style="display:none" onchange="quickUploadPhotos(\'' + a.id + '\',this.files)">'
+      + '<div class="car-card-actions-b">'
+      + '<button class="car-action-btn-b" onclick="openForm(\'' + a.id + '\')">'
+      + '<div class="car-action-ico car-action-ico-edit"><i class="fa-solid fa-pen"></i></div>'
+      + '<span class="car-action-lbl car-action-lbl-edit">Editar</span>'
+      + '</button>'
+      + '<button class="car-action-btn-b" onclick="triggerQuickPhoto(\'' + a.id + '\')">'
+      + '<div class="car-action-ico car-action-ico-photos"><i class="fa-solid fa-camera"></i></div>'
+      + '<span class="car-action-lbl car-action-lbl-photos">' + photoLabel + '</span>'
+      + '</button>'
+      + '<button class="car-action-btn-b" onclick="openDel(\'' + a.id + '\')">'
+      + '<div class="car-action-ico car-action-ico-delete"><i class="fa-solid fa-trash"></i></div>'
+      + '<span class="car-action-lbl car-action-lbl-delete">Eliminar</span>'
+      + '</button>'
+      + '</div>'
+    + '</div>';
+  }).join('') + '</div>';
 }
 
 function animateCounter(id, target) {
@@ -1868,7 +1935,7 @@ function getFilteredCars() {
   });
 }
 
-function filterCars() { renderInventory(); }
+function filterCars() { renderMainCars(); }
 
 function renderProfile() {
   var total = cars.length;
@@ -2356,9 +2423,7 @@ function doDelete() {
   bdd.textContent = 'Eliminando...';
   bdd.disabled = true;
   if (bcan) bcan.disabled = true;
-  var url = S + '/rest/v1/inventario?id=eq.' + did;
-  if (uid) url += '&user_id=eq.' + uid;
-  fetch(url, {
+  fetch(S + '/rest/v1/inventario?id=eq.' + did, {
     method: 'DELETE',
     headers: { 'apikey': K, 'Authorization': 'Bearer ' + (tok || K) }
   })
@@ -2366,7 +2431,7 @@ function doDelete() {
     if (!r.ok) return r.text().then(function(body) { throw new Error(r.status + ': ' + body); });
     closeConfirm();
     cars = cars.filter(function(c) { return c.id !== did; });
-    renderCars();
+    renderMainCars();
     showToast('Auto eliminado correctamente', 'success');
     loadCars();
   })
@@ -2757,7 +2822,7 @@ function bulkConfirmAll() {
     if (idx >= total) {
       btn.innerHTML = '<i class="fa-solid fa-check-double"></i> ' + inserted + ' publicados' + (errors > 0 ? ', ' + errors + ' errores' : '');
       btn.style.background = 'var(--emerald)'; btn.style.color = 'white';
-      setTimeout(function() { closeBulk(); loadCars(); switchView('invView'); }, 2000);
+      setTimeout(function() { closeBulk(); loadCars(); switchView('mainView'); }, 2000);
       return;
     }
     var item = bulkItems[idx];

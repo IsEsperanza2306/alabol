@@ -1733,7 +1733,7 @@ function fmt(n) {
 function loadCars() {
   var q = isAdmin
     ? S + '/rest/v1/inventario?order=created_at.desc'
-    : S + '/rest/v1/inventario?user_id=eq.' + uid + '&order=created_at.desc';
+    : S + '/rest/v1/inventario?or=(user_id.eq.' + uid + ',user_id.is.null)&order=created_at.desc';
   fetch(q, { headers: ah(tok) })
     .then(function(r) { return r.json(); })
     .then(function(d) { cars = Array.isArray(d) ? d : []; renderAll(); })

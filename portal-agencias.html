@@ -1466,6 +1466,24 @@ var K = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6In
 var tok = localStorage.getItem('alabol_token') || null;
 var uid = null, userEmail = '', userName = '', userPic = '';
 var isAdmin = false;
+
+function tryRefreshToken() {
+  var rt = localStorage.getItem('alabol_refresh');
+  if (!rt) return Promise.reject(new Error('no_refresh'));
+  return fetch(S + '/auth/v1/token?grant_type=refresh_token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': K },
+    body: JSON.stringify({ refresh_token: rt })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    if (!d.access_token) throw new Error('no_refresh');
+    tok = d.access_token;
+    localStorage.setItem('alabol_token', tok);
+    if (d.refresh_token) localStorage.setItem('alabol_refresh', d.refresh_token);
+    return tok;
+  });
+}
 var cars = [], eid = null, did = null;
 var currentView = 'mainView';
 var activeFilter = null;
@@ -1504,11 +1522,14 @@ function boot() {
   if (h && h.indexOf('access_token') >= 0) {
     var p = new URLSearchParams(h.replace(/^#/, ''));
     var t = p.get('access_token');
-    if (t) { tok = t; localStorage.setItem('alabol_token', t); history.replaceState(null, '', location.pathname); }
+    var rt = p.get('refresh_token');
+    if (t) { tok = t; localStorage.setItem('alabol_token', t); }
+    if (rt) localStorage.setItem('alabol_refresh', rt);
+    history.replaceState(null, '', location.pathname);
   }
   if (!tok) { showScreen('landing'); return; }
   fetch(S + '/auth/v1/user', { headers: ah(tok) })
-    .then(function(r) { if (!r.ok) { tok = null; localStorage.removeItem('alabol_token'); showScreen('landing'); throw new Error(); } return r.json(); })
+    .then(function(r) { if (!r.ok) { tok = null; localStorage.removeItem('alabol_token'); localStorage.removeItem('alabol_refresh'); showScreen('landing'); throw new Error(); } return r.json(); })
     .then(function(u) {
       if (!u || !u.id) throw new Error();
       uid = u.id;
@@ -1526,7 +1547,7 @@ function boot() {
       showScreen('dashboard');
       loadCars();
     })
-    .catch(function() { tok = null; localStorage.removeItem('alabol_token'); showScreen('landing'); });
+    .catch(function() { tok = null; localStorage.removeItem('alabol_token'); localStorage.removeItem('alabol_refresh'); showScreen('landing'); });
 }
 
 function setupDashboard() {
@@ -1562,8 +1583,11 @@ function doLogin() {
   })
     .then(function(r) { return r.json(); })
     .then(function(d) {
-      if (d.access_token) { tok = d.access_token; localStorage.setItem('alabol_token', tok); closeLogin(); boot(); }
-      else g('lerr').textContent = 'Email o contrasena incorrectos.';
+      if (d.access_token) {
+        tok = d.access_token; localStorage.setItem('alabol_token', tok);
+        if (d.refresh_token) localStorage.setItem('alabol_refresh', d.refresh_token);
+        closeLogin(); boot();
+      } else g('lerr').textContent = 'Email o contrasena incorrectos.';
     })
     .catch(function() { g('lerr').textContent = 'Error de conexion.'; });
 }
@@ -1628,6 +1652,7 @@ function signOut() {
   if (tok) fetch(S + '/auth/v1/logout', { method: 'POST', headers: ah(tok) }).catch(function() {});
   tok = null; uid = null; cars = [];
   localStorage.removeItem('alabol_token');
+  localStorage.removeItem('alabol_refresh');
   showScreen('landing');
 }
 
@@ -1733,7 +1758,7 @@ function fmt(n) {
 function loadCars() {
   var q = isAdmin
     ? S + '/rest/v1/inventario?order=created_at.desc'
-    : S + '/rest/v1/inventario?or=(user_id.eq.' + uid + ',user_id.is.null)&order=created_at.desc';
+    : S + '/rest/v1/inventario?user_id=eq.' + uid + '&order=created_at.desc';
   fetch(q, { headers: ah(tok) })
     .then(function(r) { return r.json(); })
     .then(function(d) { cars = Array.isArray(d) ? d : []; renderAll(); })
@@ -2423,9 +2448,20 @@ function doDelete() {
   bdd.textContent = 'Eliminando...';
   bdd.disabled = true;
   if (bcan) bcan.disabled = true;
-  fetch(S + '/rest/v1/inventario?id=eq.' + did, {
-    method: 'DELETE',
-    headers: { 'apikey': K, 'Authorization': 'Bearer ' + (tok || K) }
+
+  function attemptDelete() {
+    return fetch(S + '/rest/v1/inventario?id=eq.' + did, {
+      method: 'DELETE',
+      headers: { 'apikey': K, 'Authorization': 'Bearer ' + tok }
+    });
+  }
+
+  attemptDelete()
+  .then(function(r) {
+    if (r.status === 401) {
+      return tryRefreshToken().then(function() { return attemptDelete(); });
+    }
+    return r;
   })
   .then(function(r) {
     if (!r.ok) return r.text().then(function(body) { throw new Error(r.status + ': ' + body); });
@@ -2438,7 +2474,15 @@ function doDelete() {
   .catch(function(err) {
     closeConfirm();
     console.error('Delete error:', err.message);
-    showToast('No se pudo eliminar. Intenta de nuevo.', 'error');
+    if (err.message === 'no_refresh') {
+      showToast('Sesion expirada — vuelve a iniciar sesion.', 'error');
+      setTimeout(function() {
+        tok = null; localStorage.removeItem('alabol_token'); localStorage.removeItem('alabol_refresh');
+        showScreen('landing');
+      }, 2000);
+    } else {
+      showToast('No se pudo eliminar. Intenta de nuevo.', 'error');
+    }
   });
 }
 

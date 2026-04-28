@@ -875,13 +875,21 @@ function renderInvTable(){
   });
   document.getElementById('invTableBody').innerHTML=filtered.map(function(i){
     var img=(i.fotos&&i.fotos[0]&&i.fotos[0].startsWith('http'))?'<img src="'+i.fotos[0]+'" style="width:50px;height:35px;object-fit:cover;border-radius:6px;">':'<span style="opacity:0.3;">📷</span>';
-    return '<tr><td>'+img+'</td><td style="color:white;font-weight:600;">'+i.marca+' '+i.modelo+' '+(i.anio||'')+'</td><td style="color:var(--gold);font-weight:700;">'+fmt(i.precio_venta)+'</td><td>'+fmtN(i.kilometraje)+' km</td><td>'+(i.ciudad||'—')+'</td><td style="font-size:10px;">'+(i.agencia_id||'—')+'</td><td>'+statusBadge(i.estatus)+'</td><td><div style="display:flex;gap:4px;"><button onclick="openEditModal(\''+i.id+'\')" class="btn btn-sm btn-gold" title="Editar">✏️</button><button onclick="toggleDestacado(\''+i.id+'\','+!!i.destacado+')" class="btn btn-sm '+(i.destacado?'btn-gold':'btn-outline')+'" title="Destacar">⭐</button><select onchange="changeInvStatus(\''+i.id+'\',this.value)" style="background:var(--bg2);border:1px solid var(--border);color:var(--txt);padding:3px;border-radius:6px;font-size:10px;"><option value="disponible" '+(i.estatus==='disponible'?'selected':'')+'>Disponible</option><option value="vendido" '+(i.estatus==='vendido'?'selected':'')+'>Vendido</option><option value="reservado" '+(i.estatus==='reservado'?'selected':'')+'>Reservado</option><option value="inactivo">Inactivo</option></select></div></td></tr>';
+    return '<tr><td>'+img+'</td><td style="color:white;font-weight:600;">'+i.marca+' '+i.modelo+' '+(i.anio||'')+'</td><td style="color:var(--gold);font-weight:700;">'+fmt(i.precio_venta)+'</td><td>'+fmtN(i.kilometraje)+' km</td><td>'+(i.ciudad||'—')+'</td><td style="font-size:10px;">'+(i.agencia_id||'—')+'</td><td>'+statusBadge(i.estatus)+'</td><td><div style="display:flex;gap:4px;"><button onclick="openEditModal(\''+i.id+'\')" class="btn btn-sm btn-gold" title="Editar">✏️</button><button onclick="toggleDestacado(\''+i.id+'\','+!!i.destacado+')" class="btn btn-sm '+(i.destacado?'btn-gold':'btn-outline')+'" title="Destacar">⭐</button><select onchange="changeInvStatus(\''+i.id+'\',this.value)" style="background:var(--bg2);border:1px solid var(--border);color:var(--txt);padding:3px;border-radius:6px;font-size:10px;"><option value="disponible" '+(i.estatus==='disponible'?'selected':'')+'>Disponible</option><option value="vendido" '+(i.estatus==='vendido'?'selected':'')+'>Vendido</option><option value="reservado" '+(i.estatus==='reservado'?'selected':'')+'>Reservado</option><option value="inactivo">Inactivo</option></select><button onclick="deleteInvCar(\''+i.id+'\',\''+i.marca+' '+i.modelo+'\')" class="btn btn-sm" style="background:none;border:1px solid rgba(239,68,68,0.3);color:rgba(239,68,68,0.6);padding:3px 7px;" title="Eliminar auto" onmouseover="this.style.borderColor=\'#ef4444\';this.style.color=\'#ef4444\'" onmouseout="this.style.borderColor=\'rgba(239,68,68,0.3)\';this.style.color=\'rgba(239,68,68,0.6)\'"><i class="fa-solid fa-trash-can"></i></button></div></td></tr>';
   }).join('');
 }
 
 async function changeInvStatus(id,s){
   await sb.from('inventario').update({estatus:s,updated_at:new Date().toISOString()}).eq('id',id);
   var c=G.inv.find(function(x){return x.id===id});if(c)c.estatus=s;
+  renderInvTable();
+}
+
+async function deleteInvCar(id, nombre){
+  if(!confirm('¿Eliminar "'+nombre+'"? Esta acción no se puede deshacer.')) return;
+  var {error} = await sb.from('inventario').delete().eq('id',id);
+  if(error){ alert('Error al eliminar: '+error.message); return; }
+  G.inv = G.inv.filter(function(x){return x.id!==id});
   renderInvTable();
 }
 

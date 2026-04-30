@@ -408,7 +408,6 @@ async function generateReel(vehicleId) {
   const v = vehicles.find(x=>x.id===vehicleId);
   if (!v) return;
 
-  // Insert pending job in Supabase — el watcher local lo toma y renderiza
   const { data, error } = await sb.from('video_reels').insert({
     vehicle_id: vehicleId,
     status: 'pending',
@@ -421,7 +420,24 @@ async function generateReel(vehicleId) {
   reelsByVehicle[vehicleId] = data;
   renderGrid();
   updateStats();
-  toast('⏳ Reel en cola. Inicia el watcher local para renderizar.');
+  toast('⏳ Enviando a renderizar...');
+
+  // Disparar GitHub Actions via edge function
+  try {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/trigger-video-reel`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+      body: JSON.stringify({ job_id: data.id })
+    });
+    if (res.ok) {
+      toast('🎬 Render iniciado en la nube. Listo en ~5 minutos.');
+    } else {
+      const err = await res.json().catch(() => ({}));
+      toast('⚠️ No se pudo iniciar el render: ' + (err.error || res.status));
+    }
+  } catch (e) {
+    toast('⚠️ Error al disparar render: ' + e.message);
+  }
 }
 
 async function openModal(reelId, vehicleId) {

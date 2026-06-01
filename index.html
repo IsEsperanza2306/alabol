@@ -10,10 +10,14 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="logo-circular.png" type="image/png">
+    <link rel="preconnect" href="https://rgnunjngtsgqgvplawfr.supabase.co">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     <meta property="og:title" content="Alabol Car Broker | El Tinder de los Autos">
     <meta property="og:description" content="Encuentra tu media naranja con llantas. Compra, vende o invierte en autos verificados.">
-    <meta property="og:image" content="https://alabol.netlify.app/logo-circular.png">
-    <meta property="og:url" content="https://alabol.netlify.app">
+    <meta property="og:image" content="https://alabolcar.com.mx/logo-circular.png">
+    <meta property="og:url" content="https://alabolcar.com.mx">
     <meta property="og:type" content="website">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-RMENV8G466"></script>
     <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RMENV8G466');</script>
@@ -295,16 +299,18 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
 
         /* Header NavBar & Logo */
         header {
-            padding: 1.2rem 5%;
+            padding: 0.6rem 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(5, 16, 13, 0.95);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(10, 31, 26, 0.45);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
             position: sticky;
             top: 0;
             z-index: 1000;
+            transition: background 0.3s;
         }
 
         .logo-wrapper {
@@ -318,14 +324,14 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
         .logo-glow {
             position: absolute;
             top: 50%;
-            left: 30px;
-            width: 70px;
-            height: 70px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
             transform: translate(-50%, -50%);
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.85) 0%, rgba(212, 175, 55, 0.3) 40%, transparent 70%);
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.6) 0%, rgba(212, 175, 55, 0.2) 40%, transparent 70%);
             border-radius: 50%;
             z-index: 0;
-            animation: logoGlowPulse 2s ease-in-out infinite;
+            animation: logoGlowPulse 3s ease-in-out infinite;
             pointer-events: none;
         }
 
@@ -347,12 +353,12 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
         }
 
         .logo-img {
-            height: 60px;
+            height: 40px;
             width: auto;
             object-fit: contain;
             z-index: 1;
             position: relative;
-            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.5));
+            filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.4));
             transition: transform 0.3s;
         }
 
@@ -362,14 +368,14 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
 
         .nav-links {
             display: flex;
-            gap: 1.5rem;
+            gap: 1.2rem;
             align-items: center;
         }
 
         .nav-links a:not(.btn-premium-gold):not(.btn-premium-teal) {
             color: #a8c5b8;
             text-decoration: none;
-            font-size: 0.85rem;
+            font-size: 0.78rem;
             font-weight: 500;
             transition: color 0.3s;
         }
@@ -388,11 +394,11 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
         /* ----- HERO SECTION (B2C Matchmaker Focus) ----- */
         .hero {
             position: relative;
-            padding: 6rem 5% 4rem;
+            padding: 3rem 5% 1.5rem;
             text-align: center;
             max-width: 900px;
             margin: 0 auto;
-            min-height: 80vh;
+            min-height: auto;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -414,10 +420,10 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
         }
 
         .hero h1 {
-            font-size: 4rem;
+            font-size: 2.8rem;
             font-weight: 800;
             line-height: 1.1;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             text-transform: uppercase;
         }
 
@@ -427,9 +433,9 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
         }
 
         .hero p {
-            font-size: 1.2rem;
+            font-size: 1rem;
             color: #a8c5b8;
-            margin-bottom: 3rem;
+            margin-bottom: 1.5rem;
             font-weight: 300;
             max-width: 600px;
         }
@@ -539,8 +545,8 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
 
         /* ----- FEATURED INVENTORY (Seminuevos) ----- */
         .featured-section {
-            padding: 6rem 5%;
-            background: linear-gradient(to bottom, transparent, var(--darker-green));
+            padding: 3rem 5% 4rem;
+            background: transparent;
         }
 
         .section-header {
@@ -568,7 +574,7 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
             display: flex;
             flex-direction: column;
             gap: 20px;
-            background: linear-gradient(135deg, rgba(15, 51, 41, 0.8), rgba(10, 31, 26, 0.9));
+            background: rgba(10, 31, 26, 0.4);
             padding: 15px 24px;
             border-radius: 20px;
             border: 1px solid var(--glass-border);
@@ -1150,8 +1156,8 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
 
         /* ----- HOW IT WORKS (3 Steps) ----- */
         .how-it-works {
-            padding: 6rem 5%;
-            background: var(--darker-green);
+            padding: 4rem 5%;
+            background: transparent;
             position: relative;
             overflow: hidden;
         }
@@ -1308,8 +1314,8 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
         /* ----- B2B INVESTORS & TOOLS (Secondary Access) ----- */
         .b2b-section {
             padding: 5rem 5%;
-            background: rgba(0, 0, 0, 0.4);
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(212, 175, 55, 0.1);
         }
 
         .b2b-container {
@@ -1649,9 +1655,10 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
                 display: block;
             }
 
-            .hero h1 {
-                font-size: 2.6rem;
-            }
+            .hero { padding: 1.5rem 5% 1rem; }
+            .hero-badge { margin-bottom: 0.8rem; font-size: 0.7rem; padding: 4px 12px; }
+            .hero h1 { font-size: 1.8rem; margin-bottom: 0.6rem; }
+            .hero p { font-size: 0.85rem; margin-bottom: 1rem; }
 
             .hero-cta-container {
                 flex-direction: column;
@@ -1688,12 +1695,15 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
 
             .tinder-wrapper {
                 height: 500px;
-                margin-top: 5px;
+                margin: 5px auto 2rem;
+                max-width: 340px;
             }
 
             .tinder-card {
-                width: 90%;
+                width: 100%;
                 height: 480px;
+                left: 0;
+                right: 0;
             }
 
             .tinder-card-img {
@@ -1758,109 +1768,47 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
 
     <!-- Navigation -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <header>
-        <a href="#" class="logo-wrapper">
-            <div class="logo-glow"></div>
-            <img src="logo-circular.png" alt="Alabol Car Broker" class="logo-img">
-        </a>
-
+    <!-- NAV MINI -->
+    <header style="height:48px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;">
         <div class="mobile-menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
             <i class="fa-solid fa-bars"></i>
         </div>
-
+        <a href="#" style="display:flex;align-items:center;gap:8px;text-decoration:none;position:absolute;left:50%;transform:translateX(-50%);">
+            <img src="logo-circular.png" alt="Alabol" style="width:32px;height:32px;filter:drop-shadow(0 0 8px rgba(212,175,55,0.4));">
+            <span style="font-size:14px;font-weight:800;color:var(--gold);letter-spacing:1px;">ALABOL</span>
+        </a>
+        <a href="./vip/" style="padding:6px 14px;background:linear-gradient(135deg,#d4af37,#f4e5b0);color:#0a1f1a;border-radius:20px;text-decoration:none;font-size:11px;font-weight:800;">Matchmaker</a>
         <div class="nav-links">
-            <a href="#inventario">Solteros Disponibles</a>
-            <a href="#como-funciona">Citas Seguras</a>
-            <a href="./vendedor.html" style="color: var(--gold); font-weight: 700;">Vender mi Auto</a>
-            <a href="./login.html" class="nav-item" id="navAuthBtn">
-                <i class="fa-solid fa-user-circle"></i> Entrar
-            </a>
-            <a href="./portal-agencias.html" class="btn-premium-teal" style="font-size: 0.8rem; padding: 8px 16px;">
-                <i class="fa-solid fa-user-tie"></i> Agencias
-            </a>
+            <a href="/inventario.html">🚗 Inventario</a>
+            <a href="/vip/">💘 Matchmaker</a>
+            <a href="/simulador-credito.html">💰 Financiamiento</a>
+            <a href="/oportunidades/">🔥 Oportunidades</a>
+            <a href="/portal-agencias.html">🏢 Portal Agencias</a>
+            <a href="./login.html" class="nav-item" id="navAuthBtn"><i class="fa-solid fa-user-circle"></i> Entrar</a>
         </div>
     </header>
 
-    <!-- HERO SECTION (Matchmaker B2C Focus) -->
-    <section class="hero">
-        <div class="hero-badge">Tecnología de Búsqueda VIP</div>
-        <h1>Encuentra tu <span class="highlight">Media Naranja</span> con Llantas 🍊🚗</h1>
-        <p>Basta de "citas a ciegas" con autos poco confiables. Deja que nuestro Cupido Automotriz te presente a tu
-            compañero ideal de las mejores agencias del país.</p>
-        <div class="hero-cta-container">
-            <a href="./vip/" class="btn-premium-gold" style="padding: 18px 36px; font-size: 1.1rem;">
-                <i class="fa-solid fa-heart-circle-check"></i>
-                <span>Buscar mi Match Ideal</span>
-            </a>
-            <a href="#inventario" class="btn-premium-teal" style="padding: 18px 36px; font-size: 1.1rem;">
-                Ver Solteros Disponibles
-            </a>
+    <!-- 1. HERO — compacto, directo, potente -->
+    <section style="text-align:center;padding:8px 20px 4px;max-width:600px;margin:0 auto;">
+        <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.25);border-radius:20px;padding:3px 12px;margin-bottom:6px;">
+            <span style="font-size:11px;">💘</span>
+            <span style="font-size:9px;font-weight:700;color:var(--gold);letter-spacing:1px;text-transform:uppercase;">El Tinder de los Autos</span>
         </div>
-
-        <!-- Scroll indicator -->
-        <div style="margin-top:32px;animation:bounce 2s infinite;text-align:center;opacity:0.5;">
-            <i class="fa-solid fa-chevron-down" style="font-size:1.2rem;color:var(--gold);"></i>
-        </div>
-        <style>@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}</style>
-    </section>
-
-    <!-- SERVICIOS RÁPIDOS -->
-    <section style="max-width:900px;margin:-20px auto 30px;padding:0 20px;position:relative;z-index:5;">
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;">
-
-            <a href="#inventario" style="text-decoration:none;background:rgba(13,38,28,0.7);border:1px solid rgba(212,175,55,0.2);border-radius:16px;padding:20px 16px;text-align:center;transition:all 0.3s;backdrop-filter:blur(8px);"
-               onmouseover="this.style.borderColor='rgba(212,175,55,0.5)';this.style.transform='translateY(-3px)'"
-               onmouseout="this.style.borderColor='rgba(212,175,55,0.2)';this.style.transform='translateY(0)'">
-                <div style="font-size:28px;margin-bottom:8px;">💘</div>
-                <div style="font-size:13px;font-weight:700;color:#d4af37;">Swipe & Match</div>
-                <div style="font-size:11px;color:#a8c5b8;margin-top:4px;opacity:0.7;">Desliza para encontrar tu auto ideal</div>
-            </a>
-
-            <a href="./vendedor.html" style="text-decoration:none;background:rgba(13,38,28,0.7);border:1px solid rgba(212,175,55,0.2);border-radius:16px;padding:20px 16px;text-align:center;transition:all 0.3s;backdrop-filter:blur(8px);"
-               onmouseover="this.style.borderColor='rgba(212,175,55,0.5)';this.style.transform='translateY(-3px)'"
-               onmouseout="this.style.borderColor='rgba(212,175,55,0.2)';this.style.transform='translateY(0)'">
-                <div style="font-size:28px;margin-bottom:8px;">🏷️</div>
-                <div style="font-size:13px;font-weight:700;color:#d4af37;">Vende tu Auto</div>
-                <div style="font-size:11px;color:#a8c5b8;margin-top:4px;opacity:0.7;">Publica y conecta con compradores VIP</div>
-            </a>
-
-            <a href="./formulario-match.html" style="text-decoration:none;background:rgba(13,38,28,0.7);border:1px solid rgba(212,175,55,0.2);border-radius:16px;padding:20px 16px;text-align:center;transition:all 0.3s;backdrop-filter:blur(8px);"
-               onmouseover="this.style.borderColor='rgba(212,175,55,0.5)';this.style.transform='translateY(-3px)'"
-               onmouseout="this.style.borderColor='rgba(212,175,55,0.2)';this.style.transform='translateY(0)'">
-                <div style="font-size:28px;margin-bottom:8px;">🔍</div>
-                <div style="font-size:13px;font-weight:700;color:#d4af37;">Matchmaker VIP</div>
-                <div style="font-size:11px;color:#a8c5b8;margin-top:4px;opacity:0.7;">Cuéntanos qué buscas y te encontramos</div>
-            </a>
-
-            <a href="./oportunidades/index.html" style="text-decoration:none;background:rgba(13,38,28,0.7);border:1px solid rgba(212,175,55,0.2);border-radius:16px;padding:20px 16px;text-align:center;transition:all 0.3s;backdrop-filter:blur(8px);"
-               onmouseover="this.style.borderColor='rgba(212,175,55,0.5)';this.style.transform='translateY(-3px)'"
-               onmouseout="this.style.borderColor='rgba(212,175,55,0.2)';this.style.transform='translateY(0)'">
-                <div style="font-size:28px;margin-bottom:8px;">🔥</div>
-                <div style="font-size:13px;font-weight:700;color:#d4af37;">Oportunidades</div>
-                <div style="font-size:11px;color:#a8c5b8;margin-top:4px;opacity:0.7;">Subastas con hasta 50% de ahorro</div>
-            </a>
-
-        </div>
-
-        <!-- CTA Vendedor destacado -->
-        <div style="margin-top:16px;background:linear-gradient(135deg,rgba(212,175,55,0.08),rgba(212,175,55,0.03));border:1px solid rgba(212,175,55,0.25);border-radius:16px;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
-            <div>
-                <div style="font-size:15px;font-weight:700;color:white;">🛡️ ¿Tienes un auto que quieres vender?</div>
-                <div style="font-size:12px;color:#a8c5b8;margin-top:2px;">Publica gratis en nuestro Garage VIP y conecta con compradores verificados.</div>
-            </div>
-            <a href="./vendedor.html" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#d4af37,#c9a961);color:#0a1f1a;padding:12px 24px;border-radius:24px;text-decoration:none;font-weight:800;font-size:13px;white-space:nowrap;box-shadow:0 4px 15px rgba(212,175,55,0.35);transition:all 0.25s;"
-               onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(212,175,55,0.5)'"
-               onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 15px rgba(212,175,55,0.35)'">
-                <i class="fa-solid fa-plus"></i> Publicar mi Auto
-            </a>
+        <h1 style="font-size:1.15rem;font-weight:900;line-height:1.3;color:white;margin-bottom:5px;">
+            Autos verificados, <span style="color:var(--gold);">sin riesgo de estafas.</span>
+        </h1>
+        <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;">
+            <span style="font-size:8px;color:#a8c5b8;opacity:0.7;display:flex;align-items:center;gap:3px;"><i class="fa-solid fa-shield-halved" style="color:#10b981;font-size:9px;"></i>Verificados</span>
+            <span style="font-size:8px;color:#a8c5b8;opacity:0.7;display:flex;align-items:center;gap:3px;"><i class="fa-solid fa-file-shield" style="color:var(--gold);font-size:9px;"></i>Legal blindado</span>
+            <span style="font-size:8px;color:#a8c5b8;opacity:0.7;display:flex;align-items:center;gap:3px;"><i class="fa-solid fa-building" style="color:#14b8a6;font-size:9px;"></i>6 agencias</span>
+            <span style="font-size:8px;color:#a8c5b8;opacity:0.7;display:flex;align-items:center;gap:3px;"><i class="fa-solid fa-car" style="color:var(--gold);font-size:9px;"></i>188+ autos</span>
         </div>
     </section>
 
-    <!-- INVENTARIO DESTACADO B2C -->
-    <section class="featured-section" id="inventario">
-        <div class="section-header">
-            <h2>Nuestros <span>Solteros</span> Más Cotizados 🔥</h2>
-            <p>Joyas verificadas esperando a su match perfecto</p>
+    <!-- 2. TARJETAS TINDER (el gancho interactivo) -->
+    <section class="featured-section" id="inventario" style="padding-top:4px;">
+        <div class="section-header" style="margin-bottom:4px;">
+            <h2 style="font-size:1rem;margin-bottom:0;">Desliza y haz <span>match</span> 🔥</h2>
         </div>
 
         <div class="filters-container" id="filtersSticky">
@@ -1966,21 +1914,11 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
             </div>
         </div>
 
-        <div class="tinder-social-proof"
-            style="text-align:center; margin-bottom: 25px; animation: fadeIn 1s ease-out; display: flex; justify-content: center; gap: 15px; align-items: center; flex-wrap: wrap;">
-            <div
-                style="display:inline-flex; align-items:center; gap:8px; background: rgba(212,175,55,0.1); border: 1px solid var(--gold-dim); padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; color: var(--gold-bright);">
-                <span class="pulse-dot"
-                    style="width:8px; height:8px; background:#25D366; border-radius:50%; box-shadow:0 0 10px #25D366; animation: pulse 2s infinite;"></span>
-                <strong>42 personas</strong> buscando su match ahora
-            </div>
-
-            <!-- MATCH COUNTER -->
-            <div id="matchCounter"
-                style="display:none; align-items:center; gap:8px; background: rgba(255,59,48,0.1); border: 1px solid rgba(255,59,48,0.3); padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; color: #ff3b30; cursor: pointer; transition: all 0.3s;"
-                onclick="if(typeof trackFunnelStep==='function') trackFunnelStep(3, 'click_matches_guardados'); location.href='./inventario.html?saved_matches=true'">
+        <div style="text-align:center;margin-bottom:8px;display:flex;justify-content:center;gap:8px;align-items:center;">
+            <div id="matchCounter" style="display:none;align-items:center;gap:6px;background:rgba(255,59,48,0.08);border:1px solid rgba(255,59,48,0.2);padding:5px 12px;border-radius:16px;font-size:0.75rem;color:#ff3b30;cursor:pointer;"
+                onclick="location.href='./inventario.html?saved_matches=true'">
                 <i class="fa-solid fa-heart"></i>
-                <strong><span id="savedMatchCount">0</span> Matches</strong> Guardados
+                <span id="savedMatchCount">0</span> Matches guardados
             </div>
         </div>
 
@@ -2001,116 +1939,82 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
         </div>
     </section>
 
-    <!-- ¿CÓMO FUNCIONA? -->
-    <section class="how-it-works" id="como-funciona">
-        <div class="section-header">
-            <h2>Encontrar tu auto nunca fue tan <span style="color:var(--gold)">atractivo</span></h2>
-            <p>Un embudo invisible de tres pasos para que solo hables con tu auto ideal.</p>
-        </div>
-
-        <div class="steps-container">
-            <div class="step-card">
-                <div class="step-number">1</div>
-                <div class="step-icon"><i class="fa-solid fa-sliders"></i></div>
-                <h3>Crea tu Perfil</h3>
-                <p>Déjanos saber qué buscas: presupuesto, año, estilo (SUV, Sedán). Nuestro formulario inteligente mapea
-                    tus preferencias reales en 2 minutos.</p>
+    <!-- 3. POR QUÉ ALABOL (trust + diferenciador) -->
+    <section style="max-width:600px;margin:16px auto 20px;padding:0 20px;position:relative;z-index:5;">
+        <div style="background:rgba(13,38,28,0.5);border:1px solid rgba(212,175,55,0.12);border-radius:18px;padding:20px;backdrop-filter:blur(8px);">
+            <h2 style="font-size:1rem;font-weight:800;color:white;text-align:center;margin-bottom:14px;">Que te protege Alabol que otros no?</h2>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+                <div style="display:flex;align-items:flex-start;gap:8px;">
+                    <i class="fa-solid fa-shield-halved" style="color:#10b981;font-size:16px;margin-top:2px;flex-shrink:0;"></i>
+                    <div><div style="font-size:11px;font-weight:700;color:white;">Revision mecanica</div><div style="font-size:9px;color:#a8c5b8;opacity:0.6;">Auditoria antes de publicar</div></div>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:8px;">
+                    <i class="fa-solid fa-file-shield" style="color:var(--gold);font-size:16px;margin-top:2px;flex-shrink:0;"></i>
+                    <div><div style="font-size:11px;font-weight:700;color:white;">Legal blindado</div><div style="font-size:9px;color:#a8c5b8;opacity:0.6;">Cero riesgos en documentos</div></div>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:8px;">
+                    <i class="fa-solid fa-certificate" style="color:var(--gold);font-size:16px;margin-top:2px;flex-shrink:0;"></i>
+                    <div><div style="font-size:11px;font-weight:700;color:white;">Asesoria experta</div><div style="font-size:9px;color:#a8c5b8;opacity:0.6;">Consultores, no vendedores</div></div>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:8px;">
+                    <i class="fa-solid fa-building" style="color:#14b8a6;font-size:16px;margin-top:2px;flex-shrink:0;"></i>
+                    <div><div style="font-size:11px;font-weight:700;color:white;">Solo de agencias</div><div style="font-size:9px;color:#a8c5b8;opacity:0.6;">Inventario directo verificado</div></div>
+                </div>
             </div>
-            <div class="step-card">
-                <div class="step-number">2</div>
-                <div class="step-icon"><i class="fa-solid fa-bolt"></i></div>
+
+            <!-- Matchmaker CTA refuerzo -->
+            <div style="text-align:center;padding-top:14px;border-top:1px solid rgba(212,175,55,0.1);">
+                <p style="font-size:0.8rem;color:#a8c5b8;margin-bottom:10px;">No sabes que auto te conviene? Nuestro algoritmo cruza tus preferencias con el inventario real.</p>
+                <div style="display:flex;flex-direction:column;gap:8px;max-width:300px;margin:0 auto;">
+                    <a href="./vip/" style="display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#d4af37,#c9a961);color:#0a1f1a;padding:13px 24px;border-radius:14px;text-decoration:none;font-weight:800;font-size:0.85rem;box-shadow:0 4px 16px rgba(212,175,55,0.3);">
+                        <i class="fa-solid fa-heart-circle-check"></i> Usar el Matchmaker
+                    </a>
+                    <a href="./inventario.html" style="display:flex;align-items:center;justify-content:center;gap:8px;color:var(--gold);padding:10px;border-radius:14px;text-decoration:none;font-weight:600;font-size:0.8rem;border:1px solid rgba(212,175,55,0.2);">
+                        <i class="fa-solid fa-th-large"></i> Ver inventario completo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. ACCESO PORTALES (agencias + asesores) -->
+    <section style="max-width:600px;margin:0 auto 24px;padding:0 20px;position:relative;z-index:5;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <a href="./portal-agencias.html" style="text-decoration:none;background:rgba(13,38,28,0.5);border:1px solid rgba(212,175,55,0.15);border-radius:14px;padding:16px;text-align:center;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(212,175,55,0.4)'" onmouseout="this.style.borderColor='rgba(212,175,55,0.15)'">
+                <div style="font-size:22px;margin-bottom:6px;">🏢</div>
+                <div style="font-size:12px;font-weight:700;color:var(--gold);">Portal Agencias</div>
+                <div style="font-size:10px;color:#a8c5b8;opacity:0.6;margin-top:2px;">Agencias aliadas</div>
+            </a>
+            <a href="./login.html" style="text-decoration:none;background:rgba(13,38,28,0.5);border:1px solid rgba(13,148,136,0.15);border-radius:14px;padding:16px;text-align:center;transition:all 0.3s;" onmouseover="this.style.borderColor='rgba(13,148,136,0.4)'" onmouseout="this.style.borderColor='rgba(13,148,136,0.15)'">
+                <div style="font-size:22px;margin-bottom:6px;">👔</div>
+                <div style="font-size:12px;font-weight:700;color:#0D9488;">Portal Asesores</div>
+                <div style="font-size:10px;color:#a8c5b8;opacity:0.6;margin-top:2px;">Acceso equipo</div>
+            </a>
+        </div>
+    </section>
+
+    <!-- 6. CIERRE GENTIL -->
+    <section style="max-width:500px;margin:0 auto 30px;padding:0 20px;text-align:center;position:relative;z-index:5;">
+        <div style="width:40px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 16px;"></div>
+        <p style="font-size:0.8rem;color:#a8c5b8;line-height:1.7;opacity:0.6;">
+            Aun lo estas pensando? No te preocupes. Guardanos en tus favoritos o mandanos un WhatsApp con tus dudas. <strong style="opacity:1;">Las puertas de Alabol siempre estan abiertas.</strong>
+        </p>
+    </section>
+
+    <!-- [SECCIONES REMOVIDAS: cómo funciona, servicios rápidos, B2B — simplificado para máxima conversión] -->
                 <h3>El Algoritmo hace Match</h3>
-                <p>Nuestra tecnología escanea el inventario oculto de Alabol y las agencias afiliadas aplicando
-                    tolerancias exactas, filtrando la paja por ti.</p>
+                <p>Nuestra tecnologia escanea el inventario de Alabol y las agencias afiliadas, filtrando por ti.</p>
             </div>
             <div class="step-card">
                 <div class="step-number">3</div>
                 <div class="step-icon"><i class="fa-solid fa-handshake"></i></div>
-                <h3>Cita a Ciegas Segura</h3>
-                <p>Te enviamos una pre-selección (Blind Match). Si te enamoras, agendamos una cita formal, protegida por
-                    nuestros sellos de verificación.</p>
+                <h3>Agenda tu Cita</h3>
+                <p>Te enviamos tus matches. Si te enamoras, agendamos una cita protegida por nuestros sellos de verificacion.</p>
             </div>
         </div>
     </section>
 
-    <!-- VENDE EN EL BÚNKER (C2B Focus) -->
-    <section class="about-us" id="vender-bunker"
-        style="background: linear-gradient(135deg, var(--dark-green) 0%, #061d18 100%); border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border);">
-        <div style="max-width: 800px; margin: 0 auto; text-align: center;">
-            <div class="hero-badge" style="background: rgba(212,175,55,0.1); color: var(--gold);">Para Vendedores
-                Particulares</div>
-            <h2 style="font-size: 2.5rem; margin-top: 15px;">¿Quieres Vender tu Auto en el <span
-                    style="color:var(--gold)">Búnker</span>? 🛡️</h2>
-            <p style="font-size: 1.1rem; opacity: 0.9; margin-bottom: 30px;">
-                Certificamos tu auto legal y mecánicamente para que las mejores agencias de CDMX se peleen por él.
-                Vende rápido, seguro y al mejor precio sin lidiar con desconocidos.
-            </p>
-            <a href="./vendedor.html" class="btn-premium-gold" style="padding: 18px 40px; font-size: 1.1rem;">
-                <i class="fa-solid fa-shield-halved"></i> Entrar al Búnker de Seguridad
-            </a>
-            <p class="humor-tag" style="margin-top: 20px; font-style: italic; opacity: 0.6;">"Es como blindar tu venta
-                contra los sustos del mercado." 😉</p>
-        </div>
-    </section>
-
-    <!-- ¿QUIÉNES SOMOS? -->
-    <section class="about-us" id="nosotros">
-        <h2>Transparencia Radical en cada Operación</h2>
-        <p>En **Alabol Car Broker** nacimos para eliminar el estrés, los sobreprecios inflados y el riesgo al comprar un
-            automóvil. Ya sea que busques el auto de tus sueños o una oportunidad de inversión para tu negocio,
-            consolidamos inventarios de las mejores firmas y subastadoras bajo una capa de tecnología que te ahorra
-            horas de papeleo y negociaciones desgastantes.</p>
-
-        <div class="trust-badges">
-            <div class="trust-item">
-                <i class="fa-solid fa-shield-halved"></i>
-                <span>Agencias Verificadas</span>
-            </div>
-            <div class="trust-item">
-                <i class="fa-solid fa-file-contract"></i>
-                <span>Trámites Cero Fricción</span>
-            </div>
-            <div class="trust-item">
-                <i class="fa-solid fa-money-bill-wave"></i>
-                <span>Precios Transparentes</span>
-            </div>
-        </div>
-    </section>
-
-    <!-- B2B & INVESTORS SECTION -->
-    <section class="b2b-section" id="inversores">
-        <div class="b2b-container">
-            <div class="b2b-info">
-                <div class="pill-badge"
-                    style="display:inline-block; margin-bottom: 1rem; padding: 5px 15px; border-radius: 20px; border: 1px solid var(--teal); color: var(--teal); font-weight: bold; font-size: 0.8rem; text-transform: uppercase;">
-                    Para Negocios</div>
-                <h2>Aventuras de Inversión (Subastas)</h2>
-                <p>Si eres revendedor o buscas maximizar tus fondos, conectamos directamente con subastadoras americanas
-                    y mexicanas, ofreciendo autos con averías menores o salvamentos que te aseguran un **30% al 40% de
-                    margen**. Entra a nuestro hub profesional.</p>
-                <a href="./portal_profesional.html" class="btn-primary" style="padding: 12px 24px; font-size: 1rem;">
-                    Portal para Inversores
-                </a>
-            </div>
-
-            <div class="tools-grid">
-                <a href="https://alabolcar-hwh56g8k.manus.space/calculators" class="tool-card" target="_blank">
-                    <i class="fa-solid fa-calculator"></i>
-                    <div class="tool-info">
-                        <h4>Calculadora Importación</h4>
-                        <p>Simulador técnico de fletes, grúas y aranceles (USA a MX).</p>
-                    </div>
-                </a>
-                <a href="https://alabolcar-hwh56g8k.manus.space/calculators" class="tool-card" target="_blank">
-                    <i class="fa-solid fa-percent"></i>
-                    <div class="tool-info">
-                        <h4>Simulador de Reventa</h4>
-                        <p>Proyecta tus utilidades y comisiones operativas en segundos.</p>
-                    </div>
-                </a>
-            </div>
-        </div>
-    </section>
+    <!-- [SECCIONES SIMPLIFICADAS — servicios y B2B removidos para máxima conversión] -->
 
     <!-- TINDER MODAL (Hidden by default) -->
     <div class="modal-overlay" id="tinderModal">
@@ -2187,7 +2091,7 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
         <h2 style="font-size:2.5rem; margin-bottom:1.5rem; text-transform:uppercase;">¡Match Perfecto Detectado! 💖</h2>
         <p style="font-size:1.2rem; color:#a8c5b8; max-width:500px; margin-bottom:2.5rem;">Hemos analizado tus gustos y
             tenemos 5 opciones similares en nuestra red privada. ¿Quieres verlas ahora?</p>
-        <a href="./formulario-match.html" class="btn-premium-gold" style="padding:18px 40px; font-size:1.2rem;">Sí,
+        <a href="./vip/index.html" class="btn-premium-gold" style="padding:18px 40px; font-size:1.2rem;">Sí,
             completar mi Matchmaker</a>
         <button onclick="document.getElementById('journeyOverlay').style.display='none'"
             style="margin-top:1.5rem; background:transparent; border:none; color:var(--gold); cursor:pointer; text-decoration:underline;">Seguir
@@ -2236,6 +2140,16 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// Image optimizer — serves resized images from Supabase Storage
+function optimImg(url, width) {
+    if (!url || typeof url !== 'string') return url;
+    if (url.includes('supabase.co/storage/v1/object/public/')) {
+        return url.replace('/object/public/', '/render/image/public/') + '?width=' + (width || 600) + '&quality=75';
+    }
+    return url;
+}
+</script>
 <script>
 // === ALABOL GLOBAL SUPABASE INIT (single source of truth) ===
 (function() {
@@ -2333,7 +2247,7 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
                     id: autoId, // Use the normalized ID
                     brand: auto.marca || auto.brand,
                     model: auto.modelo || auto.model,
-                    year: auto.año || auto.year,
+                    year: auto.anio || auto.año || auto.year,
                     price: auto.precio_venta || auto.priceMXN
                 });
                 localStorage.setItem('alabol_matches', JSON.stringify(matches));
@@ -2363,7 +2277,7 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
 
             // No need to grab data from active modal here, as heartInModal handles saving
 
-            window.location.href = './formulario-match.html';
+            window.location.href = './vip/index.html';
         }
 
         // New function for heart button inside modal
@@ -2509,13 +2423,18 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
                 const { data, error } = await sb.from('inventario')
                     .select('*')
                     .eq('estatus', 'disponible')
+                    .neq('origen', 'canario')
+                    .order('destacado', { ascending: false })
                     .order('created_at', { ascending: false });
 
                 if (error) {
                     console.error("Error fetching live inventory:", error);
                     return [];
                 }
-                return data || [];
+                // Only return cars with valid photos, destacados come first
+                return (data || []).filter(function(car) {
+                    return car.fotos && car.fotos.length > 0 && car.fotos[0] && car.fotos[0].startsWith('http');
+                });
             } catch (err) {
                 console.error("Unexpected error fetching inventory:", err);
                 return [];
@@ -2534,7 +2453,7 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
             tinderCars = globalInventoryData.slice(0, 8); // Display first 8
 
             if (tinderCars.length === 0) {
-                container.innerHTML = '<p style="text-align:center; color:#a8c5b8; padding: 2rem;">No hay autos disponibles en este momento.</p>';
+                container.innerHTML = '<div style="text-align:center;padding:40px 20px;"><div style="font-size:48px;margin-bottom:16px;">🔍</div><h3 style="color:white;font-size:18px;margin-bottom:8px;">Estamos integrando inventario de agencias aliadas</h3><p style="color:#a8c5b8;font-size:14px;margin-bottom:20px;">Usa el Matchmaker para decirnos qué buscas y te contactamos con opciones.</p><a href="./vip/" style="display:inline-block;background:linear-gradient(135deg,#d4af37,#f4e5b0);color:#0a1f1a;padding:14px 32px;border-radius:14px;text-decoration:none;font-weight:700;font-size:15px;">💘 Hacer Match</a></div>';
                 return;
             }
 
@@ -2549,21 +2468,21 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
                 const marca = auto.marca || auto.brand || 'Auto';
                 const modelo = auto.modelo || auto.model || 'Alabol';
                 const precio = auto.precio_venta || auto.priceMXN || 0;
-                const anio = auto.año || auto.year || '2024';
+                const anio = auto.anio || auto.año || auto.year || '';
                 const version = auto.version || 'Equipado';
 
                 let carImg = defaultImg;
                 if (auto.fotos && Array.isArray(auto.fotos) && auto.fotos.length > 0) {
-                    carImg = auto.fotos[0];
+                    carImg = optimImg(auto.fotos[0], 600);
                 } else if (typeof auto.fotos === 'string' && auto.fotos.startsWith('[')) {
                     try {
                         const parsed = JSON.parse(auto.fotos);
-                        if (parsed.length > 0) carImg = parsed[0];
+                        if (parsed.length > 0) carImg = optimImg(parsed[0], 600);
                     } catch (e) { }
                 } else if (auto.link_fotos) {
-                    carImg = auto.link_fotos;
+                    carImg = optimImg(auto.link_fotos, 600);
                 } else if (auto.url_fotos) {
-                    carImg = auto.url_fotos;
+                    carImg = optimImg(auto.url_fotos, 600);
                 }
 
                 const isAlabol = (auto.agencia || '').toLowerCase() === 'alabol';
@@ -2584,7 +2503,7 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
                 card.innerHTML = `
                     ${trustBadge}
                     <div class="modal-badge" style="top:20px; left:20px; font-size:0.75rem; padding:6px 12px; border-radius:12px; backdrop-filter:blur(10px); background:rgba(212,175,55,0.9); color:black;">${badgeText}</div>
-                    <img src="${carImg}" class="tinder-card-img" alt="${modelo}">
+                    <img src="${carImg}" class="tinder-card-img" alt="${modelo}" loading="lazy" decoding="async">
                     <div class="tinder-card-body">
                         <div class="tinder-card-title">${marca} ${modelo} <span style="color:var(--gold); font-size:1.2rem; float:right;">${anio}</span></div>
                         <div class="tinder-card-version" style="opacity:0.8;">${version}</div>
@@ -2644,10 +2563,25 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
                 const currentAuto = tinderCars[currentCarIndex];
                 saveMatch(currentAuto);
 
-                // Dopamine Popup
-                showFeedback("¡ME ENCANTA! 😍");
+                // Dopamine Popup + CTA
+                showFeedback("Match! 💘");
+                // Show WhatsApp CTA on every 2nd like
+                if (likeCount % 2 === 0 && likeCount > 0) {
+                    var autoName = (currentAuto.marca||'') + ' ' + (currentAuto.modelo||'') + ' ' + (currentAuto.anio||currentAuto.año||'');
+                    var waMsg = encodeURIComponent('Hola Alabol! Me interesa el ' + autoName + '. Quiero mas info.');
+                    setTimeout(function(){
+                        var toast = document.createElement('div');
+                        toast.className = 'toast';
+                        toast.innerHTML = '<div style="margin-bottom:6px;font-weight:700;">Te gusta el '+autoName+'?</div>'
+                            + '<a href="https://api.whatsapp.com/send?phone=525568667571&text='+waMsg+'" target="_blank" style="display:inline-block;background:#25D366;color:white;padding:8px 16px;border-radius:10px;text-decoration:none;font-weight:700;font-size:11px;margin-right:6px;">📲 Pedir info por WhatsApp</a>'
+                            + '<button onclick="this.parentElement.remove()" style="background:none;border:1px solid rgba(255,255,255,0.2);color:white;padding:6px 12px;border-radius:10px;font-size:11px;cursor:pointer;">Seguir viendo</button>';
+                        toast.style.maxWidth = '320px';
+                        document.body.appendChild(toast);
+                        setTimeout(function(){toast.classList.add('exit');setTimeout(function(){toast.remove()},400)},8000);
+                    }, 400);
+                }
 
-                // Show journey overlay after 3 likes
+                // Confetti on 3rd like
                 if (likeCount === 3) {
                     confetti({
                         particleCount: 200,
@@ -2659,10 +2593,6 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
                     // Add a slight screen shake for impact
                     document.body.style.animation = 'screenShake 0.5s';
                     setTimeout(() => document.body.style.animation = '', 500);
-
-                    setTimeout(() => {
-                        document.getElementById('journeyOverlay').style.display = 'flex';
-                    }, 500);
                 }
             } else {
                 card.style.animation = 'swipeLeft 0.7s forwards cubic-bezier(0.23, 1, 0.32, 1)';
@@ -2686,7 +2616,7 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
                         <div style="text-align:center; padding:3rem; background:rgba(212,175,55,0.05); border-radius:30px; border:1px dashed var(--gold); display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%;">
                             <i class="fa-solid fa-heart-crack" style="font-size:3rem; color:var(--gold); margin-bottom:20px;"></i>
                             <h3 style="color:var(--gold); margin-bottom:15px;">¡Te quedaste sin candidatos!</h3>
-                            <a href="./formulario-match.html" class="btn-premium-gold" style="padding:12px 30px; font-size:1rem;">Abrir Matchmaker VIP</a>
+                            <a href="./vip/index.html" class="btn-premium-gold" style="padding:12px 30px; font-size:1rem;">Abrir Matchmaker VIP</a>
                         </div>
                     `;
                 }, 400);
@@ -2762,13 +2692,50 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
 
         function triggerMatch() {
             if (typeof trackFunnelStep === 'function') trackFunnelStep(4, 'solicitar_match_whatsapp_alabol');
-            window.location.href = './formulario-match.html';
+            window.location.href = './vip/index.html';
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
             await renderCards();
             populateBrands();
             createBubbles();
+
+            // Touch swipe for Tinder cards
+            var tContainer = document.getElementById('tinder-container');
+            if (tContainer) {
+                var startX = 0, startY = 0, dragging = false, dragCard = null, dragDx = 0;
+                tContainer.addEventListener('touchstart', function(e) {
+                    var cards = document.querySelectorAll('.tinder-card:not(.removing)');
+                    if (!cards.length) return;
+                    dragCard = cards[0];
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                    dragging = true;
+                    dragDx = 0;
+                    dragCard.style.transition = 'none';
+                }, { passive: true });
+                tContainer.addEventListener('touchmove', function(e) {
+                    if (!dragging || !dragCard) return;
+                    dragDx = e.touches[0].clientX - startX;
+                    var dy = e.touches[0].clientY - startY;
+                    if (Math.abs(dy) > Math.abs(dragDx) && Math.abs(dragDx) < 30) return; // vertical scroll
+                    var rot = dragDx * 0.08;
+                    dragCard.style.transform = 'translateX(' + dragDx + 'px) rotate(' + rot + 'deg)';
+                    dragCard.style.opacity = Math.max(0.3, 1 - Math.abs(dragDx) / 400);
+                }, { passive: true });
+                tContainer.addEventListener('touchend', function() {
+                    if (!dragging || !dragCard) return;
+                    dragging = false;
+                    dragCard.style.transition = 'transform 0.3s, opacity 0.3s';
+                    if (Math.abs(dragDx) > 80) {
+                        swipe(dragDx > 0 ? 'right' : 'left');
+                    } else {
+                        dragCard.style.transform = '';
+                        dragCard.style.opacity = '1';
+                    }
+                    dragCard = null;
+                }, { passive: true });
+            }
         });
 
         // Generate Golden Bubbles Effect
@@ -2847,6 +2814,28 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
         trackVisit();
     </script>
 
+    <script>
+    // Match Perfecto modal triggered on scroll > 60%
+    (function() {
+        var modalShown = false;
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > document.body.scrollHeight * 0.6 && !modalShown) {
+                document.getElementById('journeyOverlay').style.display = 'flex';
+                modalShown = true;
+            }
+        });
+    })();
+    </script>
+
+    <!-- Floating WhatsApp Button + Bubble -->
+    <div id="waBubble" style="position:fixed;bottom:80px;right:20px;background:var(--dark-green);border:1px solid var(--glass-border);border-radius:14px;padding:8px 14px;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,0.3);animation:fadeInUp 0.5s ease 3s both;">
+      <div style="font-size:11px;color:#a8c5b8;">Escribenos por WhatsApp</div>
+      <div style="position:absolute;bottom:-6px;right:22px;width:12px;height:12px;background:var(--dark-green);border-right:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border);transform:rotate(45deg);"></div>
+    </div>
+    <style>@keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}</style>
+    <script>setTimeout(function(){var b=document.getElementById('waBubble');if(b)b.style.display='none';},8000);</script>
+    <a href="https://api.whatsapp.com/send?phone=525568667571&text=Hola%20Alabol!%20Vi%20su%20pagina%20y%20quiero%20saber%20mas." target="_blank" style="position:fixed;bottom:20px;right:20px;width:56px;height:56px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 15px rgba(37,211,102,0.4);z-index:998;text-decoration:none;font-size:28px;transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'"><svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg></a>
+
     <!-- ECOSYSTEM FOOTER -->
     <footer
         style="background:rgba(0,0,0,0.5);border-top:1px solid rgba(255,255,255,0.05);padding:3rem 5%;margin-top:0;">
@@ -2869,7 +2858,7 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
                     <a href="./vip/" style="color:#a8c5b8;text-decoration:none;font-size:0.9rem;transition:color 0.2s;"
                         onmouseover="this.style.color='#d4af37'" onmouseout="this.style.color='#a8c5b8'">🔥 Matchmaker
                         VIP</a>
-                    <a href="./portal_profesional.html"
+                    <a href="./oportunidades/"
                         style="color:#a8c5b8;text-decoration:none;font-size:0.9rem;transition:color 0.2s;"
                         onmouseover="this.style.color='#d4af37'" onmouseout="this.style.color='#a8c5b8'">🚗 Portal
                         Subastas</a>
@@ -2903,10 +2892,11 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
         <div
             style="text-align:center;margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.05);color:#6b8a7a;font-size:0.82rem;">
             &copy; 2026 Alabol Car Broker &nbsp;|&nbsp; <a href="./index.html"
-                style="color:var(--gold);text-decoration:none;">alabol.netlify.app</a>
+                style="color:var(--gold);text-decoration:none;">alabolcar.com.mx</a>
+            <br><a href="./terminos.html" style="color:#6b8a7a;text-decoration:none;font-size:0.75rem;">Terminos y Condiciones</a> &nbsp;|&nbsp; <a href="./aviso-privacidad.html" style="color:#6b8a7a;text-decoration:none;font-size:0.75rem;">Aviso de Privacidad</a>
         </div>
     </footer>
 
 </body>
 
-</html>
+</html><!-- force rebuild Wed Mar 18 00:16:58 HEM 2026 -->

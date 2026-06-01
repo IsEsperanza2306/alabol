@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#050f0c">
+<meta property="og:title" content="Jonathan Salazar · Alabol Car Broker">
+<meta property="og:description" content="El Tinder de los Autos — Matchmaking activo para agencias de seminuevos">
+<meta property="og:image" content="https://alabolcar.com.mx/logo-circular.png">
+<title>Jonathan Salazar · Alabol Car Broker</title>
+<link rel="icon" href="/logo-circular.png" type="image/png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#050f0c;
+  --surface:rgba(10,31,26,0.55);
+  --gold:#D4AF37;--gold2:#F4E5B0;--gold-dim:rgba(212,175,55,0.08);
+  --teal:#0D9488;
+  --text:rgba(255,255,255,0.92);--muted:rgba(255,255,255,0.48);--faint:rgba(255,255,255,0.08);
+}
+html{background:var(--bg);min-height:100vh}
+body{
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  background:var(--bg);min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;
+  padding:0;position:relative;overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+.amb{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(212,175,55,0.06) 0%,transparent 50%),
+             radial-gradient(ellipse at 50% 100%,rgba(13,148,136,0.04) 0%,transparent 50%)}
+
+.card{
+  width:min(420px,94vw);
+  margin:env(safe-area-inset-top,20px) auto 40px;
+  position:relative;z-index:10;
+  animation:fadeUp .7s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.header{text-align:center;padding:48px 24px 32px}
+.logo-ring{
+  width:72px;height:72px;border-radius:50%;
+  border:1.5px solid rgba(212,175,55,0.4);
+  margin:0 auto 20px;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+  box-shadow:0 0 40px rgba(212,175,55,0.12);
+  animation:fadeUp .7s cubic-bezier(.16,1,.3,1) both .1s;
+}
+.logo-ring img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
+
+.brand{font-family:'Poppins',sans-serif;font-weight:800;font-size:13px;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);opacity:0.7;margin-bottom:2px}
+.brand-sub{font-size:10px;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:28px}
+
+.person-name{font-family:'Poppins',sans-serif;font-weight:800;font-size:28px;color:var(--text);letter-spacing:-0.02em;line-height:1.1;margin-bottom:10px}
+.role-pill{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--gold-dim);border:1px solid rgba(212,175,55,0.15);
+  border-radius:100px;padding:6px 16px;
+  font-size:11px;font-weight:600;color:var(--gold);
+  letter-spacing:0.08em;text-transform:uppercase;
+}
+.pulse{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(0.8)}}
+
+.sep{height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,0.12),transparent);margin:0 24px}
+
+.body{padding:28px 20px 24px}
+
+.btn-hero{
+  display:block;width:100%;border-radius:16px;padding:20px;
+  background:linear-gradient(135deg,var(--gold),#c9a430);
+  color:#0a1f1a;text-decoration:none;text-align:center;
+  position:relative;overflow:hidden;
+  box-shadow:0 8px 32px rgba(212,175,55,0.25);
+  transition:transform .2s cubic-bezier(.16,1,.3,1),box-shadow .2s;
+  margin-bottom:12px;
+}
+.btn-hero:active{transform:scale(0.98);box-shadow:0 4px 16px rgba(212,175,55,0.15)}
+.btn-hero::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(180deg,rgba(255,255,255,0.15),transparent);pointer-events:none}
+.btn-hero-badge{font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;opacity:0.55;margin-bottom:4px}
+.btn-hero-icon{font-size:24px;margin-bottom:4px}
+.btn-hero-label{font-size:15px;font-weight:800;letter-spacing:0.03em}
+.btn-hero-sub{font-size:10px;opacity:0.5;margin-top:3px;font-weight:500}
+
+.btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  border-radius:14px;padding:14px 12px;
+  font-size:11px;font-weight:600;letter-spacing:0.04em;
+  text-transform:uppercase;text-decoration:none;
+  transition:transform .15s,opacity .15s;cursor:pointer;border:none;
+}
+.btn:active{transform:scale(0.97);opacity:.85}
+.btn-wa{background:rgba(37,211,102,0.12);color:#25D366;border:1px solid rgba(37,211,102,0.2)}
+.btn-web{background:var(--faint);color:var(--muted);border:1px solid rgba(255,255,255,0.06)}
+.btn-sm{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  border-radius:12px;padding:11px 12px;
+  font-size:10px;font-weight:600;letter-spacing:0.05em;
+  text-transform:uppercase;text-decoration:none;
+  background:transparent;border:1px solid var(--faint);color:var(--muted);
+  transition:all .15s;
+}
+.btn-sm:active{background:var(--gold-dim);color:var(--gold);border-color:rgba(212,175,55,0.2)}
+
+.section-title{font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);opacity:0.6;margin:24px 0 14px}
+.vp{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid var(--faint)}
+.vp:last-child{border-bottom:none}
+.vp-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;background:var(--gold-dim)}
+.vp-title{font-size:13px;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:2px}
+.vp-sub{font-size:11px;color:var(--muted);line-height:1.5;font-weight:400}
+
+.email-row{display:flex;align-items:center;gap:12px;padding:12px 0;margin-top:8px;text-decoration:none}
+.email-icon{width:32px;height:32px;border-radius:8px;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.email-addr{font-size:12px;font-weight:500;color:var(--text)}
+.email-label{font-size:9px;color:var(--muted);letter-spacing:0.05em;margin-top:1px}
+
+.socials{display:flex;justify-content:center;gap:8px;margin-top:20px;padding-top:20px;border-top:1px solid var(--faint)}
+.soc{
+  display:flex;align-items:center;gap:5px;padding:8px 14px;border-radius:10px;
+  font-size:10px;font-weight:500;color:var(--muted);text-decoration:none;
+  background:transparent;border:1px solid var(--faint);transition:all .15s;letter-spacing:0.03em;
+}
+.soc:active{background:var(--gold-dim);color:var(--gold);border-color:rgba(212,175,55,0.2)}
+
+.footer{text-align:center;padding:24px 20px 20px;border-top:1px solid var(--faint);margin:0 20px}
+.footer-url{font-size:10px;color:rgba(212,175,55,0.35);letter-spacing:0.1em;font-weight:500}
+.footer-copy{font-size:9px;color:rgba(255,255,255,0.15);margin-top:4px}
+
+.nfc{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;padding-bottom:env(safe-area-inset-bottom,20px);animation:fadeUp .7s ease both .5s}
+.nfc-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 2s ease infinite}
+.nfc-text{font-size:9px;color:rgba(13,148,136,0.5);letter-spacing:0.12em;text-transform:uppercase;font-weight:500}
+
+.stagger{animation:fadeUp .6s cubic-bezier(.16,1,.3,1) both}
+.s1{animation-delay:.15s}.s2{animation-delay:.2s}.s3{animation-delay:.25s}
+.s4{animation-delay:.3s}.s5{animation-delay:.35s}.s6{animation-delay:.4s}
+</style>
+</head>
+<body>
+
+<div class="amb"></div>
+
+<div class="card">
+
+  <div class="header">
+    <div class="logo-ring">
+      <img src="/logo-circular.png" alt="Alabol">
+    </div>
+    <div class="brand">Alabol</div>
+    <div class="brand-sub">Car Broker</div>
+    <div class="person-name">Jonathan Salazar</div>
+    <div style="display:flex;justify-content:center">
+      <div class="role-pill">
+        <div class="pulse"></div>
+        Dir. Alianzas Estrategicas
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="body">
+
+    <a href="https://alabolcar.com.mx/vip/" class="btn-hero stagger s1">
+      <div class="btn-hero-badge">Prueba ahora</div>
+      <div class="btn-hero-icon">💘</div>
+      <div class="btn-hero-label">Matchmaker</div>
+      <div class="btn-hero-sub">Encuentra tu media naranja con llantas</div>
+    </a>
+
+    <div class="btn-grid stagger s2">
+      <a href="https://wa.me/5215537372871?text=Hola%20Jonathan%2C%20vi%20tu%20tarjeta%20de%20Alabol%20Car%20Broker.%20Me%20interesa%20agendar%20una%20cita%20%F0%9F%A4%9D" class="btn btn-wa">
+        <span style="font-size:14px">💬</span> WhatsApp
+      </a>
+      <a href="https://alabolcar.com.mx/" class="btn btn-web">
+        <span style="font-size:14px">🌐</span> Portal Web
+      </a>
+    </div>
+
+    <div class="btn-grid stagger s3">
+      <a href="https://alabolcar.com.mx/inventario.html" class="btn-sm">
+        <span style="font-size:13px">🚗</span> Inventario
+      </a>
+      <a href="data:text/vcard;charset=utf-8,BEGIN:VCARD%0AVERSION:3.0%0AFN:Jonathan%20Salazar%0AORG:Alabol%20Car%20Broker%0ATITLE:Dir.%20de%20Alianzas%20Estrat%C3%A9gicas%0ATEL:+5215537372871%0AEMAIL:john.salazar@alabolcar.com.mx%0AURL:https://alabolcar.com.mx%0AEND:VCARD" download="Jonathan_Salazar_Alabol.vcf" class="btn-sm">
+        <span style="font-size:13px">📥</span> Guardar contacto
+      </a>
+    </div>
+
+    <div class="section-title stagger s4">Por que Alabol</div>
+
+    <div class="stagger s4">
+      <div class="vp">
+        <div class="vp-icon">🎯</div>
+        <div>
+          <div class="vp-title">Compradores ya calificados</div>
+          <div class="vp-sub">Filtramos por presupuesto, tipo y zona antes de presentarlos. Menos curiosos, mas cierres.</div>
+        </div>
+      </div>
+      <div class="vp">
+        <div class="vp-icon">⚡</div>
+        <div>
+          <div class="vp-title">Canal adicional sin riesgo</div>
+          <div class="vp-sub">$0 hasta cerrar la venta. Sin exclusividad. Sin contrato complejo. Piloto de 30 dias.</div>
+        </div>
+      </div>
+      <div class="vp">
+        <div class="vp-icon">🔄</div>
+        <div>
+          <div class="vp-title">Matching activo, no vitrina</div>
+          <div class="vp-sub">No esperamos que el comprador te encuentre. Lo llevamos a ti.</div>
+        </div>
+      </div>
+    </div>
+
+    <a href="mailto:john.salazar@alabolcar.com.mx" class="email-row stagger s5">
+      <div class="email-icon">✉️</div>
+      <div>
+        <div class="email-addr">john.salazar@alabolcar.com.mx</div>
+        <div class="email-label">Correo electronico</div>
+      </div>
+    </a>
+
+    <div class="socials stagger s6">
+      <a href="https://www.tiktok.com/@alabolcarbroker" class="soc">
+        <span style="font-size:12px">🎵</span> TikTok
+      </a>
+      <a href="https://alabolcar.com.mx/portal-agencias.html" class="soc">
+        <span style="font-size:12px">🏢</span> Agencias
+      </a>
+      <a href="https://alabolcar.com.mx/oportunidades/" class="soc">
+        <span style="font-size:12px">🔥</span> Subastas
+      </a>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <div class="footer-url">alabolcar.com.mx/jonathan</div>
+    <div class="footer-copy">Alabol Car Broker · CDMX &amp; Cancun · 2025</div>
+  </div>
+
+</div>
+
+<div class="nfc">
+  <div class="nfc-dot"></div>
+  <span class="nfc-text">NFC Tag Ready</span>
+</div>
+
+</body>
+</html>

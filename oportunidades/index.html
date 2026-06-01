@@ -7,8 +7,8 @@
     <link rel="icon" href="../logo-circular.png" type="image/png">
     <meta property="og:title" content="Alabol Car Broker | El Tinder de los Autos">
     <meta property="og:description" content="Encuentra tu media naranja con llantas. Compra, vende o invierte en autos verificados.">
-    <meta property="og:image" content="https://alabol.netlify.app/logo-circular.png">
-    <meta property="og:url" content="https://alabol.netlify.app">
+    <meta property="og:image" content="https://alabolcar.com.mx/logo-circular.png">
+    <meta property="og:url" content="https://alabolcar.com.mx">
     <meta property="og:type" content="website">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-RMENV8G466"></script>
     <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RMENV8G466');</script>
@@ -423,18 +423,7 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .badge-savings {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 700;
-            background: rgba(212, 175, 55, 0.9);
-            color: var(--bg-dark);
-            box-shadow: 0 2px 12px rgba(212, 175, 55, 0.4);
-        }
+        /* badge-savings removed — no prices shown on auction portal */
 
         .badge-deadline {
             position: absolute;
@@ -488,79 +477,32 @@
             margin-bottom: 10px;
         }
 
-        .car-damage {
-            font-size: 12px;
-            color: var(--green-text);
-            background: rgba(212, 175, 55, 0.06);
-            padding: 6px 10px;
-            border-radius: 8px;
-            border-left: 3px solid var(--gold-dim);
-            margin-bottom: 14px;
-            line-height: 1.4;
+        /* car-damage and car-notes replaced by car-condition and car-location */
+
+        /* Condition & Location */
+        .car-condition {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 12px; color: var(--green-text);
+            background: rgba(212,175,55,0.06); padding: 8px 12px;
+            border-radius: 10px; border-left: 3px solid var(--gold-dim);
+            margin-bottom: 10px; line-height: 1.4;
+        }
+        .condition-icon { font-size: 14px; flex-shrink: 0; }
+        .condition-text { font-weight: 500; }
+
+        .car-location {
+            font-size: 12px; color: rgba(168,197,184,0.6);
+            margin-bottom: 10px; font-weight: 500;
         }
 
-        .car-notes {
-            font-size: 11px;
-            color: rgba(168, 197, 184, 0.6);
-            font-style: italic;
-            margin-bottom: 14px;
+        /* Auction notice — replaces price section */
+        .auction-notice {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.2);
+            border-radius: 10px; padding: 10px 14px; margin-bottom: 14px;
+            font-size: 11px; color: var(--gold-light); font-weight: 500;
         }
-
-        /* Price section */
-        .price-section {
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            margin-bottom: 14px;
-            padding-bottom: 14px;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
-        }
-
-        .price-main {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .price-label {
-            font-size: 10px;
-            color: var(--green-text);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-        }
-
-        .price-value {
-            font-size: 24px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #d4af37, #f4e5b0, #d4af37);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: shimmerText 3s linear infinite;
-        }
-
-        .price-market {
-            text-align: right;
-        }
-
-        .price-market .price-label {
-            color: rgba(168, 197, 184, 0.4);
-        }
-
-        .price-market .price-original {
-            font-size: 16px;
-            color: rgba(168, 197, 184, 0.35);
-            text-decoration: line-through;
-            font-weight: 500;
-        }
-
-        .savings-text {
-            font-size: 13px;
-            color: var(--green-badge);
-            font-weight: 700;
-            margin-bottom: 14px;
-        }
+        .auction-icon { font-size: 16px; flex-shrink: 0; }
 
         /* CTA */
         .cta-interest {
@@ -673,6 +615,19 @@
                 padding: 5px 10px;
             }
         }
+
+        /* === PSYCHOLOGY-BASED BADGES === */
+        .badge-scarcity {
+            position: absolute; bottom: 10px; left: 10px;
+            padding: 4px 10px; border-radius: 8px;
+            font-size: 10px; font-weight: 700;
+            background: rgba(255, 71, 87, 0.85); color: white;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 71, 87, 0.4);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* Removed: savings-bar, car-verified, car-time-on-market, badge-new — not applicable for auction portal */
     </style>
 <style id="alabol-nav-styles">
   :root {
@@ -919,7 +874,7 @@
 
 <body>
 <nav class="alabol-nav" role="navigation" aria-label="Navegación principal">
-  <a href="../index.html" class="nav-logo" aria-label="Ir al inicio">
+  <a href="/" class="nav-logo" aria-label="Ir al inicio">
     <img src="../logo-circular.png" alt="Alabol">
     <span class="nav-logo-text">Alabol</span>
   </a>
@@ -929,13 +884,12 @@
   </button>
 
   <ul class="nav-links" id="navLinks" role="list">
-    <li><a href="../inventario.html">🚗 Inventario</a></li>
-    <li><a href="../formulario-match.html">💘 Hacer Match</a></li>
-    <li><a href="../precalificacion/index.html">💳 Precalificación</a></li>
-    <li><a href="../vip/index.html">⭐ VIP</a></li>
-    <li><a href="../oportunidades/index.html">🔥 Oportunidades</a></li>
-    <li><a href="../vendedor.html">🏷️ Vende tu Auto</a></li>
-    <li><a href="../formulario-match.html" class="nav-cta">Buscar mi Auto →</a></li>
+    <li><a href="/inventario.html">🚗 Inventario</a></li>
+    <li><a href="/vip/">💘 Matchmaker</a></li>
+    <li><a href="/vendedor.html">🏷️ Vender Auto</a></li>
+    <li><a href="/oportunidades/">🔥 Subastas</a></li>
+    <li><a href="/portal-agencias.html">🏢 Agencias</a></li>
+    <li><a href="/vip/" class="nav-cta">Buscar mi Auto →</a></li>
   </ul>
 </nav>
     <div class="container">
@@ -963,6 +917,13 @@
             </div>
         </div>
 
+        <!-- Banner to unified inventory -->
+        <div style="background:linear-gradient(135deg,rgba(212,175,55,0.1),rgba(212,175,55,0.04));border:1px solid rgba(212,175,55,0.2);border-radius:16px;padding:20px;margin-bottom:20px;text-align:center;">
+            <p style="font-size:14px;color:white;font-weight:600;margin:0 0 4px;">🚙 También puedes ver estas subastas en nuestro inventario unificado</p>
+            <p style="font-size:12px;color:var(--green-text);margin:0 0 12px;">Con filtros avanzados, matchmaker y sistema de citas</p>
+            <a href="../inventario.html?tab=subastas" style="display:inline-block;background:linear-gradient(135deg,#d4af37,#f4e5b0);color:#0a1f1a;padding:12px 28px;border-radius:12px;text-decoration:none;font-weight:700;font-size:14px;">Ver subastas en inventario →</a>
+        </div>
+
         <!-- Filters -->
         <div class="filters">
             <div class="filters-label">🔍 Filtrar</div>
@@ -982,11 +943,9 @@
                 </div>
                 <div class="filter-separator"></div>
                 <div class="filter-group" id="filterPrecio">
-                    <button class="filter-btn active" data-filter="todos">💰 Todos</button>
-                    <button class="filter-btn" data-filter="150">Hasta $150k</button>
-                    <button class="filter-btn" data-filter="250">$150k - $250k</button>
-                    <button class="filter-btn" data-filter="400">$250k - $400k</button>
-                    <button class="filter-btn" data-filter="400plus">$400k+</button>
+                    <button class="filter-btn active" data-filter="todos">📅 Todas</button>
+                    <button class="filter-btn" data-filter="activas">🟢 Activas</button>
+                    <button class="filter-btn" data-filter="urgentes">🔥 Por cerrar</button>
                 </div>
             </div>
         </div>
@@ -1007,9 +966,16 @@
         </div>
 
         <div class="no-results" id="noResults" style="display:none;">
-            <div class="icon">🔍</div>
-            <p>No hay oportunidades con estos filtros</p>
-            <div class="sub">Intenta cambiar los filtros o revisa pronto — actualizamos seguido</div>
+            <div style="text-align:center;padding:40px 20px;">
+              <div style="font-size:48px;margin-bottom:16px;">📅</div>
+              <h3 style="color:white;font-size:18px;margin-bottom:8px;">Las subastas se actualizan semanalmente</h3>
+              <p style="color:#a8c5b8;font-size:14px;margin-bottom:20px;">Déjanos tu WhatsApp y te avisamos cuando haya nuevas oportunidades.</p>
+              <div style="max-width:320px;margin:0 auto;display:flex;flex-direction:column;gap:10px;">
+                <input type="text" id="alertNombre" placeholder="Tu nombre" style="padding:12px 16px;border:2px solid rgba(212,175,55,0.2);border-radius:12px;background:rgba(10,31,26,0.6);color:white;font-family:inherit;font-size:14px;">
+                <input type="tel" id="alertWhatsapp" placeholder="Tu WhatsApp" style="padding:12px 16px;border:2px solid rgba(212,175,55,0.2);border-radius:12px;background:rgba(10,31,26,0.6);color:white;font-family:inherit;font-size:14px;">
+                <button onclick="enviarAlertaSubasta()" style="padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#d4af37,#f4e5b0);color:#0a1f1a;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;">🔔 Avisarme de nuevas subastas</button>
+              </div>
+            </div>
         </div>
 
     </div>
@@ -1033,9 +999,7 @@
             return '$' + n.toLocaleString('es-MX');
         }
 
-        function calcSavings(market, total) {
-            return Math.round(((market - total) / market) * 100);
-        }
+        // calcSavings removed — auction portal doesn't show prices
 
         function getDaysLeft(fecha) {
             const diff = new Date(fecha) - new Date();
@@ -1067,12 +1031,13 @@
                 // Origen filter
                 if (activeFilters.origen !== 'todos' && car.origen !== activeFilters.origen) return false;
 
-                // Precio filter
-                if (activeFilters.precio !== 'todos') {
-                    if (activeFilters.precio === '150' && car.precioTotal > 150000) return false;
-                    if (activeFilters.precio === '250' && (car.precioTotal <= 150000 || car.precioTotal > 250000)) return false;
-                    if (activeFilters.precio === '400' && (car.precioTotal <= 250000 || car.precioTotal > 400000)) return false;
-                    if (activeFilters.precio === '400plus' && car.precioTotal <= 400000) return false;
+                // Status filter (replaces price filter)
+                if (activeFilters.precio === 'activas') {
+                    if (getDaysLeft(car.fechaLimite) <= 0) return false;
+                }
+                if (activeFilters.precio === 'urgentes') {
+                    const d = getDaysLeft(car.fechaLimite);
+                    if (d <= 0 || d > 3) return false;
                 }
 
                 return true;
@@ -1092,19 +1057,34 @@
 
             noResults.style.display = 'none';
 
+            // Count models for scarcity badge
+            const modelCount = {};
+            const disponibles_all = OPORTUNIDADES.filter(c => c.disponible);
+            disponibles_all.forEach(c => {
+                modelCount[c.modelo] = (modelCount[c.modelo] || 0) + 1;
+            });
+
             grid.innerHTML = filtered.map((car, i) => {
-                const savings = calcSavings(car.precioMercado, car.precioTotal);
-                const ahorroMXN = car.precioMercado - car.precioTotal;
                 const deadline = formatDeadline(car.fechaLimite);
                 const originLabel = car.origen === 'mexico' ? '🇲🇽 Subasta México' : '🇺🇸 Subasta USA';
                 const originClass = car.origen === 'mexico' ? 'mexico' : 'usa';
+                const tipoLabel = car.tipo === 'sedan' ? 'Sedán' : car.tipo === 'suv' ? 'SUV' : car.tipo === 'pickup' ? 'Pick-up' : 'Deportivo';
+
+                // Scarcity — unique model
+                const isUniqueModel = modelCount[car.modelo] === 1;
+
+                // CTA text based on deadline urgency
+                const ctaText = deadline.urgent
+                    ? '🔥 Preguntar antes de que cierre'
+                    : '💬 Quiero saber más de esta subasta';
 
                 const msg = encodeURIComponent(
                     `Hola Alabol 👋\n\n` +
-                    `Me interesa esta oportunidad:\n` +
+                    `Me interesa esta oportunidad de subasta:\n` +
                     `🚗 ${car.marca} ${car.modelo} ${car.anio}\n` +
-                    `💰 Precio: ${formatMoney(car.precioTotal)} MXN\n\n` +
-                    `¿Sigue disponible? ¿Qué pasos sigo?`
+                    `📍 ${car.notas || 'México'}\n` +
+                    `🔧 Estado: ${car.danio}\n\n` +
+                    `¿Me pueden dar más detalles y costos?`
                 );
 
                 const photoHTML = car.foto
@@ -1116,27 +1096,23 @@
                         <div class="car-photo">
                             ${photoHTML}
                             <div class="badge-origin ${originClass}">${originLabel}</div>
-                            <div class="badge-savings">-${savings}%</div>
                             <div class="badge-deadline ${deadline.urgent ? 'urgent' : ''}">${deadline.text}</div>
+                            ${isUniqueModel ? '<div class="badge-scarcity">Única unidad</div>' : ''}
                         </div>
                         <div class="car-info">
                             <div class="car-title">${car.marca} ${car.modelo}</div>
-                            <div class="car-year">${car.anio} · ${car.tipo === 'sedan' ? 'Sedán' : car.tipo === 'suv' ? 'SUV' : car.tipo === 'pickup' ? 'Pick-up' : 'Deportivo'}</div>
-                            <div class="car-damage">🔧 ${car.danio}</div>
-                            ${car.notas ? `<div class="car-notes">💡 ${car.notas}</div>` : ''}
-                            <div class="price-section">
-                                <div class="price-main">
-                                    <span class="price-label">Precio Alabol</span>
-                                    <span class="price-value">${formatMoney(car.precioTotal)}</span>
-                                </div>
-                                <div class="price-market">
-                                    <span class="price-label">Mercado</span>
-                                    <span class="price-original">${formatMoney(car.precioMercado)}</span>
-                                </div>
+                            <div class="car-year">${car.anio} · ${tipoLabel}</div>
+                            <div class="car-condition">
+                                <span class="condition-icon">🔧</span>
+                                <span class="condition-text">${car.danio}</span>
                             </div>
-                            <div class="savings-text">💚 Ahorras ${formatMoney(ahorroMXN)} MXN</div>
+                            ${car.notas ? `<div class="car-location">📍 ${car.notas}</div>` : ''}
+                            <div class="auction-notice">
+                                <span class="auction-icon">🏛️</span>
+                                <span>Subasta ${car.origen === 'mexico' ? 'nacional' : 'internacional'} · Precio bajo consulta</span>
+                            </div>
                             <a href="https://wa.me/${WHATSAPP_NUMBER}?text=${msg}" class="cta-interest" target="_blank" rel="noopener">
-                                💬 Me interesa este auto
+                                ${ctaText}
                             </a>
                         </div>
                     </div>
@@ -1176,9 +1152,14 @@
         // =====================
         // INIT
         // =====================
+        function enviarAlertaSubasta(){var n=document.getElementById('alertNombre').value;var w=document.getElementById('alertWhatsapp').value;if(!n||!w){alert('Completa ambos campos');return;}window.open('https://api.whatsapp.com/send?phone=525568667571&text='+encodeURIComponent('Hola! Soy '+n+' ('+w+'). Quiero que me avisen cuando haya nuevas oportunidades de subasta.'),'_blank');}
+
         setupFilters();
         renderCars();
     </script>
+
+<!-- Floating WhatsApp Button -->
+<a href="https://api.whatsapp.com/send?phone=525568667571&text=Hola%20Alabol!" target="_blank" style="position:fixed;bottom:20px;right:20px;width:56px;height:56px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 15px rgba(37,211,102,0.4);z-index:998;text-decoration:none;font-size:28px;transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'"><svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg></a>
 
 <footer class="alabol-footer" role="contentinfo">
   <div class="footer-grid">
@@ -1189,7 +1170,7 @@
     <div class="footer-col">
       <h4>Comprar</h4>
       <a href="../inventario.html">Ver Inventario</a>
-      <a href="../formulario-match.html">Hacer Match</a>
+      <a href="../vip/index.html">Hacer Match</a>
       <a href="../precalificacion/index.html">Precalificación</a>
       <a href="../vip/index.html">Zona VIP</a>
     </div>

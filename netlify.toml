@@ -1,0 +1,58 @@
+# Functions config
+[functions]
+  [functions.auto-verify]
+    schedule = ""
+  [functions.ocr-document]
+    schedule = ""
+
+# Rate limit hint for functions (requires Netlify Pro for enforcement)
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-store"
+
+# Security headers - anti-scraping + protection
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(self), microphone=(), geolocation=()"
+    X-Robots-Tag = "noai, noimageai"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' cdn.jsdelivr.net cdnjs.cloudflare.com cdn.sheetjs.com www.googletagmanager.com connect.facebook.net www.google-analytics.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com cdnjs.cloudflare.com; font-src 'self' fonts.gstatic.com cdnjs.cloudflare.com; img-src 'self' data: https: blob:; connect-src 'self' https://rgnunjngtsgqgvplawfr.supabase.co https://hook.us2.make.com https://script.google.com https://www.google-analytics.com https://vpic.nhtsa.dot.gov; frame-src 'none'; object-src 'none'; base-uri 'self';"
+
+# Block common scraping paths
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow, noai"
+
+# Cache control for inventory pages (prevent mass caching)
+[[headers]]
+  for = "/inventario*"
+  [headers.values]
+    Cache-Control = "no-store, no-cache, must-revalidate"
+    X-Robots-Tag = "noai, noimageai"
+
+# Block backup files from being served
+[[redirects]]
+  from = "/*-backup*"
+  to = "/index.html"
+  status = 301
+  force = true
+
+# Block admin page from search engines
+[[headers]]
+  for = "/admin.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
+# Block internal tools from search engines
+[[headers]]
+  for = "/radar-interno*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-store"

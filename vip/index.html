@@ -22,6 +22,8 @@
     </script>
 
     <style>
+        @property --card-glow-angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+
         :root {
             --bg-dark: #0a1f1a;
             --bg-mid: #0d2921;
@@ -32,11 +34,11 @@
             --gold-dim: rgba(212, 175, 55, 0.3);
             --green-text: #a8c5b8;
             --glass-bg: rgba(15, 51, 41, 0.5);
-            --glass-border: rgba(212, 175, 55, 0.25);
+            --glass-border: rgba(212, 175, 55, 0.15);
             --premium-gradient: linear-gradient(135deg, #D4AF37 0%, #F4E5B0 50%, #D4AF37 100%);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
 
         body {
             font-family: 'Poppins', sans-serif;
@@ -55,9 +57,7 @@
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: linear-gradient(135deg, #0a1f1a 0%, #0d2921 25%, #0f3329 50%, #0d2921 75%, #0a1f1a 100%);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
+            background: linear-gradient(160deg, #0a1f1a 0%, #0d2921 40%, #0f3329 60%, #0a1f1a 100%);
             z-index: -2;
         }
 
@@ -67,17 +67,16 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             background-image:
-                radial-gradient(2px 2px at 20% 30%, rgba(212,175,55,0.3), transparent),
-                radial-gradient(2px 2px at 60% 70%, rgba(212,175,55,0.2), transparent),
-                radial-gradient(1px 1px at 50% 50%, rgba(212,175,55,0.2), transparent),
-                radial-gradient(1px 1px at 80% 10%, rgba(212,175,55,0.3), transparent),
-                radial-gradient(1px 1px at 30% 80%, rgba(212,175,55,0.2), transparent);
+                radial-gradient(2px 2px at 20% 30%, rgba(212,175,55,0.2), transparent),
+                radial-gradient(2px 2px at 60% 70%, rgba(212,175,55,0.15), transparent),
+                radial-gradient(1px 1px at 50% 50%, rgba(212,175,55,0.15), transparent),
+                radial-gradient(1px 1px at 80% 10%, rgba(212,175,55,0.2), transparent),
+                radial-gradient(1px 1px at 30% 80%, rgba(212,175,55,0.15), transparent);
             background-size: 200% 200%;
-            animation: floatParticles 20s ease-in-out infinite;
+            animation: floatParticles 25s ease-in-out infinite;
             z-index: -1;
         }
 
-        @keyframes gradientShift { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
         @keyframes floatParticles { 0%,100% { transform: translate(0,0); } 33% { transform: translate(30px,-30px); } 66% { transform: translate(-20px,20px); } }
 
         .container {
@@ -87,31 +86,28 @@
             z-index: 1;
         }
 
-        /* VIP Badge */
-        .vip-badge { text-align: center; margin-bottom: 16px; animation: fadeInDown 0.6s ease-out; }
+        /* VIP Badge — minimal */
+        .vip-badge { text-align: center; margin-bottom: 8px; animation: fadeInDown 0.6s ease-out; }
         .vip-badge span {
             display: inline-block;
-            background: linear-gradient(135deg, #d4af37, #f4e5b0, #d4af37);
-            background-size: 200% auto;
-            color: var(--bg-dark);
-            font-weight: 700; font-size: 11px; letter-spacing: 3px;
-            padding: 8px 24px; border-radius: 20px; text-transform: uppercase;
-            box-shadow: 0 4px 25px rgba(212,175,55,0.5), 0 0 40px rgba(212,175,55,0.2);
-            animation: shimmerBadge 3s linear infinite;
+            background: rgba(212,175,55,0.1);
+            border: 1px solid rgba(212,175,55,0.25);
+            color: var(--gold);
+            font-weight: 700; font-size: 10px; letter-spacing: 3px;
+            padding: 7px 20px; border-radius: 100px; text-transform: uppercase;
         }
-        @keyframes shimmerBadge { to { background-position: 200% center; } }
         @keyframes fadeInDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
 
-        /* Main Card */
+        /* Main Card — Apple glass */
         .card {
-            background: linear-gradient(135deg, rgba(15,51,41,0.6) 0%, rgba(13,41,33,0.6) 100%);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 32px 28px;
-            border: 2px solid var(--glass-border);
-            box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 40px rgba(212,175,55,0.1), inset 0 1px 0 rgba(212,175,55,0.1);
-            animation: cardIn 0.5s ease-out 0.2s both;
+            background: rgba(13,41,33,0.45);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border-radius: 28px;
+            padding: 24px 20px;
+            border: 1px solid rgba(212,175,55,0.12);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 0 0.5px rgba(212,175,55,0.06);
+            animation: cardIn 0.6s cubic-bezier(.16,1,.3,1) 0.2s both;
             position: relative;
             overflow: hidden;
         }
@@ -120,70 +116,58 @@
             content: '';
             position: absolute; top: -100%; left: 0;
             width: 100%; height: 50%;
-            background: linear-gradient(180deg, transparent 0%, rgba(212,175,55,0.03) 40%, rgba(212,175,55,0.06) 50%, rgba(212,175,55,0.03) 60%, transparent 100%);
-            animation: scanLine 6s ease-in-out infinite;
+            background: linear-gradient(180deg, transparent 0%, rgba(212,175,55,0.02) 40%, rgba(212,175,55,0.04) 50%, rgba(212,175,55,0.02) 60%, transparent 100%);
+            animation: scanLine 8s ease-in-out infinite;
             pointer-events: none;
         }
         @keyframes scanLine { 0% { top:-50%; } 100% { top:150%; } }
-        @keyframes cardIn { from { opacity:0; transform:translateY(30px) scale(0.97); } to { opacity:1; transform:translateY(0) scale(1); } }
+        @keyframes cardIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
 
-        /* Logo */
-        .logo-section { text-align: center; margin-bottom: 6px; position: relative; }
-        .logo-container { position: relative; width: 100px; height: 100px; margin: 0 auto 14px; }
+        /* Logo — Apple clean */
+        .logo-section { text-align: center; margin-bottom: 0; position: relative; transition: height 0.4s ease, opacity 0.4s ease, margin 0.4s ease, overflow 0s; }
+        .logo-section.compact { height: 0; overflow: hidden; margin: 0; opacity: 0; }
+        .logo-container { position: relative; width: 56px; height: 56px; margin: 0 auto 10px; }
         .logo-glow {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-            width: 130px; height: 130px;
-            background: radial-gradient(circle, rgba(212,175,55,0.4) 0%, transparent 70%);
+            width: 100px; height: 100px;
+            background: radial-gradient(circle, rgba(212,175,55,0.2) 0%, transparent 70%);
             border-radius: 50%;
-            animation: logoGlowPulse 3s ease-in-out infinite;
+            animation: logoGlowPulse 4s ease-in-out infinite;
         }
-        @keyframes logoGlowPulse { 0%,100% { transform:translate(-50%,-50%) scale(1); opacity:0.5; } 50% { transform:translate(-50%,-50%) scale(1.15); opacity:0.9; } }
+        @keyframes logoGlowPulse { 0%,100% { transform:translate(-50%,-50%) scale(1); opacity:0.4; } 50% { transform:translate(-50%,-50%) scale(1.1); opacity:0.7; } }
         .logo-circle {
-            position: relative; width: 100px; height: 100px;
-            background: rgba(15,51,41,0.3); border-radius: 50%;
-            border: 3px solid rgba(212,175,55,0.5);
+            position: relative; width: 56px; height: 56px;
+            background: rgba(15,51,41,0.2); border-radius: 50%;
+            border: 1.5px solid rgba(212,175,55,0.35);
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 40px rgba(212,175,55,0.3), 0 10px 50px rgba(0,0,0,0.5), inset 0 0 30px rgba(212,175,55,0.1);
+            box-shadow: 0 0 30px rgba(212,175,55,0.15);
             overflow: hidden; backdrop-filter: blur(10px);
         }
-        .logo-circle img { width: 85px; height: 85px; object-fit: contain; filter: drop-shadow(0 0 15px rgba(212,175,55,0.5)); }
+        .logo-circle img { width: 48px; height: 48px; object-fit: contain; filter: drop-shadow(0 0 8px rgba(212,175,55,0.3)); }
         .logo-section h1 {
-            font-size: 20px; font-weight: 800;
-            background: linear-gradient(135deg, #d4af37 0%, #f4e5b0 25%, #d4af37 50%, #c9a961 75%, #d4af37 100%);
-            background-size: 200% auto;
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-            letter-spacing: 1.5px; animation: shimmerText 3s linear infinite; margin-bottom: 2px;
+            font-size: 15px; font-weight: 800;
+            color: var(--gold);
+            letter-spacing: 3px; margin-bottom: 4px;
         }
-        @keyframes shimmerText { to { background-position: 200% center; } }
-        .logo-section p { color: var(--green-text); font-size: 13px; line-height: 1.4; font-weight: 300; }
-        .logo-section .highlight { color: var(--gold); font-weight: 600; text-shadow: 0 0 15px rgba(212,175,55,0.3); }
+        .logo-section p { color: var(--green-text); font-size: 13px; line-height: 1.5; font-weight: 300; }
+        .logo-section .highlight { color: var(--gold); font-weight: 600; }
 
-        /* Trust */
-        .trust-row { display: flex; justify-content: center; gap: 12px; margin: 12px 0 18px; flex-wrap: wrap; }
+        /* Trust — minimal */
+        .trust-row { display: flex; justify-content: center; gap: 16px; margin: 8px 0 12px; flex-wrap: wrap; }
         .trust-item {
             display: flex; align-items: center; gap: 5px;
-            font-size: 10px; color: var(--green-text); font-weight: 500;
-            background: rgba(212,175,55,0.08); padding: 4px 10px; border-radius: 20px;
-            border: 1px solid rgba(212,175,55,0.15);
+            font-size: 10px; color: rgba(168,197,184,0.6); font-weight: 500;
         }
-        .trust-item .icon { font-size: 12px; filter: drop-shadow(0 0 4px rgba(212,175,55,0.5)); }
+        .trust-item .icon { font-size: 11px; }
 
-        /* Progress Bar */
-        .progress-bar { display: flex; align-items: center; gap: 4px; margin-bottom: 20px; }
-        .progress-segment {
-            flex: 1; height: 3px;
-            background: rgba(255,255,255,0.08); border-radius: 4px;
-            transition: all 0.6s cubic-bezier(0.4,0,0.2,1);
-            position: relative; overflow: hidden;
-        }
-        .progress-segment.active { background: var(--gold); box-shadow: 0 0 12px rgba(212,175,55,0.5); }
-        .progress-segment.active::after {
-            content: ''; position: absolute; top:0; left:0; right:0; bottom:0;
-            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.6) 50%, transparent 100%);
-            animation: progressShimmer 2s infinite;
-        }
-        @keyframes progressShimmer { 0% { transform:translateX(-100%); } 100% { transform:translateX(100%); } }
-        .progress-label { font-size: 11px; color: var(--gold); font-weight: 600; white-space: nowrap; min-width: 36px; text-align: right; letter-spacing: 1px; }
+        /* Progress Bar - Circular Compatibility Ring */
+        .progress-bar { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; gap: 4px; }
+        .progress-ring-svg { width: 50px; height: 50px; transform: rotate(-90deg); }
+        .progress-ring-bg { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 4; }
+        .progress-ring-fg { fill: none; stroke: var(--gold); stroke-width: 4; stroke-linecap: round; transition: stroke-dashoffset 0.8s cubic-bezier(0.4,0,0.2,1); filter: drop-shadow(0 0 6px rgba(212,175,55,0.5)); }
+        .progress-ring-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 12px; font-weight: 700; color: var(--gold); }
+        .progress-ring-wrap { position: relative; width: 50px; height: 50px; }
+        .progress-label { font-size: 10px; color: var(--gold); font-weight: 500; letter-spacing: 0.5px; opacity: 0.8; }
 
         /* Personality Hook */
         .personality-hook {
@@ -192,15 +176,17 @@
             font-style: italic; opacity: 0; transition: opacity 0.5s;
         }
 
-        /* Steps */
-        .step { display: none; animation: fadeSlideIn 0.35s ease-out; }
-        .step.active { display: block; }
-        @keyframes fadeSlideIn { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
+        /* Steps - Swipe transitions */
+        .step { display: none; }
+        .step.active { display: block; animation: stepEnter 0.4s cubic-bezier(0.16,1,0.3,1) forwards; }
+        .step.step-exit { display: block; animation: stepExit 0.3s ease-in forwards; }
+        @keyframes stepEnter { from { opacity:0; transform:translateX(60px) scale(0.95); } to { opacity:1; transform:translateX(0) scale(1); } }
+        @keyframes stepExit { from { opacity:1; transform:translateX(0) rotate(0); } to { opacity:0; transform:translateX(-80px) rotate(-3deg); } }
 
-        .step-header { margin-bottom: 20px; }
-        .step-icon { font-size: 32px; margin-bottom: 6px; filter: drop-shadow(0 0 10px rgba(212,175,55,0.4)); }
-        .step-title { font-size: 19px; font-weight: 700; color: white; margin-bottom: 3px; line-height: 1.3; }
-        .step-subtitle { font-size: 12px; color: rgba(168,197,184,0.6); }
+        .step-header { margin-bottom: 16px; }
+        .step-icon { font-size: 26px; margin-bottom: 6px; }
+        .step-title { font-size: 20px; font-weight: 700; color: white; margin-bottom: 4px; line-height: 1.3; letter-spacing: -0.02em; }
+        .step-subtitle { font-size: 12px; color: rgba(168,197,184,0.5); font-weight: 400; }
 
         /* Form */
         .form-group { margin-bottom: 16px; }
@@ -208,15 +194,15 @@
         .form-group label .required { color: var(--gold); }
 
         input, select, textarea {
-            width: 100%; padding: 13px 16px;
-            border: 2px solid rgba(212,175,55,0.2); border-radius: 14px;
+            width: 100%; padding: 14px 16px;
+            border: 1px solid rgba(255,255,255,0.08); border-radius: 14px;
             font-size: 14px; font-family: inherit; transition: all 0.3s;
-            background: rgba(10,31,26,0.6); color: white; backdrop-filter: blur(5px);
+            background: rgba(255,255,255,0.04); color: white;
         }
         input:focus, select:focus, textarea:focus {
-            outline: none; border-color: var(--gold);
-            box-shadow: 0 0 20px rgba(212,175,55,0.2), 0 0 0 4px rgba(212,175,55,0.08);
-            background: rgba(10,31,26,0.8);
+            outline: none; border-color: rgba(212,175,55,0.4);
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.08);
+            background: rgba(255,255,255,0.06);
         }
         input::placeholder, textarea::placeholder { color: rgba(168,197,184,0.35); }
         select {
@@ -226,52 +212,45 @@
         }
         select option { background: #0a1f1a; color: white; }
 
-        /* Body type grid (2x2) */
-        .body-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        /* Body type grid (2x2) — Apple style */
+        .body-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .body-card {
-            padding: 20px 12px 16px; border: 2px solid rgba(212,175,55,0.15); border-radius: 20px;
-            cursor: pointer; transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275); background: rgba(10,31,26,0.4);
+            padding: 22px 12px 18px; border: 1px solid rgba(255,255,255,0.06); border-radius: 20px;
+            cursor: pointer; transition: all 0.35s cubic-bezier(.16,1,.3,1); background: rgba(255,255,255,0.03);
             text-align: center; user-select: none; position: relative; overflow: hidden;
         }
         .body-card::before {
-            content: ''; position: absolute; inset: 0; border-radius: 18px;
-            background: radial-gradient(circle at 50% 30%, rgba(212,175,55,0.08), transparent 70%);
+            content: ''; position: absolute; inset: 0; border-radius: 19px;
+            background: radial-gradient(circle at 50% 30%, rgba(212,175,55,0.06), transparent 70%);
             opacity: 0; transition: opacity 0.4s;
         }
-        .body-card:hover { border-color: var(--gold-dim); background: rgba(212,175,55,0.06); transform: translateY(-4px) scale(1.02); }
+        .body-card:hover { border-color: rgba(212,175,55,0.2); background: rgba(212,175,55,0.04); transform: translateY(-2px); }
         .body-card:hover::before { opacity: 1; }
-        .body-card:active { transform: scale(0.97); }
+        .body-card:active { transform: scale(0.98); }
         .body-card.selected {
-            border-color: var(--gold); background: rgba(212,175,55,0.15);
-            box-shadow: 0 0 30px rgba(212,175,55,0.3), 0 8px 25px rgba(0,0,0,0.3), inset 0 0 20px rgba(212,175,55,0.05);
-            transform: translateY(-2px);
+            border-color: rgba(212,175,55,0.4); background: rgba(212,175,55,0.08);
+            box-shadow: 0 0 30px rgba(212,175,55,0.1), 0 8px 20px rgba(0,0,0,0.2);
         }
         .body-card.selected::before { opacity: 1; }
-        .body-card.selected::after {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: conic-gradient(from 0deg, transparent, rgba(212,175,55,0.1), transparent, rgba(212,175,55,0.05), transparent);
-            animation: cardGlow 4s linear infinite;
-        }
-        @keyframes cardGlow { to { transform: rotate(360deg); } }
+        .body-card.selected::after { display: none; }
         .body-card .body-icon-wrap {
-            width: 64px; height: 64px; margin: 0 auto 10px; border-radius: 50%;
-            background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(212,175,55,0.05));
-            border: 1px solid rgba(212,175,55,0.2);
+            width: 56px; height: 56px; margin: 0 auto 10px; border-radius: 16px;
+            background: rgba(212,175,55,0.06);
+            border: 1px solid rgba(212,175,55,0.12);
             display: flex; align-items: center; justify-content: center;
-            font-size: 32px; transition: all 0.4s;
+            font-size: 28px; transition: all 0.35s;
             position: relative; z-index: 1;
         }
         .body-card.selected .body-icon-wrap {
-            background: linear-gradient(135deg, rgba(212,175,55,0.3), rgba(212,175,55,0.1));
-            border-color: var(--gold);
-            box-shadow: 0 0 20px rgba(212,175,55,0.3);
-            transform: scale(1.1);
+            background: rgba(212,175,55,0.12);
+            border-color: rgba(212,175,55,0.3);
+            box-shadow: 0 0 15px rgba(212,175,55,0.15);
         }
-        .body-card .body-label { font-size: 14px; font-weight: 700; color: white; position: relative; z-index: 1; }
+        .body-card .body-label { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.9); position: relative; z-index: 1; }
         .body-card.selected .body-label { color: var(--gold-light); }
-        .body-card .body-tagline { font-size: 10px; color: rgba(168,197,184,0.5); margin-top: 2px; font-style: italic; position: relative; z-index: 1; }
-        .body-card.selected .body-tagline { color: rgba(212,175,55,0.6); }
-        .body-card .body-examples { font-size: 9px; color: rgba(168,197,184,0.35); margin-top: 5px; position: relative; z-index: 1; }
+        .body-card .body-tagline { font-size: 10px; color: rgba(168,197,184,0.4); margin-top: 3px; font-style: italic; position: relative; z-index: 1; }
+        .body-card.selected .body-tagline { color: rgba(212,175,55,0.5); }
+        .body-card .body-examples { font-size: 9px; color: rgba(168,197,184,0.3); margin-top: 5px; position: relative; z-index: 1; }
 
         /* Brand grid */
         .brand-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 12px; }
@@ -293,21 +272,19 @@
             font-family: 'Poppins', sans-serif;
         }
         .brand-card .brand-name { font-size: 10px; color: rgba(255,255,255,0.45); font-weight: 500; transition: all 0.3s; }
-        .brand-card:hover { background: rgba(212,175,55,0.06); border-color: var(--gold-dim); transform: translateY(-3px); }
-        .brand-card:active { transform: scale(0.95); }
+        .brand-card:hover { background: rgba(212,175,55,0.04); border-color: rgba(212,175,55,0.2); transform: translateY(-2px); }
+        .brand-card:active { transform: scale(0.97); }
         .brand-card.selected {
-            background: rgba(212,175,55,0.15); border-color: var(--gold);
-            box-shadow: 0 0 20px rgba(212,175,55,0.3), inset 0 0 15px rgba(212,175,55,0.05);
+            background: rgba(212,175,55,0.08); border-color: rgba(212,175,55,0.35);
+            box-shadow: 0 0 20px rgba(212,175,55,0.1);
         }
         .brand-card.selected .brand-logo {
-            background: linear-gradient(135deg, #d4af37, #f4e5b0);
-            color: var(--bg-dark); border-color: var(--gold);
-            box-shadow: 0 0 15px rgba(212,175,55,0.4);
-            transform: scale(1.1);
+            background: rgba(212,175,55,0.15);
+            color: var(--gold); border-color: rgba(212,175,55,0.3);
         }
-        .brand-card.selected .brand-name { color: var(--gold-light); font-weight: 700; }
+        .brand-card.selected .brand-name { color: var(--gold-light); font-weight: 600; }
         .brand-card.selected::after {
-            content: '💛'; position: absolute; top: 3px; right: 3px; font-size: 9px;
+            content: '✓'; position: absolute; top: 4px; right: 5px; font-size: 10px; color: var(--gold); font-weight: 700;
             animation: popIn 0.3s cubic-bezier(0.68,-0.55,0.265,1.55);
         }
         @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
@@ -315,12 +292,12 @@
         /* More brands expandable section */
         .more-brands-toggle {
             display: flex; align-items: center; justify-content: center; gap: 8px;
-            margin-top: 12px; padding: 10px 16px;
-            background: rgba(212,175,55,0.06); border: 1px dashed rgba(212,175,55,0.25);
+            margin-top: 12px; padding: 14px 16px;
+            background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.25);
             border-radius: 12px; cursor: pointer; transition: all 0.3s;
-            color: var(--gold); font-size: 12px; font-weight: 600;
+            color: var(--gold); font-size: 14px; font-weight: 700;
         }
-        .more-brands-toggle:hover { background: rgba(212,175,55,0.12); border-color: var(--gold); }
+        .more-brands-toggle:hover { background: rgba(212,175,55,0.04); border-color: rgba(212,175,55,0.2); color: var(--gold); }
         .more-brands-toggle .toggle-arrow { transition: transform 0.3s; display: inline-block; }
         .more-brands-toggle.open .toggle-arrow { transform: rotate(180deg); }
 
@@ -356,43 +333,42 @@
             color: var(--gold-light); font-weight: 700;
         }
 
-        /* Chips */
+        /* Chips — Apple clean */
         .chip-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .chip {
-            padding: 10px 6px; border: 2px solid rgba(212,175,55,0.15); border-radius: 12px;
-            cursor: pointer; transition: all 0.3s; background: rgba(10,31,26,0.4);
+            padding: 10px 6px; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px;
+            cursor: pointer; transition: all 0.3s; background: rgba(255,255,255,0.03);
             text-align: center; font-size: 12px; font-weight: 500; color: var(--green-text);
             user-select: none; position: relative; overflow: hidden;
         }
         .chip .chip-icon { display: block; font-size: 18px; margin-bottom: 2px; }
-        .chip:hover { border-color: var(--gold-dim); background: rgba(212,175,55,0.08); }
+        .chip:hover { border-color: rgba(212,175,55,0.2); background: rgba(212,175,55,0.04); }
         .chip.selected {
-            border-color: var(--gold); background: rgba(212,175,55,0.15);
-            color: var(--gold-light); font-weight: 700;
-            box-shadow: 0 0 15px rgba(212,175,55,0.2), inset 0 0 15px rgba(212,175,55,0.05);
+            border-color: rgba(212,175,55,0.35); background: rgba(212,175,55,0.08);
+            color: var(--gold-light); font-weight: 600;
         }
         .chip.selected::after { content:'✓'; position:absolute; top:3px; right:5px; font-size:10px; color:var(--gold); font-weight:700; }
 
-        /* Option cards (single select) */
+        /* Option cards (single select) — Apple clean */
         .option-list { display: flex; flex-direction: column; gap: 8px; }
         .option-card {
-            padding: 14px 16px; border: 2px solid rgba(212,175,55,0.15); border-radius: 14px;
-            cursor: pointer; transition: all 0.3s; background: rgba(10,31,26,0.4);
+            padding: 14px 16px; border: 1px solid rgba(255,255,255,0.06); border-radius: 14px;
+            cursor: pointer; transition: all 0.3s; background: rgba(255,255,255,0.03);
             display: flex; align-items: center; gap: 12px; position: relative; overflow: hidden;
         }
-        .option-card:hover { border-color: var(--gold-dim); transform: translateX(4px); background: rgba(212,175,55,0.06); }
-        .option-card.selected { border-color: var(--gold); background: rgba(212,175,55,0.12); box-shadow: 0 0 20px rgba(212,175,55,0.15), inset 0 0 20px rgba(212,175,55,0.05); }
-        .option-card .option-icon { font-size: 22px; flex-shrink: 0; filter: drop-shadow(0 0 6px rgba(212,175,55,0.4)); }
+        .option-card:hover { border-color: rgba(212,175,55,0.2); background: rgba(212,175,55,0.04); }
+        .option-card.selected { border-color: rgba(212,175,55,0.35); background: rgba(212,175,55,0.08); }
+        .option-card .option-icon { font-size: 20px; flex-shrink: 0; }
         .option-card .option-text { flex: 1; }
         .option-card .option-text .main { font-weight: 600; color: white; font-size: 13px; }
-        .option-card .option-text .sub { font-size: 11px; color: rgba(168,197,184,0.5); margin-top: 2px; }
+        .option-card .option-text .sub { font-size: 11px; color: rgba(168,197,184,0.45); margin-top: 2px; }
         .option-card.selected .option-text .main { color: var(--gold-light); }
         .option-card .check {
-            width: 22px; height: 22px; border: 2px solid rgba(212,175,55,0.3); border-radius: 50%;
+            width: 20px; height: 20px; border: 1.5px solid rgba(255,255,255,0.15); border-radius: 50%;
             flex-shrink: 0; display: flex; align-items: center; justify-content: center;
-            transition: all 0.3s; font-size: 12px; color: transparent;
+            transition: all 0.3s; font-size: 11px; color: transparent;
         }
-        .option-card.selected .check { background: var(--gold); border-color: var(--gold); color: var(--bg-dark); box-shadow: 0 0 12px rgba(212,175,55,0.4); }
+        .option-card.selected .check { background: var(--gold); border-color: var(--gold); color: var(--bg-dark); }
 
         /* Range row */
         .range-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -407,28 +383,28 @@
             background: none; pointer-events: none; z-index: 2;
         }
         .range-slider input[type="range"]::-webkit-slider-thumb {
-            height: 20px; width: 20px; border-radius: 50%;
-            background: #fff; border: 2px solid #d4af37;
+            height: 22px; width: 22px; border-radius: 50%;
+            background: #fff; border: 2px solid var(--gold);
             -webkit-appearance: none; pointer-events: auto; cursor: pointer;
-            box-shadow: 0 0 10px rgba(212,175,55,0.5);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
         .range-slider input[type="range"]::-moz-range-thumb {
-            height: 20px; width: 20px; border-radius: 50%;
-            background: #fff; border: 2px solid #d4af37;
+            height: 22px; width: 22px; border-radius: 50%;
+            background: #fff; border: 2px solid var(--gold);
             pointer-events: auto; cursor: pointer;
-            box-shadow: 0 0 10px rgba(212,175,55,0.5);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
         .budget-display { display: flex; justify-content: space-between; margin-bottom: 5px; color: #d4af37; font-weight: 600; font-size: 18px; }
 
         /* Urgency grid */
         .urgency-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .urgency-card {
-            padding: 14px 10px; border: 2px solid rgba(212,175,55,0.15); border-radius: 14px;
-            cursor: pointer; transition: all 0.3s; background: rgba(10,31,26,0.4);
+            padding: 14px 10px; border: 1px solid rgba(255,255,255,0.06); border-radius: 14px;
+            cursor: pointer; transition: all 0.3s; background: rgba(255,255,255,0.03);
             text-align: center; user-select: none;
         }
-        .urgency-card:hover { border-color: var(--gold-dim); background: rgba(212,175,55,0.06); }
-        .urgency-card.selected { border-color: var(--gold); background: rgba(212,175,55,0.15); box-shadow: 0 0 15px rgba(212,175,55,0.2); }
+        .urgency-card:hover { border-color: rgba(212,175,55,0.2); background: rgba(212,175,55,0.04); }
+        .urgency-card.selected { border-color: rgba(212,175,55,0.35); background: rgba(212,175,55,0.08); }
         .urgency-card .urgency-icon { font-size: 22px; margin-bottom: 4px; display: block; }
         .urgency-card .urgency-label { font-size: 12px; font-weight: 600; color: white; }
         .urgency-card.selected .urgency-label { color: var(--gold-light); }
@@ -455,16 +431,16 @@
 
         /* ===== REVEAL CARDS (Step 4) ===== */
         .reveal-card {
-            border-radius: 16px; overflow: hidden;
-            border: 1px solid rgba(212,175,55,0.2);
-            background: rgba(10,31,26,0.5); margin-bottom: 12px;
+            border-radius: 18px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.03); margin-bottom: 12px;
         }
         .reveal-card-img {
-            height: 130px; position: relative; overflow: hidden; background: var(--bg-mid);
+            height: 150px; position: relative; overflow: hidden; background: var(--bg-mid);
         }
         .reveal-card-img img {
-            width: 100%; height: 100%; object-fit: cover;
-            filter: blur(18px) brightness(0.4); transform: scale(1.15);
+            width: 100%; height: 100%; object-fit: cover; object-position: center 40%;
+            filter: blur(18px) brightness(0.4);
         }
         .reveal-card-img .lock-overlay {
             position: absolute; inset: 0;
@@ -498,41 +474,45 @@
 
         /* Unlock banner */
         .unlock-banner {
-            margin-top: 16px; padding: 16px;
+            margin-top: 12px; padding: 18px;
             border-radius: 14px;
-            background: linear-gradient(135deg, rgba(212,175,55,0.12), rgba(212,175,55,0.06));
+            background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(212,175,55,0.08));
             border: 1px solid rgba(212,175,55,0.3);
             text-align: center;
         }
-        .unlock-banner .ub-title { font-size: 14px; font-weight: 700; color: white; margin: 0; }
-        .unlock-banner .ub-sub { font-size: 12px; color: rgba(168,197,184,0.5); margin: 4px 0 0; }
+        .unlock-banner .ub-title { font-size: 18px; font-weight: 800; color: white; margin: 0; }
+        .unlock-banner .ub-sub { font-size: 13px; color: rgba(168,197,184,0.6); margin: 6px 0 0; }
 
         /* ===== TINDER DECK (Step 6) ===== */
         .tinder-deck {
             display: none; position: relative;
-            width: 100%; min-height: 440px; margin-top: 8px;
+            width: 100%; min-height: min(440px, calc(100vh - 260px)); margin-top: 8px;
+        }
+        @media (max-width: 768px) {
+            .tinder-deck { min-height: calc(100vh - 240px); }
         }
         .tinder-deck.active { display: flex; align-items: center; justify-content: center; }
 
         .tinder-card {
             position: absolute; width: 100%; height: 100%;
-            background: var(--bg-mid); border-radius: 20px;
-            overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            border: 1px solid var(--glass-border);
-            transition: transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275), opacity 0.4s;
+            background: rgba(13,41,33,0.6); border-radius: 22px;
+            overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+            border: 1px solid rgba(212,175,55,0.1);
+            transition: transform 0.4s cubic-bezier(.16,1,.3,1), opacity 0.4s;
             opacity: 0; pointer-events: none; z-index: 1;
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
         }
         .tinder-card.active { opacity: 1; transform: scale(1) translateX(0) rotate(0); pointer-events: all; z-index: 5; }
         .tinder-card.next { opacity: 0.6; transform: scale(0.95) translateY(15px); z-index: 4; }
         .tinder-card.swiped-left { transform: translateX(-150%) rotate(-15deg); opacity: 0; }
         .tinder-card.swiped-right { transform: translateX(150%) rotate(15deg); opacity: 0; }
 
-        .t-card-img { width: 100%; height: 55%; object-fit: cover; border-bottom: 2px solid var(--gold); }
-        .t-card-info { padding: 16px; height: 45%; display: flex; flex-direction: column; justify-content: space-between; }
-        .t-card-title { font-size: 20px; font-weight: 800; color: white; line-height: 1.2; }
-        .t-card-year { background: var(--gold); color: black; padding: 2px 8px; border-radius: 6px; font-size: 13px; font-weight: 800; display: inline-block; margin-left: 6px; vertical-align: middle; }
-        .t-card-price { font-size: 22px; font-weight: 900; color: #34d399; margin-top: 6px; }
-        .t-card-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+        .t-card-img { width: 100%; height: 45%; object-fit: cover; object-position: center 40%; border-bottom: 1px solid rgba(212,175,55,0.15); }
+        .t-card-info { padding: 14px 16px; height: 55%; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
+        .t-card-title { font-size: 18px; font-weight: 800; color: white; line-height: 1.2; }
+        .t-card-year { background: var(--gold); color: black; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 800; display: inline-block; margin-left: 6px; vertical-align: middle; }
+        .t-card-price { font-size: 20px; font-weight: 900; color: #34d399; margin-top: 4px; }
+        .t-card-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px; }
         .t-card-tag {
             padding: 4px 10px; border-radius: 10px;
             background: rgba(212,175,55,0.1); font-size: 10px;
@@ -540,42 +520,48 @@
             border: 1px solid rgba(212,175,55,0.2);
         }
         .t-card-details { display: flex; justify-content: space-between; font-size: 12px; color: var(--green-text); margin-top: auto; align-items: center; }
+        .t-card-km { font-size: 13px; font-weight: 600; }
+        .t-card-location { font-size: 11px; color: rgba(168,197,184,0.6); }
         .t-badge { background: rgba(212,175,55,0.15); border: 1px solid rgba(212,175,55,0.3); color: var(--gold); padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+        .t-card-cita {
+            display: block; text-align: center; margin-top: 10px; padding: 10px;
+            background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.25);
+            border-radius: 10px; color: var(--gold); font-size: 13px; font-weight: 600;
+            text-decoration: none; transition: all 0.3s; font-family: 'Poppins', sans-serif;
+        }
+        .t-card-cita:hover { background: rgba(212,175,55,0.15); border-color: var(--gold); }
 
         /* Action buttons */
         .tinder-actions { display: none; justify-content: center; align-items: center; gap: 30px; margin-top: 20px; width: 100%; }
         .tinder-actions.active { display: flex; }
         .t-btn {
-            width: 65px; height: 65px; border-radius: 50%; border: none;
+            width: 60px; height: 60px; border-radius: 50%; border: none;
             display: flex; align-items: center; justify-content: center;
-            font-size: 28px; cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3); background: var(--bg-light);
+            font-size: 26px; cursor: pointer;
+            transition: all 0.3s cubic-bezier(.16,1,.3,1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); background: rgba(255,255,255,0.05);
         }
-        .t-btn.pass { color: #ff4757; border: 2px solid rgba(255,71,87,0.3); }
-        .t-btn.pass:hover { transform: scale(1.15) rotate(-10deg); background: rgba(255,71,87,0.15); box-shadow: 0 0 30px rgba(255,71,87,0.4); }
-        .t-btn.like { color: #34d399; border: 2px solid rgba(52,211,153,0.3); width: 78px; height: 78px; font-size: 34px; }
-        .t-btn.like:hover { transform: scale(1.15) rotate(10deg); background: rgba(52,211,153,0.15); box-shadow: 0 0 40px rgba(52,211,153,0.5); }
+        .t-btn.pass { color: #ff4757; border: 1px solid rgba(255,71,87,0.2); }
+        .t-btn.pass:hover { transform: scale(1.1); background: rgba(255,71,87,0.1); }
+        .t-btn.like { color: #34d399; border: 1px solid rgba(52,211,153,0.2); width: 72px; height: 72px; font-size: 32px; }
+        .t-btn.like:hover { transform: scale(1.1); background: rgba(52,211,153,0.1); }
 
         /* Success screen */
         .success-screen { display: none; text-align: center; padding: 10px 0; }
-        .success-screen.active { display: block; animation: fadeSlideIn 0.5s ease-out; }
+        .success-screen.active { display: block; animation: stepEnter 0.5s ease-out; }
         .success-icon {
-            width: 90px; height: 90px; border-radius: 50%;
-            background: linear-gradient(135deg, #d4af37, #f4e5b0, #d4af37);
-            background-size: 200% auto; margin: 0 auto 20px;
-            display: flex; align-items: center; justify-content: center; font-size: 44px;
-            box-shadow: 0 0 50px rgba(212,175,55,0.5), 0 12px 40px rgba(0,0,0,0.4);
-            animation: bounceIn 0.6s cubic-bezier(0.68,-0.55,0.265,1.55), pulseGlow 2s ease-in-out infinite 0.6s;
+            width: 72px; height: 72px; border-radius: 50%;
+            background: rgba(212,175,55,0.1);
+            border: 1px solid rgba(212,175,55,0.25);
+            margin: 0 auto 20px;
+            display: flex; align-items: center; justify-content: center; font-size: 36px;
+            animation: bounceIn 0.6s cubic-bezier(0.68,-0.55,0.265,1.55);
         }
-        @keyframes bounceIn { 0% { transform:scale(0); } 60% { transform:scale(1.1); } 100% { transform:scale(1); } }
-        @keyframes pulseGlow { 0%,100% { box-shadow: 0 0 30px rgba(212,175,55,0.4), 0 12px 40px rgba(0,0,0,0.4); } 50% { box-shadow: 0 0 60px rgba(212,175,55,0.6), 0 12px 40px rgba(0,0,0,0.4); } }
+        @keyframes bounceIn { 0% { transform:scale(0); } 60% { transform:scale(1.05); } 100% { transform:scale(1); } }
         .success-title {
             font-size: 22px; font-weight: 800;
-            background: linear-gradient(135deg, #d4af37, #f4e5b0, #d4af37);
-            background-size: 200% auto;
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-            animation: shimmerText 3s linear infinite; margin-bottom: 8px;
+            color: white; letter-spacing: -0.02em;
+            margin-bottom: 8px;
         }
         .success-message { font-size: 13px; color: var(--green-text); line-height: 1.6; margin-bottom: 20px; font-weight: 300; }
         .success-summary {
@@ -599,22 +585,22 @@
         /* WhatsApp CTA */
         .cta-whatsapp {
             display: inline-flex; align-items: center; gap: 10px;
-            padding: 16px 32px; background: #25D366; color: white;
+            padding: 16px 32px; background: rgba(37,211,102,0.12); color: #25D366;
+            border: 1px solid rgba(37,211,102,0.25);
             border-radius: 16px; text-decoration: none; font-weight: 700; font-size: 15px;
-            transition: all 0.4s; width: 100%; justify-content: center;
-            box-shadow: 0 0 30px rgba(37,211,102,0.3), 0 8px 25px rgba(0,0,0,0.3);
-            border: none; cursor: pointer; font-family: inherit;
+            transition: all 0.3s; width: 100%; justify-content: center;
+            cursor: pointer; font-family: inherit;
         }
-        .cta-whatsapp:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 0 50px rgba(37,211,102,0.5), 0 12px 35px rgba(0,0,0,0.4); }
+        .cta-whatsapp:hover { background: rgba(37,211,102,0.18); border-color: rgba(37,211,102,0.4); }
 
         /* Finding matches */
         .finding-matches { text-align: center; display: none; flex-direction: column; align-items: center; gap: 15px; padding: 40px 0; }
         .finding-matches .success-title { transition: opacity 0.2s; }
         .finding-matches.active { display: flex; }
         .radar {
-            width: 70px; height: 70px; border-radius: 50%;
-            border: 2px solid var(--gold); position: relative; overflow: hidden;
-            background: rgba(212,175,55,0.05); box-shadow: 0 0 20px rgba(212,175,55,0.2);
+            width: 64px; height: 64px; border-radius: 50%;
+            border: 1.5px solid rgba(212,175,55,0.4); position: relative; overflow: hidden;
+            background: rgba(212,175,55,0.04);
         }
         .radar::before {
             content: ''; position: absolute; top: 50%; left: 50%;
@@ -624,34 +610,28 @@
         }
         @keyframes radarSweep { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Navigation */
-        .nav-buttons { display: flex; gap: 10px; margin-top: 24px; }
+        /* Navigation — Apple clean */
+        .nav-buttons { display: flex; gap: 10px; margin-top: 14px; }
         .btn {
-            flex: 1; padding: 14px 20px; border: none; border-radius: 14px;
-            font-size: 15px; font-weight: 700; font-family: 'Poppins', sans-serif;
-            cursor: pointer; transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
-            letter-spacing: 0.5px; position: relative; overflow: hidden;
+            flex: 1; padding: 15px 20px; border: none; border-radius: 14px;
+            font-size: 15px; font-weight: 600; font-family: 'Poppins', sans-serif;
+            cursor: pointer; transition: all 0.3s cubic-bezier(.16,1,.3,1);
+            letter-spacing: 0.02em; position: relative; overflow: hidden;
         }
         .btn-back {
-            background: rgba(255,255,255,0.06); color: var(--green-text);
-            border: 1px solid rgba(255,255,255,0.1); flex: 0.4;
+            background: rgba(255,255,255,0.05); color: var(--green-text);
+            border: 1px solid rgba(255,255,255,0.08); flex: 0.4;
         }
-        .btn-back:hover { background: rgba(255,255,255,0.1); }
+        .btn-back:hover { background: rgba(255,255,255,0.08); }
         .btn-next {
-            background: linear-gradient(135deg, #d4af37 0%, #f4e5b0 50%, #d4af37 100%);
-            background-size: 200% auto; color: var(--bg-dark); border: none;
-            box-shadow: 0 0 25px rgba(212,175,55,0.4), 0 8px 30px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.3);
-            animation: goldShine 3s linear infinite;
+            background: linear-gradient(135deg, #d4af37, #c9a430);
+            color: var(--bg-dark); border: none;
+            box-shadow: 0 4px 20px rgba(212,175,55,0.25);
         }
-        .btn-next::before {
-            content: ''; position: absolute; top:0; left:-100%; width:100%; height:100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
-            transition: left 0.6s;
-        }
-        .btn-next:hover:not(:disabled)::before { left: 100%; }
-        .btn-next:hover:not(:disabled) { transform: translateY(-3px) scale(1.02); box-shadow: 0 0 40px rgba(212,175,55,0.6), 0 12px 40px rgba(0,0,0,0.4); }
-        .btn-next:disabled { opacity: 0.3; cursor: not-allowed; animation: none; }
-        @keyframes goldShine { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+        .btn-next::before { display: none; }
+        .btn-next:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 25px rgba(212,175,55,0.35); }
+        .btn-next:active:not(:disabled) { transform: scale(0.98); }
+        .btn-next:disabled { opacity: 0.3; cursor: not-allowed; }
 
         /* Confetti overlay */
         .confetti-overlay {
@@ -680,16 +660,170 @@
             100% { bottom:110vh; transform:translateX(calc(100px * var(--sway))) scale(var(--scale)); opacity:0; }
         }
 
+        /* Upgrade 4: Body card gradient backgrounds */
+        .body-card[data-value="sedan"] { background: linear-gradient(135deg, rgba(212,175,55,0.05) 0%, rgba(10,31,26,0.6) 50%, rgba(52,211,153,0.05) 100%); background-size: 100% 100%; transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275), background-size 0.4s ease; }
+        .body-card[data-value="suv"] { background: linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(10,31,26,0.6) 50%, rgba(212,175,55,0.03) 100%); background-size: 100% 100%; transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275), background-size 0.4s ease; }
+        .body-card[data-value="pickup"] { background: linear-gradient(135deg, rgba(255,140,0,0.05) 0%, rgba(10,31,26,0.6) 50%, rgba(212,175,55,0.05) 100%); background-size: 100% 100%; transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275), background-size 0.4s ease; }
+        .body-card[data-value="deportivo"] { background: linear-gradient(135deg, rgba(255,50,50,0.05) 0%, rgba(10,31,26,0.6) 50%, rgba(212,175,55,0.08) 100%); background-size: 100% 100%; transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275), background-size 0.4s ease; }
+        .body-card[data-value="sedan"]:hover,
+        .body-card[data-value="suv"]:hover,
+        .body-card[data-value="pickup"]:hover,
+        .body-card[data-value="deportivo"]:hover { background-size: 200% 200%; }
+
+        /* Upgrade 5: Pulse ring on selection */
+        @keyframes pulseRing {
+            0% { box-shadow: 0 0 0 0 rgba(212,175,55,0.5); }
+            70% { box-shadow: 0 0 0 15px rgba(212,175,55,0); }
+            100% { box-shadow: 0 0 0 0 rgba(212,175,55,0); }
+        }
+        .pulse-ring { animation: pulseRing 0.6s ease-out; }
+
+        /* Upgrade 6: Compatibility counter on reveal */
+        .compat-score {
+            font-size: 36px; font-weight: 900;
+            background: linear-gradient(135deg, #d4af37, #f4e5b0);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 4px 0;
+        }
+
+        /* Upgrade 7: Rotating border glow */
+        .card::after {
+            content: ''; position: absolute; inset: -2px; border-radius: 26px;
+            background: conic-gradient(from var(--card-glow-angle, 0deg), transparent 0%, rgba(212,175,55,0.3) 10%, transparent 20%);
+            z-index: -1; animation: borderGlow 6s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes borderGlow { to { --card-glow-angle: 360deg; } }
+
+        /* Upgrade 8: Toast notifications */
+        .toast-container { position: fixed; top: 20px; right: 20px; z-index: 9998; display: flex; flex-direction: column; gap: 8px; pointer-events: none; max-width: 280px; }
+        .toast {
+            background: rgba(13,41,33,0.9); backdrop-filter: blur(15px);
+            border: 1px solid rgba(212,175,55,0.25); border-left: 3px solid #d4af37;
+            border-radius: 12px; padding: 10px 14px;
+            color: white; font-size: 12px; font-family: 'Poppins', sans-serif;
+            animation: toastIn 0.4s ease-out forwards;
+            opacity: 0; transform: translateX(100px);
+        }
+        .toast.exit { animation: toastOut 0.3s ease-in forwards; }
+        @keyframes toastIn { to { opacity: 1; transform: translateX(0); } }
+        @keyframes toastOut { to { opacity: 0; transform: translateX(100px); } }
+
         @media (max-width: 400px) {
             .card { padding: 24px 18px; }
             .chip-grid { grid-template-columns: repeat(2, 1fr); }
             .step-title { font-size: 17px; }
         }
+
+        /* Mobile fullscreen — no scroll needed */
+        @media (max-height: 750px) {
+            body { padding: 8px; align-items: flex-start; }
+            .card { padding: 20px 16px; border-radius: 20px; }
+            .logo-section { margin-bottom: 4px; }
+            .logo-container { width: 48px; height: 48px; margin-bottom: 8px; }
+            .logo-circle { width: 48px; height: 48px; }
+            .logo-circle img { width: 40px; height: 40px; }
+            .logo-glow { width: 70px; height: 70px; }
+            .logo-section h1 { font-size: 12px; letter-spacing: 2px; margin-bottom: 2px; }
+            .logo-section p { font-size: 11px; line-height: 1.4; }
+            .trust-row { margin: 6px 0 10px; gap: 10px; }
+            .vip-badge { margin-bottom: 8px; }
+            .vip-badge span { font-size: 9px; padding: 5px 14px; }
+            .step-title { font-size: 16px; margin-bottom: 8px; }
+            .step-sub { font-size: 11px; margin-bottom: 10px; }
+            .progress-track { margin-bottom: 10px; }
+            .chip-grid { gap: 6px; }
+            .chip { padding: 10px 8px; font-size: 11px; }
+            .nav-btn { padding: 12px 16px; font-size: 12px; }
+            .btn-next { font-size: 16px !important; padding: 16px 24px !important; }
+        }
+        @media (max-height: 650px) {
+            .logo-section.compact, .logo-section { height: 0; overflow: hidden; margin: 0; opacity: 0; }
+            .trust-row { display: none; }
+            .vip-badge { margin-bottom: 4px; }
+            .card { padding: 16px 14px; }
+        }
+
+        /* ── MOBILE AGGRESSIVE COMPACT ── */
+        @media (max-width: 768px) {
+            body { padding: 8px; align-items: flex-start; }
+            .card { padding: 20px 16px; }
+            .step-header { margin-bottom: 14px; }
+            .step-icon { font-size: 24px; margin-bottom: 4px; }
+            .step-title { font-size: 18px; }
+            .step-subtitle { font-size: 11px; }
+            .nav-buttons { margin-top: 10px; }
+            .btn-next {
+                font-size: 17px !important;
+                padding: 18px 24px !important;
+                border-radius: 16px !important;
+                font-weight: 800 !important;
+                letter-spacing: 0.5px !important;
+            }
+            .reveal-card { margin-bottom: 8px; }
+            .reveal-card-img { height: 120px; }
+            .reveal-card-info { padding: 10px 12px; }
+            .reveal-card-info .rc-name { font-size: 13px; }
+            .compat-score { font-size: 28px; margin: 2px 0; }
+            .unlock-banner { padding: 14px; }
+            .unlock-banner .ub-title { font-size: 16px; }
+            .form-group { margin-bottom: 12px; }
+            .form-group label { font-size: 13px; margin-bottom: 4px; }
+            input, select, textarea { padding: 14px 16px; font-size: 15px; }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<style id="alabol-nav-styles">
+  .alabol-nav { position:fixed;top:0;left:0;right:0;z-index:999;background:rgba(10,31,26,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(212,175,55,0.2);height:64px;display:flex;align-items:center;padding:0 24px;gap:0; }
+  .nav-logo { display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0; }
+  .nav-logo img { width:38px;height:38px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(212,175,55,0.5));transition:transform 0.3s ease; }
+  .nav-logo:hover img { transform:scale(1.08) rotate(5deg); }
+  .nav-logo-text { font-family:'Poppins',sans-serif;font-weight:800;font-size:18px;color:#d4af37;letter-spacing:-0.5px;text-shadow:0 0 12px rgba(212,175,55,0.4); }
+  .nav-links-nav { display:flex;align-items:center;gap:4px;margin-left:auto;list-style:none;padding:0;margin-right:0; }
+  .nav-links-nav a { font-family:'Poppins',sans-serif;font-size:13px;font-weight:500;color:#a8c5b8;text-decoration:none;padding:7px 14px;border-radius:20px;transition:all 0.25s ease;white-space:nowrap;border:1px solid transparent; }
+  .nav-links-nav a:hover { color:#d4af37;background:rgba(212,175,55,0.08);border-color:rgba(212,175,55,0.2); }
+  .nav-cta { font-family:'Poppins',sans-serif;font-size:13px;font-weight:700;color:#0a1f1a !important;background:linear-gradient(135deg,#d4af37 0%,#f4e5b0 100%) !important;padding:8px 18px !important;border-radius:20px !important;border:none !important;margin-left:8px;box-shadow:0 4px 12px rgba(212,175,55,0.35);transition:all 0.25s ease !important; }
+  .nav-cta:hover { transform:translateY(-1px);box-shadow:0 6px 18px rgba(212,175,55,0.5) !important;filter:brightness(1.05); }
+  .nav-hamburger-btn { display:none;flex-direction:column;gap:5px;cursor:pointer;margin-left:auto;padding:8px;background:none;border:none; }
+  .nav-hamburger-btn span { display:block;width:22px;height:2px;background:#d4af37;border-radius:2px;transition:all 0.3s ease; }
+  .nav-hamburger-btn.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+  .nav-hamburger-btn.open span:nth-child(2) { opacity:0; }
+  .nav-hamburger-btn.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+  @media (max-width:768px) {
+    .nav-links-nav { display:none;flex-direction:column;position:absolute;top:64px;left:0;right:0;background:rgba(10,31,26,0.98);border-bottom:1px solid rgba(212,175,55,0.2);padding:16px 24px 24px;gap:8px; }
+    .nav-links-nav.open { display:flex; }
+    .nav-hamburger-btn { display:flex; }
+    .nav-links-nav a { padding:10px 16px;border-radius:12px;border:1px solid rgba(212,175,55,0.1); }
+    .nav-cta { margin-left:0; }
+  }
+  body { padding-top:64px !important; }
+  @media (max-width:768px) { .alabol-nav { display:none !important; } body { padding-top:0 !important; } }
+</style>
 </head>
 
 <body>
+<nav class="alabol-nav" role="navigation" aria-label="Navegación principal">
+  <a href="/" class="nav-logo" aria-label="Ir al inicio">
+    <img src="../logo-circular.png" alt="Alabol">
+    <span class="nav-logo-text">Alabol</span>
+  </a>
+  <button class="nav-hamburger-btn" id="navHamburgerBtn" aria-label="Menú" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links-nav" id="navLinksNav" role="list">
+    <li><a href="/inventario.html">🚗 Inventario</a></li>
+    <li><a href="/vip/">💘 Matchmaker</a></li>
+    <li><a href="/vendedor.html">🏷️ Vender Auto</a></li>
+    <li><a href="/oportunidades/">🔥 Subastas</a></li>
+    <li><a href="/portal-agencias.html">🏢 Agencias</a></li>
+    <li><a href="/vip/" class="nav-cta">Buscar mi Auto →</a></li>
+  </ul>
+</nav>
+<!-- Floating WhatsApp Button -->
+<a href="https://api.whatsapp.com/send?phone=525568667571&text=Hola%20Alabol!" target="_blank" style="position:fixed;bottom:20px;right:20px;width:56px;height:56px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 15px rgba(37,211,102,0.4);z-index:998;text-decoration:none;font-size:28px;transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'"><svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg></a>
+
+    <div class="toast-container" id="toastContainer"></div>
     <div class="bubbles-container" id="bubblesContainer"></div>
 
     <div class="container">
@@ -716,15 +850,16 @@
                 <div class="trust-item"><span class="icon">🔒</span> Datos seguros</div>
             </div>
 
-            <!-- Progress Bar (6 segments) -->
+            <!-- Progress Bar - Compatibility Circle -->
             <div class="progress-bar" id="progressBar">
-                <div class="progress-segment active"></div>
-                <div class="progress-segment"></div>
-                <div class="progress-segment"></div>
-                <div class="progress-segment"></div>
-                <div class="progress-segment"></div>
-                <div class="progress-segment"></div>
-                <div class="progress-label" id="progressLabel">1 / 6</div>
+                <div class="progress-ring-wrap">
+                    <svg class="progress-ring-svg" viewBox="0 0 50 50">
+                        <circle class="progress-ring-bg" cx="25" cy="25" r="20"/>
+                        <circle class="progress-ring-fg" id="progressRing" cx="25" cy="25" r="20" stroke-dasharray="125.66" stroke-dashoffset="104.30"/>
+                    </svg>
+                    <span class="progress-ring-text" id="progressPercent">0%</span>
+                </div>
+                <div class="progress-label" id="progressLabel">Compatibilidad</div>
             </div>
 
             <div class="personality-hook" id="personalityHook">Que empiece el match...</div>
@@ -770,9 +905,9 @@
                         <span class="body-examples">Mustang, BMW, Camaro</span>
                     </div>
                 </div>
-                <div class="social-proof">
+                <div class="social-proof" id="socialProofBanner" style="display:none;">
                     <span class="sp-icon">🔥</span>
-                    <span class="sp-text"><strong id="socialProofCount">47</strong> personas buscando su match ahora mismo</span>
+                    <span class="sp-text"><strong id="socialProofCount">—</strong> autos disponibles en inventario</span>
                 </div>
             </div>
 
@@ -890,19 +1025,19 @@
 
             <!-- ====== STEP 4: Blurred Reveal ====== -->
             <div class="step" data-step="3">
-                <div style="text-align: center; margin-bottom: 16px;">
-                    <div style="font-size: 44px; margin-bottom: 6px;">😏</div>
-                    <div class="step-title" style="font-size: 22px; background: linear-gradient(135deg, #d4af37, #f4e5b0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-                        Alguien te hizo match... (<span id="matchCountReveal">3</span> veces)
+                <div style="text-align: center; margin-bottom: 10px;">
+                    <div class="step-title" id="revealTitle" style="font-size: 22px; background: linear-gradient(135deg, #d4af37, #f4e5b0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 2px;">
+                        ¡Hiciste match! (<span id="matchCountReveal">0</span> resultados)
                     </div>
-                    <div class="step-subtitle">Les gustó tu perfil. ¿Quieres ver quiénes son?</div>
+                    <div class="step-subtitle" id="revealSubtitle">Estos autos coinciden con lo que buscas</div>
+                    <div class="compat-score" id="compatScore">0%</div>
                 </div>
-                <div id="revealCardsContainer">
+                <div id="revealCardsContainer" style="max-height: 280px; overflow-y: auto;">
                     <!-- Injected via JS -->
                 </div>
-                <div class="unlock-banner">
-                    <p class="ub-title">🔓 Estos autos quieren conocerte</p>
-                    <p class="ub-sub">Deja tu WhatsApp y te los presentamos. Sin ghosteo, prometido.</p>
+                <div class="unlock-banner" style="margin-top: 10px;">
+                    <p class="ub-title">🔓 ¡Hiciste match!</p>
+                    <p class="ub-sub">Toca el boton para ver tus resultados</p>
                 </div>
             </div>
 
@@ -924,6 +1059,16 @@
                 <div class="form-group">
                     <label>¿Dónde te ubicas? <span class="required">*</span></label>
                     <input type="text" id="ciudad" placeholder="Cancún, CDMX, Monterrey...">
+                </div>
+                <div class="form-group">
+                    <label>Email (te enviamos tus matches) <span class="required">*</span></label>
+                    <input type="email" id="email" placeholder="tu@email.com">
+                </div>
+                <div class="form-group" style="margin-top:12px;">
+                    <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;font-size:11px;line-height:1.5;">
+                        <input type="checkbox" id="acceptTerms" style="margin-top:3px;accent-color:#d4af37;min-width:16px;">
+                        <span>Acepto los <a href="./terminos.html" target="_blank" style="color:#d4af37;">Terminos y Condiciones</a> y el <a href="./aviso-privacidad.html" target="_blank" style="color:#d4af37;">Aviso de Privacidad</a> de Alabol Car Broker.</span>
+                    </label>
                 </div>
 
                 <div class="form-group">
@@ -999,13 +1144,33 @@
                 <div class="success-summary" id="summaryBox">
                     <h3>📋 Resumen de tu búsqueda</h3>
                 </div>
+                <!-- Liked cars with cita buttons -->
+                <div id="likedCarsCitas" style="margin-bottom: 16px;"></div>
+
                 <div class="vip-retention">
                     <p>🔔 Estás en nuestra lista VIP. Cuando lleguen autos nuevos que sean tu tipo, serás el/la primer@ en saberlo. Nada de sloppy seconds.</p>
                 </div>
-                <a class="cta-whatsapp" id="ctaWhatsApp" href="#" target="_blank">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
-                    Hablar con mi asesor ahora
-                </a>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <a class="cta-whatsapp" id="ctaWhatsApp" href="#" target="_blank">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+                        Hablar con mi asesor ahora
+                    </a>
+                    <a href="../simulador-credito.html" style="display:block;text-align:center;padding:14px;border-radius:14px;background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.25);color:var(--gold);font-weight:600;font-size:14px;text-decoration:none;transition:all 0.3s;">
+                        <i class="fa-solid fa-calculator" style="margin-right:6px;"></i> Simular financiamiento
+                    </a>
+                    <a href="../inventario.html" style="display:block;text-align:center;padding:14px;border-radius:14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);color:var(--green-text);font-weight:600;font-size:14px;text-decoration:none;transition:all 0.3s;">
+                        🚙 Seguir viendo perfiles
+                    </a>
+                    <a href="#" onclick="var t=encodeURIComponent('Encontré esta herramienta para buscar autos seminuevos y de subasta. Es como Tinder pero para autos 😂 Pruébalo: https://alabolcar.com.mx/vip/');window.open('https://api.whatsapp.com/send?text='+t,'_blank');return false;" style="display:block;text-align:center;padding:12px;border-radius:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:var(--green-text);font-size:13px;font-weight:500;text-decoration:none;margin-top:10px;">🔗 Compartir Matchmaker con un amigo</a>
+                </div>
+                <div id="noMatchSection" style="display:none; margin-top:20px; background:rgba(212,175,55,0.06); border:1px solid rgba(212,175,55,0.15); border-radius:16px; padding:20px; text-align:center;">
+                    <div style="font-size:28px; margin-bottom:8px;">💔</div>
+                    <div style="font-size:16px; font-weight:700; color:white; margin-bottom:6px;">¿No llegó el amor?</div>
+                    <div style="font-size:13px; color:var(--green-text); margin-bottom:16px; line-height:1.5;">Tenemos acceso a autos que no están publicados.<br>Un asesor te busca opciones personalizadas.</div>
+                    <a id="noMatchWhatsApp" href="#" target="_blank" style="display:block;text-align:center;background:#25D366;color:white;padding:16px;border-radius:14px;text-decoration:none;font-weight:700;font-size:15px;box-shadow:0 4px 15px rgba(37,211,102,0.3);margin-bottom:10px;">💬 Que me busquen mi auto ideal</a>
+                    <a href="../inventario.html" style="display:block;text-align:center;padding:14px;border-radius:14px;background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.25);color:var(--gold);font-weight:600;font-size:14px;text-decoration:none;">🚙 Mientras tanto, ver perfiles disponibles</a>
+                    <div style="font-size:11px;color:var(--green-text);margin-top:12px;opacity:0.5;">Un tap. Sin formularios. Ya tenemos tus datos.</div>
+                </div>
             </div>
 
             <!-- Finding matches overlay -->
@@ -1030,10 +1195,22 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
     // =====================
+    // IMAGE OPTIMIZER — serves resized images from Supabase Storage
+    // =====================
+    function optimImg(url, width) {
+        if (!url || typeof url !== 'string') return url;
+        // Supabase Storage supports render/image/authenticated for transforms
+        if (url.includes('supabase.co/storage/v1/object/public/')) {
+            return url.replace('/object/public/', '/render/image/public/') + '?width=' + (width || 600) + '&quality=75';
+        }
+        return url;
+    }
+
+    // =====================
     // SUPABASE
     // =====================
     const SUPABASE_URL = 'https://rgnunjngtsgqgvplawfr.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_G6asVlNL8PHZamCS6r1_lQ_VeV-wsL3';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8';
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     // =====================
@@ -1044,12 +1221,14 @@
     let currentStep = 0;
     let matchStack = [];
     let likedCars = [];
+    let passedCars = [];
     let currentCardIndex = 0;
+    let savedLeadId = null; // UUID from Supabase after lead is saved
 
     const formData = {
         carroceria: '', marcas: [], greenFlags: [], anioDesde: '2018', anioHasta: '2026',
         presupuestoMin: 150000, presupuestoMax: 350000, dineroStatus: '',
-        nombre: '', whatsapp: '', ciudad: '', urgencia: '', proposito: ''
+        nombre: '', whatsapp: '', ciudad: '', email: '', urgencia: '', proposito: ''
     };
 
     const stepMessages = [
@@ -1111,24 +1290,17 @@
     }
 
     function loadProgress() {
-        try {
-            const raw = localStorage.getItem(STORAGE_KEY);
-            if (!raw) return false;
-            const saved = JSON.parse(raw);
-            if (Date.now() - saved.ts > STORAGE_EXPIRY) { localStorage.removeItem(STORAGE_KEY); return false; }
-            // Only restore up to step 3 (don't skip reveal/data/swipe)
-            if (saved.step > 3) return false;
-            Object.assign(formData, saved.data);
-            currentStep = saved.step;
-            return true;
-        } catch (e) { return false; }
+        // Always start fresh — never restore previous session
+        try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+        return false;
     }
 
     // =====================
     // DOM REFS
     // =====================
     const allSteps = document.querySelectorAll('.step');
-    const progressSegments = document.querySelectorAll('.progress-segment');
+    const progressRing = document.getElementById('progressRing');
+    const progressPercent = document.getElementById('progressPercent');
     const progressLabel = document.getElementById('progressLabel');
     const backBtn = document.getElementById('backBtn');
     const nextBtn = document.getElementById('nextBtn');
@@ -1138,10 +1310,22 @@
     const logoSection = document.getElementById('logoSection');
     const trustRow = document.getElementById('trustRow');
 
+    // Progress ring constants: circumference = 2 * PI * 20 = 125.66
+    const RING_CIRCUMFERENCE = 125.66;
+    const STEP_PERCENTS = [0, 17, 33, 50, 67, 83, 100];
+
     // =====================
     // MICRO-INTERACTIONS
     // =====================
+    function addPulseRing(el) {
+        el.classList.remove('pulse-ring');
+        void el.offsetWidth; // force reflow
+        el.classList.add('pulse-ring');
+        setTimeout(() => el.classList.remove('pulse-ring'), 600);
+    }
+
     function sparkleAt(el) {
+        addPulseRing(el);
         const rect = el.getBoundingClientRect();
         const x = rect.left + rect.width / 2;
         const y = rect.top + rect.height / 2;
@@ -1163,23 +1347,39 @@
         setTimeout(() => { el.style.transform = ''; }, 150);
     }
 
-    // Animated social proof counter
-    function animateSocialProof() {
+    // Real social proof: count actual leads from Supabase
+    let realInventory = []; // cached inventory for toasts + matches
+    async function loadRealData() {
+        const banner = document.getElementById('socialProofBanner');
         const el = document.getElementById('socialProofCount');
-        if (!el) return;
-        const base = 42 + Math.floor(Math.random() * 15);
-        el.textContent = base;
-        setInterval(() => {
-            const delta = Math.random() > 0.5 ? 1 : -1;
-            const current = parseInt(el.textContent);
-            const next = Math.max(35, Math.min(65, current + delta));
-            el.textContent = next;
-            el.style.transition = 'transform 0.2s';
-            el.style.transform = 'scale(1.15)';
-            setTimeout(() => { el.style.transform = 'scale(1)'; }, 200);
-        }, 4000 + Math.random() * 3000);
+        try {
+            // Pre-load inventory for toasts, matches, and social proof
+            const { data: invData } = await supabaseClient
+                .from('inventario')
+                .select('*')
+                .eq('estatus', 'disponible')
+                .not('fotos', 'is', null)
+                .not('fotos', 'eq', '{}');
+
+            if (invData && invData.length > 0) {
+                // Filter out cars with empty foto arrays
+                realInventory = invData.filter(c => Array.isArray(c.fotos) && c.fotos.length > 0);
+                // Show banner with real inventory count
+                if (el) el.textContent = invData.length;
+                if (banner) banner.style.display = 'flex';
+            } else {
+                // Show alternative message when 0 inventory
+                if (banner) {
+                    banner.style.display = 'flex';
+                    banner.innerHTML = '<span class="sp-icon">🔥</span><span class="sp-text">Conectados con agencias de <strong>CDMX, GDL y MTY</strong></span>';
+                }
+            }
+        } catch (e) {
+            // DB failed — banner stays hidden, no fake data shown
+            console.warn('Could not load inventory:', e);
+        }
     }
-    animateSocialProof();
+    loadRealData();
 
     // =====================
     // BODY TYPE (Step 1)
@@ -1287,6 +1487,7 @@
                 list.querySelectorAll('.option-card').forEach(c => { c.classList.remove('selected'); c.querySelector('.check').textContent = ''; });
                 card.classList.add('selected');
                 card.querySelector('.check').textContent = '✓';
+                addPulseRing(card);
                 updateValidation();
             });
         });
@@ -1296,6 +1497,7 @@
         card.addEventListener('click', () => {
             document.querySelectorAll('.urgency-card').forEach(c => c.classList.remove('selected'));
             card.classList.add('selected');
+            addPulseRing(card);
             updateValidation();
         });
     });
@@ -1345,7 +1547,9 @@
                 return document.getElementById('nombre').value.trim() !== '' &&
                     document.getElementById('whatsapp').value.trim() !== '' &&
                     document.getElementById('ciudad').value.trim() !== '' &&
-                    document.querySelector('.urgency-card.selected') !== null;
+                    document.getElementById('email').value.trim() !== '' &&
+                    document.querySelector('.urgency-card.selected') !== null &&
+                    document.getElementById('acceptTerms').checked;
             case 5: return true;
             default: return true;
         }
@@ -1378,6 +1582,7 @@
                 formData.nombre = document.getElementById('nombre').value.trim();
                 formData.whatsapp = document.getElementById('whatsapp').value.trim();
                 formData.ciudad = document.getElementById('ciudad').value.trim();
+                formData.email = document.getElementById('email').value.trim();
                 const urgEl = document.querySelector('.urgency-card.selected');
                 formData.urgencia = urgEl ? urgEl.dataset.value : '';
                 const usoEl = document.querySelector('#usoAuto .option-card.selected');
@@ -1394,10 +1599,14 @@
             const { data: invData, error } = await supabaseClient
                 .from('inventario')
                 .select('*')
-                .eq('estatus', 'disponible');
+                .eq('estatus', 'disponible')
+                .not('fotos', 'is', null)
+                .not('fotos', 'eq', '{}');
 
             if (error) throw error;
             if (!invData || invData.length === 0) return [];
+            // Extra filter: ensure fotos array actually has items
+            const filteredInv = invData.filter(c => Array.isArray(c.fotos) && c.fotos.length > 0);
 
             const minYear = parseInt(formData.anioDesde) || 2010;
             const maxYear = parseInt(formData.anioHasta) || 2026;
@@ -1405,30 +1614,57 @@
             const maxBudget = formData.presupuestoMax * 1.1;
             const preferredBrands = formData.marcas.map(m => m.toLowerCase());
 
-            const matches = invData.filter(car => {
-                if (car.precio_venta < minBudget || car.precio_venta > maxBudget) return false;
-                if (car.anio < minYear || car.anio > maxYear) return false;
-                if (preferredBrands.length > 0) {
-                    const carBrand = (car.marca || '').toLowerCase();
-                    const brandMatch = preferredBrands.some(pb => pb.includes(carBrand) || carBrand.includes(pb));
-                    if (!brandMatch) return false;
+            const selectedType = (formData.carroceria || '').toLowerCase();
+
+            // Score each car instead of strict filtering
+            const scored = filteredInv.map(car => {
+                let score = 0;
+                const carType = (car.tipo_vehiculo || '').toLowerCase();
+                const carBrand = (car.marca || '').toLowerCase();
+
+                // TIPO (30 pts) — flexible
+                if (selectedType) {
+                    if (selectedType === 'suv' && ['suv','crossover'].includes(carType)) score += 30;
+                    else if (selectedType === 'sedan' && ['sedan','hatchback'].includes(carType)) score += 30;
+                    else if (selectedType === 'pickup' && ['pickup','van'].includes(carType)) score += 30;
+                    else if (selectedType === 'deportivo' && ['deportivo','coupe','convertible'].includes(carType)) score += 30;
+                    else score += 5; // Different type but don't exclude
+                } else {
+                    score += 15;
                 }
-                return true;
+
+                // PRECIO (25 pts)
+                if (car.precio_venta >= minBudget && car.precio_venta <= maxBudget) score += 25;
+                else if (car.precio_venta >= minBudget * 0.85 && car.precio_venta <= maxBudget * 1.15) score += 15;
+                else if (car.precio_venta < minBudget) score += 8;
+                else score += 0;
+
+                // AÑO (20 pts)
+                if (car.anio >= minYear && car.anio <= maxYear) score += 20;
+                else if (car.anio >= minYear - 2 && car.anio <= maxYear + 1) score += 10;
+                else score += 0;
+
+                // MARCA (25 pts) — case insensitive
+                if (preferredBrands.length > 0) {
+                    const brandMatch = preferredBrands.some(pb => pb.includes(carBrand) || carBrand.includes(pb));
+                    if (brandMatch) score += 25;
+                } else {
+                    score += 12;
+                }
+
+                return { ...car, _score: score };
             });
 
-            return matches.sort((a, b) => b.precio_venta - a.precio_venta).slice(0, 10);
+            // Return top 10 with score >= 40
+            return scored.filter(c => c._score >= 40).sort((a, b) => b._score - a._score).slice(0, 10);
         } catch (err) {
             console.error("Error fetching matches:", err);
             return [];
         }
     }
 
-    // Fallback matches when no inventory available
-    const FALLBACK_MATCHES = [
-        { id: 'fb1', marca: 'Toyota', modelo: 'RAV4 XLE', anio: 2022, precio_venta: 385000, kilometraje: '32,000 km', link_fotos: '', tags: ['Automático', 'Bajo millaje'] },
-        { id: 'fb2', marca: 'Honda', modelo: 'CR-V Touring', anio: 2021, precio_venta: 410000, kilometraje: '45,000 km', link_fotos: '', tags: ['Piel', 'AWD'] },
-        { id: 'fb3', marca: 'Mazda', modelo: 'CX-5 Signature', anio: 2023, precio_venta: 450000, kilometraje: '18,000 km', link_fotos: '', tags: ['Techo solar', 'Piel'] },
-    ];
+    // No fallback matches — only real inventory
+    // If there are no matches, we show an honest "no matches yet" screen
 
     // =====================
     // RENDER REVEAL CARDS (Step 4)
@@ -1436,21 +1672,61 @@
     function renderRevealCards(cars) {
         const container = document.getElementById('revealCardsContainer');
         container.innerHTML = '';
-        const displayCars = cars.length > 0 ? cars.slice(0, 3) : FALLBACK_MATCHES;
 
+        if (!cars || cars.length === 0) {
+            // Honest "no matches yet" — show summary + WhatsApp promise
+            document.getElementById('matchCountReveal').textContent = '0';
+            var summaryParts = [];
+            if (formData.bodyType) summaryParts.push('Tipo: ' + formData.bodyType);
+            if (formData.brands && formData.brands.length) summaryParts.push('Marcas: ' + formData.brands.join(', '));
+            if (formData.budgetMin || formData.budgetMax) summaryParts.push('Presupuesto: $' + (formData.budgetMin||0).toLocaleString('es-MX') + ' - $' + (formData.budgetMax||0).toLocaleString('es-MX'));
+            if (formData.ciudad) summaryParts.push('Ciudad: ' + formData.ciudad);
+            var summaryHTML = summaryParts.length > 0 ? '<div style="margin-top:16px;background:rgba(212,175,55,0.06);border:1px solid rgba(212,175,55,0.15);border-radius:12px;padding:14px;text-align:left;"><div style="font-size:11px;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Tu búsqueda:</div>' + summaryParts.map(function(p){return '<div style="font-size:13px;color:var(--green-text);margin-bottom:4px;">• '+p+'</div>';}).join('') + '</div>' : '';
+            container.innerHTML = `
+                <div style="text-align:center; padding: 30px 16px;">
+                    <div style="font-size: 48px; margin-bottom: 12px;">🔍</div>
+                    <div style="font-size: 16px; font-weight: 700; color: white; margin-bottom: 8px;">
+                        Tu búsqueda está registrada
+                    </div>
+                    <div style="font-size: 13px; color: var(--green-text); line-height: 1.5;">
+                        Te contactamos por WhatsApp en menos de 24h con opciones personalizadas.
+                    </div>
+                    ${summaryHTML}
+                </div>
+            `;
+            return;
+        }
+
+        const displayCars = cars.slice(0, 3);
         document.getElementById('matchCountReveal').textContent = displayCars.length;
 
         displayCars.forEach((car, i) => {
-            const imgSrc = car.link_fotos || car.imagen || car.foto || '';
-            const hasImage = imgSrc && imgSrc.startsWith('http');
-            const tags = car.tags || formData.greenFlags.slice(0, 2).map(f => {
-                const labels = { automatico: 'Automático', '4x4': '4x4', bajo_millaje: 'Bajo millaje', piel: 'Piel', techo: 'Techo solar', flexible: 'Flexible' };
-                return labels[f] || f;
-            });
-            const km = car.kilometraje || car.km || '—';
-            const price = '$' + (car.precio_venta || 0).toLocaleString('es-MX');
-            const interestMsgs = ['Muy solicitad@', 'Tiene 3 pretendientes', 'Recién llegó al inventario'];
-            const interestMsg = interestMsgs[i] || `${3-i} personas interesadas`;
+            const rawImg = (Array.isArray(car.fotos) && car.fotos.length > 0 ? car.fotos[0] : '') || car.link_fotos || car.imagen || '';
+            const imgSrc = optimImg(rawImg, 400);
+            const hasImage = rawImg && rawImg.startsWith('http');
+            // Build tags from real car data
+            const tags = [];
+            if (car.transmision) tags.push(car.transmision.charAt(0).toUpperCase() + car.transmision.slice(1));
+            if (car.ciudad) tags.push(car.ciudad);
+            if (car.traccion) tags.push(car.traccion);
+            if (tags.length === 0) {
+                formData.greenFlags.slice(0, 2).forEach(f => {
+                    const labels = { automatico: 'Automático', '4x4': '4x4', bajo_millaje: 'Bajo millaje', piel: 'Piel', techo: 'Techo solar', flexible: 'Flexible' };
+                    tags.push(labels[f] || f);
+                });
+            }
+            const km = (car.kilometraje ? car.kilometraje.toLocaleString('es-MX') + ' km' : '—');
+            const price = '$' + Number(car.precio_venta || 0).toLocaleString('es-MX');
+
+            // Real badge based on actual car data
+            let badge = '';
+            if (car.created_at) {
+                const daysAgo = Math.floor((Date.now() - new Date(car.created_at).getTime()) / (1000*60*60*24));
+                if (daysAgo <= 3) badge = '🆕 Recién llegó';
+                else if (daysAgo <= 7) badge = '📅 Esta semana';
+            }
+            if (!badge && car.kilometraje && car.kilometraje < 30000) badge = '📏 Bajo km';
+            if (!badge) badge = `${car.marca} ${car.anio}`;
 
             container.innerHTML += `
                 <div class="reveal-card">
@@ -1462,7 +1738,7 @@
                                 <div class="lock-text">¿Quién será?</div>
                             </div>
                         </div>
-                        <div class="interest-badge">💛 ${interestMsg}</div>
+                        <div class="interest-badge">💛 ${badge}</div>
                     </div>
                     <div class="reveal-card-info">
                         <div class="rc-top">
@@ -1491,34 +1767,59 @@
         currentCardIndex = 0;
         likedCars = [];
 
-        const displayCars = matchStack.length > 0 ? matchStack.slice(0, 10) : FALLBACK_MATCHES;
+        if (!matchStack || matchStack.length === 0) {
+            // No matches — skip swipe, go straight to success with "searching" message
+            document.getElementById('tinderDeck').classList.remove('active');
+            document.getElementById('tinderActions').classList.remove('active');
+            showFinalSuccess();
+            return;
+        }
+
+        const displayCars = matchStack.slice(0, 10);
 
         displayCars.forEach((car, i) => {
-            const imgSrc = car.link_fotos || car.imagen || car.foto || '';
-            const hasImage = imgSrc && imgSrc.startsWith('http');
-            const price = '$' + (car.precio_venta || 0).toLocaleString('es-MX');
-            const km = car.kilometraje || car.km || '—';
-            const tags = car.tags || formData.greenFlags.slice(0, 2).map(f => {
-                const labels = { automatico: 'Automático', '4x4': '4x4', bajo_millaje: 'Bajo millaje', piel: 'Piel', techo: 'Techo solar', flexible: 'Flexible' };
-                return labels[f] || f;
-            });
+            const rawImg = (Array.isArray(car.fotos) && car.fotos.length > 0 ? car.fotos[0] : '') || car.link_fotos || car.imagen || '';
+            const imgSrc = optimImg(rawImg, 500);
+            const hasImage = rawImg && rawImg.startsWith('http');
+            const price = '$' + Number(car.precio_venta || 0).toLocaleString('es-MX');
+            const km = (car.kilometraje ? car.kilometraje.toLocaleString('es-MX') + ' km' : '—');
+            const tags = [];
+            if (car.transmision) tags.push(car.transmision.charAt(0).toUpperCase() + car.transmision.slice(1));
+            if (car.ciudad) tags.push(car.ciudad);
+            if (car.traccion) tags.push(car.traccion);
+
+            const origenBadge = car.origen === 'subasta_mx'
+                ? '<div style="position:absolute;top:12px;left:12px;background:rgba(230,81,0,0.9);color:white;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:700;backdrop-filter:blur(8px);z-index:3;">🔥 Subasta MX</div>'
+                : car.origen === 'subasta_usa'
+                ? '<div style="position:absolute;top:12px;left:12px;background:rgba(26,35,126,0.9);color:white;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:700;backdrop-filter:blur(8px);z-index:3;">🇺🇸 Subasta USA</div>'
+                : '<div style="position:absolute;top:12px;left:12px;background:rgba(46,125,50,0.9);color:white;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:700;backdrop-filter:blur(8px);z-index:3;">🏢 Agencia</div>';
+
+            const priceDisplay = car.origen === 'subasta_mx'
+                ? `<div class="t-card-price" style="color:#F57C00;">Desde ${price} MXN<div style="font-size:11px;color:#a8c5b8;font-weight:400;">Precio base de subasta</div></div>`
+                : car.origen === 'subasta_usa'
+                ? `<div class="t-card-price" style="color:#5C6BC0;">~${price} USD<div style="font-size:11px;color:#a8c5b8;font-weight:400;">Precio base + importación</div></div>`
+                : `<div class="t-card-price">${price} MXN</div>`;
 
             deck.innerHTML += `
                 <div class="tinder-card" data-index="${i}" data-car-id="${car.id || 'fb' + i}">
+                    <div style="position:relative;">
                     ${hasImage
                         ? `<img class="t-card-img" src="${imgSrc}" alt="${car.marca} ${car.modelo}" loading="lazy">`
                         : `<div class="t-card-img" style="background: linear-gradient(135deg, var(--bg-mid), var(--bg-light)); display:flex; align-items:center; justify-content:center; font-size:60px;">🚗</div>`
                     }
+                    ${origenBadge}
+                    </div>
                     <div class="t-card-info">
                         <div>
                             <div class="t-card-title">${car.marca} ${car.modelo} <span class="t-card-year">${car.anio}</span></div>
-                            <div class="t-card-price">${price} MXN</div>
+                            ${priceDisplay}
+                            <div style="display:flex;gap:12px;margin-top:6px;font-size:12px;color:var(--green-text);">
+                                <span class="t-card-km">📏 ${km}</span>
+                                <span class="t-card-location">📍 ${car.ciudad || 'Mexico'}</span>
+                            </div>
                             <div class="t-card-tags">${tags.map(t => `<span class="t-card-tag">${t}</span>`).join('')}</div>
                         </div>
-                        <div class="t-card-details">
-                            <span>${km}</span>
-                            <span class="t-badge">Match Alabol</span>
-                        </div>
+                        <a href="../agendar-cita.html?auto=${car.id}" class="t-card-cita" onclick="event.stopPropagation();">📅 Agendar primera cita</a>
                     </div>
                 </div>
             `;
@@ -1540,7 +1841,7 @@
 
     function swipe(direction) {
         const cards = document.querySelectorAll('.tinder-card');
-        const displayCars = matchStack.length > 0 ? matchStack.slice(0, 10) : FALLBACK_MATCHES;
+        const displayCars = matchStack.slice(0, 10);
         if (currentCardIndex >= cards.length) return;
 
         const card = cards[currentCardIndex];
@@ -1549,11 +1850,38 @@
         card.classList.remove('active');
         card.classList.add(direction === 'right' ? 'swiped-right' : 'swiped-left');
 
-        if (direction === 'right' && car) {
+        const isLike = direction === 'right';
+
+        if (isLike && car) {
             likedCars.push(car);
             trackGA('matchmaker_swipe_like', { car_id: car.id, marca: car.marca, modelo: car.modelo });
         } else {
+            if (car) passedCars.push(car);
             trackGA('matchmaker_swipe_pass', { car_id: car ? car.id : '' });
+        }
+
+        // Save match decision to Supabase
+        if (savedLeadId && car && car.id) {
+            // First try update (match already exists as 'sugerido' from trigger)
+            supabaseClient.from('matches')
+                .update({ estatus: isLike ? 'liked' : 'passed', updated_at: new Date().toISOString() })
+                .eq('lead_id', savedLeadId)
+                .eq('vehiculo_id', car.id)
+                .select()
+                .then(({ data, error }) => {
+                    console.log('Swipe update:', car.marca, car.modelo, '→', isLike ? 'LIKED' : 'PASSED', 'result:', data?.length || 0, 'rows', error || '');
+                    // If update didn't affect any rows, insert new
+                    if (!data || data.length === 0) {
+                        supabaseClient.from('matches').insert([{
+                            lead_id: savedLeadId,
+                            vehiculo_id: car.id,
+                            estatus: isLike ? 'liked' : 'passed',
+                            score_match: isLike ? 100 : 0
+                        }]).select().then(({ data: d2, error: e2 }) => {
+                            console.log('Swipe insert fallback:', d2?.length || 0, 'rows', e2 || '');
+                        });
+                    }
+                });
         }
 
         currentCardIndex++;
@@ -1562,7 +1890,6 @@
             if (currentCardIndex < cards.length) {
                 updateTinderCards();
             } else {
-                // All swiped - show success
                 document.getElementById('tinderDeck').classList.remove('active');
                 document.getElementById('tinderActions').classList.remove('active');
                 showFinalSuccess();
@@ -1600,9 +1927,90 @@
 
         summaryBox.innerHTML = html;
 
-        // WhatsApp link
-        const msg = encodeURIComponent(`Hola! Acabo de hacer match con ${numLikes} auto${numLikes > 1 ? 's' : ''} en Alabol y quiero la primera cita. Soy ${formData.nombre} de ${formData.ciudad}.`);
-        document.getElementById('ctaWhatsApp').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
+        // Render liked cars with cita buttons — grouped by origen
+        const citasContainer = document.getElementById('likedCarsCitas');
+        if (likedCars.length > 0) {
+            const agenciaLikes = likedCars.filter(c => !c.origen || c.origen === 'agencia' || c.origen === 'local');
+            const subastaMxLikes = likedCars.filter(c => c.origen === 'subasta_mx');
+            const subastaUsaLikes = likedCars.filter(c => c.origen === 'subasta_usa');
+
+            let citasHtml = '';
+
+            if (agenciaLikes.length > 0) {
+                citasHtml += '<p style="font-size:12px;color:var(--gold);font-weight:600;margin:12px 0 8px;text-align:left;">🏢 Tus matches de Agencia</p>';
+                citasHtml += agenciaLikes.map(c => {
+                    const price = '$' + Number(c.precio_venta || 0).toLocaleString('es-MX');
+                    return `<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(46,125,50,0.08);border:1px solid rgba(46,125,50,0.2);border-radius:12px;padding:12px;margin-bottom:8px;">
+                        <div><div style="font-size:13px;font-weight:700;color:white;">${c.marca} ${c.modelo} ${c.anio}</div><div style="font-size:12px;color:var(--gold);">${price}</div></div>
+                        <a href="../agendar-cita.html?auto=${c.id}" style="padding:8px 14px;background:linear-gradient(135deg,#d4af37,#f4e5b0);color:#0a1f1a;border-radius:10px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap;">📅 Agendar</a>
+                    </div>`;
+                }).join('');
+            }
+
+            if (subastaMxLikes.length > 0) {
+                citasHtml += '<p style="font-size:12px;color:#F57C00;font-weight:600;margin:12px 0 8px;text-align:left;">🔥 Tus matches de Subasta MX</p>';
+                citasHtml += subastaMxLikes.map(c => {
+                    const price = '$' + Number(c.precio_venta || 0).toLocaleString('es-MX');
+                    const waMsg = encodeURIComponent(`Hola Alabol! Me interesa este auto de subasta:\n🚗 ${c.marca} ${c.modelo} ${c.anio}\n📍 Subasta México\nVi este auto en el Matchmaker y quiero más información.`);
+                    return `<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(230,81,0,0.08);border:1px solid rgba(230,81,0,0.2);border-radius:12px;padding:12px;margin-bottom:8px;">
+                        <div><div style="font-size:13px;font-weight:700;color:white;">${c.marca} ${c.modelo} ${c.anio}</div><div style="font-size:12px;color:#F57C00;">Desde ${price}</div></div>
+                        <a href="https://api.whatsapp.com/send?phone=525568667571&text=${waMsg}" target="_blank" style="padding:8px 14px;background:#E65100;color:white;border-radius:10px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap;">🔥 Me interesa</a>
+                    </div>`;
+                }).join('');
+            }
+
+            if (subastaUsaLikes.length > 0) {
+                citasHtml += '<p style="font-size:12px;color:#5C6BC0;font-weight:600;margin:12px 0 8px;text-align:left;">🇺🇸 Tus matches de Subasta USA</p>';
+                citasHtml += subastaUsaLikes.map(c => {
+                    const price = '$' + Number(c.precio_venta || 0).toLocaleString('es-MX');
+                    const waMsg = encodeURIComponent(`Hola Alabol! Me interesa este auto de subasta USA:\n🚗 ${c.marca} ${c.modelo} ${c.anio}\n🇺🇸 Subasta USA\nQuiero saber sobre el proceso de importación.`);
+                    return `<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(26,35,126,0.08);border:1px solid rgba(26,35,126,0.2);border-radius:12px;padding:12px;margin-bottom:8px;">
+                        <div><div style="font-size:13px;font-weight:700;color:white;">${c.marca} ${c.modelo} ${c.anio}</div><div style="font-size:12px;color:#5C6BC0;">~${price} USD</div></div>
+                        <div style="display:flex;gap:6px;">
+                            <a href="https://alabolcar-hwh56g8k.manus.space/calculators" target="_blank" style="padding:8px 10px;background:#1A237E;color:white;border-radius:10px;font-size:10px;font-weight:700;text-decoration:none;white-space:nowrap;">🧮 Calcular</a>
+                            <a href="https://api.whatsapp.com/send?phone=525568667571&text=${waMsg}" target="_blank" style="padding:8px 10px;background:#25D366;color:white;border-radius:10px;font-size:10px;font-weight:700;text-decoration:none;white-space:nowrap;">💬 Info</a>
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+
+            if (subastaMxLikes.length > 0 || subastaUsaLikes.length > 0) {
+                citasHtml += '<p style="font-size:11px;color:#a8c5b8;margin-top:12px;text-align:left;font-style:italic;">💡 Los autos de subasta tienen precios variables. Tu asesor te explicará el proceso y te ayudará a calcular el costo final.</p>';
+            }
+
+            citasContainer.innerHTML = citasHtml;
+        }
+
+        // Save user data for agendar-cita pre-fill
+        sessionStorage.setItem('alabol_user', JSON.stringify({
+            nombre: formData.nombre,
+            whatsapp: formData.whatsapp,
+            email: formData.email,
+            ciudad: formData.ciudad,
+            lead_id: savedLeadId
+        }));
+
+        // WhatsApp link — different message if no matches
+        let msg;
+        if (likedCars.length > 0) {
+            const likedList = likedCars.map(c => `- ${c.marca} ${c.modelo} ${c.anio} ($${Number(c.precio_venta||0).toLocaleString('es-MX')})`).join('\n');
+            msg = encodeURIComponent(
+                `Hola! Soy ${formData.nombre} de ${formData.ciudad}.\n\n` +
+                `Me gustaron estos autos en Alabol:\n${likedList}\n\n` +
+                `Quiero más información o agendar una cita.`
+            );
+        } else {
+            const marcasStr = (formData.marcas || []).join(', ') || 'Cualquiera';
+            const tipoStr = formData.carroceria || 'Cualquier tipo';
+            const budgetStr = '$' + (formData.presupuestoMin||0).toLocaleString('es-MX') + ' - $' + (formData.presupuestoMax||0).toLocaleString('es-MX');
+            msg = encodeURIComponent(
+                `Hola! Soy ${formData.nombre} de ${formData.ciudad}.\n\n` +
+                `Usé el Matchmaker pero no encontré mi auto ideal.\n\n` +
+                `🚗 Busco: ${tipoStr}\n💛 Marcas: ${marcasStr}\n📅 Año: ${formData.anioDesde||'?'}-${formData.anioHasta||'?'}\n💰 Presupuesto: ${budgetStr}\n\n` +
+                `¿Me pueden buscar opciones personalizadas?`
+            );
+        }
+        document.getElementById('ctaWhatsApp').href = `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${msg}`;
 
         successScreen.classList.add('active');
 
@@ -1614,27 +2022,34 @@
             anio_desde: formData.anioDesde, anio_hasta: formData.anioHasta,
             presupuesto_min: formData.presupuestoMin, presupuesto_max: formData.presupuestoMax,
             dinero_status: formData.dineroStatus, urgencia: formData.urgencia, proposito: formData.proposito,
-            matches_liked: likedCars.map(c => c.id || `${c.marca}_${c.modelo}`),
-            matches_passed: (matchStack.length > 0 ? matchStack : FALLBACK_MATCHES)
-                .filter(c => !likedCars.includes(c)).map(c => c.id || `${c.marca}_${c.modelo}`).slice(0, 10),
+            lead_id: savedLeadId,
+            matches_liked: likedCars.map(c => ({ id: c.id, marca: c.marca, modelo: c.modelo, anio: c.anio, precio: c.precio_venta })),
+            matches_passed: passedCars.map(c => ({ id: c.id, marca: c.marca, modelo: c.modelo })),
             tiene_matches: numLikes > 0,
             fuente: 'matchmaker_v2'
         };
 
-        // Supabase lead save
-        try {
-            await supabaseClient.from('leads_matchmaker').insert([{
-                nombre: formData.nombre, whatsapp: formData.whatsapp, ciudad: formData.ciudad,
-                tipo_vehiculo: formData.carroceria, marcas: formData.marcas,
-                anio_min: parseInt(formData.anioDesde) || null, anio_max: parseInt(formData.anioHasta) || null,
-                presupuesto_min: formData.presupuestoMin, presupuesto_max: formData.presupuestoMax,
-                dinero_listo: formData.dineroStatus, prioridad: formData.urgencia,
-                uso_auto: formData.proposito, caracteristicas: formData.greenFlags
-            }]);
-            trackGA('lead_submitted', { presupuesto_max: formData.presupuestoMax, marcas: formData.marcas.join(', ') });
-        } catch (e) { console.warn('Supabase save failed:', e); }
+        // Lead already saved in step 5 unlock — update it with match results
+        if (savedLeadId) {
+            try {
+                await supabaseClient.from('leads_matchmaker')
+                    .update({ matches_iniciales: likedCars.length })
+                    .eq('id', savedLeadId);
+            } catch (e) { console.warn('Lead update failed:', e); }
+        }
 
-        // Webhook
+        // Notify owner via Edge Function — wait 2s for swipe updates to finish writing to DB
+        if (savedLeadId) {
+            setTimeout(() => {
+                fetch(`${SUPABASE_URL}/functions/v1/notify-new-lead`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ lead_id: savedLeadId })
+                }).then(r => r.json()).then(r => console.log('Notification result:', r)).catch(err => console.warn('Notify failed:', err));
+            }, 2000);
+        }
+
+        // Webhook (Make.com)
         const N8N_WEBHOOK_URL = 'https://hook.us2.make.com/z9xj6uu5nfuj54ko2eepzox336fly4ib';
         fetch(N8N_WEBHOOK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(finalPayload) })
             .catch(err => console.warn('Webhook failed:', err));
@@ -1644,8 +2059,29 @@
         fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(finalPayload) })
             .catch(err => console.warn('Sheets save failed:', err));
 
+        // Show "no match?" section with pre-filled WhatsApp
+        document.getElementById('noMatchSection').style.display = 'block';
+        prepararNoMatchWhatsApp();
+
         // Clear saved progress
         localStorage.removeItem(STORAGE_KEY);
+    }
+
+    function prepararNoMatchWhatsApp() {
+        var marcas = (formData.marcas || []).join(', ') || 'Cualquiera';
+        var tipo = formData.carroceria || 'Cualquier tipo';
+        var budget = '$' + (formData.presupuestoMin || 0).toLocaleString('es-MX') + ' - $' + (formData.presupuestoMax || 0).toLocaleString('es-MX');
+        var msg = encodeURIComponent(
+            'Hola Alabol! Soy ' + (formData.nombre || '') + ' de ' + (formData.ciudad || '') + '.\n\n' +
+            'Usé el Matchmaker pero no encontré exactamente lo que busco.\n\n' +
+            '🚗 Tipo: ' + tipo + '\n' +
+            '💛 Marcas: ' + marcas + '\n' +
+            '📅 Año: ' + (formData.anioDesde || '') + '-' + (formData.anioHasta || '') + '\n' +
+            '💰 Presupuesto: ' + budget + '\n\n' +
+            '¿Me pueden buscar opciones personalizadas?'
+        );
+        var btn = document.getElementById('noMatchWhatsApp');
+        if (btn) btn.href = 'https://api.whatsapp.com/send?phone=525568667571&text=' + msg;
     }
 
     // =====================
@@ -1692,21 +2128,98 @@
             matchStack = matches;
             findingScreen.classList.remove('active');
 
-            // Render blurred reveal cards
-            renderRevealCards(matchStack);
+            if (matchStack.length === 0) {
+                // NO MATCHES — skip reveal + swipe, go straight to data capture
+                // Show a special "no match" step instead of reveal
+                document.querySelector('.progress-bar').style.display = 'flex';
+                personalityHook.style.display = 'block';
+                navButtons.style.display = 'flex';
 
-            // Go to step 4 (reveal)
-            currentStep = 3;
-            document.querySelector('.progress-bar').style.display = 'flex';
-            personalityHook.style.display = 'block';
-            navButtons.style.display = 'flex';
-            renderStep();
+                // Update reveal step to show "no match found" with dating language
+                const revealTitle = document.getElementById('revealTitle');
+                const revealSubtitle = document.getElementById('revealSubtitle');
+                const revealContainer = document.getElementById('revealCardsContainer');
+                const compatScore = document.getElementById('compatScore');
+                const unlockBanner = document.querySelector('.unlock-banner');
+
+                if (document.querySelector('[data-step="3"] > div:first-child > div:first-child')) {
+                    document.querySelector('[data-step="3"] > div:first-child > div:first-child').textContent = '💔';
+                }
+                if (revealTitle) revealTitle.innerHTML = 'Aún no llega tu match ideal';
+                if (revealSubtitle) revealSubtitle.textContent = 'No te preocupes, a veces el amor tarda. Déjanos tus datos y nosotros lo buscamos por ti.';
+                if (compatScore) compatScore.style.display = 'none';
+                if (unlockBanner) {
+                    unlockBanner.innerHTML = `
+                        <p class="ub-title">🔍 Tenemos acceso a inventario exclusivo</p>
+                        <p class="ub-sub">Autos de agencias, subastas y importaciones que no están publicados. Déjanos tus datos y te buscamos opciones personalizadas.</p>
+                    `;
+                }
+                if (revealContainer) {
+                    var marcasResumen = (formData.marcas || []).join(', ') || 'Cualquiera';
+                    var tipoResumen = formData.carroceria || 'Cualquier tipo';
+                    var budgetResumen = '$' + (formData.presupuestoMin || 0).toLocaleString('es-MX') + ' - $' + (formData.presupuestoMax || 0).toLocaleString('es-MX');
+                    revealContainer.innerHTML = `
+                        <div style="background:rgba(212,175,55,0.06);border:1px solid rgba(212,175,55,0.15);border-radius:14px;padding:16px;margin-bottom:12px;">
+                            <div style="font-size:12px;color:var(--gold);font-weight:600;margin-bottom:10px;">Tu perfil de búsqueda:</div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                                <div><div style="font-size:10px;color:var(--green-text);opacity:0.6;">Tipo</div><div style="font-size:13px;color:white;font-weight:600;">${tipoResumen}</div></div>
+                                <div><div style="font-size:10px;color:var(--green-text);opacity:0.6;">Marcas</div><div style="font-size:13px;color:white;font-weight:600;">${marcasResumen}</div></div>
+                                <div><div style="font-size:10px;color:var(--green-text);opacity:0.6;">Año</div><div style="font-size:13px;color:white;font-weight:600;">${formData.anioDesde || '?'} - ${formData.anioHasta || '?'}</div></div>
+                                <div><div style="font-size:10px;color:var(--green-text);opacity:0.6;">Presupuesto</div><div style="font-size:13px;color:var(--gold);font-weight:700;">${budgetResumen}</div></div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // Change the next button to "Déjame tus datos"
+                currentStep = 3;
+                renderStep();
+                nextBtn.textContent = '📝 Déjame tus datos para buscártelo';
+
+            } else {
+                // HAS MATCHES — normal flow: show reveal cards
+                renderRevealCards(matchStack);
+
+                const revealTitle = document.getElementById('revealTitle');
+                const revealSubtitle = document.getElementById('revealSubtitle');
+                revealTitle.innerHTML = `¡Hiciste match! (<span id="matchCountReveal">${matchStack.length > 3 ? 3 : matchStack.length}</span> resultados)`;
+                revealSubtitle.textContent = 'Estos autos coinciden con lo que buscas';
+
+                currentStep = 3;
+                document.querySelector('.progress-bar').style.display = 'flex';
+                personalityHook.style.display = 'block';
+                navButtons.style.display = 'flex';
+                renderStep();
+            }
 
         } else if (currentStep === 4) {
-            // After personal data → unlock with confetti → go to swipe
+            // After personal data → save lead NOW, then unlock with confetti → go to swipe
             collectStepData(4);
             trackGA('matchmaker_data_submitted', { nombre: formData.nombre, ciudad: formData.ciudad });
             trackFunnelStep(6, 'data_submitted');
+
+            // Save lead to Supabase immediately and capture the ID
+            try {
+                const { data: insertedLead, error } = await supabaseClient
+                    .from('leads_matchmaker')
+                    .insert([{
+                        nombre: formData.nombre, whatsapp: formData.whatsapp, ciudad: formData.ciudad,
+                        email: formData.email, tipo_vehiculo: formData.carroceria, marcas: formData.marcas,
+                        anio_min: parseInt(formData.anioDesde) || null, anio_max: parseInt(formData.anioHasta) || null,
+                        presupuesto_min: formData.presupuestoMin, presupuesto_max: formData.presupuestoMax,
+                        dinero_listo: formData.dineroStatus, prioridad: formData.urgencia,
+                        uso_auto: formData.proposito, caracteristicas: formData.greenFlags
+                    }])
+                    .select('id')
+                    .single();
+                if (error) {
+                    console.error('Lead insert error:', error);
+                } else if (insertedLead) {
+                    savedLeadId = insertedLead.id;
+                    console.log('Lead saved with ID:', savedLeadId);
+                }
+                trackGA('lead_submitted', { presupuesto_max: formData.presupuestoMax, marcas: formData.marcas.join(', ') });
+            } catch (e) { console.error('Lead save failed:', e); }
 
             // Confetti celebration
             if (typeof confetti === 'function') {
@@ -1739,18 +2252,42 @@
     });
 
     function renderStep() {
-        allSteps.forEach((s, i) => s.classList.toggle('active', i === currentStep));
-        progressSegments.forEach((seg, i) => seg.classList.toggle('active', i <= currentStep));
-        progressLabel.textContent = `${currentStep + 1} / ${TOTAL_STEPS}`;
+        // Swipe-style exit animation on previous active step
+        const prevActive = document.querySelector('.step.active');
+        if (prevActive && parseInt(prevActive.dataset.step) !== currentStep) {
+            prevActive.classList.remove('active');
+            prevActive.classList.add('step-exit');
+            setTimeout(() => prevActive.classList.remove('step-exit'), 300);
+        }
+
+        // Activate the new step after a brief delay for exit anim
+        setTimeout(() => {
+            allSteps.forEach((s, i) => {
+                if (i === currentStep) {
+                    s.classList.remove('step-exit');
+                    s.classList.add('active');
+                } else {
+                    s.classList.remove('active');
+                }
+            });
+        }, prevActive && parseInt(prevActive.dataset.step) !== currentStep ? 150 : 0);
+
+        // Update progress ring
+        const pct = STEP_PERCENTS[currentStep] || 17;
+        const offset = RING_CIRCUMFERENCE - (RING_CIRCUMFERENCE * pct / 100);
+        progressRing.style.strokeDashoffset = offset;
+        progressPercent.textContent = pct + '%';
+
+        // Collapsing header (Upgrade 3)
+        logoSection.classList.toggle('compact', currentStep > 0);
 
         backBtn.style.display = currentStep > 0 && currentStep < 5 ? 'block' : 'none';
 
         // Conditional button text
         if (currentStep === 3) {
-            nextBtn.textContent = '🔓 Ver quién me hizo match';
+            nextBtn.textContent = '🔓 Revelar perfiles →';
         } else if (currentStep === 4) {
-            const n = matchStack.length > 0 ? Math.min(matchStack.length, 3) : 3;
-            nextBtn.textContent = `💘 Revelar mis ${n} pretendientes`;
+            nextBtn.textContent = '💘 Revelar perfiles →';
         } else if (currentStep === 5) {
             navButtons.style.display = 'none'; // Swipe step: no nav
         } else {
@@ -1768,6 +2305,11 @@
             trustRow.style.display = 'flex';
         }
 
+        // Keep trust row visible on steps 0-2
+        if (currentStep <= 2) {
+            trustRow.style.display = 'flex';
+        }
+
         // Show success screen hides steps
         if (successScreen.classList.contains('active')) {
             allSteps.forEach(s => s.classList.remove('active'));
@@ -1776,12 +2318,58 @@
             personalityHook.style.display = 'none';
         }
 
-        // Market info update for step 3
+        // Market info update for step 3 — use real data when available
         if (currentStep === 2) {
-            const range = marketRanges[formData.carroceria] || marketRanges.suv;
-            document.getElementById('marketTypeLabel').textContent = range.label;
+            const fallbackRange = marketRanges[formData.carroceria] || marketRanges.suv;
+            document.getElementById('marketTypeLabel').textContent = fallbackRange.label;
             document.getElementById('marketYearLabel').textContent = `${formData.anioDesde || '2018'}-${formData.anioHasta || '2026'}`;
-            document.querySelector('.market-info .mi-value').textContent = `Rango promedio ${range.min} - ${range.max} MXN`;
+
+            // Try to compute range from real inventory
+            if (realInventory.length > 0) {
+                const prices = realInventory
+                    .filter(c => c.precio_venta && c.precio_venta > 0)
+                    .map(c => c.precio_venta)
+                    .sort((a,b) => a - b);
+                if (prices.length >= 2) {
+                    const realMin = '$' + prices[Math.floor(prices.length * 0.1)].toLocaleString('es-MX');
+                    const realMax = '$' + prices[Math.floor(prices.length * 0.9)].toLocaleString('es-MX');
+                    document.querySelector('.market-info .mi-value').textContent = `Rango en inventario: ${realMin} - ${realMax} MXN`;
+                } else {
+                    document.querySelector('.market-info .mi-value').textContent = `Rango promedio ${fallbackRange.min} - ${fallbackRange.max} MXN`;
+                }
+            } else {
+                document.querySelector('.market-info .mi-value').textContent = `Rango promedio ${fallbackRange.min} - ${fallbackRange.max} MXN`;
+            }
+        }
+
+        // Real compatibility score based on actual matches found
+        if (currentStep === 3) {
+            const compatEl = document.getElementById('compatScore');
+            if (compatEl) {
+                let target = 0;
+                if (matchStack.length >= 5) target = 90 + Math.min(matchStack.length, 10);
+                else if (matchStack.length >= 3) target = 75 + matchStack.length * 3;
+                else if (matchStack.length >= 1) target = 50 + matchStack.length * 10;
+                else target = 0; // honest: no matches
+
+                if (target === 0) {
+                    compatEl.textContent = '—';
+                    compatEl.style.fontSize = '32px';
+                } else {
+                    let current = 0;
+                    const startTime = performance.now();
+                    const duration = 1500;
+                    function animateCompat(now) {
+                        const elapsed = now - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+                        const eased = 1 - Math.pow(1 - progress, 3);
+                        current = Math.round(eased * target);
+                        compatEl.textContent = current + '%';
+                        if (progress < 1) requestAnimationFrame(animateCompat);
+                    }
+                    requestAnimationFrame(animateCompat);
+                }
+            }
         }
 
         // Personality hook
@@ -1816,6 +2404,67 @@
         }
     }
     createBubbles();
+
+    // =====================
+    // TOAST NOTIFICATIONS — REAL DATA ONLY
+    // =====================
+    let toastInterval = null;
+    let usedToastIndexes = [];
+
+    function buildRealToast() {
+        // Only show toasts based on real inventory
+        if (!realInventory || realInventory.length === 0) return null;
+
+        // Pick a random car we haven't shown yet
+        let available = realInventory.map((c, i) => i).filter(i => !usedToastIndexes.includes(i));
+        if (available.length === 0) { usedToastIndexes = []; available = realInventory.map((c, i) => i); }
+
+        const idx = available[Math.floor(Math.random() * available.length)];
+        usedToastIndexes.push(idx);
+        const car = realInventory[idx];
+
+        const templates = [
+            `🚗 ${car.marca} ${car.modelo} ${car.anio} disponible`,
+            `📍 ${car.marca} ${car.modelo} en inventario — $${(car.precio_venta||0).toLocaleString('es-MX')}`,
+            `🆕 ${car.marca} ${car.modelo} ${car.anio} · ${car.kilometraje || '—'}`,
+        ];
+        return templates[Math.floor(Math.random() * templates.length)];
+    }
+
+    function showToast(msg) {
+        const container = document.getElementById('toastContainer');
+        if (!container || !msg) return;
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = msg;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.classList.add('exit');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    function startToasts() {
+        // Wait 3s for real data to load, then start
+        setTimeout(() => {
+            function scheduleNext() {
+                const delay = 10000 + Math.random() * 5000; // 10-15 seconds
+                toastInterval = setTimeout(() => {
+                    if (currentStep >= 4) { stopToasts(); return; }
+                    const msg = buildRealToast();
+                    if (msg) showToast(msg);
+                    scheduleNext();
+                }, delay);
+            }
+            scheduleNext();
+        }, 3000);
+    }
+
+    function stopToasts() {
+        if (toastInterval) { clearTimeout(toastInterval); toastInterval = null; }
+    }
+
+    startToasts();
 
     // =====================
     // INIT
@@ -1853,5 +2502,8 @@
         updateValidation();
     }
     </script>
+<script>
+(function(){var btn=document.getElementById('navHamburgerBtn');var links=document.getElementById('navLinksNav');if(!btn||!links)return;btn.addEventListener('click',function(){var isOpen=links.classList.toggle('open');btn.classList.toggle('open',isOpen);btn.setAttribute('aria-expanded',isOpen);});links.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){links.classList.remove('open');btn.classList.remove('open');});});})();
+</script>
 </body>
 </html>

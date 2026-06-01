@@ -6,14 +6,11 @@ const SUPABASE_URL = 'https://rgnunjngtsgqgvplawfr.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8';
 
 // Initialize Supabase Client (requires supabase-js loaded before this via CDN)
-let supabase;
-if (typeof window.supabase !== 'undefined') {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    window.supabaseClient = supabase;
-    console.log('✅ Supabase initialized successfully.');
-} else {
-    console.error('❌ Supabase JS library not loaded. Make sure to include the CDN script before config.js.');
-}
+(function() {
+    if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
+        window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+})();
 
 // Global UI Helper Functions
 

@@ -4,10 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" href="logo-circular.png" type="image/png">
+<link rel="manifest" href="/manifest-agencias.json">
+<meta name="theme-color" content="#0a1f1a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Alabol Agencias">
+<link rel="apple-touch-icon" href="/logo-circular.png">
 <meta property="og:title" content="Alabol Car Broker | El Tinder de los Autos">
 <meta property="og:description" content="Encuentra tu media naranja con llantas. Compra, vende o invierte en autos verificados.">
-<meta property="og:image" content="https://alabol.netlify.app/logo-circular.png">
-<meta property="og:url" content="https://alabol.netlify.app">
+<meta property="og:image" content="https://alabolcar.com.mx/logo-circular.png">
+<meta property="og:url" content="https://alabolcar.com.mx">
 <meta property="og:type" content="website">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-RMENV8G466"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RMENV8G466');</script>
@@ -16,6 +22,7 @@
 <meta name="description" content="Programa de Agencias Aliadas — conecta tu inventario con compradores verificados. Tu showroom digital en el Tinder de los Autos.">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <style>
 :root {
   --bg-primary: #0a1f1a;
@@ -584,6 +591,83 @@ textarea.fi { resize: vertical; min-height: 80px; }
 .trust-bar-wrap { height: 6px; background: var(--bg-secondary); border-radius: 3px; margin-top: 12px; overflow: hidden; }
 .trust-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--emerald), var(--gold)); transition: width 0.6s ease; }
 
+/* Bulk Accordion */
+.bulk-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 200;
+  display: none; align-items: flex-end; justify-content: center;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+.bulk-overlay.open { display: flex; }
+.bulk-panel {
+  background: var(--bg-primary); border: 1px solid var(--glass-border);
+  border-radius: 20px 20px 0 0; width: 100%; max-width: 540px;
+  max-height: 92vh; overflow-y: auto; padding: 0;
+}
+.bulk-header {
+  position: sticky; top: 0; z-index: 1; background: var(--bg-primary);
+  border-bottom: 1px solid var(--glass-border); padding: 16px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.bulk-progress-bar { height: 4px; background: var(--bg-secondary); border-radius: 2px; margin: 0 20px 12px; }
+.bulk-progress-fill { height: 100%; background: linear-gradient(90deg, var(--emerald), var(--gold)); border-radius: 2px; transition: width 0.4s; }
+.bulk-list { padding: 0 12px 12px; }
+.bulk-item {
+  background: var(--glass-bg); border: 1px solid var(--glass-border);
+  border-radius: 14px; margin-bottom: 8px; overflow: hidden; transition: all 0.3s;
+}
+.bulk-item.has-photos { border-color: rgba(16,185,129,0.3); }
+.bulk-item-header {
+  display: flex; align-items: center; padding: 12px 14px; cursor: pointer; gap: 12px;
+}
+.bulk-item-header:hover { background: rgba(212,175,55,0.04); }
+.bulk-item-status {
+  width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-size: 12px; flex-shrink: 0; font-weight: 800;
+}
+.bulk-item-status.pending { background: rgba(148,184,167,0.1); color: var(--green-muted); border: 1px solid rgba(148,184,167,0.15); }
+.bulk-item-status.done { background: rgba(16,185,129,0.15); color: var(--emerald); border: 1px solid rgba(16,185,129,0.3); }
+.bulk-item-info { flex: 1; min-width: 0; }
+.bulk-item-name { font-size: 13px; font-weight: 700; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bulk-item-meta { font-size: 11px; color: var(--green-text); opacity: 0.7; }
+.bulk-item-arrow { color: var(--green-muted); font-size: 12px; transition: transform 0.3s; }
+.bulk-item.expanded .bulk-item-arrow { transform: rotate(180deg); }
+.bulk-item-body { display: none; padding: 0 14px 14px; }
+.bulk-item.expanded .bulk-item-body { display: block; }
+.bulk-photo-zone {
+  border: 2px dashed var(--glass-border); border-radius: 10px; padding: 16px;
+  text-align: center; cursor: pointer; transition: all 0.3s; margin-bottom: 8px;
+}
+.bulk-photo-zone:hover { border-color: var(--gold); background: rgba(212,175,55,0.04); }
+.bulk-photo-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 8px;
+}
+.bulk-photo-thumb {
+  position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden;
+  background: var(--bg-secondary); border: 1px solid var(--glass-border);
+}
+.bulk-photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.bulk-photo-num {
+  position: absolute; top: 3px; left: 3px; background: rgba(0,0,0,0.7);
+  color: var(--gold); font-size: 10px; font-weight: 800; width: 18px; height: 18px;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+}
+.bulk-photo-del {
+  position: absolute; top: 3px; right: 3px; background: rgba(239,68,68,0.85);
+  color: white; border: none; width: 18px; height: 18px; border-radius: 50%;
+  font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.bulk-photo-num.portada { background: var(--gold); color: var(--bg-primary); }
+.bulk-photo-thumb.selected { border: 2px solid var(--gold); box-shadow: 0 0 12px rgba(212,175,55,0.5); transform: scale(1.05); }
+.bulk-photo-thumb { transition: all 0.2s; cursor: pointer; }
+.bulk-footer {
+  position: sticky; bottom: 0; background: var(--bg-primary);
+  border-top: 1px solid var(--glass-border); padding: 14px 20px;
+}
+@media(min-width:500px) {
+  .bulk-overlay { align-items: center; }
+  .bulk-panel { border-radius: 20px; max-height: 85vh; }
+}
+
 /* Wizard Footer */
 .wiz-footer {
   position: absolute; bottom: 0; left: 0; right: 0; z-index: 3;
@@ -681,9 +765,97 @@ textarea.fi { resize: vertical; min-height: 80px; }
   .progress-label { font-size: 9px; }
   .wiz-step-title { font-size: 18px; }
 }
+/* ── Auth Screen (login landing) ── */
+#landing { min-height:100vh; display:flex; align-items:center; justify-content:center; }
+.auth-center { max-width:420px; width:100%; margin:0 auto; padding:48px 24px; text-align:center; }
+.auth-logo-img { width:90px; height:90px; object-fit:contain; position:relative; z-index:2; filter:drop-shadow(0 0 16px rgba(212,175,55,0.5)); }
+.auth-title { font-size:30px; font-weight:800; color:var(--gold); margin:18px 0 6px; text-shadow:0 0 20px rgba(212,175,55,0.3); }
+.auth-subtitle { font-size:15px; color:var(--green-text); opacity:0.75; margin-bottom:40px; line-height:1.5; }
+.auth-options { display:flex; flex-direction:column; gap:12px; margin-bottom:32px; }
+.auth-opt-btn { display:flex; align-items:center; gap:16px; padding:18px 20px; border-radius:18px; border:none; width:100%; cursor:pointer; transition:all 0.25s; text-align:left; font-family:inherit; }
+.auth-opt-btn:hover { transform:translateY(-2px); }
+.auth-opt-gold { background:rgba(212,175,55,0.1); border:1.5px solid rgba(212,175,55,0.35); }
+.auth-opt-gold:hover { background:rgba(212,175,55,0.18); box-shadow:0 6px 24px rgba(212,175,55,0.2); }
+.auth-opt-green { background:rgba(34,197,94,0.08); border:1.5px solid rgba(34,197,94,0.28); }
+.auth-opt-green:hover { background:rgba(34,197,94,0.14); box-shadow:0 6px 24px rgba(34,197,94,0.12); }
+.auth-opt-ico { width:54px; height:54px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+.auth-opt-ico-gold { background:rgba(212,175,55,0.15); color:var(--gold); }
+.auth-opt-ico-green { background:rgba(34,197,94,0.12); color:#22c55e; }
+.auth-opt-text { flex:1; }
+.auth-opt-title { display:block; font-size:18px; font-weight:800; color:white; margin-bottom:3px; }
+.auth-opt-sub { display:block; font-size:13px; color:var(--green-text); opacity:0.65; }
+.auth-opt-arrow { color:var(--green-text); opacity:0.3; font-size:13px; }
+.auth-help-text { font-size:13px; color:var(--green-text); opacity:0.55; margin-bottom:10px; }
+.auth-wa-link { color:#22c55e; text-decoration:none; font-weight:600; font-size:14px; display:inline-flex; align-items:center; gap:6px; }
+.auth-wa-link:hover { opacity:0.85; }
+
+/* ── Estilo B — Car Cards ── */
+.car-card-banner { width:100%; height:130px; background:var(--bg-secondary); display:flex; align-items:center; justify-content:center; color:rgba(148,184,167,0.25); font-size:36px; overflow:hidden; position:relative; }
+.car-card-banner img { width:100%; height:100%; object-fit:cover; }
+.car-card-banner-overlay { position:absolute; inset:0; background:linear-gradient(to bottom,transparent 35%,rgba(0,0,0,0.75)); }
+.car-card-banner-status { position:absolute; top:8px; right:8px; font-size:9px !important; padding:2px 8px !important; margin:0 !important; }
+.car-card-banner-info { position:absolute; bottom:0; left:0; right:0; padding:8px 12px; display:flex; align-items:flex-end; justify-content:space-between; z-index:1; }
+.car-card-banner-name { font-size:13px; font-weight:800; color:white; }
+.car-card-banner-km { font-size:10px; color:rgba(255,255,255,0.55); margin-top:1px; }
+.car-card-banner-price { font-size:14px; font-weight:800; color:var(--gold); white-space:nowrap; }
+.car-card-actions-b { display:grid; grid-template-columns:1fr 1fr 1fr; }
+.car-action-btn-b { background:none; border:none; border-right:1px solid rgba(255,255,255,0.06); padding:12px 6px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:5px; transition:background 0.2s; font-family:inherit; }
+.car-action-btn-b:last-child { border-right:none; }
+.car-action-btn-b:hover { background:rgba(255,255,255,0.04); }
+.car-action-btn-b:active { background:rgba(255,255,255,0.08); }
+.car-action-ico { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:14px; }
+.car-action-ico-edit { background:rgba(212,175,55,0.12); border:1.5px solid rgba(212,175,55,0.35); color:var(--gold); }
+.car-action-ico-photos { background:rgba(34,197,94,0.1); border:1.5px solid rgba(34,197,94,0.3); color:#22c55e; }
+.car-action-ico-delete { background:rgba(239,68,68,0.08); border:1.5px solid rgba(239,68,68,0.22); color:#f87171; }
+.car-action-lbl { font-size:9px; font-weight:700; }
+.car-action-lbl-edit { color:var(--gold); }
+.car-action-lbl-photos { color:#22c55e; }
+.car-action-lbl-delete { color:#f87171; }
+.car-action-btn-dash { background:none; border:none; cursor:pointer; padding:0; display:flex; align-items:center; }
+.kpi-filter { transition:all 0.2s; }
+.kpi-filter:hover { border-color:rgba(212,175,55,0.5) !important; transform:translateY(-2px); }
+
+/* ── Toast ── */
+#toast-container { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); z-index:9999; display:flex; flex-direction:column; gap:10px; pointer-events:none; }
+.toast { display:flex; align-items:center; gap:10px; padding:12px 20px; border-radius:12px; font-size:14px; font-weight:600; font-family:inherit; min-width:240px; max-width:340px; box-shadow:0 8px 32px rgba(0,0,0,0.4); pointer-events:auto; animation:toastIn 0.25s ease; }
+.toast.success { background:#0d3d2e; border:1px solid #22c55e; color:#bbf7d0; }
+.toast.error   { background:#3d0d0d; border:1px solid #ef4444; color:#fecaca; }
+.toast.info    { background:#1a2e1a; border:1px solid rgba(212,175,55,0.5); color:#fef9c3; }
+.toast-icon { font-size:16px; }
+.toast-out { animation:toastOut 0.2s ease forwards; }
+@keyframes toastIn  { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+@keyframes toastOut { from { opacity:1; transform:translateY(0); } to { opacity:0; transform:translateY(12px); } }
+</style>
+<style id="alabol-nav-styles">
+  .alabol-nav { position:fixed;top:0;left:0;right:0;z-index:999;background:rgba(10,31,26,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(212,175,55,0.2);height:64px;display:flex;align-items:center;padding:0 24px; }
+  .alabol-nav .pnav-logo { display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0; }
+  .alabol-nav .pnav-logo img { width:38px;height:38px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(212,175,55,0.5));transition:transform 0.3s; }
+  .alabol-nav .pnav-logo:hover img { transform:scale(1.08) rotate(5deg); }
+  .alabol-nav .pnav-logo-text { font-family:'Poppins',sans-serif;font-weight:800;font-size:18px;color:#d4af37;letter-spacing:-0.5px; }
+  .alabol-nav .pnav-links { display:flex;align-items:center;gap:4px;margin-left:auto;list-style:none;padding:0; }
+  .alabol-nav .pnav-links a { font-family:'Poppins',sans-serif;font-size:13px;font-weight:500;color:#a8c5b8;text-decoration:none;padding:7px 14px;border-radius:20px;transition:all 0.25s;white-space:nowrap;border:1px solid transparent; }
+  .alabol-nav .pnav-links a:hover { color:#d4af37;background:rgba(212,175,55,0.08);border-color:rgba(212,175,55,0.2); }
+  .alabol-nav .pnav-cta { font-size:13px;font-weight:700;color:#0a1f1a !important;background:linear-gradient(135deg,#d4af37,#f4e5b0) !important;padding:8px 18px !important;border-radius:20px !important;border:none !important;margin-left:8px;box-shadow:0 4px 12px rgba(212,175,55,0.35); }
+  .alabol-nav .pnav-hamburger { display:none;flex-direction:column;gap:5px;cursor:pointer;margin-left:auto;padding:8px;background:none;border:none; }
+  .alabol-nav .pnav-hamburger span { display:block;width:22px;height:2px;background:#d4af37;border-radius:2px;transition:all 0.3s; }
+  .alabol-nav .pnav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}.alabol-nav .pnav-hamburger.open span:nth-child(2){opacity:0}.alabol-nav .pnav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+  @media(max-width:768px){.alabol-nav .pnav-links{display:none;flex-direction:column;position:absolute;top:64px;left:0;right:0;background:rgba(10,31,26,0.98);border-bottom:1px solid rgba(212,175,55,0.2);padding:16px 24px 24px;gap:8px}.alabol-nav .pnav-links.open{display:flex}.alabol-nav .pnav-hamburger{display:flex}.alabol-nav .pnav-links a{padding:10px 16px;border-radius:12px;border:1px solid rgba(212,175,55,0.1)}.alabol-nav .pnav-cta{margin-left:0}}
+  body { padding-top:64px !important; }
 </style>
 </head>
 <body>
+<nav class="alabol-nav" role="navigation" aria-label="Navegación principal">
+  <a href="/" class="pnav-logo"><img src="logo-circular.png" alt="Alabol"><span class="pnav-logo-text">Alabol</span></a>
+  <button class="pnav-hamburger" id="pNavHamburger" aria-label="Menú"><span></span><span></span><span></span></button>
+  <ul class="pnav-links" id="pNavLinks" role="list">
+    <li><a href="/inventario.html">🚗 Inventario</a></li>
+    <li><a href="/inventario.html">🚗 Inventario</a></li>
+    <li><a href="/portal-agencias.html">🏢 Portal Agencias</a></li>
+    <li><a href="/">🏠 Inicio</a></li>
+  </ul>
+</nav>
+<!-- Floating WhatsApp Button -->
+<a href="https://api.whatsapp.com/send?phone=525568667571&text=Hola%20Alabol!" target="_blank" style="position:fixed;bottom:20px;right:20px;width:56px;height:56px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 15px rgba(37,211,102,0.4);z-index:998;text-decoration:none;font-size:28px;transition:transform 0.3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'"><svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg></a>
 
 <!-- Ambient Glows -->
 <div class="ambient-glow-1"></div>
@@ -693,127 +865,39 @@ textarea.fi { resize: vertical; min-height: 80px; }
 <div id="spin"><div class="sp"></div></div>
 
 <!-- ══════════════════════════════════════════ -->
-<!-- ── LANDING PAGE (PUBLIC) ── -->
+<!-- ── LANDING PAGE (AUTH SCREEN) ── -->
 <!-- ══════════════════════════════════════════ -->
 <div id="landing">
+  <div class="auth-center">
+    <img src="logo-circular.png" alt="Alabol" class="auth-logo-img">
+    <h1 class="auth-title">Portal Agencias</h1>
+    <p class="auth-subtitle">Tu showroom digital de autos.<br>Administra tu inventario desde cualquier lugar.</p>
 
-  <!-- Nav -->
-  <div class="landing-nav">
-    <div class="landing-nav-left">
-      <a href="index.html"><img src="logo-circular.png" alt="Alabol" class="landing-nav-logo"></a>
-      <div>
-        <div class="landing-nav-title">Alabol</div>
-        <div class="landing-nav-sub">Agencias Aliadas</div>
-      </div>
+    <div class="auth-options">
+      <button class="auth-opt-btn auth-opt-gold" onclick="setTab(0);openLogin();">
+        <div class="auth-opt-ico auth-opt-ico-gold"><i class="fa-solid fa-right-to-bracket"></i></div>
+        <div class="auth-opt-text">
+          <span class="auth-opt-title">Ya tengo cuenta</span>
+          <span class="auth-opt-sub">Entrar a mi portal con email o Google</span>
+        </div>
+        <i class="fa-solid fa-chevron-right auth-opt-arrow"></i>
+      </button>
+
+      <button class="auth-opt-btn auth-opt-green" onclick="setTab(1);openLogin();">
+        <div class="auth-opt-ico auth-opt-ico-green"><i class="fa-solid fa-user-plus"></i></div>
+        <div class="auth-opt-text">
+          <span class="auth-opt-title">Soy nuevo</span>
+          <span class="auth-opt-sub">Crear mi cuenta con codigo de acceso</span>
+        </div>
+        <i class="fa-solid fa-chevron-right auth-opt-arrow"></i>
+      </button>
     </div>
-    <div class="landing-nav-right">
-      <a href="index.html" class="btn-home-nav"><i class="fa-solid fa-house"></i> Inicio</a>
-      <button class="btn-login-nav" onclick="openLogin()"><i class="fa-solid fa-right-to-bracket" style="margin-right:4px;"></i>Entrar</button>
-    </div>
+
+    <p class="auth-help-text">¿Tienes dudas o necesitas un codigo de acceso?</p>
+    <a href="https://api.whatsapp.com/send?phone=525568667571&text=Hola%20Alabol%2C%20necesito%20ayuda%20para%20entrar%20al%20portal." target="_blank" class="auth-wa-link">
+      <i class="fa-brands fa-whatsapp"></i> Contactar por WhatsApp
+    </a>
   </div>
-
-  <!-- Hero -->
-  <div class="landing-hero">
-    <div class="landing-hero-badge"><i class="fa-solid fa-handshake"></i> Programa Exclusivo</div>
-    <h1>Programa de <span>Agencias Aliadas</span></h1>
-    <p>Conecta tu inventario con compradores verificados. Cada auto publicado entra al radar de nuestro algoritmo de matchmaking. Tu showroom digital en el Tinder de los Autos.</p>
-    <button class="hero-cta" onclick="document.getElementById('applySection').scrollIntoView({behavior:'smooth'})">
-      <i class="fa-solid fa-rocket"></i> Solicitar Acceso
-    </button>
-  </div>
-
-  <!-- Benefits -->
-  <div class="benefits-section">
-    <div class="benefits-title">Por que ser Agencia Aliada</div>
-    <div class="benefits-sub">Tres razones para unirte al ecosistema de matches automotrices</div>
-    <div class="benefits-grid">
-      <div class="benefit-card">
-        <div class="benefit-icon"><i class="fa-solid fa-user-check" style="color:var(--gold);"></i></div>
-        <h3>Compradores Verificados</h3>
-        <p>Acceso directo a una base de compradores precalificados listos para hacer match con tu inventario.</p>
-      </div>
-      <div class="benefit-card">
-        <div class="benefit-icon"><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--emerald);"></i></div>
-        <h3>Tecnologia de Matchmaking</h3>
-        <p>Nuestro algoritmo conecta cada auto con el comprador ideal. Mas matches, menos tiempo en el lote.</p>
-      </div>
-      <div class="benefit-card">
-        <div class="benefit-icon"><i class="fa-solid fa-chart-line" style="color:var(--gold);"></i></div>
-        <h3>Dashboard de Analiticas</h3>
-        <p>Monitorea tu inventario, status de matches y rendimiento desde un panel profesional.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Application Form -->
-  <div class="apply-section" id="applySection">
-    <div class="apply-card">
-      <h2><i class="fa-solid fa-paper-plane" style="margin-right:8px;"></i>Solicita tu Acceso</h2>
-      <p class="apply-sub">Cuentanos sobre tu agencia y te contactaremos para activar tu showroom digital.</p>
-
-      <div class="g2">
-        <div class="ff">
-          <label>Nombre de la Agencia *</label>
-          <input class="fi" id="appAgency" placeholder="Autos Premium GDL">
-        </div>
-        <div class="ff">
-          <label>Nombre de Contacto *</label>
-          <input class="fi" id="appName" placeholder="Juan Perez">
-        </div>
-      </div>
-
-      <div class="g2">
-        <div class="ff">
-          <label>Email *</label>
-          <input class="fi" id="appEmail" type="email" placeholder="contacto@miagencia.com">
-        </div>
-        <div class="ff">
-          <label>Telefono / WhatsApp *</label>
-          <input class="fi" id="appPhone" type="tel" placeholder="+52 33 1234 5678">
-        </div>
-      </div>
-
-      <div class="g2">
-        <div class="ff">
-          <label>Ciudad</label>
-          <select class="fi" id="appCity">
-            <option value="CDMX">CDMX</option>
-            <option value="Guadalajara">Guadalajara</option>
-            <option value="Monterrey">Monterrey</option>
-            <option value="Puebla">Puebla</option>
-            <option value="Queretaro">Queretaro</option>
-            <option value="Cancun">Cancun</option>
-            <option value="Merida">Merida</option>
-            <option value="Leon">Leon</option>
-            <option value="Tijuana">Tijuana</option>
-            <option value="Otra">Otra</option>
-          </select>
-        </div>
-        <div class="ff">
-          <label>Numero de Vehiculos</label>
-          <select class="fi" id="appVehicles">
-            <option value="1-10">1 - 10</option>
-            <option value="11-50">11 - 50</option>
-            <option value="51-200">51 - 200</option>
-            <option value="200+">200+</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="ff">
-        <label>Mensaje (opcional)</label>
-        <textarea class="fi" id="appMessage" placeholder="Cuentanos mas sobre tu agencia, que tipo de autos manejas, etc."></textarea>
-      </div>
-
-      <button class="bgold" onclick="submitApplication()"><i class="fa-solid fa-paper-plane" style="margin-right:6px;"></i>Enviar Solicitud</button>
-      <div class="apply-msg" id="applyMsg"></div>
-
-      <div class="login-link">
-        Ya tengo cuenta — <a href="#" onclick="openLogin();return false;">Iniciar Sesion</a>
-      </div>
-    </div>
-  </div>
-
 </div>
 
 <!-- ══════════════════════════════════════════ -->
@@ -843,11 +927,31 @@ textarea.fi { resize: vertical; min-height: 80px; }
         <input class="inp" id="lp" type="password" placeholder="Contrasena">
         <div class="aerr" id="lerr"></div>
         <button class="bgold" onclick="doLogin()">Entrar al Portal</button>
+        <div style="text-align:center;margin-top:10px;">
+          <a href="#" onclick="forgotPassword();return false;" style="font-size:11px;color:var(--green-text);opacity:0.7;text-decoration:underline;">Olvide mi contrasena</a>
+        </div>
       </div>
       <div id="fr" class="dn">
+        <div style="font-size:12px;color:#a8c5b8;margin-bottom:12px;line-height:1.5;text-align:left;">
+          Completa tus datos y activa tu cuenta con el codigo que te dio tu contacto Alabol.
+        </div>
         <input class="inp" id="rn" placeholder="Nombre de la agencia">
         <input class="inp" id="re" type="email" placeholder="tu@email.com">
-        <input class="inp" id="rp" type="password" placeholder="Contrasena (min 6)">
+        <input class="inp" id="rp" type="password" placeholder="Contrasena (min 10)">
+        <div style="margin:14px 0 6px;">
+          <div style="font-size:11px;color:var(--gold-dim);margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;">Codigo de acceso</div>
+          <input class="inp" id="rcode" placeholder="Ej. ALABOL-RED-2026" style="text-transform:uppercase;letter-spacing:0.12em;text-align:center;border-color:var(--gold-dim);">
+          <div style="text-align:center;margin-top:7px;font-size:11px;color:#a8c5b8;">
+            &iquest;No tienes codigo?
+            <a href="https://api.whatsapp.com/send?phone=525568667571&text=Hola%20Alabol%2C%20quiero%20registrar%20mi%20agencia%20y%20necesito%20un%20codigo%20de%20acceso." target="_blank" style="color:#d4af37;text-decoration:underline;">Solicítalo por WhatsApp</a>
+          </div>
+        </div>
+        <div style="margin:10px 0;">
+          <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;font-size:11px;line-height:1.5;color:#a8c5b8;">
+            <input type="checkbox" id="acceptTermsAgencia" style="margin-top:3px;accent-color:#d4af37;min-width:16px;">
+            <span>Acepto los <a href="./terminos.html" target="_blank" style="color:#d4af37;">Terminos y Condiciones</a> y el <a href="./aviso-privacidad.html" target="_blank" style="color:#d4af37;">Aviso de Privacidad</a>.</span>
+          </label>
+        </div>
         <div class="aerr" id="rerr"></div>
         <button class="bgold" onclick="doReg()">Crear Cuenta de Agencia</button>
       </div>
@@ -870,14 +974,11 @@ textarea.fi { resize: vertical; min-height: 80px; }
       </div>
     </div>
     <div class="sidebar-nav">
-      <button class="sidebar-nav-item active" onclick="switchView('dashView')" data-view="dashView">
-        <i class="fa-solid fa-gauge-high"></i> Dashboard
+      <button class="sidebar-nav-item active" onclick="switchView('mainView')" data-view="mainView">
+        <i class="fa-solid fa-car-side"></i> Mis Autos
       </button>
-      <button class="sidebar-nav-item" onclick="switchView('invView')" data-view="invView">
-        <i class="fa-solid fa-warehouse"></i> Mi Inventario
-      </button>
-      <button class="sidebar-nav-item" onclick="switchView('pubView')" data-view="pubView">
-        <i class="fa-solid fa-circle-plus"></i> Publicar Auto
+      <button class="sidebar-nav-item" onclick="switchView('syncView')" data-view="syncView">
+        <i class="fa-solid fa-cloud-arrow-up"></i> Sincronizar
       </button>
       <button class="sidebar-nav-item" onclick="switchView('profileView')" data-view="profileView">
         <i class="fa-solid fa-user-tie"></i> Mi Perfil
@@ -891,6 +992,7 @@ textarea.fi { resize: vertical; min-height: 80px; }
           <div class="sidebar-user-email" id="sidebarEmail">...</div>
         </div>
       </div>
+      <a href="/" style="display:flex;align-items:center;gap:8px;padding:9px 14px;border-radius:10px;border:1px solid rgba(212,175,55,0.2);color:#a8c5b8;font-size:12px;font-weight:600;text-decoration:none;margin-bottom:8px;transition:all 0.2s;" onmouseover="this.style.borderColor='#d4af37';this.style.color='#d4af37';" onmouseout="this.style.borderColor='rgba(212,175,55,0.2)';this.style.color='#a8c5b8';"><i class="fa-solid fa-house"></i> Inicio</a>
       <button class="btn-logout" onclick="signOut()"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesion</button>
     </div>
   </div>
@@ -907,66 +1009,144 @@ textarea.fi { resize: vertical; min-height: 80px; }
       <div style="width:38px;"></div>
     </div>
 
-    <!-- DASHBOARD VIEW -->
-    <div class="view active" id="dashView">
-      <div class="dash-welcome">
-        <div class="sub">Bienvenido a tu showroom digital,</div>
-        <div class="name" id="dashName">...</div>
+    <!-- MAIN VIEW (unified command center) -->
+    <div class="view active" id="mainView">
+
+      <!-- Header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div style="font-size:12px;color:var(--green-text);opacity:0.7;margin-bottom:2px;">Hola de nuevo,</div>
+          <div style="font-size:22px;font-weight:800;color:white;" id="dashName">...</div>
+        </div>
+        <button class="bnew" onclick="openForm(null)"><i class="fa-solid fa-plus"></i> Agregar auto</button>
       </div>
 
-      <div class="kpi-grid">
-        <div class="kpi-card">
+      <!-- KPI filter cards -->
+      <div class="kpi-grid" style="margin-bottom:20px;">
+        <div class="kpi-card kpi-filter" id="kpiAll" onclick="setFilter(null)" style="cursor:pointer;">
           <div class="kpi-icon"><i class="fa-solid fa-car-side" style="color:var(--gold);"></i></div>
           <div class="kpi-num" id="kpi0">-</div>
-          <div class="kpi-label">Total Publicados</div>
+          <div class="kpi-label">Total</div>
         </div>
-        <div class="kpi-card">
-          <div class="kpi-icon"><i class="fa-solid fa-heart" style="color:var(--emerald);"></i></div>
+        <div class="kpi-card kpi-filter" id="kpiDisp" onclick="setFilter('disponible')" style="cursor:pointer;">
+          <div class="kpi-icon"><i class="fa-solid fa-circle-check" style="color:var(--emerald);"></i></div>
           <div class="kpi-num" id="kpi1">-</div>
           <div class="kpi-label">Disponibles</div>
         </div>
-        <div class="kpi-card">
+        <div class="kpi-card kpi-filter" id="kpiRes" onclick="setFilter('reservado')" style="cursor:pointer;">
           <div class="kpi-icon"><i class="fa-solid fa-fire" style="color:var(--warning);"></i></div>
           <div class="kpi-num" id="kpi2">-</div>
           <div class="kpi-label">Reservados</div>
         </div>
-        <div class="kpi-card">
-          <div class="kpi-icon"><i class="fa-solid fa-circle-check" style="color:#60a5fa;"></i></div>
+        <div class="kpi-card kpi-filter" id="kpiVend" onclick="setFilter('vendido')" style="cursor:pointer;">
+          <div class="kpi-icon"><i class="fa-solid fa-handshake" style="color:#60a5fa;"></i></div>
           <div class="kpi-num" id="kpi3">-</div>
           <div class="kpi-label">Vendidos</div>
         </div>
       </div>
 
-      <div class="recent-section">
-        <div class="recent-title"><i class="fa-solid fa-clock-rotate-left" style="color:var(--gold);"></i> Actividad Reciente</div>
-        <div class="recent-list" id="recentList">
-          <div class="empty-recent"><div class="sp" style="margin:0 auto;width:28px;height:28px;"></div></div>
+      <!-- Search bar -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+        <div class="search-wrap" style="flex:1;min-width:200px;">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input class="inv-search" id="searchInput" type="text" placeholder="Buscar marca, modelo, ciudad..." oninput="renderMainCars()">
+        </div>
+        <div id="filterBadge" style="display:none;padding:6px 14px;border-radius:20px;background:rgba(212,175,55,0.12);border:1px solid rgba(212,175,55,0.3);color:var(--gold);font-size:12px;font-weight:700;cursor:pointer;" onclick="setFilter(null)">
+          <i class="fa-solid fa-xmark" style="margin-right:5px;"></i><span id="filterBadgeText"></span>
         </div>
       </div>
-    </div>
 
-    <!-- INVENTORY VIEW -->
-    <div class="view" id="invView">
-      <div class="inv-header">
-        <div class="inv-title"><i class="fa-solid fa-warehouse" style="color:var(--gold);margin-right:8px;"></i>Mi Inventario</div>
-        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-          <div class="search-wrap">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input class="inv-search" id="searchInput" type="text" placeholder="Buscar marca, modelo..." oninput="filterCars()">
-          </div>
-          <button class="bnew" onclick="openForm(null)"><i class="fa-solid fa-plus"></i> Publicar</button>
-        </div>
-      </div>
+      <!-- Cars grid -->
       <div id="carGrid"></div>
     </div>
 
-    <!-- PUBLISH VIEW (redirects to wizard) -->
-    <div class="view" id="pubView">
-      <div style="text-align:center;padding:60px 20px;">
-        <div style="font-size:56px;margin-bottom:16px;"><i class="fa-solid fa-heart-circle-plus" style="color:var(--gold);"></i></div>
-        <div style="font-size:20px;font-weight:700;color:white;margin-bottom:8px;">Publica un nuevo auto</div>
-        <p style="font-size:13px;opacity:0.7;margin-bottom:24px;line-height:1.6;">Cada auto publicado entra al radar de nuestro algoritmo.<br>Conecta tu inventario con compradores verificados.</p>
-        <button class="bnew" style="margin:0 auto;" onclick="openForm(null)"><i class="fa-solid fa-plus"></i> Iniciar Publicacion</button>
+    <!-- SYNC VIEW -->
+    <div class="view" id="syncView">
+      <div style="margin-bottom:24px;">
+        <div style="font-size:20px;font-weight:800;color:white;"><i class="fa-solid fa-cloud-arrow-up" style="color:var(--gold);margin-right:8px;"></i>Sincronizar Inventario</div>
+        <div style="font-size:13px;color:var(--green-text);margin-top:4px;">Conecta tu Google Sheet para mantener tu inventario actualizado automáticamente</div>
+      </div>
+
+      <!-- Instructions -->
+      <div style="background:var(--bg-card);border:1px solid var(--glass-border);border-radius:16px;padding:20px;margin-bottom:20px;">
+        <div style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:12px;">📋 ¿Cómo funciona?</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;align-items:flex-start;gap:10px;">
+            <span style="background:var(--gold);color:var(--bg-primary);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;">1</span>
+            <div><div style="color:white;font-size:13px;font-weight:600;">Llena tu inventario en Excel o Google Sheets</div><div style="color:var(--green-text);font-size:11px;">Columnas: Marca, Modelo, Año, Precio, Tipo, Km, Transmision, Color, Ciudad, etc.</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;">
+            <span style="background:var(--gold);color:var(--bg-primary);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;">2</span>
+            <div><div style="color:white;font-size:13px;font-weight:600;">Sube el archivo directamente</div><div style="color:var(--green-text);font-size:11px;">Acepta .xlsx, .xls o .csv — arrastra o haz clic para seleccionar</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;">
+            <span style="background:var(--gold);color:var(--bg-primary);width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;">3</span>
+            <div><div style="color:white;font-size:13px;font-weight:600;">Revisa la preview y aplica</div><div style="color:var(--green-text);font-size:11px;">Veras cuantos autos son nuevos, cuales se actualizan y cuales ya no estan</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- File Upload (Excel/CSV) -->
+      <div style="background:var(--bg-card);border:1px solid var(--glass-border);border-radius:16px;padding:20px;margin-bottom:12px;">
+        <div style="font-size:14px;font-weight:700;color:white;margin-bottom:14px;"><i class="fa-solid fa-file-excel" style="color:var(--emerald);margin-right:6px;"></i>Subir archivo Excel o CSV</div>
+        <div id="fileDropZone" style="border:2px dashed var(--glass-border);border-radius:12px;padding:32px 20px;text-align:center;cursor:pointer;transition:all 0.3s;" onclick="g('fileInput').click()">
+          <div style="font-size:32px;margin-bottom:8px;opacity:0.5;"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+          <div style="color:white;font-size:14px;font-weight:600;margin-bottom:4px;">Arrastra tu archivo aqui o haz clic</div>
+          <div style="color:var(--green-text);font-size:12px;">.xlsx, .xls o .csv — hasta 500 autos</div>
+        </div>
+        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none;" onchange="handleFileUpload(this.files[0])">
+        <div id="fileUploadStatus" style="margin-top:10px;font-size:13px;color:var(--green-text);"></div>
+      </div>
+
+      <!-- Divider OR -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;padding:0 10px;">
+        <div style="flex:1;height:1px;background:var(--glass-border);"></div>
+        <span style="font-size:12px;font-weight:700;color:var(--green-muted);text-transform:uppercase;letter-spacing:0.1em;">o bien</span>
+        <div style="flex:1;height:1px;background:var(--glass-border);"></div>
+      </div>
+
+      <!-- URL CSV -->
+      <div style="background:var(--bg-card);border:1px solid var(--glass-border);border-radius:16px;padding:20px;margin-bottom:20px;">
+        <div style="font-size:14px;font-weight:700;color:white;margin-bottom:14px;"><i class="fa-solid fa-link" style="color:var(--gold);margin-right:6px;"></i>Pega URL de Google Sheets (CSV)</div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <input type="text" id="agSyncUrl" placeholder="https://docs.google.com/spreadsheets/d/e/..." style="padding:12px 16px;border:1px solid var(--glass-border);border-radius:10px;background:rgba(0,0,0,0.3);color:white;font-family:inherit;font-size:13px;outline:none;">
+          <button onclick="agFetchCSV()" style="padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--bg-primary);font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;"><i class="fa-solid fa-download"></i> Cargar desde URL</button>
+        </div>
+        <div id="urlSyncStatus" style="margin-top:10px;font-size:13px;color:var(--green-text);"></div>
+      </div>
+
+      <!-- Preview -->
+      <div id="agSyncPreview" style="display:none;background:var(--bg-card);border:1px solid var(--glass-border);border-radius:16px;padding:20px;margin-bottom:20px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <div style="font-size:14px;font-weight:700;color:white;">Previsualización</div>
+          <button onclick="agOpenBulkWithPhotos()" id="agApplyBtn" style="padding:10px 20px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--bg-primary);font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;"><i class="fa-solid fa-images"></i> Continuar — agregar fotos y publicar</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;">
+          <div style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:10px;text-align:center;">
+            <div style="font-size:20px;font-weight:800;color:var(--emerald);" id="agNewCount">0</div>
+            <div style="font-size:10px;color:var(--green-text);">Nuevos</div>
+          </div>
+          <div style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:10px;text-align:center;">
+            <div style="font-size:20px;font-weight:800;color:#f59e0b;" id="agUpdateCount">0</div>
+            <div style="font-size:10px;color:var(--green-text);">Actualizar</div>
+          </div>
+          <div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:10px;text-align:center;">
+            <div style="font-size:20px;font-weight:800;color:#ef4444;" id="agRemoveCount">0</div>
+            <div style="font-size:10px;color:var(--green-text);">Eliminar</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:10px;text-align:center;">
+            <div style="font-size:20px;font-weight:800;color:var(--green-text);" id="agSameCount">0</div>
+            <div style="font-size:10px;color:var(--green-text);">Sin cambios</div>
+          </div>
+        </div>
+        <div style="overflow-x:auto;" id="agPreviewTable"></div>
+      </div>
+
+      <!-- Result -->
+      <div id="agSyncResult" style="display:none;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:16px;padding:20px;text-align:center;">
+        <div style="font-size:28px;margin-bottom:8px;">✅</div>
+        <div style="font-size:16px;font-weight:700;color:white;margin-bottom:4px;">Inventario sincronizado</div>
+        <div id="agResultText" style="font-size:13px;color:var(--green-text);"></div>
       </div>
     </div>
 
@@ -1056,24 +1236,36 @@ textarea.fi { resize: vertical; min-height: 80px; }
         <div class="g2">
           <div class="ff">
             <label>Marca *</label>
-            <select class="fi" id="fm">
+            <select class="fi" id="fm" onchange="toggleOtro('fm','fmOtro')">
               <option value="">Seleccionar...</option>
-              <option value="Toyota">Toyota</option><option value="Honda">Honda</option>
-              <option value="Nissan">Nissan</option><option value="Volkswagen">Volkswagen</option>
-              <option value="Chevrolet">Chevrolet</option><option value="Ford">Ford</option>
-              <option value="BMW">BMW</option><option value="Mercedes-Benz">Mercedes-Benz</option>
-              <option value="Audi">Audi</option><option value="Mazda">Mazda</option>
-              <option value="Hyundai">Hyundai</option><option value="Kia">Kia</option>
-              <option value="Jeep">Jeep</option><option value="Dodge">Dodge</option>
-              <option value="Chrysler">Chrysler</option><option value="Subaru">Subaru</option>
-              <option value="Mini">Mini</option><option value="Mitsubishi">Mitsubishi</option>
-              <option value="Peugeot">Peugeot</option><option value="Renault">Renault</option>
-              <option value="Seat">Seat</option><option value="Suzuki">Suzuki</option>
-              <option value="Volvo">Volvo</option><option value="RAM">RAM</option>
-              <option value="GMC">GMC</option><option value="Fiat">Fiat</option>
-              <option value="MG">MG</option><option value="Acura">Acura</option>
+              <option value="Acura">Acura</option><option value="Audi">Audi</option>
+              <option value="BAIC">BAIC</option><option value="BMW">BMW</option>
+              <option value="BYD">BYD</option><option value="Buick">Buick</option>
+              <option value="Cadillac">Cadillac</option><option value="Changan">Changan</option>
+              <option value="Chevrolet">Chevrolet</option><option value="Chirey">Chirey</option>
+              <option value="Chrysler">Chrysler</option><option value="Cupra">Cupra</option>
+              <option value="Dodge">Dodge</option><option value="Fiat">Fiat</option>
+              <option value="Ford">Ford</option><option value="GAC">GAC</option>
+              <option value="Geely">Geely</option><option value="GMC">GMC</option>
+              <option value="GWM">GWM</option><option value="Hino">Hino</option>
+              <option value="Honda">Honda</option><option value="Hyundai">Hyundai</option>
+              <option value="Infiniti">Infiniti</option><option value="Isuzu">Isuzu</option>
+              <option value="JAC">JAC</option><option value="Jaguar">Jaguar</option>
+              <option value="Jeep">Jeep</option><option value="Kenworth">Kenworth</option>
+              <option value="Kia">Kia</option><option value="Land Rover">Land Rover</option>
+              <option value="Lexus">Lexus</option><option value="Lincoln">Lincoln</option>
+              <option value="Mazda">Mazda</option><option value="Mercedes-Benz">Mercedes-Benz</option>
+              <option value="MG">MG</option><option value="Mini">Mini</option>
+              <option value="Mitsubishi">Mitsubishi</option><option value="Nissan">Nissan</option>
+              <option value="Omoda">Omoda</option><option value="Peugeot">Peugeot</option>
+              <option value="Porsche">Porsche</option><option value="RAM">RAM</option>
+              <option value="Renault">Renault</option><option value="Seat">Seat</option>
+              <option value="Subaru">Subaru</option><option value="Suzuki">Suzuki</option>
+              <option value="Tesla">Tesla</option><option value="Toyota">Toyota</option>
+              <option value="Volkswagen">Volkswagen</option><option value="Volvo">Volvo</option>
               <option value="Otra">Otra</option>
             </select>
+            <input class="fi" id="fmOtro" placeholder="Escribe la marca..." style="display:none;margin-top:6px;">
           </div>
           <div class="ff">
             <label>Modelo *</label>
@@ -1128,14 +1320,18 @@ textarea.fi { resize: vertical; min-height: 80px; }
           </div>
           <div class="ff">
             <label>Color</label>
-            <select class="fi" id="fcol">
+            <select class="fi" id="fcol" onchange="toggleOtro('fcol','fcolOtro')">
               <option value="">Seleccionar...</option>
               <option value="Blanco">Blanco</option><option value="Negro">Negro</option>
               <option value="Gris">Gris</option><option value="Plata">Plata</option>
               <option value="Rojo">Rojo</option><option value="Azul">Azul</option>
-              <option value="Verde">Verde</option><option value="Cafe">Cafe</option>
-              <option value="Dorado">Dorado</option><option value="Otro">Otro</option>
+              <option value="Verde">Verde</option><option value="Amarillo">Amarillo</option>
+              <option value="Naranja">Naranja</option><option value="Cafe">Cafe</option>
+              <option value="Beige">Beige</option><option value="Dorado">Dorado</option>
+              <option value="Vino">Vino</option><option value="Morado">Morado</option>
+              <option value="Bronce">Bronce</option><option value="Otro">Otro</option>
             </select>
+            <input class="fi" id="fcolOtro" placeholder="Escribe el color..." style="display:none;margin-top:6px;">
           </div>
           <div class="ff">
             <label>Ciudad</label>
@@ -1225,12 +1421,36 @@ textarea.fi { resize: vertical; min-height: 80px; }
 </div>
 
 <!-- ── MODAL CONFIRMAR ELIMINAR ── -->
+<!-- BULK UPLOAD ACCORDION -->
+<div class="bulk-overlay" id="bulkOverlay">
+  <div class="bulk-panel">
+    <div class="bulk-header">
+      <div>
+        <div style="font-size:16px;font-weight:800;color:white;"><i class="fa-solid fa-boxes-stacked" style="color:var(--gold);margin-right:6px;"></i>Carga Masiva</div>
+        <div style="font-size:11px;color:var(--green-text);" id="bulkSubtitle">0 autos detectados</div>
+      </div>
+      <button style="background:none;border:none;color:var(--green-muted);font-size:22px;cursor:pointer;" onclick="closeBulk()">&times;</button>
+    </div>
+    <div class="bulk-progress-bar"><div class="bulk-progress-fill" id="bulkProgressFill" style="width:0%"></div></div>
+    <div style="padding:0 20px 8px;font-size:12px;color:var(--green-text);" id="bulkProgressText">0 de 0 con fotos</div>
+    <div class="bulk-list" id="bulkList"></div>
+    <div class="bulk-footer">
+      <button id="bulkConfirmBtn" onclick="bulkConfirmAll()" style="width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--bg-primary);font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;">
+        <i class="fa-solid fa-check-double"></i> Publicar todo al inventario
+      </button>
+      <div style="text-align:center;margin-top:8px;font-size:11px;color:var(--green-muted);">Las fotos son opcionales — puedes agregarlas despues desde Mi Inventario</div>
+      <button onclick="bulkForceUnstick()" style="display:block;margin:8px auto 0;background:none;border:none;color:var(--green-muted);font-size:11px;cursor:pointer;text-decoration:underline;font-family:inherit;">Foto atorada? Toca aqui para desbloquear</button>
+    </div>
+  </div>
+</div>
+
 <div class="mbg" id="mC">
   <div class="modal-confirm">
     <div class="mtit"><i class="fa-solid fa-triangle-exclamation" style="margin-right:6px;color:var(--danger);"></i> Eliminar Auto</div>
+    <div id="delCarName" style="font-weight:700;font-size:15px;color:white;margin-bottom:6px;"></div>
     <div class="cmsg">Este auto sera eliminado de tu inventario permanentemente. No se puede deshacer.</div>
     <div class="cbts">
-      <button class="bcan" onclick="closeConfirm()">Cancelar</button>
+      <button class="bcan" id="bcan" onclick="closeConfirm()">Cancelar</button>
       <button class="bdanger" id="bdd" onclick="doDelete()">Si, eliminar</button>
     </div>
   </div>
@@ -1243,9 +1463,30 @@ textarea.fi { resize: vertical; min-height: 80px; }
 var S = 'https://rgnunjngtsgqgvplawfr.supabase.co';
 var K = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8';
 
-var tok = null, uid = null, userEmail = '', userName = '', userPic = '';
+var tok = localStorage.getItem('alabol_token') || null;
+var uid = null, userEmail = '', userName = '', userPic = '';
+var isAdmin = false;
+
+function tryRefreshToken() {
+  var rt = localStorage.getItem('alabol_refresh');
+  if (!rt) return Promise.reject(new Error('no_refresh'));
+  return fetch(S + '/auth/v1/token?grant_type=refresh_token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': K },
+    body: JSON.stringify({ refresh_token: rt })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    if (!d.access_token) throw new Error('no_refresh');
+    tok = d.access_token;
+    localStorage.setItem('alabol_token', tok);
+    if (d.refresh_token) localStorage.setItem('alabol_refresh', d.refresh_token);
+    return tok;
+  });
+}
 var cars = [], eid = null, did = null;
-var currentView = 'dashView';
+var currentView = 'mainView';
+var activeFilter = null;
 
 function g(id) { return document.getElementById(id); }
 
@@ -1257,8 +1498,14 @@ function showScreen(s) {
   g('landing').style.display = 'none';
   g('dashboard').style.display = 'none';
   g('dashboard').classList.remove('active');
+  // Hide/show global site nav
+  var globalNav = document.querySelector('.alabol-nav');
+  if (globalNav) {
+    globalNav.style.display = (s === 'dashboard') ? 'none' : '';
+    document.body.style.paddingTop = (s === 'dashboard') ? '0' : '';
+  }
   if (s === 'spin') g('spin').style.display = 'flex';
-  else if (s === 'landing') g('landing').style.display = 'block';
+  else if (s === 'landing') g('landing').style.display = 'flex';
   else if (s === 'dashboard') { g('dashboard').style.display = 'flex'; g('dashboard').classList.add('active'); }
 }
 
@@ -1275,11 +1522,14 @@ function boot() {
   if (h && h.indexOf('access_token') >= 0) {
     var p = new URLSearchParams(h.replace(/^#/, ''));
     var t = p.get('access_token');
-    if (t) { tok = t; history.replaceState(null, '', location.pathname); }
+    var rt = p.get('refresh_token');
+    if (t) { tok = t; localStorage.setItem('alabol_token', t); }
+    if (rt) localStorage.setItem('alabol_refresh', rt);
+    history.replaceState(null, '', location.pathname);
   }
   if (!tok) { showScreen('landing'); return; }
   fetch(S + '/auth/v1/user', { headers: ah(tok) })
-    .then(function(r) { if (!r.ok) throw new Error(); return r.json(); })
+    .then(function(r) { if (!r.ok) { tok = null; localStorage.removeItem('alabol_token'); localStorage.removeItem('alabol_refresh'); showScreen('landing'); throw new Error(); } return r.json(); })
     .then(function(u) {
       if (!u || !u.id) throw new Error();
       uid = u.id;
@@ -1287,11 +1537,17 @@ function boot() {
       userName = m.full_name || m.name || u.email || 'Agencia';
       userEmail = u.email || '';
       userPic = m.avatar_url || m.picture || '';
+      return fetch(S + '/rest/v1/perfiles?id=eq.' + uid + '&select=rol', { headers: ah(tok) })
+        .then(function(r) { return r.json(); })
+        .then(function(d) { isAdmin = d && d[0] && d[0].rol === 'admin'; })
+        .catch(function() { isAdmin = false; });
+    })
+    .then(function() {
       setupDashboard();
       showScreen('dashboard');
       loadCars();
     })
-    .catch(function() { tok = null; showScreen('landing'); });
+    .catch(function() { tok = null; localStorage.removeItem('alabol_token'); localStorage.removeItem('alabol_refresh'); showScreen('landing'); });
 }
 
 function setupDashboard() {
@@ -1327,32 +1583,76 @@ function doLogin() {
   })
     .then(function(r) { return r.json(); })
     .then(function(d) {
-      if (d.access_token) { tok = d.access_token; closeLogin(); boot(); }
-      else g('lerr').textContent = 'Email o contrasena incorrectos.';
+      if (d.access_token) {
+        tok = d.access_token; localStorage.setItem('alabol_token', tok);
+        if (d.refresh_token) localStorage.setItem('alabol_refresh', d.refresh_token);
+        closeLogin(); boot();
+      } else g('lerr').textContent = 'Email o contrasena incorrectos.';
     })
     .catch(function() { g('lerr').textContent = 'Error de conexion.'; });
 }
 
 function doReg() {
+  var code = (g('rcode').value || '').trim().toUpperCase();
   var n = g('rn').value.trim(), e = g('re').value.trim(), p = g('rp').value;
   g('rerr').textContent = '';
+  if (!code) { g('rerr').textContent = 'Codigo de invitacion requerido.'; return; }
   if (!n || !e || !p) { g('rerr').textContent = 'Completa todos los campos.'; return; }
-  if (p.length < 6) { g('rerr').textContent = 'Minimo 6 caracteres.'; return; }
+  if (p.length < 10) { g('rerr').textContent = 'Minimo 10 caracteres.'; return; }
+  if (!g('acceptTermsAgencia').checked) { g('rerr').textContent = 'Debes aceptar los Terminos y el Aviso de Privacidad.'; return; }
+  // Validate invite code server-side via Supabase
+  fetch(S + '/rest/v1/invite_codes?code=eq.' + encodeURIComponent(code) + '&activo=eq.true&usos_restantes=gt.0&select=id', {
+    headers: { 'apikey': K, 'Authorization': 'Bearer ' + K }
+  }).then(function(r){ return r.json(); }).then(function(codes){
+    if (!codes || codes.length === 0) { g('rerr').textContent = 'Codigo de invitacion invalido. Solicita uno a tu contacto Alabol.'; return; }
+    doRegSubmit(n, e, p, codes[0].id);
+  }).catch(function(){ g('rerr').textContent = 'Error validando codigo.'; });
+}
+function doRegSubmit(n, e, p, codeId) {
   fetch(S + '/auth/v1/signup', {
     method: 'POST', headers: ah(),
-    body: JSON.stringify({ email: e, password: p, data: { full_name: n } })
+    body: JSON.stringify({ email: e, password: p, data: { full_name: n, rol: 'vendedor' } })
   })
     .then(function(r) { return r.json(); })
     .then(function(d) {
-      if (d.id || d.access_token) { g('rerr').style.color = '#34d399'; g('rerr').textContent = 'Revisa tu email para confirmar tu cuenta!'; }
+      if (d.id || d.access_token) {
+        g('rerr').style.color = '#34d399'; g('rerr').textContent = 'Revisa tu email para confirmar tu cuenta!';
+        // Decrement invite code uses
+        fetch(S + '/rest/v1/rpc/decrement_invite_code', {
+          method: 'POST', headers: { 'apikey': K, 'Authorization': 'Bearer ' + K, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code_id: codeId })
+        }).catch(function(){});
+      }
       else g('rerr').textContent = d.msg || d.error_description || 'Error al registrar.';
     })
     .catch(function() { g('rerr').textContent = 'Error de conexion.'; });
 }
 
+function forgotPassword() {
+  var email = g('le').value.trim();
+  if (!email) { g('lerr').textContent = 'Ingresa tu email primero.'; return; }
+  g('lerr').style.color = 'var(--green-text)';
+  g('lerr').textContent = 'Enviando link de recuperacion...';
+  fetch(S + '/auth/v1/recover', {
+    method: 'POST', headers: ah(),
+    body: JSON.stringify({ email: email, gotrue_meta_security: {} })
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      g('lerr').style.color = '#34d399';
+      g('lerr').textContent = 'Link enviado a ' + email + '. Revisa tu bandeja de entrada (y spam).';
+    })
+    .catch(function() {
+      g('lerr').style.color = '';
+      g('lerr').textContent = 'Error al enviar. Intenta de nuevo.';
+    });
+}
+
 function signOut() {
   if (tok) fetch(S + '/auth/v1/logout', { method: 'POST', headers: ah(tok) }).catch(function() {});
   tok = null; uid = null; cars = [];
+  localStorage.removeItem('alabol_token');
+  localStorage.removeItem('alabol_refresh');
   showScreen('landing');
 }
 
@@ -1436,9 +1736,6 @@ function switchView(viewId) {
     btn.classList.toggle('active', btn.getAttribute('data-view') === viewId);
   });
   closeSidebar();
-  if (viewId === 'pubView') {
-    openForm(null);
-  }
 }
 
 function toggleSidebar() {
@@ -1459,17 +1756,95 @@ function fmt(n) {
 }
 
 function loadCars() {
-  fetch(S + '/rest/v1/inventario?user_id=eq.' + uid + '&order=created_at.desc', { headers: ah(tok) })
+  var q = isAdmin
+    ? S + '/rest/v1/inventario?order=created_at.desc'
+    : S + '/rest/v1/inventario?user_id=eq.' + uid + '&order=created_at.desc';
+  fetch(q, { headers: ah(tok) })
     .then(function(r) { return r.json(); })
-    .then(function(d) { cars = d || []; renderAll(); })
+    .then(function(d) { cars = Array.isArray(d) ? d : []; renderAll(); })
     .catch(function() { cars = []; renderAll(); });
 }
 
 function renderAll() {
   renderKPIs();
-  renderRecent();
-  renderInventory();
+  renderMainCars();
   renderProfile();
+}
+
+function setFilter(status) {
+  activeFilter = status;
+  // Update KPI card active styles
+  ['kpiAll','kpiDisp','kpiRes','kpiVend'].forEach(function(id) { var el = g(id); if (el) el.style.borderColor = ''; });
+  var activeId = status === 'disponible' ? 'kpiDisp' : status === 'reservado' ? 'kpiRes' : status === 'vendido' ? 'kpiVend' : 'kpiAll';
+  var activeEl = g(activeId);
+  if (activeEl) activeEl.style.borderColor = 'rgba(212,175,55,0.6)';
+  // Badge
+  var badge = g('filterBadge');
+  if (badge) {
+    if (status) {
+      badge.style.display = 'flex';
+      var labels = { disponible: 'Disponibles', reservado: 'Reservados', vendido: 'Vendidos' };
+      g('filterBadgeText').textContent = labels[status] || status;
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+  renderMainCars();
+}
+
+function renderMainCars() {
+  var q = (g('searchInput') ? g('searchInput').value : '').toLowerCase().trim();
+  var filtered = cars.filter(function(a) {
+    var matchStatus = !activeFilter || a.estatus === activeFilter;
+    var matchSearch = !q || ((a.marca||'') + ' ' + (a.modelo||'') + ' ' + (a.anio||'') + ' ' + (a.ciudad||'')).toLowerCase().indexOf(q) >= 0;
+    return matchStatus && matchSearch;
+  });
+  if (!cars.length) {
+    g('carGrid').innerHTML = '<div class="empty">'
+      + '<div class="empty-icon"><i class="fa-solid fa-car-side"></i></div>'
+      + '<div class="empty-title">Tu inventario esta vacio</div>'
+      + '<div class="empty-sub">Publica tu primer auto y conéctalo con compradores verificados.</div>'
+      + '<button class="empty-cta" onclick="openForm(null)"><i class="fa-solid fa-plus"></i> Agregar mi primer auto</button>'
+      + '</div>';
+    return;
+  }
+  if (!filtered.length) {
+    g('carGrid').innerHTML = '<div class="empty-recent">No se encontraron autos con ese filtro.</div>';
+    return;
+  }
+  g('carGrid').innerHTML = '<div class="car-grid">' + filtered.map(function(a) {
+    var hasFoto = a.fotos && a.fotos.length && a.fotos[0] && a.fotos[0].startsWith('http');
+    var photoCount = (a.fotos||[]).filter(function(f){return f&&f.startsWith('http')}).length;
+    var statusClass = 'status-' + (a.estatus || 'disponible');
+    var statusLabel = a.estatus === 'disponible' ? 'Disponible' : a.estatus === 'vendido' ? 'Vendido' : a.estatus === 'reservado' ? 'Reservado' : 'Pausado';
+    var photoLabel = photoCount > 0 ? photoCount + ' fotos' : 'Agregar fotos';
+    var bannerContent = hasFoto ? '<img src="' + a.fotos[0] + '" alt="">' : '<i class="fa-solid fa-car"></i>';
+    return '<div class="car-card">'
+      + '<div class="car-card-banner">' + bannerContent
+      + '<div class="car-card-banner-overlay"></div>'
+      + '<span class="car-card-status car-card-banner-status ' + statusClass + '">' + statusLabel + '</span>'
+      + '<div class="car-card-banner-info">'
+      + '<div><div class="car-card-banner-name">' + (a.marca||'') + ' ' + (a.modelo||'') + ' ' + (a.anio||'') + '</div>'
+      + '<div class="car-card-banner-km">' + new Intl.NumberFormat('es-MX').format(a.kilometraje||0) + ' km &middot; ' + (a.ciudad||'') + '</div></div>'
+      + '<div class="car-card-banner-price">' + fmt(a.precio_venta) + '</div>'
+      + '</div></div>'
+      + '<input type="file" id="qp-' + a.id + '" accept="image/*" multiple style="display:none" onchange="quickUploadPhotos(\'' + a.id + '\',this.files)">'
+      + '<div class="car-card-actions-b">'
+      + '<button class="car-action-btn-b" onclick="openForm(\'' + a.id + '\')">'
+      + '<div class="car-action-ico car-action-ico-edit"><i class="fa-solid fa-pen"></i></div>'
+      + '<span class="car-action-lbl car-action-lbl-edit">Editar</span>'
+      + '</button>'
+      + '<button class="car-action-btn-b" onclick="triggerQuickPhoto(\'' + a.id + '\')">'
+      + '<div class="car-action-ico car-action-ico-photos"><i class="fa-solid fa-camera"></i></div>'
+      + '<span class="car-action-lbl car-action-lbl-photos">' + photoLabel + '</span>'
+      + '</button>'
+      + '<button class="car-action-btn-b" onclick="openDel(\'' + a.id + '\')">'
+      + '<div class="car-action-ico car-action-ico-delete"><i class="fa-solid fa-trash"></i></div>'
+      + '<span class="car-action-lbl car-action-lbl-delete">Eliminar</span>'
+      + '</button>'
+      + '</div>'
+    + '</div>';
+  }).join('') + '</div>';
 }
 
 function animateCounter(id, target) {
@@ -1507,14 +1882,21 @@ function renderRecent() {
     return;
   }
   g('recentList').innerHTML = recent.map(function(a) {
-    var thumb = (a.fotos && a.fotos.length) ? '<img src="' + a.fotos[0] + '" alt="">' : '<i class="fa-solid fa-car"></i>';
+    var thumb = (a.fotos && a.fotos.length && a.fotos[0].startsWith('http')) ? '<img src="' + a.fotos[0] + '" alt="">' : '<i class="fa-solid fa-car"></i>';
+    var statusClass = 'status-' + (a.estatus || 'disponible');
+    var statusLabel = a.estatus === 'disponible' ? 'Disponible' : a.estatus === 'reservado' ? 'Reservado' : a.estatus === 'vendido' ? 'Vendido' : 'Pausado';
     return '<div class="recent-item">'
       + '<div class="recent-thumb">' + thumb + '</div>'
       + '<div class="recent-info">'
         + '<div class="recent-name">' + (a.marca||'') + ' ' + (a.modelo||'') + ' ' + (a.anio||'') + '</div>'
-        + '<div class="recent-meta">' + (a.ciudad||'') + ' &middot; ' + (a.estatus||'') + '</div>'
+        + '<span class="car-card-status ' + statusClass + '" style="font-size:8px;padding:1px 7px;">' + statusLabel + '</span>'
       + '</div>'
       + '<div class="recent-price">' + fmt(a.precio_venta) + '</div>'
+      + '<div style="display:flex;gap:4px;margin-left:6px;">'
+      + '<button class="car-action-btn-dash" onclick="openForm(\'' + a.id + '\')" title="Editar info"><div class="car-action-ico car-action-ico-edit" style="width:30px;height:30px;border-radius:8px;font-size:12px;"><i class="fa-solid fa-pen"></i></div></button>'
+      + '<button class="car-action-btn-dash" onclick="triggerQuickPhoto(\'' + a.id + '\')" title="Fotos"><div class="car-action-ico car-action-ico-photos" style="width:30px;height:30px;border-radius:8px;font-size:12px;"><i class="fa-solid fa-camera"></i></div></button>'
+      + '<button class="car-action-btn-dash" onclick="openDel(\'' + a.id + '\')" title="Eliminar"><div class="car-action-ico car-action-ico-delete" style="width:30px;height:30px;border-radius:8px;font-size:12px;"><i class="fa-solid fa-trash"></i></div></button>'
+      + '</div>'
     + '</div>';
   }).join('');
 }
@@ -1535,23 +1917,35 @@ function renderInventory() {
     return;
   }
   g('carGrid').innerHTML = '<div class="car-grid">' + filtered.map(function(a) {
-    var photo = (a.fotos && a.fotos.length) ? '<img src="' + a.fotos[0] + '" alt="">' : '<i class="fa-solid fa-car"></i>';
+    var hasFoto = a.fotos && a.fotos.length && a.fotos[0] && a.fotos[0].startsWith('http');
+    var photoCount = (a.fotos||[]).filter(function(f){return f&&f.startsWith('http')}).length;
     var statusClass = 'status-' + (a.estatus || 'disponible');
     var statusLabel = a.estatus === 'disponible' ? 'Disponible' : a.estatus === 'vendido' ? 'Vendido' : a.estatus === 'reservado' ? 'Reservado' : 'Pausado';
-    var toggleLabel = a.estatus === 'disponible' ? 'Pausar' : 'Activar';
-    var toggleIcon = a.estatus === 'disponible' ? 'fa-pause' : 'fa-play';
+    var photoLabel = photoCount > 0 ? photoCount + ' fotos' : 'Agregar fotos';
+    var bannerContent = hasFoto ? '<img src="' + a.fotos[0] + '" alt="">' : '<i class="fa-solid fa-car"></i>';
     return '<div class="car-card">'
-      + '<div class="car-card-img">' + photo + '</div>'
-      + '<div class="car-card-body">'
-        + '<div class="car-card-name">' + (a.marca||'') + ' ' + (a.modelo||'') + ' ' + (a.anio||'') + '</div>'
-        + '<div class="car-card-meta">' + new Intl.NumberFormat('es-MX').format(a.kilometraje || 0) + ' km &middot; ' + (a.ciudad || '') + '</div>'
-        + '<div class="car-card-price">' + fmt(a.precio_venta) + '</div>'
-        + '<span class="car-card-status ' + statusClass + '">' + statusLabel + '</span>'
-        + '<div class="car-card-actions">'
-          + '<button class="btn-toggle" onclick="toggleStatus(\'' + a.id + '\',\'' + a.estatus + '\')"><i class="fa-solid ' + toggleIcon + '"></i> ' + toggleLabel + '</button>'
-          + '<button class="btn-edit" onclick="openForm(\'' + a.id + '\')"><i class="fa-solid fa-pen"></i></button>'
-          + '<button class="btn-delete" onclick="openDel(\'' + a.id + '\')"><i class="fa-solid fa-trash"></i></button>'
-        + '</div>'
+      + '<div class="car-card-banner">' + bannerContent
+      + '<div class="car-card-banner-overlay"></div>'
+      + '<span class="car-card-status car-card-banner-status ' + statusClass + '">' + statusLabel + '</span>'
+      + '<div class="car-card-banner-info">'
+      + '<div><div class="car-card-banner-name">' + (a.marca||'') + ' ' + (a.modelo||'') + ' ' + (a.anio||'') + '</div>'
+      + '<div class="car-card-banner-km">' + new Intl.NumberFormat('es-MX').format(a.kilometraje||0) + ' km &middot; ' + (a.ciudad||'') + '</div></div>'
+      + '<div class="car-card-banner-price">' + fmt(a.precio_venta) + '</div>'
+      + '</div></div>'
+      + '<input type="file" id="qp-' + a.id + '" accept="image/*" multiple style="display:none" onchange="quickUploadPhotos(\'' + a.id + '\',this.files)">'
+      + '<div class="car-card-actions-b">'
+      + '<button class="car-action-btn-b" onclick="openForm(\'' + a.id + '\')">'
+      + '<div class="car-action-ico car-action-ico-edit"><i class="fa-solid fa-pen"></i></div>'
+      + '<span class="car-action-lbl car-action-lbl-edit">Editar</span>'
+      + '</button>'
+      + '<button class="car-action-btn-b" onclick="triggerQuickPhoto(\'' + a.id + '\')">'
+      + '<div class="car-action-ico car-action-ico-photos"><i class="fa-solid fa-camera"></i></div>'
+      + '<span class="car-action-lbl car-action-lbl-photos">' + photoLabel + '</span>'
+      + '</button>'
+      + '<button class="car-action-btn-b" onclick="openDel(\'' + a.id + '\')">'
+      + '<div class="car-action-ico car-action-ico-delete"><i class="fa-solid fa-trash"></i></div>'
+      + '<span class="car-action-lbl car-action-lbl-delete">Eliminar</span>'
+      + '</button>'
       + '</div>'
     + '</div>';
   }).join('') + '</div>';
@@ -1566,7 +1960,7 @@ function getFilteredCars() {
   });
 }
 
-function filterCars() { renderInventory(); }
+function filterCars() { renderMainCars(); }
 
 function renderProfile() {
   var total = cars.length;
@@ -1607,14 +2001,23 @@ function openForm(id) {
   eid = id;
   wizStep = 0;
   uploadedPhotos = [];
+  wizSelectedPhoto = -1;
+  photoUploading = 0;
   g('ferr').textContent = '';
   g('photoGrid').innerHTML = '';
+  if(g('fmOtro')){g('fmOtro').value='';g('fmOtro').style.display='none';}
+  if(g('fcolOtro')){g('fcolOtro').value='';g('fcolOtro').style.display='none';}
 
   if (id) {
     var a = cars.find(function(x) { return x.id === id; });
     if (!a) return;
     g('ftit').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Editar Auto';
-    g('fm').value = a.marca || '';
+    // Check if marca exists in dropdown, if not use "Otra"
+    var marcaSel = g('fm');
+    var marcaFound = false;
+    for(var oi=0;oi<marcaSel.options.length;oi++){if(marcaSel.options[oi].value===a.marca){marcaFound=true;break;}}
+    if(marcaFound){marcaSel.value=a.marca;if(g('fmOtro'))g('fmOtro').style.display='none';}
+    else{marcaSel.value='Otra';if(g('fmOtro')){g('fmOtro').value=a.marca||'';g('fmOtro').style.display='block';}}
     g('fmo').value = a.modelo || '';
     g('fa').value = a.anio || '';
     g('fp').value = a.precio_venta || '';
@@ -1622,7 +2025,13 @@ function openForm(id) {
     g('fci').value = a.ciudad || 'CDMX';
     g('fti').value = a.tipo_vehiculo || 'sedan';
     g('ftr').value = a.transmision || 'Automatico';
-    g('fcol').value = a.color || '';
+    // Check if color exists in dropdown
+    var colSel = g('fcol');
+    var colFound = false;
+    for(var ci=0;ci<colSel.options.length;ci++){if(colSel.options[ci].value===a.color){colFound=true;break;}}
+    if(colFound){colSel.value=a.color;if(g('fcolOtro'))g('fcolOtro').style.display='none';}
+    else if(a.color){colSel.value='Otro';if(g('fcolOtro')){g('fcolOtro').value=a.color;g('fcolOtro').style.display='block';}}
+    else{colSel.value='';if(g('fcolOtro'))g('fcolOtro').style.display='none';}
     g('fco').value = a.combustible || 'gasolina';
     g('fd').value = a.descripcion || '';
     g('fst').value = a.estatus || 'disponible';
@@ -1701,6 +2110,7 @@ function wizNext() {
   } else if (wizStep === 1) {
     wizStep = 2; showWizStep(); updateTrustSummary();
   } else if (wizStep === 2) {
+    photoUploading = 0; // Force unstick any hanging uploads
     submitForm();
   }
 }
@@ -1753,50 +2163,174 @@ if (dropZone) {
   });
 }
 
+var photoUploading = 0;
+
 function handlePhotos(files) {
   var remaining = 8 - uploadedPhotos.length;
   if (remaining <= 0) return;
   var toProcess = Array.from(files).slice(0, remaining);
   toProcess.forEach(function(file) {
     if (!file.type.startsWith('image/')) return;
-    compressImage(file, function(base64) {
-      uploadedPhotos.push(base64);
-      renderPhotoGrid();
-      updateTrustSummary();
-    });
+    compressAndUpload(file);
   });
 }
 
-function compressImage(file, cb) {
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    var img = new Image();
-    img.onload = function() {
-      var canvas = document.createElement('canvas');
-      var maxDim = 1200;
-      var w = img.width, h = img.height;
-      if (w > maxDim || h > maxDim) {
-        if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
-        else { w = Math.round(w * maxDim / h); h = maxDim; }
-      }
-      canvas.width = w; canvas.height = h;
-      var ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, w, h);
-      cb(canvas.toDataURL('image/jpeg', 0.7));
-    };
-    img.src = e.target.result;
+function compressAndUpload(file) {
+  photoUploading++;
+  renderPhotoGrid();
+  var img = new Image();
+  var objectUrl = URL.createObjectURL(file);
+  img.onerror = function() {
+    URL.revokeObjectURL(objectUrl);
+    photoUploading--;
+    renderPhotoGrid();
   };
-  reader.readAsDataURL(file);
+  img.onload = function() {
+    URL.revokeObjectURL(objectUrl);
+    var canvas = document.createElement('canvas');
+    var maxDim = 1200;
+    var w = img.width, h = img.height;
+    if (w > maxDim || h > maxDim) {
+      if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
+      else { w = Math.round(w * maxDim / h); h = maxDim; }
+    }
+    canvas.width = w; canvas.height = h;
+    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+    canvas.toBlob(function(blob) {
+      if (!blob) { photoUploading--; renderPhotoGrid(); return; }
+      var folder = (uid || 'anon').substring(0, 8);
+      var fileName = folder + '/' + Date.now() + '-' + Math.random().toString(36).substring(2, 6) + '.webp';
+      fetch(S + '/storage/v1/object/vehicle_photos/' + fileName, {
+        method: 'POST',
+        headers: {
+          'apikey': K,
+          'Authorization': 'Bearer ' + (tok || K),
+          'Content-Type': 'image/webp',
+          'x-upsert': 'true'
+        },
+        body: blob
+      })
+      .then(function(r) {
+        if (!r.ok) throw new Error('Upload failed: ' + r.status);
+        var publicUrl = S + '/storage/v1/object/public/vehicle_photos/' + fileName;
+        uploadedPhotos.push(publicUrl);
+        photoUploading--;
+        renderPhotoGrid();
+        updateTrustSummary();
+        if (photoUploading === 0) showToast('Foto subida correctamente', 'success');
+      })
+      .catch(function(err) {
+        console.error('Photo upload error:', err);
+        photoUploading--;
+        renderPhotoGrid();
+        showToast('Error al subir foto. Intenta de nuevo.', 'error');
+      });
+    }, 'image/webp', 0.75);
+  };
+  img.src = objectUrl;
 }
+
+var wizSelectedPhoto = -1;
 
 function renderPhotoGrid() {
   var html = uploadedPhotos.map(function(src, i) {
-    return '<div class="photo-thumb">'
+    var isFirst = i === 0;
+    var isSelected = i === wizSelectedPhoto;
+    return '<div class="photo-thumb' + (isSelected ? ' selected' : '') + '" style="position:relative;cursor:pointer;transition:all 0.2s;' + (isSelected ? 'border:2px solid var(--gold);box-shadow:0 0 12px rgba(212,175,55,0.5);transform:scale(1.05);' : '') + '" onclick="tapWizPhoto(' + i + ')">'
       + '<img src="' + src + '" alt="Foto ' + (i+1) + '">'
-      + '<button class="photo-remove" onclick="removePhoto(' + i + ')">&times;</button>'
+      + '<div style="position:absolute;top:3px;left:3px;background:' + (isFirst ? 'var(--gold)' : 'rgba(0,0,0,0.7)') + ';color:' + (isFirst ? 'var(--bg-primary)' : 'var(--gold)') + ';font-size:10px;font-weight:800;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;">' + (isFirst ? '★' : (i+1)) + '</div>'
+      + '<button class="photo-remove" onclick="event.stopPropagation();removePhoto(' + i + ')">&times;</button>'
       + '</div>';
   }).join('');
+  for (var u = 0; u < photoUploading; u++) {
+    html += '<div class="photo-thumb" style="display:flex;align-items:center;justify-content:center;background:rgba(212,175,55,0.08);"><div class="sp" style="width:24px;height:24px;"></div></div>';
+  }
+  if (uploadedPhotos.length > 1) {
+    html += '<div style="font-size:10px;color:var(--green-muted);margin-top:4px;text-align:center;grid-column:1/-1;">' + (wizSelectedPhoto >= 0 ? '👆 Toca otra foto para intercambiar posicion' : '★ = portada · toca una foto y luego otra para cambiar orden') + '</div>';
+  }
   g('photoGrid').innerHTML = html;
+}
+
+function tapWizPhoto(idx) {
+  if (wizSelectedPhoto < 0) {
+    wizSelectedPhoto = idx;
+  } else if (wizSelectedPhoto === idx) {
+    wizSelectedPhoto = -1;
+  } else {
+    var temp = uploadedPhotos[wizSelectedPhoto];
+    uploadedPhotos[wizSelectedPhoto] = uploadedPhotos[idx];
+    uploadedPhotos[idx] = temp;
+    wizSelectedPhoto = -1;
+  }
+  renderPhotoGrid();
+}
+
+// ══════════════════════════════════════════
+// QUICK PHOTO UPLOAD (direct from inventory card)
+// ══════════════════════════════════════════
+function triggerQuickPhoto(id) {
+  var input = g('qp-' + id);
+  if (input) input.click();
+}
+
+function quickUploadPhotos(carId, files) {
+  if (!files || !files.length) return;
+  var car = cars.find(function(c) { return c.id === carId; });
+  if (!car) return;
+  var existing = (car.fotos || []).filter(function(f) { return f && f.startsWith('http'); });
+  var remaining = 8 - existing.length;
+  if (remaining <= 0) { alert('Este auto ya tiene 8 fotos (maximo)'); return; }
+  var toProcess = Array.from(files).slice(0, remaining);
+  var uploaded = 0, total = toProcess.length;
+
+  // Show uploading state on the card
+  var btn = document.querySelector('#qp-' + carId).previousElementSibling;
+  if (btn) { btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Subiendo ' + total + '...'; btn.disabled = true; }
+
+  toProcess.forEach(function(file) {
+    if (!file.type.startsWith('image/')) { checkDone(); return; }
+    var img = new Image();
+    var objectUrl = URL.createObjectURL(file);
+    img.onerror = function() { URL.revokeObjectURL(objectUrl); checkDone(); };
+    img.onload = function() {
+      URL.revokeObjectURL(objectUrl);
+      var canvas = document.createElement('canvas');
+      var maxDim = 1200, w = img.width, h = img.height;
+      if (w > maxDim || h > maxDim) { if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; } else { w = Math.round(w * maxDim / h); h = maxDim; } }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      canvas.toBlob(function(blob) {
+        if (!blob) { checkDone(); return; }
+        var folder = (uid || 'anon').substring(0, 8);
+        var fileName = folder + '/' + Date.now() + '-' + Math.random().toString(36).substring(2, 6) + '.webp';
+        fetch(S + '/storage/v1/object/vehicle_photos/' + fileName, {
+          method: 'POST',
+          headers: { 'apikey': K, 'Authorization': 'Bearer ' + (tok || K), 'Content-Type': 'image/webp', 'x-upsert': 'true' },
+          body: blob
+        }).then(function(r) {
+          if (r.ok) existing.push(S + '/storage/v1/object/public/vehicle_photos/' + fileName);
+          checkDone();
+        }).catch(function() { checkDone(); });
+      }, 'image/webp', 0.75);
+    };
+    img.src = objectUrl;
+  });
+
+  function checkDone() {
+    uploaded++;
+    if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ' + uploaded + '/' + total;
+    if (uploaded >= total) {
+      // Save to DB
+      fetch(S + '/rest/v1/inventario?id=eq.' + carId + '&user_id=eq.' + uid, {
+        method: 'PATCH',
+        headers: Object.assign({}, ah(tok), { 'Prefer': 'return=minimal' }),
+        body: JSON.stringify({ fotos: existing, updated_at: new Date().toISOString() })
+      }).then(function() {
+        car.fotos = existing;
+        renderAll();
+      });
+    }
+  }
 }
 
 function removePhoto(i) {
@@ -1808,8 +2342,27 @@ function removePhoto(i) {
 // ══════════════════════════════════════════
 // FORM SUBMIT
 // ══════════════════════════════════════════
+function toggleOtro(selectId, inputId) {
+  var sel = g(selectId);
+  var inp = g(inputId);
+  if (!sel || !inp) return;
+  inp.style.display = (sel.value === 'Otra' || sel.value === 'Otro') ? 'block' : 'none';
+  if (inp.style.display === 'block') inp.focus();
+}
+
+function getFieldWithOtro(selectId, inputId) {
+  var sel = g(selectId);
+  if (!sel) return '';
+  if (sel.value === 'Otra' || sel.value === 'Otro') {
+    var inp = g(inputId);
+    return inp ? inp.value.trim() : '';
+  }
+  return sel.value.trim();
+}
+
 function submitForm() {
-  var marca = g('fm').value.trim(), modelo = g('fmo').value.trim();
+  var marca = getFieldWithOtro('fm', 'fmOtro') || g('fm').value.trim();
+  var modelo = g('fmo').value.trim();
   var anio = parseInt(g('fa').value) || 0, precio = parseFloat(g('fp').value) || 0;
   g('ferr').textContent = '';
   if (!marca || !modelo || !anio || !precio) {
@@ -1825,7 +2378,7 @@ function submitForm() {
     kilometraje: parseInt(g('fk').value) || 0,
     ciudad: g('fci').value.trim() || 'CDMX',
     tipo_vehiculo: g('fti').value, transmision: g('ftr').value,
-    color: g('fcol').value.trim(), combustible: g('fco').value,
+    color: getFieldWithOtro('fcol', 'fcolOtro') || g('fcol').value.trim(), combustible: g('fco').value,
     descripcion: (g('fd').value.trim() + (g('fvin').value.trim() ? ' | VIN: ' + g('fvin').value.trim() : '')).trim(),
     estatus: g('fst').value,
     fotos: uploadedPhotos,
@@ -1853,27 +2406,669 @@ function submitForm() {
 }
 
 // ══════════════════════════════════════════
+// ══════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════
+function showToast(msg, type) {
+  var icons = { success: '✅', error: '❌', info: 'ℹ️' };
+  var tc = g('toast-container');
+  if (!tc) return;
+  var t = document.createElement('div');
+  t.className = 'toast ' + (type || 'info');
+  t.innerHTML = '<span class="toast-icon">' + (icons[type] || icons.info) + '</span><span>' + msg + '</span>';
+  tc.appendChild(t);
+  setTimeout(function() {
+    t.classList.add('toast-out');
+    setTimeout(function() { if (t.parentNode) t.parentNode.removeChild(t); }, 220);
+  }, 3500);
+}
+
+// ══════════════════════════════════════════
 // DELETE
 // ══════════════════════════════════════════
-function openDel(id) { did = id; g('mC').classList.add('open'); document.body.style.overflow = 'hidden'; }
-function closeConfirm() { g('mC').classList.remove('open'); document.body.style.overflow = ''; did = null; }
+function openDel(id) {
+  did = id;
+  var car = cars.find(function(c) { return c.id === id; });
+  var nameEl = g('delCarName');
+  if (nameEl) nameEl.textContent = car ? (car.marca || '') + ' ' + (car.modelo || '') + ' ' + (car.anio || '') : '';
+  g('mC').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeConfirm() {
+  g('mC').classList.remove('open');
+  document.body.style.overflow = '';
+  did = null;
+  var bdd = g('bdd'), bcan = g('bcan');
+  if (bdd) { bdd.textContent = 'Si, eliminar'; bdd.disabled = false; }
+  if (bcan) bcan.disabled = false;
+}
 function doDelete() {
   if (!did) return;
-  g('bdd').textContent = 'Eliminando...';
-  fetch(S + '/rest/v1/inventario?id=eq.' + did + '&user_id=eq.' + uid, {
-    method: 'DELETE', headers: ah(tok)
+  var bdd = g('bdd'), bcan = g('bcan');
+  bdd.textContent = 'Eliminando...';
+  bdd.disabled = true;
+  if (bcan) bcan.disabled = true;
+
+  function attemptDelete() {
+    return fetch(S + '/rest/v1/inventario?id=eq.' + did, {
+      method: 'DELETE',
+      headers: { 'apikey': K, 'Authorization': 'Bearer ' + tok }
+    });
+  }
+
+  attemptDelete()
+  .then(function(r) {
+    if (r.status === 401) {
+      return tryRefreshToken().then(function() { return attemptDelete(); });
+    }
+    return r;
   })
-    .then(function() { closeConfirm(); loadCars(); })
-    .catch(function() { closeConfirm(); loadCars(); });
+  .then(function(r) {
+    if (!r.ok) return r.text().then(function(body) { throw new Error(r.status + ': ' + body); });
+    closeConfirm();
+    cars = cars.filter(function(c) { return c.id !== did; });
+    renderMainCars();
+    showToast('Auto eliminado correctamente', 'success');
+    loadCars();
+  })
+  .catch(function(err) {
+    closeConfirm();
+    console.error('Delete error:', err.message);
+    if (err.message === 'no_refresh') {
+      showToast('Sesion expirada — vuelve a iniciar sesion.', 'error');
+      setTimeout(function() {
+        tok = null; localStorage.removeItem('alabol_token'); localStorage.removeItem('alabol_refresh');
+        showScreen('landing');
+      }, 2000);
+    } else {
+      showToast('No se pudo eliminar. Intenta de nuevo.', 'error');
+    }
+  });
 }
 
 // Close modals on click outside
 g('mC').addEventListener('click', function(e) { if (e.target === e.currentTarget) closeConfirm(); });
 
 // ══════════════════════════════════════════
+// CSV SYNC FOR AGENCY
+// ══════════════════════════════════════════
+var agSyncData = [];
+var agExisting = [];
+
+function agParseCSV(text) {
+    var lines = text.split('\n').filter(function(l) { return l.trim(); });
+    if (lines.length < 2) return [];
+    var headers = lines[0].split(',').map(function(h) { return h.trim().replace(/"/g, ''); });
+    return lines.slice(1).map(function(line) {
+        var values = []; var current = ''; var inQ = false;
+        for (var i = 0; i < line.length; i++) {
+            if (line[i] === '"') inQ = !inQ;
+            else if (line[i] === ',' && !inQ) { values.push(current.trim()); current = ''; }
+            else current += line[i];
+        }
+        values.push(current.trim());
+        var obj = {};
+        headers.forEach(function(h, idx) { obj[h] = values[idx] || ''; });
+        return obj;
+    }).filter(function(r) { return r['Marca'] && r['Modelo']; });
+}
+
+function agFetchCSV() {
+    var url = g('agSyncUrl').value.trim();
+    var status = g('urlSyncStatus');
+    if (!url) { status.textContent = '❌ Pega la URL del CSV publicado'; return; }
+    status.textContent = '⏳ Cargando CSV...';
+
+    fetch(url).then(function(r) {
+        if (!r.ok) throw new Error('No se pudo cargar');
+        return r.text();
+    }).then(function(text) {
+        agSyncData = agParseCSV(text);
+        if (agSyncData.length === 0) { status.textContent = '❌ CSV vacío o formato incorrecto'; return; }
+        status.textContent = '✅ ' + agSyncData.length + ' autos encontrados';
+
+        var agName = userName || userEmail || 'agencia';
+        fetch(S + '/rest/v1/inventario?user_id=eq.' + uid + '&select=id,marca,modelo,anio,precio_venta,estatus,agencia_id', { headers: ah(tok) })
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            agExisting = data || [];
+            agBuildPreview(agName);
+          });
+    }).catch(function(err) {
+        status.textContent = '❌ Error: ' + err.message;
+    });
+}
+
+function agBuildPreview(agName) {
+    var newC = 0, updC = 0, remC = 0, sameC = 0;
+    var html = '<table style="width:100%;border-collapse:collapse;"><thead><tr><th style="text-align:left;padding:6px;font-size:11px;color:var(--gold);">Acción</th><th style="text-align:left;padding:6px;font-size:11px;color:var(--gold);">Auto</th><th style="text-align:left;padding:6px;font-size:11px;color:var(--gold);">Precio</th><th style="text-align:left;padding:6px;font-size:11px;color:var(--gold);">Estatus</th></tr></thead><tbody>';
+
+    agSyncData.forEach(function(row) {
+        var marca = row['Marca'] || '';
+        var modelo = row['Modelo'] || '';
+        var anio = parseInt(row['Año'] || row['Anio'] || '0');
+        var precio = parseFloat((row['Precio'] || '0').replace(/[^0-9.]/g, ''));
+        var estatus = (row['Estatus'] || 'disponible').toLowerCase();
+        var existing = agExisting.find(function(e) {
+            return e.marca && e.marca.toLowerCase() === marca.toLowerCase() && e.modelo && e.modelo.toLowerCase() === modelo.toLowerCase() && e.anio === anio;
+        });
+        var action, color;
+        if (existing) {
+            if (existing.precio_venta != precio || existing.estatus !== estatus) { action = '🔄 Actualizar'; color = '#f59e0b'; updC++; }
+            else { action = '✓ OK'; color = '#666'; sameC++; }
+        } else { action = '🆕 Nuevo'; color = '#10b981'; newC++; }
+        html += '<tr><td style="padding:6px;color:'+color+';font-weight:600;font-size:12px;">'+action+'</td><td style="padding:6px;color:white;font-size:12px;">'+marca+' '+modelo+' '+anio+'</td><td style="padding:6px;color:var(--gold);font-size:12px;">$'+precio.toLocaleString('es-MX')+'</td><td style="padding:6px;font-size:12px;color:var(--green-text);">'+estatus+'</td></tr>';
+    });
+
+    agExisting.forEach(function(ex) {
+        if (ex.estatus !== 'disponible') return;
+        var inCSV = agSyncData.find(function(r) {
+            return (r['Marca']||'').toLowerCase() === (ex.marca||'').toLowerCase() && (r['Modelo']||'').toLowerCase() === (ex.modelo||'').toLowerCase() && parseInt(r['Año']||r['Anio']||'0') === ex.anio;
+        });
+        if (!inCSV) {
+            remC++;
+            html += '<tr><td style="padding:6px;color:#ef4444;font-weight:600;font-size:12px;">🗑️ Eliminar</td><td style="padding:6px;color:white;font-size:12px;">'+ex.marca+' '+ex.modelo+' '+ex.anio+'</td><td style="padding:6px;font-size:12px;">-</td><td style="padding:6px;font-size:12px;color:#ef4444;">No está en CSV</td></tr>';
+        }
+    });
+
+    html += '</tbody></table>';
+    g('agNewCount').textContent = newC;
+    g('agUpdateCount').textContent = updC;
+    g('agRemoveCount').textContent = remC;
+    g('agSameCount').textContent = sameC;
+    g('agPreviewTable').innerHTML = html;
+    g('agSyncPreview').style.display = 'block';
+}
+
+function agApplySync() {
+    var btn = g('agApplyBtn');
+    btn.disabled = true; btn.textContent = '⏳ Sincronizando...';
+    var agName = userName || userEmail || 'agencia';
+    var inserted = 0, updated = 0, removed = 0;
+    var promises = [];
+    var hdrs = Object.assign({}, ah(tok), { 'Prefer': 'return=minimal' });
+
+    agSyncData.forEach(function(row) {
+        var marca = row['Marca']||row['marca']||'';
+        var modelo = row['Modelo']||row['modelo']||'';
+        var anio = parseInt(row['Año']||row['Anio']||row['anio']||row['ano']||'0');
+        var precio = parseFloat((row['Precio']||row['precio_venta']||row['precio']||'0').toString().replace(/[^0-9.]/g,''));
+        var tipo = (row['Tipo']||row['tipo_vehiculo']||'sedan').toLowerCase();
+        var km = parseInt((row['Kilometraje']||row['kilometraje']||row['km']||'0').toString().replace(/[^0-9]/g,''));
+        var transmision = row['Transmision']||row['Transmisión']||row['transmision']||'Automatico';
+        var color = row['Color']||row['color']||'';
+        var ciudad = row['Ciudad']||row['ciudad']||'';
+        var estatus = (row['Estatus']||row['estatus']||'disponible').toLowerCase();
+        var descripcion = row['Descripcion']||row['Descripción']||row['descripcion']||'';
+        var combustible = row['Combustible']||row['combustible']||'gasolina';
+        var traccion = row['Traccion']||row['traccion']||'4x2';
+        var motor = row['Motor']||row['motor']||'';
+        var vin = row['VIN']||row['vin']||'';
+        var fotos = [row['Foto1'],row['Foto2'],row['Foto3'],row['Foto4'],row['fotos']].filter(function(f){return f&&f.toString().startsWith('http');});
+        if (!marca||!modelo||!anio) return;
+
+        var existing = agExisting.find(function(e) {
+            return e.marca&&e.marca.toLowerCase()===marca.toLowerCase()&&e.modelo&&e.modelo.toLowerCase()===modelo.toLowerCase()&&e.anio===anio;
+        });
+
+        if (existing) {
+            var updateBody = {precio_venta:precio,kilometraje:km,transmision:transmision,color:color,ciudad:ciudad,estatus:estatus,tipo_vehiculo:tipo,combustible:combustible,traccion:traccion,motor:motor||undefined,descripcion:descripcion,updated_at:new Date().toISOString()};
+            if (fotos.length>0) updateBody.fotos = fotos;
+            promises.push(
+              fetch(S+'/rest/v1/inventario?id=eq.'+existing.id, {method:'PATCH',headers:hdrs,body:JSON.stringify(updateBody)})
+              .then(function(r){if(r.ok)updated++;})
+            );
+        } else {
+            var insertBody = {user_id:uid,agencia_id:agName,marca:marca,modelo:modelo,anio:anio,precio_venta:precio,kilometraje:km,transmision:transmision,color:color,ciudad:ciudad,estatus:estatus,tipo_vehiculo:tipo,combustible:combustible,traccion:traccion,motor:motor||null,descripcion:descripcion,vin:vin||null,origen:'agencia',fotos:fotos.length>0?fotos:[],created_at:new Date().toISOString(),updated_at:new Date().toISOString()};
+            promises.push(
+              fetch(S+'/rest/v1/inventario', {method:'POST',headers:hdrs,body:JSON.stringify(insertBody)})
+              .then(function(r){if(r.ok||r.status===201)inserted++;})
+            );
+        }
+    });
+
+    agExisting.forEach(function(ex) {
+        if (ex.estatus !== 'disponible') return;
+        var inCSV = agSyncData.find(function(r) {
+            return ((r['Marca']||r['marca']||'').toLowerCase()===(ex.marca||'').toLowerCase())&&((r['Modelo']||r['modelo']||'').toLowerCase()===(ex.modelo||'').toLowerCase())&&(parseInt(r['Año']||r['Anio']||r['anio']||r['ano']||'0')===ex.anio);
+        });
+        if (!inCSV) {
+            promises.push(
+              fetch(S+'/rest/v1/inventario?id=eq.'+ex.id, {method:'PATCH',headers:hdrs,body:JSON.stringify({estatus:'vendido',updated_at:new Date().toISOString()})})
+              .then(function(r){if(r.ok)removed++;})
+            );
+        }
+    });
+
+    Promise.all(promises).then(function() {
+        g('agSyncResult').style.display = 'block';
+        g('agResultText').textContent = inserted + ' nuevos · ' + updated + ' actualizados · ' + removed + ' eliminados';
+        btn.textContent = '✅ Completado';
+        loadCars();
+    }).catch(function(err) {
+        btn.textContent = '❌ Error: ' + err.message; btn.disabled = false;
+    });
+}
+
+// ══════════════════════════════════════════
+// BULK ACCORDION
+// ══════════════════════════════════════════
+var bulkItems = []; // [{tempId, marca, modelo, anio, precio, ..., photos: [url, url]}]
+
+function openBulkAccordion(items) {
+  bulkItems = items.map(function(row, i) {
+    return {
+      tempId: 'bulk-' + i,
+      marca: row['Marca'] || row['marca'] || '',
+      modelo: row['Modelo'] || row['modelo'] || '',
+      anio: parseInt(row['Año'] || row['Anio'] || row['anio'] || row['ano'] || '0'),
+      precio: parseFloat((row['Precio'] || row['precio_venta'] || row['precio'] || '0').toString().replace(/[^0-9.]/g, '')),
+      tipo: (row['Tipo'] || row['tipo_vehiculo'] || 'sedan').toLowerCase(),
+      km: parseInt((row['Kilometraje'] || row['kilometraje'] || row['km'] || '0').toString().replace(/[^0-9]/g, '')),
+      transmision: row['Transmision'] || row['Transmisión'] || row['transmision'] || 'Automatico',
+      color: row['Color'] || row['color'] || '',
+      ciudad: row['Ciudad'] || row['ciudad'] || '',
+      combustible: row['Combustible'] || row['combustible'] || 'gasolina',
+      traccion: row['Traccion'] || row['traccion'] || '4x2',
+      motor: row['Motor'] || row['motor'] || '',
+      vin: row['VIN'] || row['vin'] || '',
+      descripcion: row['Descripcion'] || row['Descripción'] || row['descripcion'] || '',
+      photos: [],
+      uploading: 0,
+      expanded: false
+    };
+  });
+  g('bulkSubtitle').textContent = bulkItems.length + ' autos detectados';
+  renderBulkList();
+  g('bulkOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeBulk() {
+  g('bulkOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function renderBulkList() {
+  var withPhotos = bulkItems.filter(function(b) { return b.photos.length > 0; }).length;
+  var pct = bulkItems.length > 0 ? Math.round(withPhotos / bulkItems.length * 100) : 0;
+  g('bulkProgressFill').style.width = pct + '%';
+  g('bulkProgressText').textContent = withPhotos + ' de ' + bulkItems.length + ' con fotos';
+
+  g('bulkList').innerHTML = bulkItems.map(function(item, idx) {
+    var hasPhotos = item.photos.length > 0;
+    var isExp = item.expanded;
+    var statusClass = hasPhotos ? 'done' : 'pending';
+    var statusIcon = hasPhotos ? '<i class="fa-solid fa-check"></i>' : (idx + 1);
+    var photoCount = item.photos.length > 0 ? ' · ' + item.photos.length + ' fotos' : '';
+
+    var html = '<div class="bulk-item' + (isExp ? ' expanded' : '') + (hasPhotos ? ' has-photos' : '') + '" id="bi-' + idx + '">'
+      + '<div class="bulk-item-header" onclick="toggleBulkItem(' + idx + ')">'
+        + '<div class="bulk-item-status ' + statusClass + '">' + statusIcon + '</div>'
+        + '<div class="bulk-item-info">'
+          + '<div class="bulk-item-name">' + item.marca + ' ' + item.modelo + ' ' + item.anio + '</div>'
+          + '<div class="bulk-item-meta">' + fmt(item.precio) + ' · ' + new Intl.NumberFormat('es-MX').format(item.km) + ' km' + (item.ciudad ? ' · ' + item.ciudad : '') + photoCount + '</div>'
+        + '</div>'
+        + '<div class="bulk-item-arrow"><i class="fa-solid fa-chevron-down"></i></div>'
+      + '</div>';
+
+    if (isExp) {
+      html += '<div class="bulk-item-body">'
+        + '<div class="bulk-photo-zone" onclick="triggerBulkPhoto(' + idx + ')">'
+          + '<i class="fa-solid fa-camera" style="font-size:20px;color:var(--gold);margin-bottom:4px;"></i><br>'
+          + '<span style="font-size:13px;color:white;font-weight:600;">Toca para subir fotos</span><br>'
+          + '<span style="font-size:11px;color:var(--green-muted);">Seleccion multiple · max 8 fotos · la #1 es portada</span>'
+        + '</div>'
+        + '<input type="file" id="bulkFileInput-' + idx + '" accept="image/*" multiple style="display:none" onchange="handleBulkPhotos(' + idx + ', this.files)">';
+
+      if (item.photos.length > 0 || item.uploading > 0) {
+        var selIdx = (typeof bulkSelectedPhoto !== 'undefined' && bulkSelectedPhoto && bulkSelectedPhoto.item === idx) ? bulkSelectedPhoto.photo : -1;
+        html += '<div class="bulk-photo-grid">';
+        item.photos.forEach(function(url, pi) {
+          var isFirst = pi === 0;
+          var isSelected = pi === selIdx;
+          html += '<div class="bulk-photo-thumb' + (isSelected ? ' selected' : '') + '" onclick="tapBulkPhoto(' + idx + ',' + pi + ')">'
+            + '<img src="' + url + '" alt="">'
+            + '<div class="bulk-photo-num' + (isFirst ? ' portada' : '') + '">' + (isFirst ? '★' : (pi + 1)) + '</div>'
+            + '<button class="bulk-photo-del" onclick="event.stopPropagation();removeBulkPhoto(' + idx + ',' + pi + ')">&times;</button>'
+          + '</div>';
+        });
+        for (var u = 0; u < item.uploading; u++) {
+          html += '<div class="bulk-photo-thumb" style="display:flex;align-items:center;justify-content:center;"><div class="sp" style="width:20px;height:20px;"></div></div>';
+        }
+        html += '</div>';
+        if (item.photos.length > 1) {
+          html += '<div style="font-size:10px;color:var(--green-muted);margin-top:4px;text-align:center;">' + (selIdx >= 0 ? '👆 Ahora toca otra foto para intercambiar posicion' : '★ = portada · toca una foto y luego otra para cambiar orden') + '</div>';
+        }
+      }
+      html += '</div>';
+    }
+    html += '</div>';
+    return html;
+  }).join('');
+}
+
+function toggleBulkItem(idx) {
+  bulkItems[idx].expanded = !bulkItems[idx].expanded;
+  renderBulkList();
+}
+
+function triggerBulkPhoto(idx) {
+  g('bulkFileInput-' + idx).click();
+}
+
+function handleBulkPhotos(idx, files) {
+  if (!files || !files.length) return;
+  var item = bulkItems[idx];
+  var remaining = 8 - item.photos.length;
+  if (remaining <= 0) return;
+  var toProcess = Array.from(files).slice(0, remaining);
+  toProcess.forEach(function(file) {
+    if (!file.type.startsWith('image/')) return;
+    item.uploading++;
+    renderBulkList();
+    // Timeout safety: if upload hangs for 20s, force decrement
+    var done = false;
+    var timer = setTimeout(function() {
+      if (!done) { done = true; item.uploading = Math.max(0, item.uploading - 1); renderBulkList(); }
+    }, 20000);
+    function finish(url) {
+      if (done) return;
+      done = true; clearTimeout(timer);
+      if (url) item.photos.push(url);
+      item.uploading = Math.max(0, item.uploading - 1);
+      renderBulkList();
+    }
+    try {
+      var reader = new FileReader();
+      reader.onerror = function() { finish(); };
+      reader.onload = function(e) {
+        var img = new Image();
+        img.onerror = function() { finish(); };
+        img.onload = function() {
+          try {
+            var canvas = document.createElement('canvas');
+            var maxDim = 1200;
+            var w = img.width, h = img.height;
+            if (w > maxDim || h > maxDim) {
+              if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
+              else { w = Math.round(w * maxDim / h); h = maxDim; }
+            }
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            canvas.toBlob(function(blob) {
+              if (!blob) { finish(); return; }
+              var folder = (uid || 'anon').substring(0, 8);
+              var fileName = folder + '/' + Date.now() + '-' + Math.random().toString(36).substring(2, 6) + '.webp';
+              fetch(S + '/storage/v1/object/vehicle_photos/' + fileName, {
+                method: 'POST',
+                headers: { 'apikey': K, 'Authorization': 'Bearer ' + (tok || K), 'Content-Type': 'image/webp', 'x-upsert': 'true' },
+                body: blob
+              }).then(function(r) {
+                if (!r.ok) { finish(); return; }
+                finish(S + '/storage/v1/object/public/vehicle_photos/' + fileName);
+              }).catch(function() { finish(); });
+            }, 'image/webp', 0.75);
+          } catch(ex) { finish(); }
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    } catch(ex) { finish(); }
+  });
+}
+
+function bulkForceUnstick() {
+  bulkItems.forEach(function(item) { item.uploading = 0; });
+  renderBulkList();
+}
+
+function removeBulkPhoto(itemIdx, photoIdx) {
+  bulkItems[itemIdx].photos.splice(photoIdx, 1);
+  if (bulkSelectedPhoto && bulkSelectedPhoto.item === itemIdx) bulkSelectedPhoto = null;
+  renderBulkList();
+}
+
+var bulkSelectedPhoto = null;
+
+function tapBulkPhoto(itemIdx, photoIdx) {
+  if (!bulkSelectedPhoto || bulkSelectedPhoto.item !== itemIdx) {
+    // First tap: select this photo
+    bulkSelectedPhoto = { item: itemIdx, photo: photoIdx };
+  } else if (bulkSelectedPhoto.photo === photoIdx) {
+    // Tap same photo: deselect
+    bulkSelectedPhoto = null;
+  } else {
+    // Second tap on different photo: swap
+    var photos = bulkItems[itemIdx].photos;
+    var temp = photos[bulkSelectedPhoto.photo];
+    photos[bulkSelectedPhoto.photo] = photos[photoIdx];
+    photos[photoIdx] = temp;
+    bulkSelectedPhoto = null;
+  }
+  renderBulkList();
+}
+
+function bulkConfirmAll() {
+  var btn = g('bulkConfirmBtn');
+  btn.disabled = true;
+  // Force unstick any hanging uploads
+  bulkItems.forEach(function(b) { b.uploading = 0; });
+
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Publicando ' + bulkItems.length + ' autos...';
+  var agName = userName || userEmail || 'agencia';
+  var hdrs = Object.assign({}, ah(tok), { 'Prefer': 'return=minimal' });
+  var inserted = 0, errors = 0;
+  var total = bulkItems.length;
+  var idx = 0;
+
+  function insertNext() {
+    if (idx >= total) {
+      btn.innerHTML = '<i class="fa-solid fa-check-double"></i> ' + inserted + ' publicados' + (errors > 0 ? ', ' + errors + ' errores' : '');
+      btn.style.background = 'var(--emerald)'; btn.style.color = 'white';
+      setTimeout(function() { closeBulk(); loadCars(); switchView('mainView'); }, 2000);
+      return;
+    }
+    var item = bulkItems[idx];
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Publicando ' + (idx + 1) + ' de ' + total + '...';
+    var body = {
+      user_id: uid, agencia_id: agName, marca: item.marca, modelo: item.modelo,
+      anio: item.anio, precio_venta: item.precio, kilometraje: item.km,
+      transmision: item.transmision, tipo_vehiculo: item.tipo, color: item.color,
+      ciudad: item.ciudad, combustible: item.combustible, traccion: item.traccion,
+      motor: item.motor || null, vin: item.vin || null, descripcion: item.descripcion,
+      fotos: item.photos, origen: 'agencia', estatus: 'disponible',
+      created_at: new Date().toISOString(), updated_at: new Date().toISOString()
+    };
+    fetch(S + '/rest/v1/inventario', { method: 'POST', headers: hdrs, body: JSON.stringify(body) })
+      .then(function(r) { if (r.ok || r.status === 201) inserted++; else errors++; })
+      .catch(function() { errors++; })
+      .finally(function() { idx++; insertNext(); });
+  }
+  insertNext();
+}
+
+g('bulkOverlay').addEventListener('click', function(e) { if (e.target === e.currentTarget) closeBulk(); });
+
+function agOpenBulkWithPhotos() {
+  // Filter only new items (not updates/removes)
+  var newItems = agSyncData.filter(function(row) {
+    var marca = (row['Marca'] || row['marca'] || '').toLowerCase();
+    var modelo = (row['Modelo'] || row['modelo'] || '').toLowerCase();
+    var anio = parseInt(row['Año'] || row['Anio'] || row['anio'] || row['ano'] || '0');
+    var isExisting = agExisting.find(function(e) {
+      return e.marca && e.marca.toLowerCase() === marca && e.modelo && e.modelo.toLowerCase() === modelo && e.anio === anio;
+    });
+    return !isExisting;
+  });
+  if (newItems.length === 0) {
+    // No new items, just apply updates directly
+    agApplySync();
+    return;
+  }
+  openBulkAccordion(agSyncData);
+}
+
+// ══════════════════════════════════════════
+// FILE UPLOAD (EXCEL / CSV)
+// ══════════════════════════════════════════
+(function() {
+  var dz = g('fileDropZone');
+  if (!dz) return;
+  dz.addEventListener('dragover', function(e) { e.preventDefault(); dz.style.borderColor = 'var(--gold)'; dz.style.background = 'rgba(212,175,55,0.05)'; });
+  dz.addEventListener('dragleave', function() { dz.style.borderColor = 'var(--glass-border)'; dz.style.background = 'transparent'; });
+  dz.addEventListener('drop', function(e) {
+    e.preventDefault(); dz.style.borderColor = 'var(--glass-border)'; dz.style.background = 'transparent';
+    if (e.dataTransfer.files.length) handleFileUpload(e.dataTransfer.files[0]);
+  });
+})();
+
+function handleFileUpload(file) {
+  if (!file) return;
+  var status = g('fileUploadStatus');
+  var name = file.name.toLowerCase();
+  status.textContent = '⏳ Procesando ' + file.name + '...';
+
+  if (name.endsWith('.csv')) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      agSyncData = agParseCSV(e.target.result);
+      if (agSyncData.length === 0) { status.textContent = '❌ CSV vacio o formato incorrecto'; return; }
+      status.textContent = '✅ ' + agSyncData.length + ' autos encontrados en ' + file.name;
+      agFetchExisting();
+    };
+    reader.readAsText(file);
+  } else if (name.endsWith('.xlsx') || name.endsWith('.xls')) {
+    if (typeof XLSX === 'undefined') { status.textContent = '❌ Error: libreria de Excel no cargada. Recarga la pagina.'; return; }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        var wb = XLSX.read(e.target.result, { type: 'array' });
+        // Try sheets in priority: Captura, INVENTARIO, first sheet
+        var wsName = wb.SheetNames.indexOf('Captura') >= 0 ? 'Captura' : wb.SheetNames.find(function(s){return s.trim().toUpperCase().indexOf('INVENTARIO')>=0}) || wb.SheetNames[0];
+        var ws = wb.Sheets[wsName];
+
+        // Smart header detection: scan rows to find the one with marca/modelo/automovil
+        var rawData = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+        var headerRow = -1;
+        var markerWords = ['marca','modelo','automovil','vehiculo','precio','año','anio'];
+        for (var ri = 0; ri < Math.min(20, rawData.length); ri++) {
+          var row = rawData[ri];
+          if (!row) continue;
+          var rowStr = row.map(function(c){return (c||'').toString().toLowerCase().trim()}).join('|');
+          var matches = markerWords.filter(function(w){return rowStr.indexOf(w) >= 0});
+          if (matches.length >= 2) { headerRow = ri; break; }
+        }
+
+        var jsonData;
+        if (headerRow >= 0) {
+          // Re-parse with detected header row
+          var headers = rawData[headerRow].map(function(h){return (h||'').toString().trim()});
+          jsonData = [];
+          for (var di = headerRow + 1; di < rawData.length; di++) {
+            var dataRow = rawData[di];
+            if (!dataRow || !dataRow.some(function(c){return c!==null&&c!==undefined&&c!==''})) continue;
+            var obj = {};
+            headers.forEach(function(h, ci) { if(h) obj[h] = dataRow[ci] !== undefined ? dataRow[ci] : ''; });
+            jsonData.push(obj);
+          }
+        } else {
+          jsonData = XLSX.utils.sheet_to_json(ws, { defval: '' });
+        }
+
+        // Universal field mapper — handles any Excel format
+        function getField(row, aliases) {
+          for (var a = 0; a < aliases.length; a++) {
+            // Try exact match
+            if (row[aliases[a]] !== undefined && row[aliases[a]] !== '') return row[aliases[a]];
+            // Try case-insensitive
+            var keys = Object.keys(row);
+            for (var k = 0; k < keys.length; k++) {
+              if (keys[k].toLowerCase().trim() === aliases[a].toLowerCase()) return row[keys[k]];
+            }
+          }
+          return '';
+        }
+
+        agSyncData = jsonData.filter(function(row) {
+          var marca = getField(row, ['marca','MARCA','Marca','brand','Make']);
+          var modelo = getField(row, ['modelo','MODELO','Modelo','AUTOMOVIL','Automovil','automovil','vehiculo','VEHICULO','model','Model','nombre']);
+          return marca && modelo;
+        }).map(function(row) {
+          var version = getField(row, ['version','VERSION','Version','VERSIÓN','trim']);
+          var modelo = getField(row, ['modelo','MODELO','Modelo','AUTOMOVIL','Automovil','automovil','vehiculo','VEHICULO','model','Model']);
+          // If there's a version, append it to modelo
+          if (version && modelo.toLowerCase().indexOf(version.toLowerCase()) < 0) modelo = modelo + ' ' + version;
+
+          return {
+            'Marca': getField(row, ['marca','MARCA','Marca','brand','Make']),
+            'Modelo': modelo.trim(),
+            'Año': getField(row, ['anio','Anio','Año','AÑO','ano','ANO','year','Year','YEAR']) || '',
+            'Precio': (getField(row, ['precio_venta','PRECIO DE VENTA','Precio de Venta','precio','PRECIO','Precio','price','Price','PRECIO DE VENTA SIN IVA']) || '0').toString(),
+            'Tipo': getField(row, ['tipo_vehiculo','Tipo','tipo','TIPO','type','categoria']) || 'sedan',
+            'Kilometraje': (getField(row, ['kilometraje','Kilometraje','KILOMETRAJE','km','KM','Km','mileage','odometro']) || '0').toString(),
+            'Transmision': getField(row, ['transmision','Transmision','TRANSMISION','Transmisión','TRANS','Trans','trans','transmission']) || 'Automatico',
+            'Color': getField(row, ['color','Color','COLOR','COLOR EXTERIOR','Color Exterior']) || '',
+            'Ciudad': getField(row, ['ciudad','Ciudad','CIUDAD','UBICACIÓN','Ubicacion','ubicacion','location']) || '',
+            'Estatus': (function(){
+              var disp = getField(row, ['estatus','Estatus','ESTATUS','DISPONIBILIDAD','Disponibilidad','disponibilidad','status']);
+              if (!disp) return 'disponible';
+              disp = disp.toString().toLowerCase().trim();
+              if (disp === 'libre' || disp === 'disponible' || disp === 'activo') return 'disponible';
+              if (disp.indexOf('proceso') >= 0 || disp.indexOf('reserv') >= 0) return 'reservado';
+              // If it contains a name (assigned to someone), mark as reservado
+              if (disp.length > 3 && disp.match(/[a-z]{3,}/i)) return 'reservado';
+              return 'disponible';
+            })(),
+            'Descripcion': getField(row, ['descripcion','Descripcion','DESCRIPCION','Descripción','desc','notas','NOTAS','observaciones']) || '',
+            'Combustible': getField(row, ['combustible','Combustible','COMBUSTIBLE','fuel']) || 'gasolina',
+            'Traccion': getField(row, ['traccion','Traccion','TRACCION','Tracción','4x2','4x4']) || '4x2',
+            'Motor': getField(row, ['motor','Motor','MOTOR','engine']) || '',
+            'VIN': getField(row, ['vin','VIN','Vin','CHASIS','Chasis','chasis','numero_serie','NUMERO DE SERIE','serie']) || '',
+            'Foto1': getField(row, ['fotos','Foto1','FOTO','foto1']) || '',
+            'Foto2': getField(row, ['Foto2','foto2']) || '',
+            'Foto3': getField(row, ['Foto3','foto3']) || '',
+            'Foto4': getField(row, ['Foto4','foto4']) || ''
+          };
+        });
+        if (agSyncData.length === 0) { status.textContent = '❌ No se encontraron autos validos. Verifica que el archivo tenga columnas de Marca y Modelo/Automovil.'; return; }
+        status.textContent = '✅ ' + agSyncData.length + ' autos encontrados en ' + file.name + ' (hoja: ' + wsName + ')';
+        agFetchExisting();
+      } catch(err) {
+        status.textContent = '❌ Error al leer Excel: ' + err.message;
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  } else {
+    status.textContent = '❌ Formato no soportado. Usa .xlsx, .xls o .csv';
+  }
+}
+
+function agFetchExisting() {
+  var agName = userName || userEmail || 'agencia';
+  fetch(S + '/rest/v1/inventario?user_id=eq.' + uid + '&select=id,marca,modelo,anio,precio_venta,estatus,agencia_id', { headers: ah(tok) })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      agExisting = data || [];
+      agBuildPreview(agName);
+    })
+    .catch(function(err) {
+      g('fileUploadStatus').textContent = '❌ Error al cargar inventario existente: ' + err.message;
+    });
+}
+
+// ══════════════════════════════════════════
 // BOOT
 // ══════════════════════════════════════════
 boot();
 </script>
+<script>
+// Register PWA Service Worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw-agencias.js').catch(function(){});
+}
+</script>
+<script>(function(){var b=document.getElementById('pNavHamburger'),l=document.getElementById('pNavLinks');if(!b||!l)return;b.addEventListener('click',function(){var o=l.classList.toggle('open');b.classList.toggle('open',o);});l.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){l.classList.remove('open');b.classList.remove('open');});});})();</script>
+<div id="toast-container"></div>
 </body>
 </html>

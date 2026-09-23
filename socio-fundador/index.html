@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Franquicia de Marca Blanca — Modelo de Negocio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-dark: #081C14;
+    --bg-dark-2: #0F2E22;
+    --bg-dark-3: #163A2B;
+    --bg-light: #F6F4EF;
+    --paper: #FFFFFF;
+    --ink: #14161A;
+    --ink-soft: #55585F;
+    --on-dark: #F3F1EC;
+    --on-dark-soft: #9AA0A8;
+    --accent: #C9A227;
+    --accent-2: #E9CE7C;
+    --accent-dim: #8A6B1E;
+    --line-dark: rgba(243,241,236,0.12);
+    --line-light: rgba(20,22,26,0.12);
+    --serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0;
+    font-family: var(--sans);
+    background: var(--bg-light);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  img, svg { max-width: 100%; display: block; }
+  section { position: relative; width: 100%; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 2; }
+  .pad { padding-top: clamp(80px, 11vw, 156px); padding-bottom: clamp(80px, 11vw, 156px); }
+
+  /* ---- grain texture on dark sections ---- */
+  .grain { position: absolute; inset: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay; z-index: 1;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---- scroll progress ---- */
+  .progress-bar { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--accent-dim), var(--accent), var(--accent-2)); z-index: 100; width: 0%; transition: width .1s linear; }
+
+  /* ---------- Nav ---------- */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 32px 16px;
+    padding-top: calc(20px + env(safe-area-inset-top, 0px));
+    background: rgba(10,12,15,0.6);
+    backdrop-filter: blur(16px) saturate(1.4);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    border-bottom: 1px solid var(--line-dark);
+    transition: transform .45s cubic-bezier(.2,.7,.3,1);
+  }
+  .nav.hide { transform: translateY(-100%); }
+  .nav-mark { display: flex; align-items: center; gap: 11px; }
+  .nav-mark svg { width: 22px; height: 22px; }
+  .nav-mark span { font-family: var(--serif); font-weight: 600; font-size: 14.5px; color: var(--on-dark); letter-spacing: .01em; }
+  .nav-progress { font-family: var(--sans); font-size: 11.5px; color: var(--on-dark-soft); font-variant-numeric: tabular-nums; letter-spacing: .03em; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    background: var(--bg-dark);
+    color: var(--on-dark);
+    min-height: 100svh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 130px 32px 60px;
+    overflow: hidden;
+  }
+  .hero-orb { position: absolute; border-radius: 50%; filter: blur(90px); pointer-events: none; z-index: 0; }
+  .orb-1 { width: 640px; height: 640px; top: -220px; right: -160px; background: radial-gradient(circle, rgba(201,162,39,.30), transparent 68%); }
+  .orb-2 { width: 480px; height: 480px; bottom: -220px; left: -140px; background: radial-gradient(circle, rgba(22,120,84,.28), transparent 68%); }
+
+  .hero-grid { position: relative; z-index: 2; max-width: 1080px; margin: 0 auto; width: 100%; display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 40px; align-items: center; }
+  .hero-copy { max-width: 640px; }
+  .eyebrow-line { display: flex; align-items: center; gap: 14px; margin-bottom: 36px; opacity: 0; animation: rise .9s .08s cubic-bezier(.2,.8,.2,1) forwards; }
+  .eyebrow-line .rule { width: 36px; height: 1px; background: var(--accent); }
+  .eyebrow-line span { font-size: 12.5px; color: var(--on-dark-soft); letter-spacing: .06em; }
+  h1.hero-title {
+    font-family: var(--serif); font-weight: 600; font-size: clamp(42px, 5.6vw, 76px);
+    line-height: 1.02; margin: 0 0 26px; letter-spacing: -0.015em; max-width: 13ch;
+    opacity: 0; animation: rise .9s .2s cubic-bezier(.2,.8,.2,1) forwards;
+  }
+  h1.hero-title em { font-style: italic; color: var(--accent-2); font-weight: 500; }
+  .hero-sub { font-size: clamp(16.5px, 1.7vw, 19px); color: var(--on-dark-soft); max-width: 44ch; line-height: 1.6; margin: 0 0 48px;
+    opacity: 0; animation: rise .9s .32s cubic-bezier(.2,.8,.2,1) forwards; }
+  .hero-stats { display: grid; grid-template-columns: repeat(3, auto); gap: clamp(24px, 4vw, 52px); padding-top: 36px; border-top: 1px solid var(--line-dark);
+    opacity: 0; animation: rise .9s .44s cubic-bezier(.2,.8,.2,1) forwards; }
+  .hstat b { display: block; font-family: var(--serif); font-weight: 600; font-size: clamp(24px, 2.6vw, 32px); color: var(--on-dark); line-height: 1; font-variant-numeric: tabular-nums; }
+  .hstat span { display: block; margin-top: 8px; font-size: 12px; color: var(--on-dark-soft); max-width: 15ch; }
+  @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+
+  .hero-visual { position: relative; height: 420px; opacity: 0; animation: fadein 1.3s .5s ease forwards; }
+  @keyframes fadein { to { opacity: 1; } }
+  .hero-visual svg { width: 100%; height: 100%; overflow: visible; }
+  .draw-path { stroke-dasharray: 900; stroke-dashoffset: 900; animation: draw 2.2s .6s cubic-bezier(.3,.9,.3,1) forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .float-slow { animation: float 7s ease-in-out infinite; }
+  @keyframes float { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-14px); } }
+  @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; } .hero-visual { height: 260px; order: -1; opacity: .5; } }
+
+  .hero-seal { position: relative; width: 100%; max-width: 380px; margin: 0 auto; aspect-ratio: 1/1; }
+  .seal-ring { position: absolute; inset: -26px; border-radius: 50%; border: 1px solid rgba(233,206,124,0.18); }
+  .seal-ring.r2 { inset: -54px; border-color: rgba(233,206,124,0.09); }
+  .seal-glow { position: absolute; inset: -60px; border-radius: 50%; background: radial-gradient(circle, rgba(201,162,39,.35), transparent 66%); filter: blur(30px); animation: pulse-glow 4.5s ease-in-out infinite; }
+  @keyframes pulse-glow { 0%,100% { opacity: .7; transform: scale(1); } 50% { opacity: 1; transform: scale(1.06); } }
+  @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  .marquee { background: var(--bg-dark-2); border-top: 1px solid var(--line-dark); border-bottom: 1px solid var(--line-dark); overflow: hidden; padding: 18px 0; position: relative; z-index: 2; }
+  .marquee-track { display: flex; width: max-content; animation: scroll-x 32s linear infinite; }
+  .marquee-track span { font-family: var(--serif); font-style: italic; font-size: 15px; color: var(--on-dark-soft); padding: 0 34px; white-space: nowrap; letter-spacing: .01em; }
+  .marquee-track span b { color: var(--accent-2); font-style: normal; font-weight: 600; }
+  .marquee-track span.dot { color: var(--accent-dim); }
+  @keyframes scroll-x { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* ---------- Section headers ---------- */
+  .kicker { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+  .kicker .num { font-family: var(--serif); font-style: italic; font-size: 14px; color: var(--accent); }
+  .kicker .rule { width: 28px; height: 1px; background: currentColor; opacity: .3; }
+  .kicker span.label { font-size: 12px; color: var(--ink-soft); letter-spacing: .05em; }
+  h2.sec-title { font-family: var(--serif); font-weight: 600; letter-spacing: -0.01em; font-size: clamp(30px, 3.6vw, 48px); line-height: 1.08; margin: 0 0 22px; max-width: 15ch; }
+  p.sec-lede { font-size: 17px; line-height: 1.65; color: var(--ink-soft); max-width: 58ch; margin: 0 0 8px; }
+  .on-dark .kicker span.label, .on-dark .kicker .num { color: var(--on-dark-soft); }
+  .on-dark .kicker .num { color: var(--accent-2); }
+  .on-dark h2.sec-title { color: var(--on-dark); }
+  .on-dark p.sec-lede { color: var(--on-dark-soft); }
+
+  /* seam divider between sections */
+  .seam { position: relative; height: 1px; }
+  .seam::before { content: ""; position: absolute; left: 32px; right: 32px; top: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--line-light), transparent); }
+  .seam.on-dark::before { background: linear-gradient(90deg, transparent, var(--line-dark), transparent); }
+
+  /* ---------- Value split ---------- */
+  .split { display: grid; grid-template-columns: 1fr 1px 1fr; gap: 0; margin-top: 56px; }
+  .split-col { padding: 4px 44px; }
+  .split-col:first-child { padding-left: 0; }
+  .split-col:last-child { padding-right: 0; }
+  .split-divider { background: var(--line-light); }
+  .split-col .col-label { font-size: 11.5px; letter-spacing: .05em; color: var(--accent); margin-bottom: 14px; display: block; }
+  .split-col h3 { font-family: var(--serif); font-size: 22px; font-weight: 600; margin: 0 0 22px; }
+  .split-col ul { list-style: none; margin: 0; padding: 0; }
+  .split-col li { font-size: 15px; line-height: 1.6; color: var(--ink-soft); padding: 15px 0; border-top: 1px solid var(--line-light); }
+  .split-col li:first-of-type { border-top: none; }
+  @media (max-width: 720px) { .split { grid-template-columns: 1fr; } .split-divider { display: none; } .split-col { padding: 24px 0; } }
+
+  /* ---------- Process flow ---------- */
+  .flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line-dark); margin-top: 58px; border: 1px solid var(--line-dark); position: relative; }
+  .flow-step { background: var(--bg-dark-2); padding: 34px 26px; position: relative; overflow: hidden; }
+  .flow-step .ghost { position: absolute; right: -6px; top: -22px; font-family: var(--serif); font-size: 96px; font-weight: 700; color: rgba(243,241,236,0.04); line-height: 1; }
+  .flow-step .fn { font-family: var(--serif); font-style: italic; font-size: 15px; color: var(--accent-2); margin-bottom: 20px; position: relative; }
+  .flow-step h4 { font-family: var(--sans); font-weight: 600; font-size: 15.5px; color: var(--on-dark); margin: 0 0 10px; position: relative; }
+  .flow-step p { font-size: 13.5px; line-height: 1.55; color: var(--on-dark-soft); margin: 0; position: relative; }
+  @media (max-width: 860px) { .flow { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 520px) { .flow { grid-template-columns: 1fr; } }
+
+  /* ---------- Fee tiers ---------- */
+  .tiers { margin-top: 54px; border-top: 1px solid var(--line-light); }
+  .tier-row { display: grid; grid-template-columns: 1.4fr 1fr 1fr; align-items: center; padding: 24px 0; border-bottom: 1px solid var(--line-light); gap: 12px; transition: padding-left .35s ease; }
+  .tier-row:hover { padding-left: 8px; }
+  .tier-row .r-range { font-size: 15px; color: var(--ink); }
+  .tier-row .r-fee { font-family: var(--serif); font-size: 26px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .tier-row .r-pct { font-size: 12.5px; color: var(--accent); text-align: right; font-variant-numeric: tabular-nums; }
+  @media (max-width: 560px) { .tier-row { grid-template-columns: 1fr 1fr; } .r-pct { display: none; } }
+
+  .addons { margin-top: 46px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line-light); border: 1px solid var(--line-light); }
+  .addon-card { padding: 26px 24px; background: var(--paper); transition: background .3s ease; }
+  .addon-card:hover { background: var(--bg-light); }
+  .addon-card .tag { font-size: 10.5px; letter-spacing: .06em; color: var(--accent); margin-bottom: 12px; display: block; }
+  .addon-card h5 { font-family: var(--serif); font-size: 17.5px; font-weight: 600; margin: 0 0 8px; }
+  .addon-card p { font-size: 13.5px; color: var(--ink-soft); line-height: 1.5; margin: 0; }
+  @media (max-width: 720px) { .addons { grid-template-columns: 1fr; } }
+
+  /* ---------- Cases ---------- */
+  .case-grid { margin-top: 54px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line-dark); border: 1px solid var(--line-dark); }
+  .case-card { background: var(--bg-dark-2); padding: 32px 28px; position: relative; overflow: hidden; transition: transform .4s cubic-bezier(.2,.8,.2,1), background .4s ease; }
+  .case-card:hover { transform: translateY(-6px); background: #123626; }
+  .case-card .ghost-pct { position: absolute; right: -10px; top: -30px; font-family: var(--serif); font-weight: 700; font-size: 118px; color: rgba(243,241,236,0.035); line-height: 1; pointer-events: none; }
+  .case-card .cname { font-family: var(--sans); font-size: 12px; color: var(--on-dark-soft); letter-spacing: .02em; margin-bottom: 20px; position: relative; }
+  .case-card .cmargin { font-family: var(--serif); font-size: 44px; font-weight: 600; color: var(--accent-2); line-height: 1; position: relative; font-variant-numeric: tabular-nums; }
+  .case-card .cmargin sup { font-size: 17px; top: -1.2em; }
+  .case-card .clabel { font-size: 11px; color: var(--on-dark-soft); margin: 7px 0 18px; position: relative; }
+  .case-card .mbar { position: relative; height: 4px; border-radius: 2px; background: rgba(243,241,236,0.08); overflow: hidden; margin-bottom: 22px; }
+  .case-card .mbar i { display: block; height: 100%; background: linear-gradient(90deg, var(--accent-dim), var(--accent-2)); border-radius: 2px; width: 0; transition: width 1.1s cubic-bezier(.2,.8,.2,1); }
+  .case-card .crow { display: flex; justify-content: space-between; font-size: 13px; color: var(--on-dark); padding: 10px 0; border-top: 1px solid var(--line-dark); position: relative; }
+  .case-card .crow span:first-child { color: var(--on-dark-soft); }
+  @media (max-width: 860px) { .case-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .case-grid { grid-template-columns: 1fr; } }
+
+  /* ---------- Investment (consolidated) ---------- */
+  .invest-total { margin-top: 40px; }
+  .invest-total .big { font-family: var(--serif); font-weight: 600; font-size: clamp(46px, 6vw, 72px); line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .invest-total .big span { color: var(--accent-dim); }
+  .invest-total .cap-label { margin-top: 14px; font-size: 14.5px; color: var(--ink-soft); max-width: 46ch; line-height: 1.55; }
+  .invest-break { margin-top: 44px; border-top: 1px solid var(--line-light); }
+  .ib-row { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 18px; padding: 20px 0; border-bottom: 1px solid var(--line-light); }
+  .ib-row .ib-plus { font-family: var(--serif); font-style: italic; color: var(--accent-dim); font-size: 16px; }
+  .ib-row .ib-name { font-size: 15px; color: var(--ink); }
+  .ib-row .ib-name small { display: block; font-size: 12.5px; color: var(--ink-soft); margin-top: 3px; }
+  .ib-row .ib-amt { font-family: var(--serif); font-size: 20px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .ib-row.total { border-bottom: none; border-top: 2px solid var(--ink); margin-top: 4px; }
+  .ib-row.total .ib-plus { color: var(--ink); }
+  .ib-row.total .ib-name { font-weight: 600; }
+  .ib-row.total .ib-amt { font-size: 24px; color: var(--accent-dim); }
+
+  /* ---------- Projection chart ---------- */
+  .chart-wrap { margin-top: 58px; }
+  .chart-bars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; align-items: end; height: 240px; position: relative; }
+  .chart-bars::before, .chart-bars::after { content:""; position:absolute; left:0; right:0; height:1px; background: var(--line-dark); }
+  .chart-bars::before { bottom: 0; }
+  .chart-bars::after { top: 0; }
+  .cbar-col { display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; }
+  .cbar { width: 100%; max-width: 96px; background: linear-gradient(180deg, var(--accent-2), var(--accent)); border-radius: 3px 3px 0 0; position: relative;
+    height: 0; transition: height 1.4s cubic-bezier(.2,.8,.2,1); box-shadow: 0 0 40px rgba(201,162,39,.3); }
+  .cbar-col .cb-range { font-size: 11px; color: var(--on-dark-soft); margin-bottom: 10px; font-variant-numeric: tabular-nums; }
+  .chart-labels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 18px; }
+  .chart-labels div { text-align: center; font-size: 13px; color: var(--on-dark); }
+  .chart-labels div span { display: block; font-size: 11.5px; color: var(--on-dark-soft); margin-top: 4px; }
+
+  /* ---------- Bullets list ---------- */
+  .clean-list { margin-top: 46px; }
+  .clean-list .cl-row { display: flex; gap: 26px; padding: 22px 0; border-top: 1px solid var(--line-light); align-items: baseline; }
+  .clean-list .cl-row:first-child { border-top: none; }
+  .clean-list .cl-mark { font-family: var(--serif); font-style: italic; font-size: 14px; color: var(--accent); flex: 0 0 24px; }
+  .clean-list .cl-text { font-size: 15px; line-height: 1.6; color: var(--ink-soft); }
+  .clean-list .cl-text b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- Comparables ---------- */
+  .comp-grid { margin-top: 50px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line-dark); border: 1px solid var(--line-dark); }
+  .comp-card { background: var(--bg-dark-2); padding: 28px 24px; }
+  .comp-card.hl { background: linear-gradient(160deg, #2b230c, var(--bg-dark-2)); }
+  .comp-card h5 { font-family: var(--serif); font-size: 16.5px; font-weight: 600; margin: 0 0 10px; color: var(--on-dark); }
+  .comp-card p { font-size: 13.5px; line-height: 1.6; color: var(--on-dark-soft); margin: 0; }
+  @media (max-width: 760px) { .comp-grid { grid-template-columns: 1fr; } }
+
+  /* ---------- Closing ---------- */
+  .closing { background: var(--bg-dark); color: var(--on-dark); text-align: left; overflow: hidden; }
+  .closing h2 { font-family: var(--serif); font-weight: 600; font-size: clamp(36px, 5.4vw, 64px); line-height: 1.06; max-width: 17ch; margin: 0 0 30px; }
+  .closing .em { color: var(--accent-2); font-style: italic; }
+  .closing-meta { display: flex; flex-wrap: wrap; gap: 44px; margin-top: 58px; padding-top: 34px; border-top: 1px solid var(--line-dark); }
+  .closing-meta div b { display: block; font-family: var(--serif); font-size: 21px; margin-bottom: 4px; font-variant-numeric: tabular-nums; }
+  .closing-meta div span { font-size: 13px; color: var(--on-dark-soft); }
+
+  footer { padding: 34px 32px; text-align: center; font-size: 12px; color: var(--on-dark-soft); background: var(--bg-dark); border-top: 1px solid var(--line-dark); }
+
+  .bg-light { background: var(--bg-light); color: var(--ink); }
+  .bg-paper { background: var(--paper); color: var(--ink); }
+  .bg-dark { background: var(--bg-dark); color: var(--on-dark); }
+  .bg-dark2 { background: var(--bg-dark-2); color: var(--on-dark); }
+
+  ::selection { background: var(--accent); color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<nav class="nav" id="nav">
+  <div class="nav-mark">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M3 16 L8 7 L16 7 L21 16" stroke="#C9A227" stroke-width="1.6" stroke-linejoin="round"/><circle cx="7.5" cy="17.5" r="1.6" fill="#F3F1EC"/><circle cx="16.5" cy="17.5" r="1.6" fill="#F3F1EC"/></svg>
+    <span>Programa Socio Fundador</span>
+  </div>
+  <div class="nav-progress" id="navProgress">01 / 09</div>
+</nav>
+
+<!-- 1. HERO -->
+<section class="hero" id="s0">
+  <div class="hero-orb orb-1"></div>
+  <div class="hero-orb orb-2"></div>
+  <div class="hero-grid">
+    <div class="hero-copy">
+      <div class="eyebrow-line"><div class="rule"></div><span>MODELO DE NEGOCIO — FRANQUICIA DE MARCA BLANCA</span></div>
+      <h1 class="hero-title">Compramos en subasta.<br>Ustedes venden <em>bajo su marca.</em></h1>
+      <p class="hero-sub">Sourcing verificado, plataforma de venta y estrategia digital — empaquetados para dueños de agencias que quieren inventario sin montar un equipo de compras.</p>
+      <div class="hero-stats">
+        <div class="hstat"><b data-count="34.6" data-suffix="%">0%</b><span>Margen real en casos operados</span></div>
+        <div class="hstat"><b data-count="80" data-prefix="$" data-suffix="K">$0K</b><span>Capital de entrada, MXN</span></div>
+        <div class="hstat"><b>0%</b><span>Del margen de reventa se comparte</span></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-seal">
+        <div class="seal-glow"></div>
+        <div class="seal-ring r2"></div>
+        <div class="seal-ring"></div>
+        <svg viewBox="0 0 420 420" fill="none" style="position:relative;width:100%;height:100%;">
+          <path class="draw-path" d="M70 260 C 130 150, 190 300, 250 170 C 290 90, 330 150, 360 120"
+            stroke="#C9A227" stroke-width="1.6" stroke-linecap="round"/>
+          <g transform="translate(56,235)">
+            <path d="M0 30 L14 4 L46 4 L60 30 Z" stroke="#E9CE7C" stroke-width="1.6" stroke-linejoin="round"/>
+            <circle cx="15" cy="34" r="5" fill="#F3F1EC"/>
+            <circle cx="45" cy="34" r="5" fill="#F3F1EC"/>
+          </g>
+          <g transform="translate(330,86)">
+            <circle cx="0" cy="0" r="20" stroke="#E9CE7C" stroke-width="1.6"/>
+            <path d="M-9 -3 L-2 4 L10 -8" stroke="#E9CE7C" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </g>
+          <circle cx="250" cy="170" r="3" fill="#C9A227"/>
+        </svg>
+      </div>
+    </div>
+</section>
+
+<div class="marquee">
+  <div class="marquee-track">
+    <span><b>SIN COMPARTIR MARGEN</b> <span class="dot">·</span> EXCLUSIVIDAD POR PLAZA <span class="dot">·</span> VERIFICACIÓN ESTANDARIZADA <span class="dot">·</span> <b>28–35% DE MARGEN REAL</b> <span class="dot">·</span> VENTA BAJO SU PROPIA MARCA <span class="dot">·</span></span>
+    <span><b>SIN COMPARTIR MARGEN</b> <span class="dot">·</span> EXCLUSIVIDAD POR PLAZA <span class="dot">·</span> VERIFICACIÓN ESTANDARIZADA <span class="dot">·</span> <b>28–35% DE MARGEN REAL</b> <span class="dot">·</span> VENTA BAJO SU PROPIA MARCA <span class="dot">·</span></span>
+  </div>
+</div>
+
+<!-- 2. PROPUESTA DE VALOR -->
+<section class="bg-paper pad" id="s1">
+  <div class="wrap">
+    <div class="kicker"><span class="num">01</span><div class="rule"></div><span class="label">PROPUESTA DE VALOR</span></div>
+    <h2 class="sec-title">Cada quien hace lo que sabe hacer.</h2>
+    <p class="sec-lede">El socio vende con lo que ya tiene: su marca, su relación con clientes, su punto de venta. El operador se especializa en lo demás.</p>
+    <div class="split">
+      <div class="split-col">
+        <span class="col-label">PARA EL SOCIO</span>
+        <h3>Lo que recibe</h3>
+        <ul>
+          <li>Acceso a inventario de subasta sin montar equipo de compras propio.</li>
+          <li>Verificación estandarizada que reduce el riesgo de comprar un auto problemático.</li>
+          <li>Plataforma de venta lista, operando bajo su propia marca.</li>
+          <li>Conserva el 100% de su margen de reventa habitual.</li>
+        </ul>
+      </div>
+      <div class="split-divider"></div>
+      <div class="split-col">
+        <span class="col-label">PARA EL OPERADOR</span>
+        <h3>Lo que construye</h3>
+        <ul>
+          <li>Ingreso recurrente por volumen, sin capital propio inmovilizado en inventario.</li>
+          <li>El socio paga el auto directo al ganar la subasta — sin pre-financiar.</li>
+          <li>Escala con cada agencia nueva que se suma a la red.</li>
+          <li>Relación de largo plazo protegida por exclusividad contractual.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. CÓMO FUNCIONA -->
+<section class="bg-dark2 pad" id="s2">
+  <div class="grain"></div>
+  <div class="wrap on-dark">
+    <div class="kicker"><span class="num">02</span><div class="rule"></div><span class="label">CÓMO FUNCIONA</span></div>
+    <h2 class="sec-title">Cuatro pasos, un solo responsable en cada uno.</h2>
+    <div class="flow">
+      <div class="flow-step"><div class="ghost">01</div><div class="fn">Paso uno</div><h4>Sourcing</h4><p>El operador busca, evalúa y puja en subasta el inventario que el socio necesita.</p></div>
+      <div class="flow-step"><div class="ghost">02</div><div class="fn">Paso dos</div><h4>Verificación</h4><p>Cada unidad pasa por revisión estandarizada antes de llegar al socio.</p></div>
+      <div class="flow-step"><div class="ghost">03</div><div class="fn">Paso tres</div><h4>Plataforma</h4><p>El socio recibe el auto listo para publicar, con ficha y fotos generadas.</p></div>
+      <div class="flow-step"><div class="ghost">04</div><div class="fn">Paso cuatro</div><h4>Venta digital</h4><p>Reventa vía redes sociales, con acompañamiento de marketing opcional.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. MODELO DE INGRESOS -->
+<section class="bg-paper pad" id="s3">
+  <div class="wrap">
+    <div class="kicker"><span class="num">03</span><div class="rule"></div><span class="label">MODELO DE INGRESOS</span></div>
+    <h2 class="sec-title">Un fee fijo por auto. Nada del margen del socio.</h2>
+    <p class="sec-lede">El costo operativo por vehículo es casi el mismo sin importar su precio — por eso el fee es fijo por rango, no un porcentaje que penaliza al socio en autos de mayor valor.</p>
+    <div class="tiers">
+      <div class="tier-row"><div class="r-range">Hasta $150,000 MXN</div><div class="r-fee">$7,500</div><div class="r-pct">5.0%</div></div>
+      <div class="tier-row"><div class="r-range">$151,000 – $250,000 MXN</div><div class="r-fee">$12,500</div><div class="r-pct">5.0 – 8.3%</div></div>
+      <div class="tier-row"><div class="r-range">$251,000 – $400,000 MXN</div><div class="r-fee">$20,000</div><div class="r-pct">5.0 – 8.0%</div></div>
+      <div class="tier-row"><div class="r-range">$401,000 MXN en adelante</div><div class="r-fee">$27,500+</div><div class="r-pct">Piso, negociable</div></div>
+    </div>
+    <div class="addons">
+      <div class="addon-card"><span class="tag">INCLUIDO</span><h5>Capacitación en línea</h5><p>Dentro del fee de setup — sin costo adicional para el equipo del socio.</p></div>
+      <div class="addon-card"><span class="tag">OPCIONAL</span><h5>Capacitación presencial</h5><p>Cotizada por sesión y viáticos, cuando el socio la prefiere en sitio.</p></div>
+      <div class="addon-card"><span class="tag">OPCIONAL</span><h5>Acompañamiento digital</h5><p>Gestión de redes y campañas de venta, fee mensual o por campaña.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. CASOS REALES -->
+<section class="bg-dark2 pad" id="s4">
+  <div class="grain"></div>
+  <div class="wrap on-dark">
+    <div class="kicker"><span class="num">04</span><div class="rule"></div><span class="label">CASOS REALES DE OPERACIÓN</span></div>
+    <h2 class="sec-title">No es una proyección. Es lo que ya pasó.</h2>
+    <p class="sec-lede">Seis unidades, sourcing real en subasta, precio de venta llevado a cliente final. Costo financiero excluido.</p>
+    <div class="case-grid" id="caseGrid">
+      <div class="case-card"><div class="ghost-pct">35</div><div class="cname">Ford Ranger 2015</div><div class="cmargin">34.6<sup>%</sup></div><div class="clabel">margen sobre venta</div>
+        <div class="mbar"><i data-w="86.5"></i></div>
+        <div class="crow"><span>Costo total</span><span>$139,150</span></div>
+        <div class="crow"><span>Venta cliente final</span><span>$212,750</span></div>
+      </div>
+      <div class="case-card"><div class="ghost-pct">34</div><div class="cname">Nissan March 2017</div><div class="cmargin">33.9<sup>%</sup></div><div class="clabel">margen sobre venta</div>
+        <div class="mbar"><i data-w="84.8"></i></div>
+        <div class="crow"><span>Costo total</span><span>$68,400</span></div>
+        <div class="crow"><span>Venta cliente final</span><span>$103,500</span></div>
+      </div>
+      <div class="case-card"><div class="ghost-pct">30</div><div class="cname">Nissan Frontier 2021</div><div class="cmargin">29.6<sup>%</sup></div><div class="clabel">margen sobre venta</div>
+        <div class="mbar"><i data-w="74.0"></i></div>
+        <div class="crow"><span>Costo total</span><span>$218,550</span></div>
+        <div class="crow"><span>Venta cliente final</span><span>$310,500</span></div>
+      </div>
+      <div class="case-card"><div class="ghost-pct">28</div><div class="cname">NP300 Cabina Regular 2019</div><div class="cmargin">28.1<sup>%</sup></div><div class="clabel">margen sobre venta</div>
+        <div class="mbar"><i data-w="70.3"></i></div>
+        <div class="crow"><span>Costo total</span><span>$206,664</span></div>
+        <div class="crow"><span>Venta cliente final</span><span>$287,500</span></div>
+      </div>
+      <div class="case-card"><div class="ghost-pct">33</div><div class="cname">Toyota Highlander 2016</div><div class="cmargin">33.1<sup>%</sup></div><div class="clabel">margen sobre venta</div>
+        <div class="mbar"><i data-w="82.8"></i></div>
+        <div class="crow"><span>Costo total</span><span>$180,697</span></div>
+        <div class="crow"><span>Venta cliente final</span><span>$270,250</span></div>
+      </div>
+      <div class="case-card"><div class="ghost-pct">32</div><div class="cname">NP300 Doble Cabina 2020</div><div class="cmargin">31.6<sup>%</sup></div><div class="clabel">margen sobre venta</div>
+        <div class="mbar"><i data-w="79.0"></i></div>
+        <div class="crow"><span>Costo total</span><span>$220,214</span></div>
+        <div class="crow"><span>Venta cliente final</span><span>$322,000</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. INVERSIÓN -->
+<section class="bg-paper pad" id="s5">
+  <div class="wrap">
+    <div class="kicker"><span class="num">05</span><div class="rule"></div><span class="label">INVERSIÓN DEL SOCIO</span></div>
+    <h2 class="sec-title">Todo lo que necesita, en un solo número.</h2>
+    <p class="sec-lede">Setup, garantía de acceso a subastas y capital para mantener inventario en rotación — sumado y desglosado.</p>
+    <div class="invest-total">
+      <div class="big">$530K <span>– $1,080K</span></div>
+      <div class="cap-label">Inversión total del socio antes de operar a régimen, en pesos mexicanos. El rango depende de cuántos autos mantiene en rotación simultánea.</div>
+      <div class="invest-break">
+        <div class="ib-row"><span class="ib-plus">+</span><span class="ib-name">Fee de setup<small>Puesta a punto del ecosistema, pago único</small></span><span class="ib-amt">$30,000</span></div>
+        <div class="ib-row"><span class="ib-plus">+</span><span class="ib-name">Depósito en garantía<small>Acceso a subastas, cuenta controlada por el operador</small></span><span class="ib-amt">$50,000</span></div>
+        <div class="ib-row"><span class="ib-plus">+</span><span class="ib-name">Capital para autos<small>3–5 unidades simultáneas en rotación, paga completo al ganar</small></span><span class="ib-amt">$450,000 – $1,000,000</span></div>
+        <div class="ib-row total"><span class="ib-plus">=</span><span class="ib-name">Inversión total</span><span class="ib-amt">$530,000 – $1,080,000</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. PROYECCIÓN -->
+<section class="bg-dark pad" id="s6">
+  <div class="grain"></div>
+  <div class="hero-orb orb-1" style="top:-260px; right:-260px; width:520px; height:520px; opacity:.5;"></div>
+  <div class="wrap on-dark">
+    <div class="kicker"><span class="num">06</span><div class="rule"></div><span class="label">PROYECCIÓN — PRIMEROS MESES</span></div>
+    <h2 class="sec-title">La curva de arranque, mes a mes.</h2>
+    <p class="sec-lede">Ingreso del operador (fee de adjudicación) conforme el socio incorpora volumen.</p>
+    <div class="chart-wrap">
+      <div class="chart-bars" id="chartBars">
+        <div class="cbar-col"><div class="cb-range">$37K–100K</div><div class="cbar" data-h="34"></div></div>
+        <div class="cbar-col"><div class="cb-range">$75K–200K</div><div class="cbar" data-h="64"></div></div>
+        <div class="cbar-col"><div class="cb-range">$150K–350K</div><div class="cbar" data-h="100"></div></div>
+      </div>
+      <div class="chart-labels">
+        <div>Mes 1<span>5–10 autos</span></div>
+        <div>Meses 2–3<span>10–20 autos</span></div>
+        <div>Meses 4–6<span>20–35 autos</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8. EXCLUSIVIDAD -->
+<section class="bg-paper pad" id="s7">
+  <div class="wrap">
+    <div class="kicker"><span class="num">07</span><div class="rule"></div><span class="label">EXCLUSIVIDAD Y PROTECCIÓN</span></div>
+    <h2 class="sec-title">La relación se protege por contrato, no por buena fe.</h2>
+    <div class="clean-list">
+      <div class="cl-row"><div class="cl-mark">—</div><div class="cl-text"><b>Exclusividad de acceso.</b> Cuenta de subasta operada por el operador, o con carta de autorización — el socio no puede saltarse el proceso una vez lo conoce.</div></div>
+      <div class="cl-row"><div class="cl-mark">—</div><div class="cl-text"><b>No-circunvención.</b> Cláusula con penalización, vigente 12–24 meses después de terminado el contrato.</div></div>
+      <div class="cl-row"><div class="cl-mark">—</div><div class="cl-text"><b>Territorio protegido.</b> Exclusividad por plaza, cubriendo cada estado o ciudad donde el socio tiene agencia.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 9. POSICIONAMIENTO -->
+<section class="bg-dark2 pad" id="s8">
+  <div class="grain"></div>
+  <div class="wrap on-dark">
+    <div class="kicker"><span class="num">08</span><div class="rule"></div><span class="label">POSICIONAMIENTO</span></div>
+    <h2 class="sec-title">Un modelo probado en otros mercados. Sin nadie más ofreciéndolo completo.</h2>
+    <div class="comp-grid">
+      <div class="comp-card"><h5>Programas de agente de dealer (EE.UU.)</h5><p>Fee de acceso más fee creciente por vehículo — la misma lógica de fee fijo escalado que usamos aquí.</p></div>
+      <div class="comp-card"><h5>Brokers de subasta</h5><p>Cobran por representar al comprador, pero no ofrecen plataforma de venta ni verificación estandarizada.</p></div>
+      <div class="comp-card hl"><h5>Nuestro espacio</h5><p>Sourcing + verificación + plataforma + marca blanca, en un solo paquete. Nadie más lo combina así.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 10. CLOSING -->
+<section class="closing pad" id="s9">
+  <div class="hero-orb orb-1" style="top:-260px; left:-200px; right:auto;"></div>
+  <div class="wrap">
+    <h2>Empecemos con tus primeras agencias <span class="em">como socio fundador.</span></h2>
+    <div class="closing-meta">
+      <div><b>Programa Piloto</b><span>Socio Fundador — condiciones preferentes</span></div>
+      <div><b>$530K – $1,080K</b><span>Inversión total, MXN</span></div>
+      <div><b>28–35%</b><span>Margen real observado</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>Documento de trabajo — confidencial, para discusión con socios prospecto.</footer>
+
+<script>
+  const sections = Array.from(document.querySelectorAll('section[id]'));
+  const nav = document.getElementById('nav');
+  const navProgress = document.getElementById('navProgress');
+  const progressBar = document.getElementById('progressBar');
+  let lastY = window.scrollY;
+
+  function onScroll() {
+    const y = window.scrollY;
+    nav.classList.toggle('hide', y > lastY && y > 200);
+    lastY = y;
+
+    const doc = document.documentElement;
+    const pct = (y / (doc.scrollHeight - doc.clientHeight)) * 100;
+    progressBar.style.width = Math.min(100, Math.max(0, pct)) + '%';
+
+    let idx = 0;
+    sections.forEach((s, i) => { if (y + window.innerHeight * 0.5 >= s.offsetTop) idx = i; });
+    navProgress.textContent = String(idx + 1).padStart(2, '0') + ' / ' + String(sections.length).padStart(2, '0');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // count-up hero numbers
+  document.querySelectorAll('[data-count]').forEach(el => {
+    const target = parseFloat(el.getAttribute('data-count'));
+    const prefix = el.getAttribute('data-prefix') || '';
+    const suffix = el.getAttribute('data-suffix') || '';
+    const decimals = (el.getAttribute('data-count').split('.')[1] || '').length;
+    let started = false;
+    const run = () => {
+      if (started) return; started = true;
+      const dur = 1400; const t0 = performance.now();
+      function step(t) {
+        const p = Math.min(1, (t - t0) / dur);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = prefix + (target * eased).toFixed(decimals) + suffix;
+        if (p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    };
+    setTimeout(run, 900);
+  });
+
+  // chart bars grow-in when visible
+  const chartObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.cbar').forEach(b => { b.style.height = b.getAttribute('data-h') + '%'; });
+        chartObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.4 });
+  const chartEl = document.getElementById('chartBars');
+  if (chartEl) chartObs.observe(chartEl);
+
+  // case margin bars grow-in when visible
+  const caseObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.mbar i').forEach(b => { b.style.width = b.getAttribute('data-w') + '%'; });
+        caseObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  const caseGridEl = document.getElementById('caseGrid');
+  if (caseGridEl) caseObs.observe(caseGridEl);
+</script>
+</body>
+</html>

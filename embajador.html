@@ -262,7 +262,7 @@
             <p>Comparte este link único — cada persona que llegue por aquí te da crédito de referido.</p>
 
             <div class="link-display">
-                <span id="refLink">https://alabol.netlify.app/?ref=...</span>
+                <span id="refLink">https://alabolcar.com.mx/?ref=...</span>
                 <button class="btn-copy" id="copyLinkBtn" onclick="copyLink()">
                     <i class="fas fa-copy"></i> Copiar
                 </button>
@@ -362,7 +362,7 @@ function checkEmbajador(user) {
 function renderDashboard(user, emb) {
     var nombre = emb.nombre || user.user_metadata && user.user_metadata.full_name || user.email.split('@')[0];
     var inicial = nombre.charAt(0).toUpperCase();
-    var refUrl = 'https://alabol.netlify.app/?ref=' + emb.codigo;
+    var refUrl = 'https://alabolcar.com.mx/?ref=' + emb.codigo;
 
     document.getElementById('navUserName').textContent = nombre;
     document.getElementById('heroAvatar').textContent = inicial;
@@ -392,7 +392,7 @@ function loadStats(codigo) {
 }
 
 function getRefUrl() {
-    return _embajador ? 'https://alabol.netlify.app/?ref=' + _embajador.codigo : '';
+    return _embajador ? 'https://alabolcar.com.mx/?ref=' + _embajador.codigo : '';
 }
 
 function copyLink() {

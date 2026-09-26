@@ -132,8 +132,8 @@ function buildNuevaSolicitudEmail(exp) {
   var fecha = exp.created_at ? new Date(exp.created_at).toLocaleString('es-MX', { timeZone: 'America/Mexico_City' }) : 'N/A';
   var tierNombres = { basico: 'Escudo ($299)', verificado: 'Escudo Pro ($499)', plus: 'Escudo Total ($799)' };
   var tierLabel = tierNombres[exp.tier] || esc(exp.tier || 'N/A');
-  var radarUrl = 'https://alabol.netlify.app/radar-interno.html';
-  var peritoUrl = 'https://alabol.netlify.app/verificacion/verificar/';
+  var radarUrl = 'https://alabolcar.com.mx/radar-interno.html';
+  var peritoUrl = 'https://alabolcar.com.mx/verificacion/verificar/';
   return '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;background:#0a1f1a;font-family:Arial,sans-serif"><div style="max-width:600px;margin:0 auto;background:#0a1f1a;color:#a8c5b8">' +
     '<div style="background:#0d2921;padding:24px;text-align:center;border-bottom:2px solid #d4af37"><h1 style="color:#d4af37;margin:0;font-size:22px">Alabol Car Broker</h1><p style="color:#a8c5b8;margin:4px 0 0;font-size:12px">Nueva Solicitud de Verificacion</p></div>' +
     '<div style="padding:24px;text-align:center;background:rgba(212,175,55,0.07)">' +

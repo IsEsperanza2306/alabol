@@ -1527,6 +1527,16 @@ function boot() {
     if (rt) localStorage.setItem('alabol_refresh', rt);
     history.replaceState(null, '', location.pathname);
   }
+  // Sesión única: reutiliza la sesión iniciada en /login.html (SDK de Supabase)
+  if (!tok) {
+    try {
+      var sdk = JSON.parse(localStorage.getItem('sb-rgnunjngtsgqgvplawfr-auth-token') || 'null');
+      if (sdk && sdk.access_token && (!sdk.expires_at || sdk.expires_at * 1000 > Date.now() + 60000)) {
+        tok = sdk.access_token; localStorage.setItem('alabol_token', tok);
+        if (sdk.refresh_token) localStorage.setItem('alabol_refresh', sdk.refresh_token);
+      }
+    } catch (e) {}
+  }
   if (!tok) { showScreen('landing'); return; }
   fetch(S + '/auth/v1/user', { headers: ah(tok) })
     .then(function(r) { if (!r.ok) { tok = null; localStorage.removeItem('alabol_token'); localStorage.removeItem('alabol_refresh'); showScreen('landing'); throw new Error(); } return r.json(); })

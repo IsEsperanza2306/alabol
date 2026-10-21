@@ -1556,8 +1556,9 @@
     <li><a href="/vip/">💘 Matchmaker</a></li>
     <li><a href="/vendedor.html">🏷️ Vender Auto</a></li>
     <li><a href="/simulador-credito.html">💰 Financiamiento</a></li>
-    <li><a href="/oportunidades/">🔥 Subastas</a></li>
+    <li><a href="/subastas/">🔨 Subastas</a></li>
     <li><a href="/portal-agencias.html">🏢 Agencias</a></li>
+    <li><a href="/login.html">👤 Entrar</a></li>
     <li><a href="/vip/" class="nav-cta">Buscar mi Auto →</a></li>
   </ul>
 </nav>
@@ -1651,7 +1652,7 @@
                 🏢 Seminuevos
             </button>
             <button class="inv-tab" data-tab="subastas" onclick="switchInvTab('subastas')">
-                🔥 Subastas
+                🔨 Subastas
             </button>
         </div>
 
@@ -2420,7 +2421,7 @@ function optimImg(url, width) {
             const semTab = document.querySelector('.inv-tab[data-tab="seminuevos"]');
             const subTab = document.querySelector('.inv-tab[data-tab="subastas"]');
             if (semTab) semTab.textContent = '🏢 Seminuevos (' + seminuevosCount + ')';
-            if (subTab) subTab.textContent = '🔥 Subastas (' + subastasCount + ')';
+            if (subTab) subTab.textContent = '🔨 Subastas (' + subastasCount + ')';
         }
 
         // --- MODAL LOGIC ---
@@ -2787,7 +2788,7 @@ function optimImg(url, width) {
     <div class="footer-col">
       <h4>Vender</h4>
       <a href="vendedor.html">Vender mi Auto</a>
-      <a href="oportunidades/index.html">Oportunidades</a>
+      <a href="/subastas/">Subastas</a>
       <a href="portal-agencias.html">Portal Agencias</a>
     </div>
     <div class="footer-col">

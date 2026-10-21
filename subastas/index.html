@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<title>Subastas | Alabol Car Broker</title>
+<link rel="icon" href="logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="catalogo.css?v=2">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="/subastas/"><img src="logo.png" alt=""><div><span>Subastas privadas</span><b>Alabol Car Broker</b></div></a>
+    <div class="who" id="who" hidden>
+      <span class="lock">Sesión segura</span>
+      <span class="mail" id="whoMail"></span>
+      <button class="btn sm" type="button" id="btnSalir">Salir</button>
+    </div>
+  </div>
+</header>
+
+<div class="loader" id="vLoading"><div class="spin"></div><span>Verificando acceso…</span></div>
+
+<!-- Acceso -->
+<section class="gate wrap" id="vGate" hidden>
+  <div class="gate-card">
+    <img class="logo" src="logo.png" alt="Alabol">
+    <div>
+      <h1>Subastas privadas Alabol</h1>
+      <p class="sub">Acceso exclusivo para socios autorizados por Alabol Car Broker.</p>
+    </div>
+    <button class="btn google" type="button" id="btnGoogle">
+      <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>
+      Entrar con Google
+    </button>
+    <div class="or"><span>o con tu correo</span></div>
+    <form id="fPass" autocomplete="on">
+      <label class="f">Correo<input id="gEmail" type="email" required autocomplete="email" placeholder="tu@empresa.com"></label>
+      <label class="f">Contraseña<input id="gPass" type="password" autocomplete="current-password" placeholder="Tu contraseña"></label>
+      <button class="btn" type="submit" id="btnEntrar">Entrar con contraseña</button>
+    </form>
+    <div class="alt">
+      <button class="btn" type="button" id="btnLink">Enviarme un enlace de acceso al correo</button>
+      <p class="sub" style="font-size:12.5px">Sin contraseña: te llega un enlace de un solo uso al correo autorizado.</p>
+    </div>
+    <div class="msg" id="gMsg" hidden></div>
+    <div class="alt">
+      <p class="sub" style="font-size:13px">¿Eres agencia, lote o comprador profesional y aún no tienes acceso?</p>
+      <a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/525568667571?text=Hola%20Alabol%2C%20quiero%20acceso%20a%20las%20subastas%20privadas">Solicitar acceso por WhatsApp</a>
+    </div>
+    <div class="gate-feats"><span>Acceso por invitación</span><span>Sesión cifrada</span><span>Registro de actividad</span></div>
+    <a class="btn ghost sm" href="/">← Volver a alabolcar.com.mx</a>
+  </div>
+</section>
+
+<!-- Sin autorización -->
+<section class="gate wrap" id="vDenied" hidden>
+  <div class="gate-card">
+    <img class="logo" src="logo.png" alt="Alabol">
+    <h1>Tu correo aún no tiene acceso</h1>
+    <p class="sub">Iniciaste sesión como <b id="dMail"></b>, pero este correo no está autorizado o su acceso venció. Pide a tu asesor de Alabol que lo habilite.</p>
+    <a class="btn wa" id="dWa" target="_blank" rel="noopener">Solicitar acceso por WhatsApp</a>
+    <button class="btn" type="button" id="dSalir">Usar otro correo</button>
+  </div>
+</section>
+
+<!-- Catálogo -->
+<div id="vApp" hidden>
+  <section class="wrap hero">
+    <div>
+      <div class="eyebrow" id="hCliente">Subastas privadas</div>
+      <h1 id="hTitulo">Unidades disponibles</h1>
+      <p id="hSub">Información confidencial. Número de serie, ubicación exacta e inspección física se comparten por unidad con el acuerdo de confidencialidad y no elusión firmado.</p>
+    </div>
+    <div class="count" id="hCount" hidden>
+      <div><b id="cD">0</b><small>días</small></div>
+      <div><b id="cH">00</b><small>horas</small></div>
+      <div><b id="cM">00</b><small>min</small></div>
+    </div>
+  </section>
+  <div class="wrap stats" id="chips"></div>
+  <div class="filters"><div class="wrap">
+    <input id="q" type="search" placeholder="Buscar marca, modelo, año o referencia" aria-label="Buscar">
+    <select id="fMarca" aria-label="Marca"><option value="">Todas las marcas</option></select>
+    <select id="fZona" aria-label="Zona"><option value="">Todas las zonas</option></select>
+    <select id="fEstado" aria-label="Estado"><option value="">Cualquier estado</option></select>
+    <select id="fOrden" aria-label="Ordenar">
+      <option value="ref">Orden: referencia</option>
+      <option value="anio">Año: más nuevo</option>
+      <option value="km">Kilometraje: menor</option>
+    </select>
+    <span class="n" id="n"></span>
+  </div></div>
+  <main class="wrap"><div class="grid" id="grid"></div></main>
+</div>
+
+<footer class="foot"><div class="wrap">
+  <span>© 2026 Alabol Car Broker · Información confidencial para uso exclusivo del destinatario autorizado.</span>
+  <span id="fSesion"></span>
+</div></footer>
+
+<div class="sheet" id="sheet" hidden></div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="../config.js"></script>
+<script>
+(() => {
+'use strict';
+const WA = '525568667571';
+const BUCKET = 'catalogo';
+const INACTIVIDAD_MIN = 30;
+const sb = window.supabaseClient;
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtKm = k => k ? Number(k).toLocaleString('es-MX') + ' km' : 'km por confirmar';
+const stCls = e => e === 'Operable' ? 'ok' : (e === 'No enciende' ? 'bad' : 'warn');
+const show = id => ['vLoading','vGate','vDenied','vApp'].forEach(v => $('#'+v).hidden = v !== id);
+const toast = m => { const t = $('#toast'); t.textContent = m; t.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(() => t.hidden = true, 2400); };
+const msg = (txt, ok) => { const m = $('#gMsg'); m.textContent = txt; m.className = 'msg ' + (ok ? 'ok' : 'err'); m.hidden = false; };
+
+let ME = null, UNITS = [], EVENTS = [], THUMBS = {};
+
+function log(accion, extra = {}) {
+  if (!ME) return;
+  sb.from('catalogo_bitacora').insert({ user_id: ME.uid, accion, user_agent: navigator.userAgent.slice(0, 180), ...extra }).then(() => {});
+}
+
+function setWatermark(email) {
+  const d = new Date().toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
+  const t = esc(email + ' · ' + d);
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='420' height='220'><g transform='rotate(-22 210 110)' font-family='Poppins,Arial,sans-serif' font-size='14' font-weight='600'><text x='20' y='90' fill='rgba(255,255,255,0.20)'>${t}</text><text x='20' y='92' fill='rgba(0,0,0,0.10)'>${t}</text><text x='200' y='200' fill='rgba(255,255,255,0.20)'>ALABOL · CONFIDENCIAL</text></g></svg>`;
+  document.documentElement.style.setProperty('--wm', `url("data:image/svg+xml,${encodeURIComponent(svg)}")`);
+}
+
+// ---------- acceso ----------
+async function boot() {
+  if (!sb) { show('vGate'); msg('No se pudo conectar con el servidor. Recarga la página.'); return; }
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { show('vGate'); return; }
+  const { data: acc, error } = await sb.rpc('catalogo_mi_acceso');
+  const email = session.user.email;
+  $('#who').hidden = false; $('#whoMail').textContent = email;
+  ME = { uid: session.user.id, email, admin: !!acc?.admin, clientes: acc?.clientes || [] };
+  if (error || (!ME.admin && !ME.clientes.length)) {
+    log('sin_acceso');
+    $('#dMail').textContent = email;
+    $('#dWa').href = `https://wa.me/${WA}?text=${encodeURIComponent('Hola, solicito acceso al catálogo privado de Alabol para el correo ' + email)}`;
+    show('vDenied'); return;
+  }
+  setWatermark(email);
+  await loadCatalog();
+  log('entrada');
+  armInactivity();
+}
+
+$('#fPass').addEventListener('submit', async e => {
+  e.preventDefault();
+  const email = $('#gEmail').value.trim(), password = $('#gPass').value;
+  if (!password) { msg('Escribe tu contraseña o usa el enlace de acceso.'); return; }
+  const b = $('#btnEntrar'); b.disabled = true; b.textContent = 'Verificando…';
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  b.disabled = false; b.textContent = 'Entrar con contraseña';
+  if (error) { msg('Correo o contraseña incorrectos. Si no tienes contraseña, usa el enlace de acceso.'); return; }
+  show('vLoading'); boot();
+});
+$('#btnGoogle').addEventListener('click', async () => {
+  const b = $('#btnGoogle'); b.disabled = true;
+  const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + '/subastas/', queryParams: { prompt: 'select_account' } } });
+  if (error) { b.disabled = false; msg('No se pudo abrir Google: ' + error.message); }
+});
+$('#btnLink').addEventListener('click', async () => {
+  const email = $('#gEmail').value.trim();
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { msg('Escribe tu correo para enviarte el enlace.'); $('#gEmail').focus(); return; }
+  const b = $('#btnLink'); b.disabled = true;
+  const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + '/subastas/' } });
+  b.disabled = false;
+  if (error) { msg('No se pudo enviar el enlace: ' + error.message); return; }
+  msg('Listo. Revisa tu correo ' + email + ' y abre el enlace desde este mismo dispositivo.', true);
+});
+const salir = async () => { log('salida'); await sb.auth.signOut(); location.replace('/subastas/'); };
+$('#btnSalir').addEventListener('click', salir);
+$('#dSalir').addEventListener('click', salir);
+sb && sb.auth.onAuthStateChange((ev) => { if (ev === 'SIGNED_IN' && !ME) { show('vLoading'); boot(); } });
+
+function armInactivity() {
+  let t;
+  const reset = () => { clearTimeout(t); t = setTimeout(async () => { await sb.auth.signOut(); location.replace('/subastas/?expirada=1'); }, INACTIVIDAD_MIN * 60000); };
+  ['click','keydown','scroll','touchstart','mousemove'].forEach(ev => addEventListener(ev, reset, { passive: true }));
+  reset();
+  $('#fSesion').textContent = `La sesión se cierra tras ${INACTIVIDAD_MIN} min sin actividad.`;
+}
+
+// ---------- catálogo ----------
+async function loadCatalog() {
+  const [{ data: evs }, { data: us, error }] = await Promise.all([
+    sb.from('catalogo_eventos').select('id,titulo,fecha_evento').eq('activo', true).order('fecha_evento', { ascending: true }),
+    sb.from('catalogo_unidades').select('id,evento_id,ref,marca,modelo,anio,km,cuerpo,zona,estado,condiciones,fotos,orden').eq('activo', true).order('orden')
+  ]);
+  if (error) { show('vGate'); msg('No se pudo cargar el catálogo. Intenta de nuevo.'); return; }
+  EVENTS = evs || []; UNITS = us || [];
+  const cli = ME.clientes.map(c => c.nombre).join(' · ');
+  $('#hCliente').textContent = ME.admin && !cli ? 'Vista de administrador' : `Subastas privadas · ${cli}`;
+  const ev = EVENTS.find(e => e.fecha_evento && new Date(e.fecha_evento) > new Date()) || EVENTS[0];
+  if (ev) {
+    $('#hTitulo').textContent = ev.titulo;
+    if (ev.fecha_evento && new Date(ev.fecha_evento) > new Date()) startCountdown(new Date(ev.fecha_evento));
+  }
+  fillFilters(); renderChips(); show('vApp'); render();
+  // portadas firmadas (miniatura t_ o foto completa como respaldo)
+  const want = UNITS.filter(u => u.fotos?.length).map(u => ({ u, t: `${u.evento_id}/${u.ref}/t_${u.fotos[0]}`, f: `${u.evento_id}/${u.ref}/${u.fotos[0]}` }));
+  const { data: s1 } = await sb.storage.from(BUCKET).createSignedUrls(want.map(w => w.t), 3600);
+  const miss = [];
+  want.forEach((w, i) => { const r = s1?.[i]; if (r && !r.error && r.signedUrl) THUMBS[w.u.id] = r.signedUrl; else miss.push(w); });
+  if (miss.length) {
+    const { data: s2 } = await sb.storage.from(BUCKET).createSignedUrls(miss.map(w => w.f), 3600);
+    miss.forEach((w, i) => { const r = s2?.[i]; if (r && !r.error && r.signedUrl) THUMBS[w.u.id] = r.signedUrl; });
+  }
+  render();
+}
+
+function startCountdown(d) {
+  $('#hCount').hidden = false;
+  const tick = () => {
+    const ms = d - new Date(); if (ms <= 0) { $('#hCount').hidden = true; return; }
+    $('#cD').textContent = Math.floor(ms / 864e5);
+    $('#cH').textContent = String(Math.floor(ms / 36e5) % 24).padStart(2, '0');
+    $('#cM').textContent = String(Math.floor(ms / 6e4) % 60).padStart(2, '0');
+  };
+  tick(); setInterval(tick, 30000);
+}
+
+function fillFilters() {
+  const opt = (sel, k) => [...new Set(UNITS.map(u => u[k]).filter(Boolean))].sort().forEach(v => $(sel).insertAdjacentHTML('beforeend', `<option>${esc(v)}</option>`));
+  opt('#fMarca', 'marca'); opt('#fZona', 'zona'); opt('#fEstado', 'estado');
+}
+let CUERPO = '';
+function renderChips() {
+  const by = {}; UNITS.forEach(u => by[u.cuerpo || 'Otro'] = (by[u.cuerpo || 'Otro'] || 0) + 1);
+  $('#chips').innerHTML = [`<button class="chip" type="button" data-c="" aria-pressed="true"><b>${UNITS.length}</b> unidades</button>`]
+    .concat(Object.entries(by).sort((a, b) => b[1] - a[1]).map(([k, n]) => `<button class="chip" type="button" data-c="${esc(k)}" aria-pressed="false"><b>${n}</b> ${esc(k)}</button>`)).join('');
+  $('#chips').onclick = e => { const c = e.target.closest('.chip'); if (!c) return; CUERPO = c.dataset.c; $('#chips').querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', String(x === c))); render(); };
+}
+function filtered() {
+  const q = $('#q').value.trim().toLowerCase(), m = $('#fMarca').value, z = $('#fZona').value, e = $('#fEstado').value, o = $('#fOrden').value;
+  let r = UNITS.filter(u => (!CUERPO || u.cuerpo === CUERPO) && (!m || u.marca === m) && (!z || u.zona === z) && (!e || u.estado === e) &&
+    (!q || [u.ref, u.marca, u.modelo, u.anio, u.cuerpo].join(' ').toLowerCase().includes(q)));
+  if (o === 'anio') r = r.slice().sort((a, b) => (b.anio || 0) - (a.anio || 0) || a.orden - b.orden);
+  if (o === 'km') r = r.slice().sort((a, b) => (a.km ?? 1e9) - (b.km ?? 1e9));
+  return r;
+}
+function render() {
+  const r = filtered();
+  $('#n').textContent = `${r.length} de ${UNITS.length} unidades`;
+  $('#grid').innerHTML = r.length ? r.map(u => `
+    <button class="card" type="button" data-id="${u.id}" aria-label="${esc(u.ref)}, ${esc(u.marca)} ${esc(u.modelo)}">
+      <div class="ph wm">${THUMBS[u.id] ? `<img src="${THUMBS[u.id]}" alt="" loading="lazy" draggable="false">` : '<div class="sk"></div>'}
+        <span class="tag">${esc(u.ref)}</span>${u.fotos?.length ? `<span class="nph">${u.fotos.length} fotos</span>` : ''}</div>
+      <div class="cb">
+        <div class="mk">${esc(u.marca)} · ${esc(u.cuerpo || '')}</div>
+        <div class="md">${esc(u.modelo)}</div>
+        <div class="sp"><b>${esc(u.anio || '')}</b><span>${fmtKm(u.km)}</span></div>
+        <div class="cf"><span class="st ${stCls(u.estado)}">${esc(u.estado || 'Por verificar')}</span><span class="pill">${esc(u.zona || '')}</span></div>
+      </div>
+    </button>`).join('') : '<div class="empty">Ninguna unidad coincide con los filtros.</div>';
+}
+['#q', '#fMarca', '#fZona', '#fEstado', '#fOrden'].forEach(s => $(s).addEventListener('input', render));
+$('#grid').addEventListener('click', e => { const c = e.target.closest('.card'); if (c) openUnit(c.dataset.id); });
+document.addEventListener('contextmenu', e => { if (e.target.closest('.ph,.viewer,.strip')) e.preventDefault(); });
+
+// ---------- ficha ----------
+async function openUnit(id) {
+  const u = UNITS.find(x => x.id === id); if (!u) return;
+  log('ver_unidad', { unidad_ref: u.ref, evento_id: u.evento_id });
+  const sh = $('#sheet');
+  const fotos = u.fotos || [];
+  sh.innerHTML = `<div class="panel" role="dialog" aria-modal="true" aria-label="${esc(u.ref)}">
+    <div class="ptop"><span class="ref">${esc(u.ref)}</span><button class="btn sm" type="button" id="xClose">Cerrar</button></div>
+    ${fotos.length ? `<div class="viewer wm"><img id="vImg" alt="${esc(u.marca)} ${esc(u.modelo)}" draggable="false" ${THUMBS[u.id] ? `src="${THUMBS[u.id]}"` : ''}>
+      ${fotos.length > 1 ? '<button class="nav prev" type="button" id="vPrev" aria-label="Foto anterior">‹</button><button class="nav next" type="button" id="vNext" aria-label="Foto siguiente">›</button>' : ''}
+      <span class="pos" id="vPos">1 / ${fotos.length}</span></div>
+      <div class="strip" id="vStrip">${fotos.map((f, i) => `<button type="button" data-i="${i}" aria-label="Foto ${i + 1}" aria-current="${i === 0}"></button>`).join('')}</div>` : ''}
+    <div><div class="mk">${esc(u.marca)} · ${esc(u.cuerpo || '')}</div><h2>${esc(u.modelo)} ${esc(u.anio || '')}</h2></div>
+    <dl class="kv">
+      <dt>Año</dt><dd>${esc(u.anio || '—')}</dd>
+      <dt>Kilometraje</dt><dd>${fmtKm(u.km)}</dd>
+      <dt>Estado</dt><dd><span class="st ${stCls(u.estado)}">${esc(u.estado || 'Por verificar')}</span></dd>
+      <dt>Zona</dt><dd>${esc(u.zona || '—')}</dd>
+      <dt>Condiciones</dt><dd><ul class="cond">${(u.condiciones || []).map(c => `<li>${esc(c)}</li>`).join('')}</ul></dd>
+    </dl>
+    <div class="notice">Número de serie, ubicación exacta e inspección física de <b>${esc(u.ref)}</b> se comparten con el acuerdo de confidencialidad y no elusión firmado con Alabol Car Broker.</div>
+    <div class="actions">
+      <a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/${WA}?text=${encodeURIComponent(`Hola Israel, me interesa la unidad ${u.ref} · ${u.marca} ${u.modelo} ${u.anio || ''}`)}">Me interesa · WhatsApp</a>
+      <button class="btn" type="button" id="xCopy">Copiar ficha</button>
+    </div>
+  </div>`;
+  sh.hidden = false; document.body.style.overflow = 'hidden';
+  const close = () => { sh.hidden = true; sh.innerHTML = ''; sh._nav = null; document.body.style.overflow = ''; };
+  $('#xClose').onclick = close; sh.onclick = e => { if (e.target === sh) close(); };
+  $('#xCopy').onclick = async () => {
+    const t = `${u.ref} · ${u.marca} ${u.modelo} ${u.anio || ''}\nKm: ${u.km ? Number(u.km).toLocaleString('es-MX') : 'por confirmar'}\nEstado: ${u.estado || ''}\nZona: ${u.zona || ''}\nCondiciones: ${(u.condiciones || []).join('; ')}\nAlabol Car Broker`;
+    try { await navigator.clipboard.writeText(t); toast('Ficha copiada'); log('copiar_ficha', { unidad_ref: u.ref, evento_id: u.evento_id }); } catch { toast('No se pudo copiar'); }
+  };
+  $('#xClose').focus();
+  if (!fotos.length) return;
+  const full = fotos.map(f => `${u.evento_id}/${u.ref}/${f}`), th = fotos.map(f => `${u.evento_id}/${u.ref}/t_${f}`);
+  const [{ data: fs }, { data: ts }] = await Promise.all([
+    sb.storage.from(BUCKET).createSignedUrls(full, 1800), sb.storage.from(BUCKET).createSignedUrls(th, 1800)]);
+  if (sh.hidden) return;
+  const F = full.map((_, i) => fs?.[i]?.signedUrl || null);
+  const T = th.map((_, i) => ts?.[i]?.signedUrl || F[i]);
+  $('#vStrip').querySelectorAll('button').forEach((b, i) => { if (T[i]) b.innerHTML = `<img src="${T[i]}" alt="" loading="lazy" draggable="false">`; });
+  let cur = 0;
+  const go = i => { cur = (i + fotos.length) % fotos.length; if (F[cur]) $('#vImg').src = F[cur]; $('#vPos').textContent = `${cur + 1} / ${fotos.length}`;
+    $('#vStrip').querySelectorAll('button').forEach((b, j) => b.setAttribute('aria-current', String(j === cur))); };
+  go(0);
+  sh._nav = d => go(cur + d);
+  if ($('#vPrev')) { $('#vPrev').onclick = () => go(cur - 1); $('#vNext').onclick = () => go(cur + 1); }
+  $('#vStrip').onclick = e => { const b = e.target.closest('button'); if (b) go(+b.dataset.i); };
+}
+document.addEventListener('keydown', e => {
+  const sh = $('#sheet'); if (sh.hidden) return;
+  if (e.key === 'Escape') { sh.hidden = true; sh.innerHTML = ''; document.body.style.overflow = ''; }
+  if (sh._nav && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) sh._nav(e.key === 'ArrowRight' ? 1 : -1);
+});
+
+if (new URLSearchParams(location.search).get('expirada')) { setTimeout(() => msg('Tu sesión se cerró por inactividad. Vuelve a entrar.'), 0); }
+boot();
+})();
+</script>
+</body>
+</html>

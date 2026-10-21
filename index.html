@@ -1782,7 +1782,7 @@ if (window.location.hash.includes('type=recovery') || window.location.hash.inclu
             <a href="/inventario.html">🚗 Inventario</a>
             <a href="/vip/">💘 Matchmaker</a>
             <a href="/simulador-credito.html">💰 Financiamiento</a>
-            <a href="/oportunidades/">🔥 Oportunidades</a>
+            <a href="/subastas/">🔨 Subastas</a>
             <a href="/portal-agencias.html">🏢 Portal Agencias</a>
             <a href="./login.html" class="nav-item" id="navAuthBtn"><i class="fa-solid fa-user-circle"></i> Entrar</a>
         </div>
@@ -2191,7 +2191,7 @@ function optimImg(url, width) {
             if (session) {
                 const userName = (session.user.user_metadata.full_name || session.user.user_metadata.name || 'Mi Perfil').split(' ')[0];
                 authBtn.innerHTML = `<i class="fa-solid fa-user-check" style="color:var(--gold);"></i> ${userName}`;
-                authBtn.href = './vendedor.html';
+                authBtn.href = '/login.html';
                 authBtn.style.position = 'relative';
                 authBtn.onclick = null;
 
@@ -2858,7 +2858,7 @@ function optimImg(url, width) {
                     <a href="./vip/" style="color:#a8c5b8;text-decoration:none;font-size:0.9rem;transition:color 0.2s;"
                         onmouseover="this.style.color='#d4af37'" onmouseout="this.style.color='#a8c5b8'">🔥 Matchmaker
                         VIP</a>
-                    <a href="./oportunidades/"
+                    <a href="/subastas/"
                         style="color:#a8c5b8;text-decoration:none;font-size:0.9rem;transition:color 0.2s;"
                         onmouseover="this.style.color='#d4af37'" onmouseout="this.style.color='#a8c5b8'">🚗 Portal
                         Subastas</a>

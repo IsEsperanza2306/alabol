@@ -538,9 +538,10 @@ async function publishReel() {
   btn.disabled = true; btn.textContent = '⏳ Publicando...';
 
   try {
-    const res = await fetch('/.netlify/functions/publish-reel', {
+    const { data: { session: ses } } = await sb.auth.getSession();
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/publish-reel`, {
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{'Content-Type':'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + (ses ? ses.access_token : SUPABASE_ANON_KEY)},
       body: JSON.stringify({ reel_id: activeReelId, video_url: r.video_url, copy_text: r.copy_text })
     });
     const json = await res.json();

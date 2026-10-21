@@ -239,9 +239,9 @@
         var base64 = canvas.toDataURL('image/jpeg', 0.85);
 
         // Call OCR function
-        fetch('/.netlify/functions/ocr-document', {
+        fetch(SUPABASE_URL + '/functions/v1/ocr-document', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer client' },
+          headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
           body: JSON.stringify({ image: base64, type: 'tarjeta_circulacion' })
         })
         .then(function (res) { return res.json(); })
@@ -699,16 +699,16 @@
         showConfirmation();
         // Send confirmation email (fire and forget)
         try {
-          fetch('/.netlify/functions/send-notification', {
+          fetch(SUPABASE_URL + '/functions/v1/send-notification', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer client' },
+            headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
             body: JSON.stringify({ folio: state.folio, tipo: 'confirmacion' })
           });
         } catch (e) { /* best effort */ }
         // Notificar internamente a Israel
-        fetch('/.netlify/functions/send-notification', {
+        fetch(SUPABASE_URL + '/functions/v1/send-notification', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer internal' },
+          headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY },
           body: JSON.stringify({ folio: state.folio, tipo: 'nueva_solicitud_interna' })
         }).catch(function(){}); // silencioso — no bloquear al cliente si falla
       })

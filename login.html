@@ -418,15 +418,12 @@
             try {
                 const { data: { user } } = await sb.auth.getUser();
                 if (!user) return '/vip/';
-                const [perfil, acceso, agencia] = await Promise.all([
-                    sb.from('perfiles').select('rol,activo').eq('id', user.id).maybeSingle(),
-                    sb.rpc('catalogo_mi_acceso'),
-                    sb.from('agencia_miembros').select('id').eq('user_id', user.id).eq('activo', true).limit(1)
-                ]);
-                const p = perfil.data;
-                if (p && p.rol === 'admin' && p.activo !== false) return '/admin.html';
-                if (acceso.data && acceso.data.clientes && acceso.data.clientes.length) return '/subastas/';
-                if ((agencia.data && agencia.data.length) || (p && p.rol === 'vendedor')) return '/portal-agencias.html';
+                const { data: r } = await sb.rpc('alabol_mis_roles');
+                if (r && r.admin) return '/admin.html';
+                if (r && r.subastas) return '/subastas/';
+                if (r && r.agencia) return '/portal-agencias.html';
+                if (r && r.verificador) return '/verificacion/verificar/';
+                if (r && r.embajador) return '/embajador.html';
                 return '/vip/';
             } catch (e) { return '/vip/'; }
         }

@@ -603,9 +603,15 @@ a:hover { text-decoration: underline; }
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"><i class="fas fa-circle-notch fa-spin"></i></span> Procesando...';
 
-    fetch('/.netlify/functions/emitir-dictamen', {
+    var tokenPerito = sesionPerito();
+    if (!tokenPerito) {
+      alert('Inicia sesión como verificador para emitir el dictamen.');
+      location.href = '/login.html?redirect=' + encodeURIComponent('verificacion/peritar/?folio=' + folioActual);
+      return;
+    }
+    fetch(SB_URL + '/functions/v1/emitir-dictamen', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'apikey': SK, 'Authorization': 'Bearer ' + tokenPerito },
       body: JSON.stringify({ folio: folioActual, semaforo: semaforo, notas: notas, resultado: resultado })
     })
     .then(function (res) { return res.json(); })
@@ -640,6 +646,15 @@ a:hover { text-decoration: underline; }
     g('result-label').className = 'result-label ' + (classes[resultado] || '');
     g('result-folio').textContent = folio;
     g('result-desc').textContent = descs[resultado] || 'Dictamen emitido correctamente.';
+  }
+
+  // Sesión iniciada en /login.html (SDK de Supabase guardado en este navegador)
+  function sesionPerito() {
+    try {
+      var s = JSON.parse(localStorage.getItem('sb-rgnunjngtsgqgvplawfr-auth-token') || 'null');
+      if (s && s.access_token && (!s.expires_at || s.expires_at * 1000 > Date.now() + 60000)) return s.access_token;
+    } catch (e) {}
+    return null;
   }
 
   // ── FETCH & INIT ──

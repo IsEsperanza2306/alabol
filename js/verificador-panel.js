@@ -437,13 +437,13 @@
   }
 
   function getAuthHeaders() {
-    var h = { 'Content-Type': 'application/json' };
-    if (_cachedToken) h['Authorization'] = 'Bearer ' + _cachedToken;
+    var h = { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY };
+    h['Authorization'] = 'Bearer ' + (_cachedToken || SUPABASE_ANON_KEY);
     return h;
   }
 
   function sendNotification(folio, tipo) {
-    return fetch('/.netlify/functions/send-notification', {
+    return fetch(SUPABASE_URL + '/functions/v1/send-notification', {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify({ folio: folio, tipo: tipo })
@@ -457,7 +457,7 @@
   }
 
   function previewEmail(folio) {
-    fetch('/.netlify/functions/send-notification', {
+    fetch(SUPABASE_URL + '/functions/v1/send-notification', {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify({ folio: folio, tipo: 'dictamen', preview: true })
@@ -483,7 +483,7 @@
     var btn = document.querySelector('.btn-auto-verify');
     if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analizando con IA...'; }
 
-    fetch('/.netlify/functions/auto-verify', {
+    fetch(SUPABASE_URL + '/functions/v1/auto-verify', {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify({ folio: folio })

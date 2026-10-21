@@ -2,12 +2,91 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="refresh" content="0;url=vendedor.html">
-<title>Vende tu Auto | Alabol</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vende tu auto | Alabol Car Broker</title>
+<meta name="description" content="Vende tu auto con Alabol Car Broker: déjanos los datos y un asesor te contacta por WhatsApp.">
+<link rel="icon" href="/logo-circular.png" type="image/png">
+<meta property="og:title" content="Vende tu auto con Alabol">
+<meta property="og:image" content="https://alabolcar.com.mx/logo-circular.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/subastas/catalogo.css?v=2">
+<style>
+.hero2{padding-block:32px 8px;max-width:760px}
+.hero2 h1{font-size:clamp(28px,4.4vw,40px);line-height:1.1;margin-top:6px;text-wrap:balance}
+.hero2 p{color:var(--muted);margin-top:10px;max-width:60ch}
+.pasos{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:20px}
+.paso{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.paso b{display:block;color:var(--gold-2);font-family:var(--f-num);font-size:13px;margin-bottom:4px}
+.paso span{color:var(--muted);font-size:13.5px}
+form.box{margin-block:24px 56px;max-width:760px;background:linear-gradient(180deg,var(--surface2),var(--surface));border:1px solid var(--line2);border-radius:16px;padding:24px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+form.box h2{grid-column:1/-1;font-size:18px}
+.full{grid-column:1/-1}
+@media (max-width:560px){form.box{grid-template-columns:1fr;padding:18px}}
+</style>
 </head>
 <body>
-<script>window.location.replace('vendedor.html');</script>
-<p>Redirigiendo al <a href="vendedor.html">Portal Vendedor</a>...</p>
+<header class="topbar"><div class="wrap">
+  <a class="brand" href="/"><img src="/logo-circular.png" alt=""><div><span>Vende tu auto</span><b>Alabol Car Broker</b></div></a>
+  <div class="who"><a class="btn sm" href="/inventario.html">Inventario</a><a class="btn sm" href="/login.html">Entrar</a></div>
+</div></header>
+
+<main class="wrap">
+  <section class="hero2">
+    <div class="eyebrow">Vende sin complicarte</div>
+    <h1>Te ayudamos a vender tu auto al mejor precio</h1>
+    <p>Déjanos los datos de tu auto. Un asesor de Alabol te escribe por WhatsApp con una valuación y las opciones para venderlo.</p>
+    <div class="pasos">
+      <div class="paso"><b>1 · Datos</b><span>Llenas este formulario en 1 minuto.</span></div>
+      <div class="paso"><b>2 · Valuación</b><span>Te escribimos por WhatsApp con un rango de precio.</span></div>
+      <div class="paso"><b>3 · Venta</b><span>Te conectamos con compradores verificados.</span></div>
+    </div>
+  </section>
+
+  <form class="box" id="f" novalidate>
+    <h2>Datos de tu auto</h2>
+    <label class="f">Marca<input id="marca" required maxlength="60" placeholder="Ej. Mazda" autocomplete="off"></label>
+    <label class="f">Modelo y versión<input id="modelo" required maxlength="80" placeholder="Ej. CX-5 i Grand Touring"></label>
+    <label class="f">Año<input id="anio" type="number" inputmode="numeric" min="1980" max="2030" required placeholder="2021"></label>
+    <label class="f">Kilometraje<input id="km" type="number" inputmode="numeric" min="0" placeholder="45000"></label>
+    <label class="f">Precio que esperas (MXN)<input id="precio" type="number" inputmode="numeric" min="0" placeholder="350000"></label>
+    <label class="f">Ciudad<input id="ciudad" maxlength="80" placeholder="CDMX" autocomplete="address-level2"></label>
+    <h2>Tus datos</h2>
+    <label class="f">Nombre<input id="nombre" required maxlength="120" autocomplete="name" placeholder="Tu nombre"></label>
+    <label class="f">WhatsApp (10 dígitos)<input id="wa" required inputmode="tel" maxlength="20" autocomplete="tel" placeholder="55 1234 5678"></label>
+    <label class="f full">Comentarios (opcional)<textarea id="com" rows="3" maxlength="1000" placeholder="Servicios en agencia, detalles, si lo urge vender…"></textarea></label>
+    <div class="msg err full" id="err" hidden></div>
+    <div class="full actions"><button class="btn gold" type="submit" id="go">Enviar y hablar por WhatsApp</button></div>
+    <p class="sub full" style="color:var(--muted2);font-size:12px">Al enviar aceptas nuestro <a href="/aviso-privacidad.html">aviso de privacidad</a>.</p>
+  </form>
+</main>
+
+<div class="toast" id="toast" hidden></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="/config.js"></script>
+<script>
+(() => {
+  const WA = '525568667571';
+  const $ = id => document.getElementById(id);
+  const err = m => { $('err').textContent = m; $('err').hidden = !m; };
+  const num = v => v === '' ? null : Number(v);
+  $('f').addEventListener('submit', async e => {
+    e.preventDefault(); err('');
+    const d = { nombre: $('nombre').value.trim(), whatsapp: $('wa').value.replace(/[^\d+]/g, ''), ciudad: $('ciudad').value.trim() || null,
+      marca: $('marca').value.trim(), modelo: $('modelo').value.trim(), anio: num($('anio').value), km: num($('km').value),
+      precio_esperado: num($('precio').value), comentarios: $('com').value.trim() || null };
+    if (!d.marca || !d.modelo || !d.anio) return err('Escribe marca, modelo y año de tu auto.');
+    if (!d.nombre) return err('Escribe tu nombre.');
+    if (d.whatsapp.replace(/\D/g, '').length < 10) return err('Escribe tu WhatsApp a 10 dígitos.');
+    const b = $('go'); b.disabled = true; b.textContent = 'Enviando…';
+    try { if (window.supabaseClient) await window.supabaseClient.from('vende_auto_leads').insert(d); } catch (_) {}
+    try { if (window.fbq) fbq('track', 'Lead', { content_name: 'vende_tu_auto' }); } catch (_) {}
+    const txt = `Hola Alabol, quiero vender mi auto:\n${d.marca} ${d.modelo} ${d.anio}` + (d.km ? `\n${d.km.toLocaleString('es-MX')} km` : '') +
+      (d.precio_esperado ? `\nPrecio esperado: $${d.precio_esperado.toLocaleString('es-MX')}` : '') + (d.ciudad ? `\nCiudad: ${d.ciudad}` : '') + `\nSoy ${d.nombre}.`;
+    location.href = `https://wa.me/${WA}?text=${encodeURIComponent(txt)}`;
+  });
+})();
+</script>
 </body>
 </html>

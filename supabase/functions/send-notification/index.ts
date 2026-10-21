@@ -1,114 +1,80 @@
-// =============================================
-// SEND-NOTIFICATION — Email al cliente
-// Netlify Function — Alabol Car Broker
-// =============================================
+// SEND-NOTIFICATION — Correos de verificación (migrada de Netlify)
+// Públicos: 'confirmacion' y 'nueva_solicitud_interna' (solo folios creados hace < 2 h).
+// Requieren verificador/admin: 'dictamen' y cualquier vista previa.
+import { json, preflight, rolDe, sbSelect, limpiarFolio, SITE_URL } from '../_shared/comun.ts';
 
-var SUPABASE_URL = process.env.SUPABASE_URL;
-var SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-var INTERNAL_SECRET = process.env.INTERNAL_SECRET;
-var SITE_URL = 'https://alabolcar.com.mx';
+const RESEND_KEY = Deno.env.get('RESEND_API_KEY') ?? '';
+const RESEND_FROM = Deno.env.get('RESEND_FROM') ?? 'Alabol Car Broker <onboarding@resend.dev>';
+const AVISO_INTERNO = 'israel.esperanza.h@gmail.com';
 
-function checkAuth(event) {
-  var secret = event.headers['x-internal-key'] || '';
-  if (INTERNAL_SECRET && secret === INTERNAL_SECRET) return true;
-  var authHeader = event.headers['authorization'] || '';
-  if (authHeader) return true;
-  return false;
-}
+function esc(s: unknown) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 
-function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
-
-async function sbSelect(table, query) {
-  var res = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?' + query, {
-    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Accept': 'application/json' }
+async function enviar(to: string, subject: string, html: string) {
+  const r = await fetch('https://api.resend.com/emails', {
+    method: 'POST', headers: { Authorization: 'Bearer ' + RESEND_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ from: RESEND_FROM, to: [to], subject, html }),
   });
-  if (!res.ok) throw new Error('DB error: ' + res.status);
-  return res.json();
+  return { ok: r.ok, body: await r.text() };
 }
 
-exports.handler = async function (event) {
-  if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method not allowed' };
-  if (!SUPABASE_URL || !SUPABASE_KEY) return { statusCode: 500, body: JSON.stringify({ error: 'Config missing' }) };
-  if (!checkAuth(event)) return { statusCode: 401, body: JSON.stringify({ error: 'No autorizado' }) };
-
+Deno.serve(async (req) => {
+  const pf = preflight(req); if (pf) return pf;
   try {
-    var body = JSON.parse(event.body || '{}');
-    var folio = (body.folio || '').replace(/[^A-Z0-9\-]/gi, '').substring(0, 12);
-    var tipo = body.tipo || 'dictamen';
-    if (!folio) return { statusCode: 400, body: JSON.stringify({ error: 'Folio requerido' }) };
+    const body = await req.json().catch(() => ({}));
+    const folio = limpiarFolio(body.folio, 12);
+    const tipo = body.tipo || 'dictamen';
+    const preview = body.preview === true;
+    if (!folio) return json(req, 400, { error: 'Folio requerido' });
 
-    var rows = await sbSelect('verificaciones', 'folio=eq.' + folio + '&limit=1');
-    if (!rows || !rows.length) return { statusCode: 404, body: JSON.stringify({ error: 'No encontrado' }) };
-    var exp = rows[0];
-    var email = exp.email_solicitante;
-    if (!email) return { statusCode: 400, body: JSON.stringify({ error: 'Sin email' }) };
+    const rol = await rolDe(req);
+    const publico = (tipo === 'confirmacion' || tipo === 'nueva_solicitud_interna') && !preview;
+    if (!publico && !rol.verificador) return json(req, 401, { error: 'No autorizado' });
 
-    var subject, htmlBody;
-    if (tipo === 'nueva_solicitud_interna') {
-      var vehiculoInterno = esc((exp.marca || '') + ' ' + (exp.modelo || '') + ' ' + (exp.anio || ''));
-      subject = '🚗 Nueva solicitud de verificacion — ' + esc(folio) + ' | ' + vehiculoInterno;
-      htmlBody = buildNuevaSolicitudEmail(exp);
-      var RESEND_KEY_INT = process.env.RESEND_API_KEY;
-      var RESEND_FROM_INT = process.env.RESEND_FROM || 'Alabol Car Broker <onboarding@resend.dev>';
-      if (RESEND_KEY_INT) {
-        var intRes = await fetch('https://api.resend.com/emails', {
-          method: 'POST',
-          headers: { 'Authorization': 'Bearer ' + RESEND_KEY_INT, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ from: RESEND_FROM_INT, to: ['israel.esperanza.h@gmail.com'], subject: subject, html: htmlBody })
-        });
-        var intBody = await intRes.text();
-        if (!intRes.ok) {
-          return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ success: false, error: 'Resend interno: ' + intBody.substring(0, 200) }) };
-        }
-        return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ success: true, sent: true, to: 'israel.esperanza.h@gmail.com', tipo: tipo }) };
-      }
-      return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ success: true, preview: true, subject: subject, html: htmlBody }) };
+    const rows = await sbSelect('verificaciones', 'folio=eq.' + encodeURIComponent(folio) + '&limit=1');
+    if (!rows.length) return json(req, 404, { error: 'No encontrado' });
+    const exp = rows[0];
+    if (publico && !rol.verificador) {
+      const edadMin = exp.created_at ? (Date.now() - Date.parse(exp.created_at)) / 60000 : 9999;
+      if (edadMin > 120) return json(req, 403, { error: 'Solicitud fuera de tiempo' });
     }
 
+    if (tipo === 'nueva_solicitud_interna') {
+      const vehiculo = esc((exp.marca || '') + ' ' + (exp.modelo || '') + ' ' + (exp.anio || ''));
+      const subject = '🚗 Nueva solicitud de verificacion — ' + esc(folio) + ' | ' + vehiculo;
+      const html = buildNuevaSolicitudEmail(exp);
+      if (!RESEND_KEY) return json(req, 200, { success: true, preview: true, subject, html });
+      const r = await enviar(AVISO_INTERNO, subject, html);
+      return json(req, 200, r.ok ? { success: true, sent: true, tipo } : { success: false, error: 'Resend interno: ' + r.body.slice(0, 200) });
+    }
+
+    const email = exp.email_solicitante;
+    if (!email) return json(req, 400, { error: 'Sin email' });
+    let subject: string, html: string;
     if (tipo === 'dictamen') {
-      var resultado = exp.resultado_final || 'pendiente';
-      var esAprobado = resultado === 'aprobado' || resultado === 'aprobado_con_observaciones';
-      var emoji = esAprobado ? '✅' : resultado === 'no_aprobado' ? '🚨' : '⏳';
-      var statusText = resultado === 'aprobado' ? 'APROBADO — Green Flags' : resultado === 'aprobado_con_observaciones' ? 'APROBADO CON OBSERVACIONES — Yellow Flags' : 'NO APROBADO — Red Flags';
+      const resultado = exp.resultado_final || 'pendiente';
+      const esAprobado = resultado === 'aprobado' || resultado === 'aprobado_con_observaciones';
+      const emoji = esAprobado ? '✅' : resultado === 'no_aprobado' ? '🚨' : '⏳';
+      const statusText = resultado === 'aprobado' ? 'APROBADO — Green Flags' : resultado === 'aprobado_con_observaciones' ? 'APROBADO CON OBSERVACIONES — Yellow Flags' : 'NO APROBADO — Red Flags';
       subject = emoji + ' Resultado de tu verificacion ' + esc(folio) + ' — Alabol';
-      htmlBody = buildDictamenEmail(exp, statusText, esAprobado);
+      html = buildDictamenEmail(exp, statusText, esAprobado);
     } else {
       subject = '📋 Solicitud recibida — ' + esc(folio) + ' — Alabol';
-      htmlBody = buildConfirmacionEmail(exp);
+      html = buildConfirmacionEmail(exp);
     }
-
-    var isPreview = body.preview === true;
-    var RESEND_KEY = process.env.RESEND_API_KEY;
-    var RESEND_FROM = process.env.RESEND_FROM || 'Alabol Car Broker <onboarding@resend.dev>';
-
-    if (isPreview) {
-      return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ success: true, preview: true, to: email, subject: subject, html: htmlBody }) };
-    }
-
-    if (RESEND_KEY) {
-      var emailRes = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: { 'Authorization': 'Bearer ' + RESEND_KEY, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ from: RESEND_FROM, to: [email], subject: subject, html: htmlBody })
-      });
-      var resBody = await emailRes.text();
-      if (!emailRes.ok) {
-        return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ success: false, error: 'Resend: ' + resBody.substring(0, 200), to: email, html: htmlBody }) };
-      }
-      return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ success: true, sent: true, to: email, tipo: tipo }) };
-    }
-
-    return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ success: true, preview: true, to: email, subject: subject, html: htmlBody }) };
+    if (preview || !RESEND_KEY) return json(req, 200, { success: true, preview: true, to: email, subject, html });
+    const r = await enviar(email, subject, html);
+    return json(req, 200, r.ok ? { success: true, sent: true, to: email, tipo } : { success: false, error: 'Resend: ' + r.body.slice(0, 200), to: email });
   } catch (err) {
-    return { statusCode: 500, body: JSON.stringify({ error: err.message || 'Error interno' }) };
+    return json(req, 500, { error: (err as Error).message || 'Error interno' });
   }
-};
+});
 
-function buildDictamenEmail(exp, statusText, esAprobado) {
+// deno-lint-ignore-file no-explicit-any no-var
+function buildDictamenEmail(exp: any, statusText: string, esAprobado: boolean) {
   var certUrl = SITE_URL + '/certificado/' + esc(exp.folio);
   var vehiculo = esc((exp.marca || '') + ' ' + (exp.modelo || '') + ' ' + (exp.anio || ''));
   var semaforo = exp.semaforo || {};
-  var puntos = { vin_valido:'NIV valido', vin_no_remarcado:'Sin remarcado', sin_reporte_robo:'Sin reporte robo', documentos_completos:'Documentos', tarjeta_circulacion:'Tarjeta circ.', factura_original:'Factura', chip_repuve:'Chip REPUVE', numero_motor:'Num. motor', condicion_exterior:'Exterior', pintura_original:'Pintura', estructura_integra:'Estructura', placas_vigentes:'Placas' };
+  var puntos: any = { vin_valido:'NIV valido', vin_no_remarcado:'Sin remarcado', sin_reporte_robo:'Sin reporte robo', documentos_completos:'Documentos', tarjeta_circulacion:'Tarjeta circ.', factura_original:'Factura', chip_repuve:'Chip REPUVE', numero_motor:'Num. motor', condicion_exterior:'Exterior', pintura_original:'Pintura', estructura_integra:'Estructura', placas_vigentes:'Placas' };
   var semaforoHtml = '';
   Object.keys(puntos).forEach(function (k) {
     var val = semaforo[k] || 'pendiente';
@@ -127,10 +93,10 @@ function buildDictamenEmail(exp, statusText, esAprobado) {
     '<div style="padding:12px 24px;text-align:center;font-size:11px;color:#6b8f7b"><p>Alabol Car Broker — El Tinder de los Autos</p><p>alabolcar.com.mx | WhatsApp: +52 55 6866 7571</p></div></div></body></html>';
 }
 
-function buildNuevaSolicitudEmail(exp) {
+function buildNuevaSolicitudEmail(exp: any) {
   var vehiculo = esc((exp.marca || '') + ' ' + (exp.modelo || '') + ' ' + (exp.anio || ''));
   var fecha = exp.created_at ? new Date(exp.created_at).toLocaleString('es-MX', { timeZone: 'America/Mexico_City' }) : 'N/A';
-  var tierNombres = { basico: 'Escudo ($299)', verificado: 'Escudo Pro ($499)', plus: 'Escudo Total ($799)' };
+  var tierNombres: any = { basico: 'Escudo ($299)', verificado: 'Escudo Pro ($499)', plus: 'Escudo Total ($799)' };
   var tierLabel = tierNombres[exp.tier] || esc(exp.tier || 'N/A');
   var radarUrl = 'https://alabolcar.com.mx/radar-interno.html';
   var peritoUrl = 'https://alabolcar.com.mx/verificacion/verificar/';
@@ -156,7 +122,7 @@ function buildNuevaSolicitudEmail(exp) {
     '<div style="padding:12px 24px;text-align:center;font-size:11px;color:#6b8f7b"><p>Alabol Car Broker — El Tinder de los Autos</p><p>alabolcar.com.mx | WhatsApp: +52 55 6866 7571</p></div></div></body></html>';
 }
 
-function buildConfirmacionEmail(exp) {
+function buildConfirmacionEmail(exp: any) {
   var vehiculo = esc((exp.marca || '') + ' ' + (exp.modelo || '') + ' ' + (exp.anio || ''));
   return '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;background:#0a1f1a;font-family:Arial,sans-serif"><div style="max-width:600px;margin:0 auto;background:#0a1f1a;color:#a8c5b8">' +
     '<div style="background:#0d2921;padding:24px;text-align:center;border-bottom:2px solid #d4af37"><h1 style="color:#d4af37;margin:0;font-size:22px">Alabol Car Broker</h1><p style="color:#a8c5b8;margin:4px 0 0;font-size:12px">El Tinder de los Autos</p></div>' +

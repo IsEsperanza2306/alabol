@@ -136,15 +136,23 @@ const toast = m => { const t = $('#toast'); t.textContent = m; t.hidden = false;
 const fdt = d => d ? new Date(d).toLocaleString('es-MX', { dateStyle: 'short', timeStyle: 'short' }) : '—';
 let CLIENTES = [], EVENTOS = [];
 
+const conTiempo = (p, ms, et) => Promise.race([p, new Promise((_, r) => setTimeout(() => r(new Error('Tiempo agotado: ' + et)), ms))]);
+const falla = (m) => { $('#vLoading').hidden = true; $('#noTxt').textContent = m; $('#vNo').hidden = false; };
 async function boot() {
-  const { data: { session } } = await sb.auth.getSession();
-  if (!session) { $('#vLoading').hidden = true; $('#vNo').hidden = false; return; }
-  const { data: acc } = await sb.rpc('catalogo_mi_acceso');
-  if (!acc?.admin) { $('#vLoading').hidden = true; $('#noTxt').textContent = `${session.user.email} no es administrador.`; $('#vNo').hidden = false; return; }
-  $('#who').hidden = false; $('#whoMail').textContent = session.user.email;
-  $('#vLoading').hidden = true; $('#vApp').hidden = false;
-  await Promise.all([loadClientes(), loadEventos()]);
-  loadAccesos();
+  try {
+    const { data: { session } } = await conTiempo(sb.auth.getSession(), 8000, 'sesión');
+    if (!session) { $('#vLoading').hidden = true; $('#vNo').hidden = false; return; }
+    const { data: acc, error } = await conTiempo(sb.rpc('catalogo_mi_acceso'), 10000, 'permisos');
+    if (error) throw error;
+    if (!acc?.admin) return falla(`${session.user.email} no es administrador.`);
+    $('#who').hidden = false; $('#whoMail').textContent = session.user.email;
+    $('#vLoading').hidden = true; $('#vApp').hidden = false;
+    await Promise.all([loadClientes(), loadEventos()]);
+    loadAccesos();
+  } catch (e) {
+    console.error(e);
+    falla('No se pudo verificar tu sesión (' + (e.message || e) + '). Cierra otras pestañas de Alabol y recarga con Ctrl+F5.');
+  }
 }
 $('#btnSalir').onclick = async () => { await sb.auth.signOut(); location.replace('/subastas/'); };
 $('#btnGoogle').onclick = () => sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + '/subastas/admin.html', queryParams: { prompt: 'select_account' } } });

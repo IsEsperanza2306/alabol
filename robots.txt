@@ -9,6 +9,7 @@ Disallow: /radar*
 Disallow: /checkin*
 Disallow: /transacciones*
 Disallow: /config.js
+Disallow: /catalogo/
 
 # Block AI training crawlers
 User-agent: GPTBot

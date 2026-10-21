@@ -137,7 +137,10 @@ const fdt = d => d ? new Date(d).toLocaleString('es-MX', { dateStyle: 'short', t
 let CLIENTES = [], EVENTOS = [];
 
 const conTiempo = (p, ms, et) => Promise.race([p, new Promise((_, r) => setTimeout(() => r(new Error('Tiempo agotado: ' + et)), ms))]);
-const falla = (m) => { $('#vLoading').hidden = true; $('#noTxt').textContent = m; $('#vNo').hidden = false; };
+const falla = (m, reset) => { $('#vLoading').hidden = true; $('#noTxt').textContent = m; $('#vNo').hidden = false;
+  if (reset && !$('#btnReset')) { const b = document.createElement('button'); b.id = 'btnReset'; b.className = 'btn gold'; b.textContent = 'Restablecer sesión y reintentar'; b.style.marginTop = '12px';
+    b.onclick = () => { try { Object.keys(localStorage).filter(k => k.startsWith('sb-')).forEach(k => localStorage.removeItem(k)); sessionStorage.clear(); } catch (_) {} location.reload(); };
+    $('#noTxt').after(b); } };
 async function boot() {
   try {
     const { data: { session } } = await conTiempo(sb.auth.getSession(), 8000, 'sesión');
@@ -151,7 +154,7 @@ async function boot() {
     loadAccesos();
   } catch (e) {
     console.error(e);
-    falla('No se pudo verificar tu sesión (' + (e.message || e) + '). Cierra otras pestañas de Alabol y recarga con Ctrl+F5.');
+    falla('No se pudo verificar tu sesión (' + (e.message || e) + '). Pulsa el botón para restablecer la sesión.', true);
   }
 }
 $('#btnSalir').onclick = async () => { await sb.auth.signOut(); location.replace('/subastas/'); };

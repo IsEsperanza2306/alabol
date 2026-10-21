@@ -297,15 +297,20 @@ $('#pDir').onchange = () => {
 $('#pGo').onclick = async () => {
   const ev = $('#pEv').value; if (!ev || !FILES.length) return;
   $('#pGo').disabled = true; const L = m => { $('#pLog').textContent += '\n' + m; $('#pLog').scrollTop = 1e9; };
-  let done = 0, fail = 0; const N = FILES.length;
-  const queue = FILES.slice(); const workers = Array.from({ length: 4 }, async () => {
-    while (queue.length) { const x = queue.shift();
+  let done = 0, fail = 0; const N = FILES.length; const ok = new Set();
+  const dormir = ms => new Promise(r => setTimeout(r, ms));
+  const subir = async x => { let err;
+    for (let i = 0; i < 5; i++) {
       const { error } = await sb.storage.from(BUCKET).upload(`${ev}/${x.ref}/${x.name}`, x.f, { upsert: true, contentType: x.f.type || 'image/webp', cacheControl: '3600' });
-      if (error) { fail++; L(`✗ ${x.ref}/${x.name}: ${error.message}`); }
+      if (!error) return null; err = error; await dormir(800 * (i + 1) + Math.random() * 500);
+    } return err; };
+  const queue = FILES.slice(); const workers = Array.from({ length: 2 }, async () => {
+    while (queue.length) { const x = queue.shift(); const error = await subir(x);
+      if (error) { fail++; L(`✗ ${x.ref}/${x.name}: ${error.message}`); } else ok.add(x);
       done++; $('#pBar').style.width = (done / N * 100).toFixed(1) + '%'; } });
   await Promise.all(workers);
-  // actualizar lista de fotos por unidad (excluye miniaturas t_)
-  const byRef = {}; FILES.forEach(x => { if (!x.name.startsWith('t_')) (byRef[x.ref] = byRef[x.ref] || []).push(x.name); });
+  // actualizar lista de fotos por unidad (solo las subidas, excluye miniaturas t_)
+  const byRef = {}; FILES.forEach(x => { if (ok.has(x) && !x.name.startsWith('t_')) (byRef[x.ref] = byRef[x.ref] || []).push(x.name); });
   let upd = 0;
   for (const [ref, names] of Object.entries(byRef)) {
     const { data } = await sb.from('catalogo_unidades').update({ fotos: names.sort() }).eq('evento_id', ev).eq('ref', ref).select('id');

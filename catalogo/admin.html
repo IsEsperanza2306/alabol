@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="catalogo.css?v=1">
+<link rel="stylesheet" href="catalogo.css?v=2">
 <style>
 .tabs{display:flex;gap:6px;flex-wrap:wrap;padding-block:18px 6px}
 .tabs button{border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:999px;padding:7px 14px;font-weight:600;font-size:13.5px;cursor:pointer}
@@ -43,7 +43,8 @@ tr.off td{opacity:.5}
   <img class="logo" src="logo.png" alt="">
   <h1>Solo administradores</h1>
   <p class="sub" id="noTxt">Inicia sesión con tu cuenta de administrador de Alabol.</p>
-  <a class="btn gold" href="/login.html?redirect=catalogo/admin.html">Iniciar sesión</a>
+  <button class="btn google" type="button" id="btnGoogle">Entrar con Google</button>
+  <a class="btn" href="/login.html?redirect=catalogo/admin.html">Entrar con correo y contraseña</a>
 </div></section>
 
 <div class="wrap" id="vApp" hidden>
@@ -58,7 +59,7 @@ tr.off td{opacity:.5}
   <section class="sec" data-p="accesos">
     <div class="box">
       <h3>Dar acceso</h3>
-      <p class="h">El correo podrá entrar a alabolcar.com.mx/catalogo/ con enlace al correo o contraseña, y solo verá los eventos asignados a su cliente.</p>
+      <p class="h">El correo podrá entrar a alabolcar.com.mx/catalogo/ con su cuenta de Google (Gmail o Google Workspace), con enlace al correo o con contraseña, y solo verá los eventos asignados a su cliente.</p>
       <form class="row" id="fAcc">
         <label class="f">Correo<input id="aEmail" type="email" required placeholder="nombre@empresa.com"></label>
         <label class="f">Nombre (opcional)<input id="aNombre" type="text" placeholder="Nombre del contacto"></label>
@@ -146,6 +147,8 @@ async function boot() {
   loadAccesos();
 }
 $('#btnSalir').onclick = async () => { await sb.auth.signOut(); location.replace('/catalogo/'); };
+$('#btnGoogle').onclick = () => sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + '/catalogo/admin.html', queryParams: { prompt: 'select_account' } } });
+sb && sb.auth.onAuthStateChange(ev => { if (ev === 'SIGNED_IN' && $('#vApp').hidden) location.reload(); });
 
 document.querySelector('.tabs').onclick = e => {
   const b = e.target.closest('button'); if (!b) return;

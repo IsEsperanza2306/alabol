@@ -159,7 +159,6 @@ async function boot() {
 }
 $('#btnSalir').onclick = async () => { await sb.auth.signOut(); location.replace('/subastas/'); };
 $('#btnGoogle').onclick = () => sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + '/subastas/admin.html', queryParams: { prompt: 'select_account' } } });
-sb && sb.auth.onAuthStateChange(ev => { if (ev === 'SIGNED_IN' && $('#vApp').hidden) location.reload(); });
 
 document.querySelector('.tabs').onclick = e => {
   const b = e.target.closest('button'); if (!b) return;

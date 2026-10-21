@@ -5,22 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow, noarchive">
 <meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#06120e">
 <title>Subastas | Alabol Car Broker</title>
 <link rel="icon" href="logo.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="catalogo.css?v=2">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;650;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="portal.css?v=1">
 </head>
 <body>
 
 <header class="topbar">
   <div class="wrap">
-    <a class="brand" href="/subastas/"><img src="logo.png" alt=""><div><span>Subastas privadas</span><b>Alabol Car Broker</b></div></a>
+    <a class="brand" href="/subastas/"><img src="logo.png" alt=""><b>Alabol</b><span>Subastas</span></a>
     <div class="who" id="who" hidden>
-      <span class="lock">Sesión segura</span>
       <span class="mail" id="whoMail"></span>
-      <button class="btn sm" type="button" id="btnSalir">Salir</button>
+      <button class="link" type="button" id="btnSalir">Salir</button>
     </div>
   </div>
 </header>
@@ -30,82 +30,95 @@
 <!-- Acceso -->
 <section class="gate wrap" id="vGate" hidden>
   <div class="gate-card">
-    <img class="logo" src="logo.png" alt="Alabol">
+    <img class="logo" src="logo.png" alt="Alabol Car Broker">
     <div>
-      <h1>Subastas privadas Alabol</h1>
-      <p class="sub">Acceso exclusivo para socios autorizados por Alabol Car Broker.</p>
+      <h1>Subastas privadas</h1>
+      <p class="sub" style="margin-top:12px">Unidades seleccionadas por Alabol para socios con invitación.</p>
     </div>
-    <button class="btn google" type="button" id="btnGoogle">
-      <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>
-      Entrar con Google
-    </button>
-    <div class="or"><span>o con tu correo</span></div>
-    <form id="fPass" autocomplete="on">
-      <label class="f">Correo<input id="gEmail" type="email" required autocomplete="email" placeholder="tu@empresa.com"></label>
-      <label class="f">Contraseña<input id="gPass" type="password" autocomplete="current-password" placeholder="Tu contraseña"></label>
-      <button class="btn" type="submit" id="btnEntrar">Entrar con contraseña</button>
-    </form>
-    <div class="alt">
-      <button class="btn" type="button" id="btnLink">Enviarme un enlace de acceso al correo</button>
-      <p class="sub" style="font-size:12.5px">Sin contraseña: te llega un enlace de un solo uso al correo autorizado.</p>
+    <div class="big-actions">
+      <button class="btn google" type="button" id="btnGoogle">
+        <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>
+        Entrar con Google
+      </button>
     </div>
     <div class="msg" id="gMsg" hidden></div>
-    <div class="alt">
-      <p class="sub" style="font-size:13px">¿Eres agencia, lote o comprador profesional y aún no tienes acceso?</p>
-      <a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/525568667571?text=Hola%20Alabol%2C%20quiero%20acceso%20a%20las%20subastas%20privadas">Solicitar acceso por WhatsApp</a>
+    <details class="more" id="moreOpts">
+      <summary>Entrar con correo</summary>
+      <div class="body">
+        <form id="fPass" autocomplete="on">
+          <label class="f">Correo<input id="gEmail" type="email" required autocomplete="email" placeholder="tu@empresa.com"></label>
+          <label class="f">Contraseña<input id="gPass" type="password" autocomplete="current-password" placeholder="Tu contraseña"></label>
+          <button class="btn block" type="submit" id="btnEntrar">Entrar</button>
+        </form>
+        <button class="btn block" type="button" id="btnLink">Enviarme un enlace de acceso</button>
+        <p class="note">El enlace llega a tu correo autorizado y sirve una sola vez.</p>
+      </div>
+    </details>
+    <div class="gate-foot">
+      <span>¿Aún no tienes invitación?</span>
+      <a target="_blank" rel="noopener" href="https://wa.me/525568667571?text=Hola%20Alabol%2C%20quiero%20acceso%20a%20las%20subastas%20privadas">Solicitar acceso por WhatsApp</a>
     </div>
-    <div class="gate-feats"><span>Acceso por invitación</span><span>Sesión cifrada</span><span>Registro de actividad</span></div>
-    <a class="btn ghost sm" href="/">← Volver a alabolcar.com.mx</a>
   </div>
 </section>
 
 <!-- Sin autorización -->
 <section class="gate wrap" id="vDenied" hidden>
   <div class="gate-card">
-    <img class="logo" src="logo.png" alt="Alabol">
-    <h1>Tu correo aún no tiene acceso</h1>
-    <p class="sub">Iniciaste sesión como <b id="dMail"></b>, pero este correo no está autorizado o su acceso venció. Pide a tu asesor de Alabol que lo habilite.</p>
-    <a class="btn wa" id="dWa" target="_blank" rel="noopener">Solicitar acceso por WhatsApp</a>
-    <button class="btn" type="button" id="dSalir">Usar otro correo</button>
+    <img class="logo" src="logo.png" alt="Alabol Car Broker">
+    <div>
+      <h1>Este correo aún no tiene acceso</h1>
+      <p class="sub" style="margin-top:12px">Entraste como <b id="dMail"></b>. Pide a tu asesor de Alabol que lo autorice o entra con otra cuenta.</p>
+    </div>
+    <div class="big-actions">
+      <a class="btn wa block" id="dWa" target="_blank" rel="noopener">Solicitar acceso por WhatsApp</a>
+      <button class="btn block" type="button" id="dSalir">Usar otro correo</button>
+    </div>
   </div>
 </section>
 
 <!-- Catálogo -->
 <div id="vApp" hidden>
-  <section class="wrap hero">
-    <div>
-      <div class="eyebrow" id="hCliente">Subastas privadas</div>
-      <h1 id="hTitulo">Unidades disponibles</h1>
-      <p id="hSub">Información confidencial. Número de serie, ubicación exacta e inspección física se comparten por unidad con el acuerdo de confidencialidad y no elusión firmado.</p>
-    </div>
-    <div class="count" id="hCount" hidden>
-      <div><b id="cD">0</b><small>días</small></div>
-      <div><b id="cH">00</b><small>horas</small></div>
-      <div><b id="cM">00</b><small>min</small></div>
+  <section class="hero">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="wrap">
+      <div>
+        <div class="who-for" id="hCliente"></div>
+        <h1 id="hTitulo">Unidades disponibles</h1>
+        <p class="lead">Número de serie, ubicación exacta e inspección física se comparten por unidad, con el acuerdo de confidencialidad y no elusión firmado.</p>
+      </div>
+      <div class="cd" id="hCount" hidden aria-label="Tiempo para el evento">
+        <div><b id="cD">0</b><small>días</small></div>
+        <div><b id="cH">00</b><small>horas</small></div>
+        <div><b id="cM">00</b><small>minutos</small></div>
+      </div>
     </div>
   </section>
-  <div class="wrap stats" id="chips"></div>
-  <div class="filters"><div class="wrap">
-    <input id="q" type="search" placeholder="Buscar marca, modelo, año o referencia" aria-label="Buscar">
-    <select id="fMarca" aria-label="Marca"><option value="">Todas las marcas</option></select>
-    <select id="fZona" aria-label="Zona"><option value="">Todas las zonas</option></select>
-    <select id="fEstado" aria-label="Estado"><option value="">Cualquier estado</option></select>
-    <select id="fOrden" aria-label="Ordenar">
-      <option value="ref">Orden: referencia</option>
-      <option value="anio">Año: más nuevo</option>
-      <option value="km">Kilometraje: menor</option>
-    </select>
-    <span class="n" id="n"></span>
+  <div class="bar"><div class="wrap">
+    <div class="seg" id="chips" role="group" aria-label="Tipo de unidad"></div>
+    <div class="row">
+      <label class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="q" type="search" placeholder="Marca, modelo, año o referencia" aria-label="Buscar"></label>
+      <select id="fMarca" aria-label="Marca"><option value="">Marca</option></select>
+      <select id="fZona" aria-label="Zona"><option value="">Zona</option></select>
+      <select id="fEstado" aria-label="Estado"><option value="">Estado</option></select>
+      <select id="fOrden" aria-label="Ordenar">
+        <option value="ref">Por referencia</option>
+        <option value="anio">Más nuevos</option>
+        <option value="km">Menos kilómetros</option>
+      </select>
+      <span class="n" id="n"></span>
+    </div>
   </div></div>
   <main class="wrap"><div class="grid" id="grid"></div></main>
 </div>
 
 <footer class="foot"><div class="wrap">
-  <span>© 2026 Alabol Car Broker · Información confidencial para uso exclusivo del destinatario autorizado.</span>
+  <span>© 2026 Alabol Car Broker. Información confidencial para el destinatario autorizado.</span>
   <span id="fSesion"></span>
 </div></footer>
 
 <div class="sheet" id="sheet" hidden></div>
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Fotos ampliadas"></div>
 <div class="toast" id="toast" hidden></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
@@ -119,11 +132,20 @@ const INACTIVIDAD_MIN = 30;
 const sb = window.supabaseClient;
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const fmtKm = k => k ? Number(k).toLocaleString('es-MX') + ' km' : 'km por confirmar';
+const fmtKm = k => k ? Number(k).toLocaleString('es-MX') + ' km' : 'Km por confirmar';
 const stCls = e => e === 'Operable' ? 'ok' : (e === 'No enciende' ? 'bad' : 'warn');
+// "PRIUS C HYBRID HATCHBACK" → "Prius C Hybrid Hatchback"; conserva siglas cortas y versiones (LT, 4X4, CR-V)
+const tc = s => String(s ?? '').split(/\s+/).map(w => (w.length <= 3 || /[\d\-\/.]/.test(w)) ? w : w.charAt(0) + w.slice(1).toLowerCase()).join(' ');
 const show = id => ['vLoading','vGate','vDenied','vApp'].forEach(v => $('#'+v).hidden = v !== id);
 const toast = m => { const t = $('#toast'); t.textContent = m; t.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(() => t.hidden = true, 2400); };
 const msg = (txt, ok) => { const m = $('#gMsg'); m.textContent = txt; m.className = 'msg ' + (ok ? 'ok' : 'err'); m.hidden = false; };
+const IC = {
+  x: '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 2l10 10M12 2L2 12"/></svg>',
+  l: '<svg width="10" height="16" viewBox="0 0 10 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2L2 8l6 6"/></svg>',
+  r: '<svg width="10" height="16" viewBox="0 0 10 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 2l6 6-6 6"/></svg>',
+  ex: '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 1.5h4v4M5.5 12.5h-4v-4M12.5 1.5L8 6M1.5 12.5L6 8"/></svg>',
+  cam: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h3l2-3h6l2 3h3v13H4z"/><circle cx="12" cy="13" r="3.5"/></svg>'
+};
 
 let ME = null, UNITS = [], EVENTS = [], THUMBS = {};
 
@@ -134,7 +156,7 @@ function log(accion, extra = {}) {
 
 function setWatermark() {
   const t = 'alabolcar.com.mx · 55 6866 7571';
-  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='420' height='220'><g transform='rotate(-22 210 110)' font-family='Poppins,Arial,sans-serif' font-size='14' font-weight='600'><text x='20' y='90' fill='rgba(255,255,255,0.20)'>${t}</text><text x='20' y='92' fill='rgba(0,0,0,0.10)'>${t}</text><text x='200' y='200' fill='rgba(255,255,255,0.20)'>${t}</text></g></svg>`;
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='420' height='220'><g transform='rotate(-22 210 110)' font-family='Inter,Arial,sans-serif' font-size='14' font-weight='600'><text x='20' y='90' fill='rgba(255,255,255,0.20)'>${t}</text><text x='20' y='92' fill='rgba(0,0,0,0.10)'>${t}</text><text x='200' y='200' fill='rgba(255,255,255,0.20)'>${t}</text></g></svg>`;
   document.documentElement.style.setProperty('--wm', `url("data:image/svg+xml,${encodeURIComponent(svg)}")`);
 }
 
@@ -150,10 +172,10 @@ async function boot() {
   if (error || (!ME.admin && !ME.clientes.length)) {
     log('sin_acceso');
     $('#dMail').textContent = email;
-    $('#dWa').href = `https://wa.me/${WA}?text=${encodeURIComponent('Hola, solicito acceso al catálogo privado de Alabol para el correo ' + email)}`;
+    $('#dWa').href = `https://wa.me/${WA}?text=${encodeURIComponent('Hola, solicito acceso a las subastas privadas de Alabol para el correo ' + email)}`;
     show('vDenied'); return;
   }
-  setWatermark(email);
+  setWatermark();
   await loadCatalog();
   log('entrada');
   armInactivity();
@@ -162,11 +184,11 @@ async function boot() {
 $('#fPass').addEventListener('submit', async e => {
   e.preventDefault();
   const email = $('#gEmail').value.trim(), password = $('#gPass').value;
-  if (!password) { msg('Escribe tu contraseña o usa el enlace de acceso.'); return; }
+  if (!password) { msg('Escribe tu contraseña o pide un enlace de acceso.'); return; }
   const b = $('#btnEntrar'); b.disabled = true; b.textContent = 'Verificando…';
   const { error } = await sb.auth.signInWithPassword({ email, password });
-  b.disabled = false; b.textContent = 'Entrar con contraseña';
-  if (error) { msg('Correo o contraseña incorrectos. Si no tienes contraseña, usa el enlace de acceso.'); return; }
+  b.disabled = false; b.textContent = 'Entrar';
+  if (error) { msg('Correo o contraseña incorrectos. Si no tienes contraseña, pide un enlace de acceso.'); return; }
   show('vLoading'); boot();
 });
 $('#btnGoogle').addEventListener('click', async () => {
@@ -181,19 +203,19 @@ $('#btnLink').addEventListener('click', async () => {
   const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + '/subastas/' } });
   b.disabled = false;
   if (error) { msg('No se pudo enviar el enlace: ' + error.message); return; }
-  msg('Listo. Revisa tu correo ' + email + ' y abre el enlace desde este mismo dispositivo.', true);
+  msg('Enlace enviado a ' + email + '. Ábrelo desde este mismo dispositivo.', true);
 });
 const salir = async () => { log('salida'); await sb.auth.signOut(); location.replace('/subastas/'); };
 $('#btnSalir').addEventListener('click', salir);
 $('#dSalir').addEventListener('click', salir);
-sb && sb.auth.onAuthStateChange((ev) => { if (ev === 'SIGNED_IN' && !ME) { show('vLoading'); boot(); } });
+sb && sb.auth.onAuthStateChange((ev) => { if (ev === 'SIGNED_IN' && !ME && !boot._run) { boot._run = true; show('vLoading'); boot(); } });
 
 function armInactivity() {
   let t;
   const reset = () => { clearTimeout(t); t = setTimeout(async () => { await sb.auth.signOut(); location.replace('/subastas/?expirada=1'); }, INACTIVIDAD_MIN * 60000); };
   ['click','keydown','scroll','touchstart','mousemove'].forEach(ev => addEventListener(ev, reset, { passive: true }));
   reset();
-  $('#fSesion').textContent = `La sesión se cierra tras ${INACTIVIDAD_MIN} min sin actividad.`;
+  $('#fSesion').textContent = `La sesión se cierra tras ${INACTIVIDAD_MIN} minutos sin actividad.`;
 }
 
 // ---------- catálogo ----------
@@ -202,10 +224,10 @@ async function loadCatalog() {
     sb.from('catalogo_eventos').select('id,titulo,fecha_evento').eq('activo', true).order('fecha_evento', { ascending: true }),
     sb.from('catalogo_unidades').select('id,evento_id,ref,marca,modelo,anio,km,cuerpo,zona,estado,condiciones,fotos,orden').eq('activo', true).order('orden')
   ]);
-  if (error) { show('vGate'); msg('No se pudo cargar el catálogo. Intenta de nuevo.'); return; }
+  if (error) { show('vGate'); msg('No se pudo cargar el catálogo. Recarga la página.'); return; }
   EVENTS = evs || []; UNITS = us || [];
-  const cli = ME.clientes.map(c => c.nombre).join(' · ');
-  $('#hCliente').textContent = ME.admin && !cli ? 'Vista de administrador' : `Subastas privadas · ${cli}`;
+  const cli = ME.clientes.map(c => c.nombre).join(', ');
+  $('#hCliente').textContent = cli ? `Para ${cli}` : 'Vista de administrador';
   const ev = EVENTS.find(e => e.fecha_evento && new Date(e.fecha_evento) > new Date()) || EVENTS[0];
   if (ev) {
     $('#hTitulo').textContent = ev.titulo;
@@ -221,6 +243,8 @@ async function loadCatalog() {
     const { data: s2 } = await sb.storage.from(BUCKET).createSignedUrls(miss.map(w => w.f), 3600);
     miss.forEach((w, i) => { const r = s2?.[i]; if (r && !r.error && r.signedUrl) THUMBS[w.u.id] = r.signedUrl; });
   }
+  const cover = UNITS.find(u => THUMBS[u.id]);
+  if (cover) $('#heroBg').style.setProperty('--cover', `url("${THUMBS[cover.id]}")`);
   render();
 }
 
@@ -236,14 +260,14 @@ function startCountdown(d) {
 }
 
 function fillFilters() {
-  const opt = (sel, k) => [...new Set(UNITS.map(u => u[k]).filter(Boolean))].sort().forEach(v => $(sel).insertAdjacentHTML('beforeend', `<option>${esc(v)}</option>`));
+  const opt = (sel, k) => [...new Set(UNITS.map(u => u[k]).filter(Boolean))].sort().forEach(v => $(sel).insertAdjacentHTML('beforeend', `<option value="${esc(v)}">${esc(v)}</option>`));
   opt('#fMarca', 'marca'); opt('#fZona', 'zona'); opt('#fEstado', 'estado');
 }
 let CUERPO = '';
 function renderChips() {
   const by = {}; UNITS.forEach(u => by[u.cuerpo || 'Otro'] = (by[u.cuerpo || 'Otro'] || 0) + 1);
-  $('#chips').innerHTML = [`<button class="chip" type="button" data-c="" aria-pressed="true"><b>${UNITS.length}</b> unidades</button>`]
-    .concat(Object.entries(by).sort((a, b) => b[1] - a[1]).map(([k, n]) => `<button class="chip" type="button" data-c="${esc(k)}" aria-pressed="false"><b>${n}</b> ${esc(k)}</button>`)).join('');
+  $('#chips').innerHTML = [`<button class="chip" type="button" data-c="" aria-pressed="true">Todas <i>${UNITS.length}</i></button>`]
+    .concat(Object.entries(by).sort((a, b) => b[1] - a[1]).map(([k, n]) => `<button class="chip" type="button" data-c="${esc(k)}" aria-pressed="false">${esc(k)} <i>${n}</i></button>`)).join('');
   $('#chips').onclick = e => { const c = e.target.closest('.chip'); if (!c) return; CUERPO = c.dataset.c; $('#chips').querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', String(x === c))); render(); };
 }
 function filtered() {
@@ -256,54 +280,67 @@ function filtered() {
 }
 function render() {
   const r = filtered();
-  $('#n').textContent = `${r.length} de ${UNITS.length} unidades`;
+  $('#n').textContent = r.length === UNITS.length ? `${UNITS.length} unidades` : `${r.length} de ${UNITS.length} unidades`;
   $('#grid').innerHTML = r.length ? r.map(u => `
-    <button class="card" type="button" data-id="${u.id}" aria-label="${esc(u.ref)}, ${esc(u.marca)} ${esc(u.modelo)}">
+    <button class="card" type="button" data-id="${u.id}" aria-label="${esc(u.ref)}, ${esc(u.marca)} ${esc(tc(u.modelo))} ${esc(u.anio || '')}">
       <div class="ph wm">${THUMBS[u.id] ? `<img src="${THUMBS[u.id]}" alt="" loading="lazy" draggable="false">` : '<div class="sk"></div>'}
-        <span class="tag">${esc(u.ref)}</span>${u.fotos?.length ? `<span class="nph">${u.fotos.length} fotos</span>` : ''}</div>
+        <span class="badge">${esc(u.ref)}</span>${u.fotos?.length ? `<span class="count-ph">${IC.cam}${u.fotos.length}</span>` : ''}</div>
       <div class="cb">
-        <div class="mk">${esc(u.marca)} · ${esc(u.cuerpo || '')}</div>
-        <div class="md">${esc(u.modelo)}</div>
-        <div class="sp"><b>${esc(u.anio || '')}</b><span>${fmtKm(u.km)}</span></div>
-        <div class="cf"><span class="st ${stCls(u.estado)}">${esc(u.estado || 'Por verificar')}</span><span class="pill">${esc(u.zona || '')}</span></div>
+        <div class="mk">${esc(u.marca)}${u.cuerpo ? ', ' + esc(u.cuerpo.toLowerCase()) : ''}</div>
+        <div class="md">${esc(tc(u.modelo))}</div>
+        <div class="sp"><b>${esc(u.anio || '')}</b>&ensp;${fmtKm(u.km)}</div>
+        <div class="cf"><span class="st ${stCls(u.estado)}">${esc(u.estado || 'Por verificar')}</span><span>${esc(u.zona || '')}</span></div>
       </div>
-    </button>`).join('') : '<div class="empty">Ninguna unidad coincide con los filtros.</div>';
+    </button>`).join('') : '<div class="empty">Ninguna unidad coincide. Quita un filtro para ver más.</div>';
 }
 ['#q', '#fMarca', '#fZona', '#fEstado', '#fOrden'].forEach(s => $(s).addEventListener('input', render));
 $('#grid').addEventListener('click', e => { const c = e.target.closest('.card'); if (c) openUnit(c.dataset.id); });
-document.addEventListener('contextmenu', e => { if (e.target.closest('.ph,.viewer,.strip')) e.preventDefault(); });
+document.addEventListener('contextmenu', e => { if (e.target.closest('.ph,.viewer,.strip,.lb')) e.preventDefault(); });
 
 // ---------- ficha ----------
+const lock = on => { document.documentElement.style.overflow = on ? 'hidden' : ''; };
+function closeSheet() { const sh = $('#sheet'); sh.hidden = true; sh.innerHTML = ''; sh._nav = null; closeLB(); lock(false); }
+
 async function openUnit(id) {
   const u = UNITS.find(x => x.id === id); if (!u) return;
   log('ver_unidad', { unidad_ref: u.ref, evento_id: u.evento_id });
   const sh = $('#sheet');
   const fotos = u.fotos || [];
-  sh.innerHTML = `<div class="panel" role="dialog" aria-modal="true" aria-label="${esc(u.ref)}">
-    <div class="ptop"><span class="ref">${esc(u.ref)}</span><button class="btn sm" type="button" id="xClose">Cerrar</button></div>
-    ${fotos.length ? `<div class="viewer wm"><img id="vImg" alt="${esc(u.marca)} ${esc(u.modelo)}" draggable="false" ${THUMBS[u.id] ? `src="${THUMBS[u.id]}"` : ''}>
-      ${fotos.length > 1 ? '<button class="nav prev" type="button" id="vPrev" aria-label="Foto anterior">‹</button><button class="nav next" type="button" id="vNext" aria-label="Foto siguiente">›</button>' : ''}
-      <span class="pos" id="vPos">1 / ${fotos.length}</span></div>
-      <div class="strip" id="vStrip">${fotos.map((f, i) => `<button type="button" data-i="${i}" aria-label="Foto ${i + 1}" aria-current="${i === 0}"></button>`).join('')}</div>` : ''}
-    <div><div class="mk">${esc(u.marca)} · ${esc(u.cuerpo || '')}</div><h2>${esc(u.modelo)} ${esc(u.anio || '')}</h2></div>
-    <dl class="kv">
-      <dt>Año</dt><dd>${esc(u.anio || '—')}</dd>
-      <dt>Kilometraje</dt><dd>${fmtKm(u.km)}</dd>
-      <dt>Estado</dt><dd><span class="st ${stCls(u.estado)}">${esc(u.estado || 'Por verificar')}</span></dd>
-      <dt>Zona</dt><dd>${esc(u.zona || '—')}</dd>
-      <dt>Condiciones</dt><dd><ul class="cond">${(u.condiciones || []).map(c => `<li>${esc(c)}</li>`).join('')}</ul></dd>
-    </dl>
-    <div class="notice">Número de serie, ubicación exacta e inspección física de <b>${esc(u.ref)}</b> se comparten con el acuerdo de confidencialidad y no elusión firmado con Alabol Car Broker.</div>
-    <div class="actions">
-      <a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/${WA}?text=${encodeURIComponent(`Hola Israel, me interesa la unidad ${u.ref} · ${u.marca} ${u.modelo} ${u.anio || ''}`)}">Me interesa · WhatsApp</a>
-      <button class="btn" type="button" id="xCopy">Copiar ficha</button>
+  const titulo = `${tc(u.modelo)} ${u.anio || ''}`.trim();
+  sh.innerHTML = `<div class="panel" role="dialog" aria-modal="true" aria-label="${esc(u.ref)} ${esc(titulo)}">
+    <button class="x" type="button" id="xClose" aria-label="Cerrar">${IC.x}</button>
+    ${fotos.length ? `<div class="gal">
+      <div class="viewer wm" id="vBox" title="Ampliar foto">
+        <img id="vImg" alt="${esc(u.marca)} ${esc(titulo)}" draggable="false" ${THUMBS[u.id] ? `src="${THUMBS[u.id]}"` : ''}>
+        ${fotos.length > 1 ? `<button class="nav prev" type="button" id="vPrev" aria-label="Foto anterior">${IC.l}</button><button class="nav next" type="button" id="vNext" aria-label="Foto siguiente">${IC.r}</button>` : ''}
+        <button class="expand" type="button" id="vExp">${IC.ex}<span id="vPos">1 de ${fotos.length}</span></button>
+      </div>
+      <div class="strip" id="vStrip">${fotos.map((f, i) => `<button type="button" data-i="${i}" aria-label="Foto ${i + 1}" aria-current="${i === 0}"></button>`).join('')}</div>
+    </div>` : ''}
+    <div class="info">
+      <div>
+        <div class="ref">${esc(u.ref)}</div>
+        <h2>${esc(titulo)}</h2>
+        <div class="mk">${esc(u.marca)}${u.cuerpo ? ', ' + esc(u.cuerpo.toLowerCase()) : ''}</div>
+      </div>
+      <dl class="kv">
+        <dt>Año</dt><dd>${esc(u.anio || '—')}</dd>
+        <dt>Kilometraje</dt><dd>${fmtKm(u.km)}</dd>
+        <dt>Estado</dt><dd><span class="st ${stCls(u.estado)}">${esc(u.estado || 'Por verificar')}</span></dd>
+        <dt>Zona</dt><dd>${esc(u.zona || '—')}</dd>
+        ${(u.condiciones || []).length ? `<dt>Condiciones</dt><dd><ul class="cond">${u.condiciones.map(c => `<li>${esc(c)}</li>`).join('')}</ul></dd>` : ''}
+      </dl>
+      <div class="notice">Número de serie, ubicación exacta e inspección física de <b>${esc(u.ref)}</b> se comparten con el acuerdo de confidencialidad y no elusión firmado con Alabol.</div>
+      <div class="actions">
+        <a class="btn gold block" target="_blank" rel="noopener" href="https://wa.me/${WA}?text=${encodeURIComponent(`Hola Israel, me interesa la unidad ${u.ref}: ${u.marca} ${tc(u.modelo)} ${u.anio || ''}`)}">Me interesa esta unidad</a>
+        <button class="btn block" type="button" id="xCopy">Copiar ficha</button>
+      </div>
     </div>
   </div>`;
-  sh.hidden = false; document.body.style.overflow = 'hidden';
-  const close = () => { sh.hidden = true; sh.innerHTML = ''; sh._nav = null; document.body.style.overflow = ''; };
-  $('#xClose').onclick = close; sh.onclick = e => { if (e.target === sh) close(); };
+  sh.hidden = false; lock(true);
+  $('#xClose').onclick = closeSheet; sh.onclick = e => { if (e.target === sh) closeSheet(); };
   $('#xCopy').onclick = async () => {
-    const t = `${u.ref} · ${u.marca} ${u.modelo} ${u.anio || ''}\nKm: ${u.km ? Number(u.km).toLocaleString('es-MX') : 'por confirmar'}\nEstado: ${u.estado || ''}\nZona: ${u.zona || ''}\nCondiciones: ${(u.condiciones || []).join('; ')}\nAlabol Car Broker`;
+    const t = `${u.ref}: ${u.marca} ${tc(u.modelo)} ${u.anio || ''}\nKm: ${u.km ? Number(u.km).toLocaleString('es-MX') : 'por confirmar'}\nEstado: ${u.estado || ''}\nZona: ${u.zona || ''}\nCondiciones: ${(u.condiciones || []).join('; ')}\nAlabol Car Broker`;
     try { await navigator.clipboard.writeText(t); toast('Ficha copiada'); log('copiar_ficha', { unidad_ref: u.ref, evento_id: u.evento_id }); } catch { toast('No se pudo copiar'); }
   };
   $('#xClose').focus();
@@ -313,24 +350,77 @@ async function openUnit(id) {
     sb.storage.from(BUCKET).createSignedUrls(full, 1800), sb.storage.from(BUCKET).createSignedUrls(th, 1800)]);
   if (sh.hidden) return;
   const F = full.map((_, i) => fs?.[i]?.signedUrl || null);
-  const T = th.map((_, i) => ts?.[i]?.signedUrl || F[i]);
+  const T = th.map((_, i) => (ts?.[i] && !ts[i].error && ts[i].signedUrl) || F[i]);
   $('#vStrip').querySelectorAll('button').forEach((b, i) => { if (T[i]) b.innerHTML = `<img src="${T[i]}" alt="" loading="lazy" draggable="false">`; });
   let cur = 0;
-  const go = i => { cur = (i + fotos.length) % fotos.length; if (F[cur]) $('#vImg').src = F[cur]; $('#vPos').textContent = `${cur + 1} / ${fotos.length}`;
-    $('#vStrip').querySelectorAll('button').forEach((b, j) => b.setAttribute('aria-current', String(j === cur))); };
+  const go = i => { cur = (i + fotos.length) % fotos.length; const src = F[cur] || T[cur]; if (src) $('#vImg').src = src;
+    $('#vPos').textContent = `${cur + 1} de ${fotos.length}`;
+    $('#vStrip').querySelectorAll('button').forEach((b, j) => { b.setAttribute('aria-current', String(j === cur)); if (j === cur) b.scrollIntoView({ block: 'nearest', inline: 'nearest' }); });
+    [cur + 1, cur - 1].forEach(k => { const s = F[(k + fotos.length) % fotos.length]; if (s) new Image().src = s; }); };
   go(0);
   sh._nav = d => go(cur + d);
-  if ($('#vPrev')) { $('#vPrev').onclick = () => go(cur - 1); $('#vNext').onclick = () => go(cur + 1); }
+  if ($('#vPrev')) { $('#vPrev').onclick = e => { e.stopPropagation(); go(cur - 1); }; $('#vNext').onclick = e => { e.stopPropagation(); go(cur + 1); }; }
   $('#vStrip').onclick = e => { const b = e.target.closest('button'); if (b) go(+b.dataset.i); };
+  const abrir = () => openLB({ F, T, start: cur, titulo: `${u.ref} · ${titulo}`, onChange: i => go(i) });
+  $('#vBox').onclick = e => { if (!e.target.closest('.nav')) abrir(); };
+  $('#vExp').onclick = e => { e.stopPropagation(); abrir(); };
+  swipe($('#vBox'), d => go(cur + d));
 }
+
+// ---------- visor ampliado ----------
+let LB = null;
+function openLB({ F, T, start, titulo, onChange }) {
+  const lb = $('#lb'); const n = F.length; let cur = start, zoom = false;
+  lb.innerHTML = `<div class="lb-top"><div class="lb-meta"><span class="t">${esc(titulo)}</span><span id="lbPos"></span></div>
+      <button class="x" type="button" id="lbX" aria-label="Cerrar fotos" style="position:static">${IC.x}</button></div>
+    <div class="lb-stage wm" id="lbStage"><img id="lbImg" alt="" draggable="false">
+      ${n > 1 ? `<button class="nav prev" type="button" id="lbPrev" aria-label="Foto anterior">${IC.l}</button><button class="nav next" type="button" id="lbNext" aria-label="Foto siguiente">${IC.r}</button>` : ''}
+      <div class="lb-hint" id="lbHint">Toca la foto para acercar</div></div>
+    <div class="lb-strip" id="lbStrip">${T.map((s, i) => `<button type="button" data-i="${i}" aria-label="Foto ${i + 1}">${s ? `<img src="${s}" alt="" loading="lazy" draggable="false">` : ''}</button>`).join('')}</div>`;
+  lb.hidden = false; $('#sheet').style.visibility = 'hidden';
+  const stage = $('#lbStage'), img = $('#lbImg');
+  const setZoom = (on, x = 50, y = 50) => { zoom = on; stage.classList.toggle('zoom', on); img.style.transformOrigin = `${x}% ${y}%`; img.style.transform = on ? 'scale(2.4)' : ''; };
+  const go = i => { cur = (i + n) % n; setZoom(false); img.src = F[cur] || T[cur] || '';
+    $('#lbPos').textContent = `${cur + 1} de ${n}`;
+    $('#lbStrip').querySelectorAll('button').forEach((b, j) => { b.setAttribute('aria-current', String(j === cur)); if (j === cur) b.scrollIntoView({ block: 'nearest', inline: 'center' }); });
+    [cur + 1, cur - 1].forEach(k => { const s = F[(k + n) % n]; if (s) new Image().src = s; });
+    onChange && onChange(cur); };
+  const pos = e => { const r = stage.getBoundingClientRect(); const p = e.touches ? e.touches[0] : e;
+    return [Math.min(100, Math.max(0, (p.clientX - r.left) / r.width * 100)), Math.min(100, Math.max(0, (p.clientY - r.top) / r.height * 100))]; };
+  stage.addEventListener('click', e => { if (e.target.closest('.nav') || stage._swiped) return; const [x, y] = pos(e); setZoom(!zoom, x, y); $('#lbHint').style.opacity = 0; });
+  stage.addEventListener('mousemove', e => { if (zoom) { const [x, y] = pos(e); img.style.transformOrigin = `${x}% ${y}%`; } });
+  stage.addEventListener('touchmove', e => { if (zoom) { e.preventDefault(); const [x, y] = pos(e); img.style.transformOrigin = `${x}% ${y}%`; } }, { passive: false });
+  swipe(stage, d => { if (!zoom) go(cur + d); });
+  if (n > 1) { $('#lbPrev').onclick = () => go(cur - 1); $('#lbNext').onclick = () => go(cur + 1); }
+  $('#lbStrip').onclick = e => { const b = e.target.closest('button'); if (b) go(+b.dataset.i); };
+  $('#lbX').onclick = closeLB;
+  setTimeout(() => { const h = $('#lbHint'); if (h) h.style.opacity = 0; }, 2600);
+  LB = { go: d => go(cur + d), zoomOff: () => zoom && setZoom(false), isZoom: () => zoom };
+  go(start); $('#lbX').focus();
+}
+function closeLB() { const lb = $('#lb'); if (lb.hidden) return; lb.hidden = true; $('#sheet').style.visibility = ''; lb.innerHTML = ''; LB = null; const b = $('#vExp'); if (b) b.focus(); }
+
+// deslizar con el dedo para cambiar de foto
+function swipe(el, cb) {
+  let x0 = null, y0 = 0;
+  el.addEventListener('touchstart', e => { if (e.touches.length === 1) { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; el._swiped = false; } }, { passive: true });
+  el.addEventListener('touchend', e => { if (x0 === null) return; const t = e.changedTouches[0]; const dx = t.clientX - x0, dy = t.clientY - y0; x0 = null;
+    if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.4) { el._swiped = true; setTimeout(() => el._swiped = false, 350); cb(dx < 0 ? 1 : -1); } }, { passive: true });
+}
+
 document.addEventListener('keydown', e => {
+  if (LB) {
+    if (e.key === 'Escape') { e.preventDefault(); if (LB.isZoom()) LB.zoomOff(); else closeLB(); }
+    else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') LB.go(e.key === 'ArrowRight' ? 1 : -1);
+    return;
+  }
   const sh = $('#sheet'); if (sh.hidden) return;
-  if (e.key === 'Escape') { sh.hidden = true; sh.innerHTML = ''; document.body.style.overflow = ''; }
+  if (e.key === 'Escape') closeSheet();
   if (sh._nav && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) sh._nav(e.key === 'ArrowRight' ? 1 : -1);
 });
 
 if (new URLSearchParams(location.search).get('expirada')) { setTimeout(() => msg('Tu sesión se cerró por inactividad. Vuelve a entrar.'), 0); }
-boot();
+boot._run = true; boot();
 })();
 </script>
 </body>

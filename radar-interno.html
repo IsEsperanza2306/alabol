@@ -187,6 +187,7 @@ body{background:var(--bg);color:var(--white);min-height:100vh;display:flex;backg
     <button class="nav-item" onclick="switchTab('trafico')" data-tab="trafico"><i class="fa-solid fa-chart-line"></i>Trafico & Reportes</button>
     <button class="nav-item" onclick="switchTab('reportes')" data-tab="reportes"><i class="fa-solid fa-file-chart-column"></i>Reportes BI</button>
     <button class="nav-item" onclick="switchTab('herramientas')" data-tab="herramientas"><i class="fa-solid fa-gear"></i>Herramientas</button>
+    <button class="nav-item" onclick="switchTab('subastas')" data-tab="subastas"><i class="fa-solid fa-gavel"></i>Subastas privadas</button>
     <button class="nav-item" onclick="window.location.href='reels.html'" data-tab="reels"><i class="fa-solid fa-clapperboard"></i>Reels &amp; Video</button>
   </div>
   <div class="sidebar-footer">
@@ -461,6 +462,12 @@ body{background:var(--bg);color:var(--white);min-height:100vh;display:flex;backg
 <!-- ══════════════════════════════════════════ -->
 <!-- TAB 7: HERRAMIENTAS -->
 <!-- ══════════════════════════════════════════ -->
+<div class="tab" id="tab-subastas">
+  <div class="section" style="padding:0;overflow:hidden;">
+    <iframe id="frameSubastas" title="Subastas privadas" style="width:100%;height:calc(100vh - 140px);min-height:560px;border:0;background:#0a1f1a" loading="lazy"></iframe>
+  </div>
+  <div style="margin-top:8px;font-size:12px"><a href="/subastas/admin.html" target="_blank" style="color:var(--gold)">Abrir en pantalla completa ↗</a></div>
+</div>
 <div class="tab" id="tab-herramientas">
   <div class="section">
     <div class="section-title"><i class="fa-solid fa-cloud-arrow-up"></i>Sincronizar inventario desde Google Sheets</div>
@@ -536,7 +543,7 @@ async function loadAll(){
 // TAB SWITCHING
 // ══════════════════════════════════════════
 var currentTab = 'dashboard';
-var tabTitles = {dashboard:'📊 <span>Dashboard</span>',leads:'👥 <span>Leads & Pipeline</span>',inventario:'🚘 <span>Inventario</span>',agencias:'🏢 <span>Agencias</span>',verificaciones:'🛡️ <span>Verificaciones</span>',trafico:'📈 <span>Trafico & Analitica</span>',reportes:'📋 <span>Reportes BI</span>',herramientas:'⚙️ <span>Herramientas</span>'};
+var tabTitles = {dashboard:'📊 <span>Dashboard</span>',leads:'👥 <span>Leads & Pipeline</span>',inventario:'🚘 <span>Inventario</span>',agencias:'🏢 <span>Agencias</span>',verificaciones:'🛡️ <span>Verificaciones</span>',trafico:'📈 <span>Trafico & Analitica</span>',reportes:'📋 <span>Reportes BI</span>',herramientas:'⚙️ <span>Herramientas</span>',subastas:'🔨 <span>Subastas privadas</span>'};
 var asesores = [];
 
 function switchTab(id){
@@ -558,6 +565,7 @@ function renderCurrentTab(){
   else if(currentTab==='trafico')renderTrafico();
   else if(currentTab==='reportes')renderReportes();
   else if(currentTab==='herramientas')renderHerramientas();
+  else if(currentTab==='subastas'){var f=document.getElementById('frameSubastas');if(f&&!f.getAttribute('src'))f.setAttribute('src','/subastas/admin.html');}
   else if(currentTab==='verificaciones')renderVerificaciones();
 }
 

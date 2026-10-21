@@ -10,6 +10,10 @@ Disallow: /checkin*
 Disallow: /transacciones*
 Disallow: /config.js
 Disallow: /catalogo/
+Disallow: /subastas/
+Disallow: /socio-fundador/
+Disallow: /login.html
+Disallow: /verificacion/
 
 # Block AI training crawlers
 User-agent: GPTBot

@@ -943,7 +943,6 @@ function bootWithToken() {
           else g('uav').textContent = (nm[0] || '?').toUpperCase();
           show('dash');
           loadCars();
-        })
         }).catch(function() { showComingSoon(); });
     })
     .catch(function() { tok = null; show('login'); });

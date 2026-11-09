@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Estrena tu Chevrolet con Paty · Querétaro</title>
+<meta name="description" content="Paty Herrera, asesora Chevrolet en Querétaro. Los más vendidos, toda la gama por categoría y tu mensualidad estimada en un minuto.">
+<meta name="theme-color" content="#05060B">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Mismo sistema que la landing de Espe: túnel WebGL de anillos de luz sobre asfalto mojado. El auto se estaciona dentro del primer anillo; elegir un modelo repinta el auto, los anillos y la interfaz. Al bajar se viaja por el túnel mientras los capítulos de vidrio alternan lados. */
+:root{
+  --night:#05060B;--text:#F2F4FA;--dim:rgba(242,244,250,.68);
+  --glass:rgba(10,12,22,.6);--edge:rgba(255,255,255,.12);
+  --paint:#FFC81A;--on-paint:#05060B;
+  --display:"Unbounded","Arial Black",sans-serif;
+  --body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --pad:max(18px,5vw);color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--night);scroll-behavior:smooth;scroll-padding-top:76px}
+body{background:var(--night);color:var(--text);font-family:var(--body);font-size:16.5px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+button,input,select{font:inherit;color:inherit}
+a{color:inherit}
+:focus-visible{outline:2.5px solid var(--paint);outline-offset:3px;border-radius:10px}
+#gl{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block;background:radial-gradient(70% 55% at 70% 45%,color-mix(in srgb,var(--paint) 26%,transparent),transparent 70%),var(--night)}
+main,header,footer{position:relative;z-index:2}
+h1,h2,h3{font-family:var(--display);font-weight:700;letter-spacing:-.025em;line-height:1.04;text-wrap:balance}
+
+/* stage: el auto estacionado dentro del primer anillo (lo posiciona el script) */
+.stage{position:fixed;left:0;top:0;z-index:1;pointer-events:none;will-change:transform,opacity;transform-origin:0 0}
+.stage .car{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center}
+.stage .car svg,.stage .car img{position:absolute;left:0;right:0;bottom:0;width:100%;height:100%;object-fit:contain;object-position:center bottom;transition:opacity .5s ease,transform .6s cubic-bezier(.2,.8,.2,1)}
+.stage .car .out{opacity:0;transform:translateX(-14%)}
+.stage .car .in{animation:carIn .7s cubic-bezier(.2,.8,.2,1)}
+@keyframes carIn{from{opacity:0;transform:translateX(16%)}to{opacity:1;transform:none}}
+.stage .mirror{position:absolute;left:0;right:0;top:100%;height:60%;overflow:hidden;opacity:.28;-webkit-mask-image:linear-gradient(to bottom,#000,transparent 75%);mask-image:linear-gradient(to bottom,#000,transparent 75%)}
+.stage .mirror svg,.stage .mirror img{position:absolute;left:0;right:0;width:100%;transform:scaleY(-1);transform-origin:center top;top:0;height:166%;filter:blur(1.5px)}
+.platform{position:absolute;left:4%;right:4%;bottom:-9%;height:22%;border-radius:50%;background:radial-gradient(50% 50% at 50% 50%,color-mix(in srgb,var(--paint) 70%,transparent),transparent 70%);filter:blur(8px);opacity:.75;transition:background .6s}
+.ph{position:absolute;left:0;right:0;bottom:104%;text-align:center;display:grid;gap:4px;justify-items:center}
+.ph b{font-family:var(--display);font-weight:400;font-size:clamp(12px,1.2vw,15px);letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.7)}
+.ph strong{font-family:var(--display);font-weight:800;font-size:clamp(28px,3.6vw,52px);letter-spacing:-.04em;color:var(--paint);text-shadow:0 0 40px color-mix(in srgb,var(--paint) 60%,transparent);transition:color .6s;line-height:1}
+
+/* top */
+.top{position:absolute;inset:0 0 auto 0;z-index:20;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px var(--pad)}
+.me{display:flex;align-items:center;gap:12px;text-decoration:none}
+.av{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--paint);color:var(--on-paint);font-family:var(--display);font-weight:700;font-size:14px;box-shadow:0 0 24px color-mix(in srgb,var(--paint) 60%,transparent);transition:background-color .6s,color .3s;overflow:hidden;flex:none}
+.av img{width:100%;height:100%;object-fit:cover}
+.me b{display:block;font-weight:700;font-size:15.5px;line-height:1.2}
+.me small{display:block;color:var(--dim);font-size:13px}
+
+/* nav de categorías: aparece al salir del hero */
+.snav{position:fixed;z-index:25;top:0;left:0;right:0;padding:10px 0 10px;background:rgba(5,6,11,.78);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);border-bottom:1px solid var(--edge);transform:translateY(-110%);transition:transform .35s}
+.snav.on{transform:none}
+.snav .row{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:0 var(--pad);max-width:1320px;margin:0 auto}
+.snav .row::-webkit-scrollbar{display:none}
+.sc{flex:none;min-height:40px;padding:0 15px;border-radius:999px;border:1px solid var(--edge);background:rgba(255,255,255,.05);font-weight:700;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;transition:background-color .25s,color .25s,border-color .25s}
+.sc i{width:7px;height:7px;border-radius:50%;background:var(--paint);box-shadow:0 0 8px var(--paint)}
+.sc.on{background:#fff;color:#05060B;border-color:#fff}
+.sc small{font-size:12px;opacity:.55;font-weight:800}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 26px;border-radius:999px;border:1.5px solid transparent;font-weight:700;font-size:15.5px;text-decoration:none;cursor:pointer;transition:transform .18s,box-shadow .3s,background-color .6s,color .3s;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn.glow{background:var(--paint);color:var(--on-paint);box-shadow:0 0 0 1px color-mix(in srgb,var(--paint) 60%,white),0 10px 40px -8px color-mix(in srgb,var(--paint) 80%,transparent)}
+.btn.glow:hover{transform:translateY(-2px);box-shadow:0 0 0 1px color-mix(in srgb,var(--paint) 60%,white),0 16px 56px -6px var(--paint)}
+.btn.ghost{background:rgba(255,255,255,.06);border-color:var(--edge);color:var(--text);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.btn.ghost:hover{background:rgba(255,255,255,.12)}
+.top .btn{min-height:44px;padding:0 18px;font-size:14px}
+
+/* hero */
+.hero{position:relative;min-height:100vh;min-height:100svh;display:grid;align-content:center;padding:110px var(--pad) 48px}
+@media(min-width:861px){.hero .paint{position:absolute;z-index:3;width:min(460px,40vw);left:60%;top:62%}}
+.hero-in{max-width:1320px;width:100%;margin:0 auto}
+.copy{max-width:min(640px,48vw);display:grid;gap:20px}
+.from{display:inline-flex;align-items:center;gap:10px;justify-self:start;padding:8px 14px 8px 10px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid var(--edge);font-size:14px;font-weight:600;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.from i{width:8px;height:8px;border-radius:50%;background:var(--paint);box-shadow:0 0 12px var(--paint);animation:pulse 1.6s ease-in-out infinite;flex:none}
+@keyframes pulse{50%{opacity:.35}}
+.hero h1{font-size:clamp(32px,4vw,60px)}
+.hero h1 em{font-style:normal;color:var(--paint);transition:color .6s}
+.big{display:flex;align-items:flex-end;gap:16px;font-family:var(--display);line-height:.8}
+.big b{font-size:clamp(96px,12vw,180px);font-weight:800;letter-spacing:-.06em;font-variant-numeric:tabular-nums;background:linear-gradient(180deg,#fff 30%,color-mix(in srgb,var(--paint) 70%,white));-webkit-background-clip:text;background-clip:text;color:transparent}
+.big span{font-family:var(--body);font-size:clamp(14px,1.2vw,17px);font-weight:600;color:var(--dim);line-height:1.35;padding-bottom:clamp(8px,1.2vw,18px)}
+.big span em{display:block;font-style:normal;font-family:var(--display);font-size:clamp(24px,2.6vw,40px);color:#fff;letter-spacing:-.03em;margin-bottom:4px}
+.ctas{display:flex;flex-wrap:wrap;gap:12px}
+.paint{display:grid;gap:12px;padding:16px 18px;border-radius:22px;background:rgba(10,12,22,.55);border:1px solid var(--edge);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);max-width:540px}
+.paint-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.paint-head small{font-size:13px;color:var(--dim);font-weight:600}
+.paint-head b{font-family:var(--display);font-size:16px;font-weight:600;letter-spacing:-.01em}
+.mods{display:flex;gap:8px;flex-wrap:wrap}
+.mod{min-height:40px;padding:0 14px 0 10px;border-radius:999px;border:1px solid var(--edge);background:rgba(255,255,255,.04);font-weight:700;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background-color .25s,color .25s,border-color .25s}
+.mod i{width:14px;height:14px;border-radius:50%;background:var(--c);box-shadow:inset 0 0 0 1px rgba(255,255,255,.3),0 0 10px -2px var(--g)}
+.mod small{font-size:11px;font-weight:800;opacity:.55}
+.mod[aria-pressed="true"]{background:#fff;color:#05060B;border-color:#fff}
+.price-line{font-size:14px;color:var(--dim)}
+.price-line b{color:#fff}
+
+/* capítulos */
+.ch{min-height:92vh;display:flex;align-items:center;padding:clamp(60px,10vh,120px) var(--pad)}
+.ch .wrap{max-width:1320px;width:100%;margin:0 auto;display:flex}
+.ch.r .wrap{justify-content:flex-end}
+.ch.c .wrap{justify-content:center}
+.panel{width:min(560px,100%);background:var(--glass);border:1px solid var(--edge);border-radius:28px;padding:clamp(24px,3.2vw,40px);backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);box-shadow:0 40px 80px -40px rgba(0,0,0,.8)}
+.panel.wide{width:min(920px,100%)}
+.panel.xl{width:min(1180px,100%)}
+.ch h2{font-size:clamp(28px,3.2vw,48px);margin-bottom:14px}
+.panel>p{color:var(--dim);max-width:60ch}
+.k{font-size:13.5px;font-weight:700;color:var(--paint);margin-bottom:12px;transition:color .6s}
+.note{font-size:12.5px;color:rgba(242,244,250,.5);margin-top:18px}
+
+/* tarjetas de modelo */
+.rail{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:24px}
+.card{--mc:var(--paint);position:relative;text-align:left;cursor:pointer;border-radius:22px;border:1px solid var(--edge);background:rgba(255,255,255,.035);overflow:hidden;display:flex;flex-direction:column;transition:transform .3s cubic-bezier(.2,.8,.2,1),border-color .3s,box-shadow .3s}
+.card:hover{transform:translateY(-4px);border-color:color-mix(in srgb,var(--mc) 55%,transparent);box-shadow:0 24px 50px -28px color-mix(in srgb,var(--mc) 70%,transparent)}
+.art{position:relative;aspect-ratio:16/8.5;display:grid;place-items:end center;padding:0 6% 6%;background:radial-gradient(70% 60% at 50% 100%,color-mix(in srgb,var(--mc) 32%,transparent),transparent 72%)}
+.art:after{content:"";position:absolute;left:12%;right:12%;bottom:9%;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,var(--mc),transparent);opacity:.7;filter:blur(.5px)}
+.art svg{width:92%;position:relative;z-index:1}
+.art img{position:relative;z-index:1;width:auto;max-width:90%;height:92%;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 14px 18px rgba(0,0,0,.45))}
+.rank{position:absolute;top:12px;left:12px;font-family:var(--display);font-size:12px;font-weight:700;padding:5px 10px;border-radius:999px;background:var(--mc);color:#05060B;box-shadow:0 0 18px -4px var(--mc)}
+.badge{position:absolute;top:12px;right:12px;font-size:11.5px;font-weight:800;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid var(--edge)}
+.cb{padding:14px 18px 18px;display:grid;gap:6px;flex:1;align-content:start}
+.cb h3{font-size:22px}
+.cb p{color:var(--dim);font-size:14px;line-height:1.45}
+.units{font-size:12.5px;color:var(--mc);font-weight:700}
+.prow{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin-top:8px;padding-top:12px;border-top:1px solid var(--edge)}
+.prow small{display:block;font-size:11.5px;color:var(--dim);font-weight:700}
+.prow b{font-family:var(--display);font-size:16px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.prow .mo{text-align:right}
+.prow .mo b{color:var(--mc)}
+@media(max-width:1000px){.rail{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:860px){.rail{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;margin:22px -14px 0;padding:0 14px 6px;scrollbar-width:none}.rail::-webkit-scrollbar{display:none}.card{flex:0 0 82%;scroll-snap-align:center}}
+.swipe{display:none;font-size:13px;color:var(--dim);font-weight:700;margin-top:10px}
+@media(max-width:860px){.swipe{display:block}}
+
+/* explorador por categoría */
+.tabs{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px;margin:22px -2px 6px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;min-height:46px;padding:0 16px;border-radius:999px;border:1px solid var(--edge);background:rgba(255,255,255,.04);font-weight:700;font-size:14.5px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background-color .25s,color .25s,border-color .25s}
+.tab:hover{border-color:rgba(255,255,255,.3)}
+.tab[aria-selected="true"]{background:#fff;color:#05060B;border-color:#fff}
+.tab i{width:7px;height:7px;border-radius:50%;background:#9aa3b5}
+.tab i.ev{background:#5BE3A8;box-shadow:0 0 8px #5BE3A8}
+.tab small{font-size:12px;opacity:.55;font-weight:800}
+.fam{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:10px 20px;margin:16px 0 4px}
+.fam h3{font-size:clamp(26px,2.8vw,40px)}
+.fam p{color:var(--dim);max-width:60ch;width:100%}
+.fam .tag{font-size:12.5px;font-weight:700;padding:5px 12px;border-radius:99px;background:rgba(255,255,255,.08)}
+.subs{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.opt{min-height:42px;padding:0 16px;border-radius:999px;border:1px solid var(--edge);background:rgba(255,255,255,.04);font-weight:600;cursor:pointer;transition:background-color .2s,color .2s,border-color .2s}
+.opt[aria-pressed="true"]{background:var(--paint);color:var(--on-paint);border-color:var(--paint)}
+.vette{margin-top:22px;display:grid;grid-template-columns:1fr 1.1fr;align-items:center;gap:10px;border-radius:22px;border:1px solid rgba(255,48,70,.35);background:radial-gradient(80% 120% at 85% 100%,rgba(255,48,70,.28),transparent 60%),rgba(255,255,255,.03);padding:22px 24px;cursor:pointer;text-align:left;width:100%}
+.vette small{font-size:12px;font-weight:800;letter-spacing:.12em;color:#FF6B7A;text-transform:uppercase}
+.vette h3{font-size:clamp(24px,2.6vw,34px);margin:4px 0}
+.vette p{color:var(--dim);font-size:14.5px}
+@media(max-width:620px){.vette{grid-template-columns:1fr}}
+
+/* mensualidad */
+.calc{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:24px}
+.bigmo{font-family:var(--display);font-weight:800;font-size:clamp(48px,6vw,80px);letter-spacing:-.05em;line-height:1;font-variant-numeric:tabular-nums;background:linear-gradient(180deg,#fff 30%,color-mix(in srgb,var(--paint) 70%,white));-webkit-background-clip:text;background-clip:text;color:transparent}
+.bigmo+small{color:var(--dim);font-weight:600}
+input[type=range]{width:100%;margin:18px 0 4px;accent-color:var(--paint);height:30px}
+.rlab{display:flex;justify-content:space-between;font-size:12.5px;color:var(--dim);font-weight:600}
+.q{margin-top:18px}
+.q h3{font-size:15px;font-family:var(--body);font-weight:700;letter-spacing:0;margin-bottom:8px;color:var(--dim)}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.fits{display:grid;gap:8px;max-height:440px;overflow:auto;padding-right:4px;scrollbar-width:thin}
+.fh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;gap:10px}
+.fh b{font-family:var(--display);font-size:18px}
+.fit{--mc:var(--paint);display:grid;grid-template-columns:84px 1fr auto;gap:12px;align-items:center;padding:10px 14px 10px 8px;border-radius:16px;border:1px solid var(--edge);background:rgba(255,255,255,.04);cursor:pointer;text-align:left;width:100%;transition:border-color .25s,background .25s}
+.fit:hover{border-color:color-mix(in srgb,var(--mc) 60%,transparent);background:rgba(255,255,255,.07)}
+.fit img{width:84px;height:46px;object-fit:contain}
+.fit b{display:block;font-size:15.5px}
+.fit small{color:var(--dim);font-size:12.5px}
+.fit .m{font-family:var(--display);font-weight:600;color:var(--mc);white-space:nowrap;text-align:right;font-size:15px}
+.fit .m small{display:block;font-family:var(--body);font-weight:600}
+.empty{padding:18px;border-radius:16px;border:1px dashed var(--edge);color:var(--dim)}
+@media(max-width:860px){.calc{grid-template-columns:1fr}}
+
+/* asesora */
+.advisor{display:grid;grid-template-columns:auto 1fr;gap:clamp(20px,3vw,36px);align-items:start}
+.portrait{width:clamp(110px,14vw,170px);aspect-ratio:3/4;border-radius:22px;background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--paint) 70%,white),var(--paint) 45%,#0b0e1a 100%);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:clamp(40px,5vw,60px);color:var(--on-paint);overflow:hidden;transition:background .6s}
+.portrait img{width:100%;height:100%;object-fit:cover;object-position:50% 20%}
+.promises{list-style:none;display:grid;gap:14px;margin-top:20px}
+.promises li{display:grid;grid-template-columns:28px 1fr;gap:12px;align-items:start}
+.promises li i{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--paint) 25%,transparent);font-style:normal;font-size:14px;font-weight:700}
+.promises b{display:block}
+.promises span{color:var(--dim);font-size:15px}
+@media(max-width:560px){.advisor{grid-template-columns:1fr}.portrait{width:120px}}
+
+/* formularios */
+form{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}
+.f{display:grid;gap:6px}
+.f.full{grid-column:1/-1}
+label.l{font-size:13.5px;font-weight:700;color:var(--dim)}
+input[type=text],input[type=tel],select{min-height:52px;padding:0 14px;border-radius:14px;border:1px solid var(--edge);background:rgba(255,255,255,.06);width:100%}
+select option{color:#111}
+.check{display:flex;gap:12px;align-items:center;font-weight:600;font-size:15px;cursor:pointer;grid-column:1/-1}
+.check input{width:22px;height:22px;accent-color:var(--paint);flex:none}
+form>.btn{grid-column:1/-1;min-height:56px;font-size:16.5px}
+.err{grid-column:1/-1;color:#FF8A8A;font-size:14.5px;display:none}
+.err.show{display:block}
+.done{grid-column:1/-1;display:none;gap:12px;border-radius:18px;padding:16px;background:rgba(255,255,255,.06);border:1px solid var(--edge)}
+.done.show{display:grid}
+.done pre{white-space:pre-wrap;font-family:var(--body);font-size:14.5px;color:var(--dim)}
+.done .row{display:flex;gap:10px;flex-wrap:wrap}
+.done small{color:var(--dim);font-size:12.5px}
+.sum{grid-column:1/-1;display:grid;grid-template-columns:150px 1fr auto;gap:16px;align-items:center;padding:12px 16px 12px 10px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid var(--edge)}
+.sum img{width:100%;height:76px;object-fit:contain}
+.sum b{font-family:var(--display);font-size:18px;display:block}
+.sum small{color:var(--dim);font-size:13px}
+.sum .m{text-align:right;font-family:var(--display);font-weight:600;color:var(--paint)}
+.sum .m small{display:block;font-family:var(--body)}
+@media(max-width:560px){form{grid-template-columns:1fr}.sum{grid-template-columns:96px 1fr}.sum .m{grid-column:1/-1;text-align:left}}
+
+/* faq + footer */
+.faq details{border-bottom:1px solid var(--edge);padding:16px 2px}
+.faq summary{font-weight:700;font-size:17px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:12px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-size:22px;line-height:1;transition:transform .25s}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq details p{color:var(--dim);margin-top:8px;font-size:15px}
+footer{padding:40px var(--pad) 120px;color:rgba(242,244,250,.55);font-size:13px}
+footer p{max-width:96ch}
+footer p+p{margin-top:8px}
+.linkish{background:none;border:0;padding:0;color:#fff;text-decoration:underline;cursor:pointer;font:inherit;font-weight:700}
+dialog#aviso{margin:auto;max-width:min(560px,calc(100% - 28px));border:1px solid var(--edge);border-radius:22px;background:#0b0e18;color:var(--text);padding:24px;display:none}
+dialog#aviso[open]{display:grid;gap:14px}
+dialog#aviso::backdrop{background:rgba(0,0,0,.6)}
+dialog#aviso h3{font-size:20px}
+dialog#aviso p{color:var(--dim);font-size:14.5px}
+
+/* ficha del modelo (sheet) */
+.scrim{position:fixed;inset:0;z-index:40;background:rgba(2,3,8,.6);opacity:0;pointer-events:none;transition:opacity .3s}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{--mc:var(--paint);position:fixed;z-index:41;left:0;right:0;bottom:0;max-height:92vh;overflow:auto;background:rgba(11,14,24,.96);border:1px solid var(--edge);border-bottom:0;border-radius:28px 28px 0 0;transform:translateY(105%);transition:transform .45s cubic-bezier(.2,.9,.25,1.02);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 -30px 80px -30px color-mix(in srgb,var(--mc) 40%,transparent)}
+.sheet.on{transform:none}
+@media(min-width:861px){.sheet{left:50%;right:auto;bottom:auto;top:50%;width:640px;border-radius:28px;border-bottom:1px solid var(--edge);transform:translate(-50%,-46%) scale(.97);opacity:0;pointer-events:none;transition:all .35s cubic-bezier(.2,.8,.2,1)}.sheet.on{transform:translate(-50%,-50%);opacity:1;pointer-events:auto}}
+.grab{width:44px;height:5px;border-radius:5px;background:rgba(255,255,255,.2);margin:10px auto 0}
+.sx{position:absolute;top:14px;right:14px;width:42px;height:42px;border-radius:50%;border:1px solid var(--edge);background:rgba(255,255,255,.06);font-size:18px;cursor:pointer;z-index:3}
+.sart{position:relative;aspect-ratio:16/7.2;display:grid;place-items:end center;padding:0 0 5%;background:radial-gradient(60% 70% at 50% 100%,color-mix(in srgb,var(--mc) 38%,transparent),transparent 70%)}
+.sart svg{width:min(78%,440px)}
+.sart img{width:auto;max-width:82%;height:94%;object-fit:contain;object-position:center bottom}
+.sbody{padding:6px 22px 0}
+.sbody h3{font-size:clamp(28px,6vw,40px)}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.tag{font-size:12px;font-weight:700;padding:5px 11px;border-radius:99px;background:rgba(255,255,255,.08)}
+.tag.g{background:var(--mc);color:#05060B}
+.sbody>p{color:var(--dim)}
+.vers{display:grid;gap:8px;margin:16px 0}
+.ver{display:grid;grid-template-columns:1fr auto;gap:6px 14px;align-items:center;padding:13px 16px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid var(--edge);cursor:pointer;text-align:left;width:100%;transition:border-color .2s,background .2s}
+.ver[aria-pressed="true"]{border-color:var(--mc);background:color-mix(in srgb,var(--mc) 10%,transparent)}
+.ver b.vn{font-family:var(--display);font-size:15px;font-weight:600;letter-spacing:-.01em}
+.ver .pr{font-family:var(--display);font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+.ver .meter{grid-column:1/-1;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}
+.ver .meter .t{height:6px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.ver .meter .t span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,color-mix(in srgb,var(--mc) 45%,transparent),var(--mc));box-shadow:0 0 12px var(--mc)}
+.ver .meter small{font-size:12.5px;color:var(--dim);white-space:nowrap}
+.ver .meter small b{color:#fff}
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mini label{display:grid;gap:4px;font-size:12px;font-weight:700;color:var(--dim)}
+.mini select{min-height:44px;border-radius:12px}
+.sact{position:sticky;bottom:0;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px -22px 0;padding:12px 22px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(rgba(11,14,24,0),rgba(11,14,24,.96) 30%)}
+.sact .btn{padding:0 12px}
+
+.mbar{position:fixed;z-index:30;left:0;right:0;bottom:0;display:none;gap:10px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(5,6,11,.84);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--edge);transform:translateY(110%);transition:transform .35s}
+.mbar.on{transform:none}
+.mbar .btn{flex:1;min-height:50px;padding:0 10px}
+.mbar .btn.ghost{flex:.6}
+
+@media(max-width:860px){
+  .mbar{display:flex}
+  .top .btn{display:none}
+  .hero{align-content:start}
+  .copy{max-width:none}
+  .ctas .btn{flex:1}
+  .panel{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(8,10,18,.84)}
+  .ch{min-height:auto;padding:52px 14px}
+  .paint{order:-1;padding:12px 14px;gap:10px}
+  .mods{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -14px;padding:0 14px}
+  .mods::-webkit-scrollbar{display:none}
+  .mod{flex:none}
+  .hero{padding-top:calc(50svh + 14px)}
+  .ph{bottom:100%}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="gl" aria-hidden="true"></canvas>
+
+<div class="stage" id="stage" aria-hidden="true">
+  <div class="platform"></div>
+  <div class="ph"><b id="phRank">#1 más vendido</b><strong id="phName">Aveo</strong></div>
+  <div class="car" id="stageCar"></div>
+  <div class="mirror" id="stageMir"></div>
+</div>
+
+<nav class="snav" id="snav" aria-label="Categorías"><div class="row" id="snavRow"></div></nav>
+
+<header class="top">
+  <a class="me" href="#yo"><span class="av" id="avatar">PH</span><span><b data-cfg="name">Patricia Herrera</b><small data-cfg="role">Asesora Chevrolet · Querétaro</small></span></a>
+  <a class="btn ghost" data-wa href="#cotizar">Escríbeme por WhatsApp</a>
+</header>
+
+<main>
+<section class="hero" id="inicio">
+  <div class="hero-in"><div class="copy">
+    <span class="from"><i></i><span id="fromText">¿Vienes de mi video? Aquí está toda la gama Chevrolet</span></span>
+    <h1>Estrena tu <em>Chevrolet</em> con una asesora que sí te responde</h1>
+    <div class="big" id="bigCount"><b id="count">0</b><span><em>modelos</em>autos, SUVs, pickups, vans y eléctricos</span></div>
+    <div class="ctas">
+      <a class="btn glow" data-wa href="#cotizar">Cotizar por WhatsApp</a>
+      <a class="btn ghost" href="#mas-vendidos">Ver los más vendidos</a>
+    </div>
+    <div class="paint">
+      <div class="paint-head"><small>Los 6 más vendidos de México</small><b id="pname">Aveo</b></div>
+      <div class="mods" id="mods" role="group" aria-label="Elige un modelo"></div>
+    </div>
+    <p class="price-line" id="priceLine"></p>
+  </div></div>
+</section>
+
+<section class="ch c" id="mas-vendidos">
+  <div class="wrap"><div class="panel xl">
+    <p class="k">Los favoritos de México</p>
+    <h2>Los 6 Chevrolet más vendidos</h2>
+    <p>Si no sabes por dónde empezar, empieza aquí. Toca uno y te enseño versiones, precio y mensualidad.</p>
+    <div class="rail" id="topRail"></div>
+    <p class="swipe">Desliza para ver los 6 →</p>
+    <p class="note">Ranking de Chevrolet por unidades vendidas en México, enero a junio de 2026 (INEGI).</p>
+  </div></div>
+</section>
+
+<section class="ch c" id="gama">
+  <div class="wrap"><div class="panel xl">
+    <p class="k">Toda la gama</p>
+    <h2>¿Qué estás buscando?</h2>
+    <p>Elige una categoría y solo ves lo que te sirve.</p>
+    <div class="tabs" id="tabs" role="tablist" aria-label="Categorías Chevrolet"></div>
+    <div id="catBox"></div>
+    <button class="vette" type="button" id="vette"></button>
+    <p class="note">Precios de lista de GM de México, vigentes del 3 al 30 de noviembre de 2026. No incluyen bonos, seguros ni comisiones. Confírmalos conmigo antes de decidir.</p>
+  </div></div>
+</section>
+
+<section class="ch" id="mensualidad">
+  <div class="wrap"><div class="panel wide">
+    <p class="k">Por presupuesto</p>
+    <h2>¿Cuánto quieres pagar al mes?</h2>
+    <p>Mueve la barra y te digo qué Chevrolet te alcanzan.</p>
+    <div class="calc">
+      <div>
+        <div class="bigmo" id="moOut">$10,000</div><small>al mes</small>
+        <input type="range" id="mo" min="4000" max="40000" step="500" value="10000" aria-label="Mensualidad deseada">
+        <div class="rlab"><span>$4,000</span><span>$40,000</span></div>
+        <div class="q"><h3>Enganche</h3><div class="opts" id="segEng"></div></div>
+        <div class="q"><h3>Plazo</h3><div class="opts" id="segPlazo"></div></div>
+        <p class="note" id="fineTxt"></p>
+      </div>
+      <div>
+        <div class="fh"><b id="fitCount"></b></div>
+        <div class="fits" id="fits"></div>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<section class="ch r" id="a-cuenta">
+  <div class="wrap"><div class="panel">
+    <p class="k">Tu auto vale</p>
+    <h2>¿Tienes auto? Úsalo como enganche</h2>
+    <p>Mándame los datos y te digo cuánto te ayuda para el nuevo. Así bajas tu mensualidad desde el primer día.</p>
+    <form id="tradeForm">
+      <div class="f full"><label class="l" for="tMod">Tu auto (marca y modelo)</label><input id="tMod" type="text" placeholder="Ej. Nissan Versa" autocomplete="off"></div>
+      <div class="f"><label class="l" for="tAno">Año</label><select id="tAno"></select></div>
+      <div class="f"><label class="l" for="tKm">Kilómetros</label><select id="tKm"><option>Menos de 30 mil</option><option>30 a 60 mil</option><option>60 a 100 mil</option><option>Más de 100 mil</option></select></div>
+      <button class="btn glow" type="submit">Mandar a <span data-cfg="first">Paty</span> por WhatsApp</button>
+    </form>
+  </div></div>
+</section>
+
+<section class="ch r" id="yo">
+  <div class="wrap"><div class="panel wide" style="width:min(760px,100%)">
+    <div class="advisor">
+      <div class="portrait" id="portrait">PH</div>
+      <div>
+        <p class="k">Por qué comprar conmigo</p>
+        <h2 style="font-size:clamp(26px,2.8vw,42px)" id="meTitle">Soy Paty y vendo Chevrolet todos los días</h2>
+        <p style="color:var(--dim)" data-cfg="bio">Te ayudo a estrenar tu Chevrolet en Querétaro: te explico claro, te consigo la mejor mensualidad y te acompaño hasta que te lo llevas.</p>
+        <ul class="promises">
+          <li><i>1</i><div><b>Te respondo yo</b><span>Sin bots ni call center. Hablas directo conmigo por WhatsApp.</span></div></li>
+          <li><i>2</i><div><b>Tu mensualidad, clara</b><span>Versiones, enganche y plazo lado a lado, con las promociones del mes.</span></div></li>
+          <li><i>3</i><div><b>Te acompaño después</b><span>De la prueba de manejo a la entrega, y cuando tengas dudas con tu Chevrolet.</span></div></li>
+        </ul>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<section class="ch" id="cotizar">
+  <div class="wrap"><div class="panel wide" style="width:min(760px,100%)">
+    <p class="k">Tu siguiente paso</p>
+    <h2>Arma tu mensaje y te respondo hoy</h2>
+    <p>Elige modelo y versión. Se abre WhatsApp con todo escrito y solo lo envías.</p>
+    <form id="form" novalidate>
+      <div class="sum" id="sum"></div>
+      <div class="f"><label class="l" for="fMod">Modelo</label><select id="fMod"></select></div>
+      <div class="f"><label class="l" for="fVer">Versión</label><select id="fVer"></select></div>
+      <div class="f"><label class="l" for="nombre">Tu nombre</label><input id="nombre" type="text" autocomplete="name" required></div>
+      <div class="f"><label class="l" for="wa">Tu WhatsApp (opcional)</label><input id="wa" type="tel" inputmode="tel" autocomplete="tel" placeholder="442 123 4567"></div>
+      <div class="f"><label class="l" for="pago">Forma de pago</label><select id="pago"><option>Crédito</option><option>Contado</option><option>Aún no lo sé</option></select></div>
+      <div class="f"><label class="l" for="cuando">¿Cuándo comprarías?</label><select id="cuando"><option>Este mes</option><option>En 1 a 3 meses</option><option>Estoy explorando</option></select></div>
+      <div class="f full"><label class="l" for="cuenta">¿Tienes auto a cuenta?</label><select id="cuenta"><option>No</option><option>Sí</option></select></div>
+      <label class="check" for="prueba"><input id="prueba" type="checkbox" checked> Quiero agendar prueba de manejo</label>
+      <label class="check" for="acepto"><input id="acepto" type="checkbox"> <span>Acepto el <button type="button" class="linkish" id="verAviso">aviso de privacidad</button> para que me contacten sobre mi cotización</span></label>
+      <p class="err" id="err" role="alert"></p>
+      <button class="btn glow" type="submit">Preparar mi mensaje de WhatsApp</button>
+      <div class="done" id="done" role="status">
+        <pre id="msg"></pre>
+        <div class="row"><a class="btn glow" id="waOpen" href="#" target="_blank" rel="noopener">Abrir WhatsApp y enviar</a><button class="btn ghost" type="button" id="copy">Copiar mensaje</button></div>
+        <small id="doneNote"></small>
+      </div>
+    </form>
+  </div></div>
+</section>
+
+<section class="ch r" id="preguntas" style="min-height:auto">
+  <div class="wrap"><div class="panel faq">
+    <p class="k">Dudas rápidas</p>
+    <h2 style="font-size:clamp(24px,2.4vw,34px)">Lo que más me preguntan</h2>
+    <details><summary>¿Los precios son finales?</summary><p>Son precios de lista de GM de México, vigentes del 3 al 30 de noviembre de 2026. No incluyen bonos ni promociones del mes: pídeme la cifra exacta y te digo cuánto queda con descuento.</p></details>
+    <details><summary>¿La mensualidad que veo es real?</summary><p>Es una estimación para darte una idea. La final depende del plan de financiamiento, tu perfil, el seguro y la comisión. Te la confirmo por WhatsApp.</p></details>
+    <details><summary>¿Reciben mi auto a cuenta?</summary><p>Sí. Mándame marca, modelo, año y kilometraje, y te digo cuánto te ayuda como enganche.</p></details>
+    <details><summary>¿Dónde está la agencia?</summary><p>En Querétaro. Escríbeme y te mando la ubicación y un horario para tu prueba de manejo.</p></details>
+  </div></div>
+</section>
+</main>
+
+<footer>
+  <p><span data-cfg="name">Patricia Herrera</span>, asesora de ventas de autos nuevos Chevrolet en Querétaro.</p>
+  <p>Precios de lista en pesos mexicanos publicados por GM de México, vigentes del 3 al 30 de noviembre de 2026; no incluyen bonos, seguros ni comisiones y pueden cambiar sin aviso. Mensualidades estimadas, sujetas a aprobación de crédito. Ranking de ventas: enero a junio de 2026, INEGI. Imágenes de referencia; el equipo y los colores varían por versión. Chevrolet es marca de su titular; esta es una página personal de asesoría de ventas, no un sitio oficial de Chevrolet ni de General Motors.</p>
+  <p><button type="button" class="linkish" id="verAviso2">Aviso de privacidad</button></p>
+</footer>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sTitle">
+  <div class="grab"></div>
+  <button class="sx" id="sx" aria-label="Cerrar">✕</button>
+  <div id="sheetIn"></div>
+</div>
+
+<dialog id="aviso" aria-labelledby="avisoT">
+  <h3 id="avisoT">Aviso de privacidad simplificado</h3>
+  <div id="avisoTxt"></div>
+  <button class="btn glow" type="button" id="cerrarAviso">Entendido</button>
+</dialog>
+
+<div class="mbar" id="mbar">
+  <a class="btn glow" data-wa href="#cotizar">Cotizar en WhatsApp</a>
+  <a class="btn ghost" id="callBtn" href="#gama">Ver gama</a>
+</div>
+
+<script>
+(function(){
+var CAT=[
+ {id:'aveo',n:'Aveo',cat:'autos',body:'hatch',col:'#C8202F',tint:'#F7DADC',top:1,units:35352,pax:5,
+  tags:['Hatchback y sedán','Gasolina'],d:'El Chevrolet más vendido de México. Económico, fácil de mantener y con refacciones en todos lados.',
+  v:[['Hatchback LS Manual',323900],['Hatchback LT Manual',351700],['Hatchback LT Black Edition',357900],['Hatchback LT Plus',384600],['Sedán LS Manual',337800],['Sedán LT Manual',364000],['Sedán LT Plus',395900]]},
+ {id:'s10',n:'S10 Max',cat:'pickups',body:'pickup',col:'#8C939C',tint:'#E4E7EA',top:2,units:11806,pax:5,
+  tags:['Pickup','Trabajo y familia'],d:'La pickup Chevrolet más vendida. Chasis cabina, cabina regular o doble cabina, y versión 4x4 turbo.',
+  v:[['Chasis Cabina 4x2',488300],['Cabina Regular 2.4 4x2',491300],['Crew Cab 2.4 4x2',510800],['Crew Cab 2.0 Turbo 4x4 Automática (2026)',697000]]},
+ {id:'groove',n:'Groove',cat:'suv',sub:'compactas',body:'suvs',col:'#2D6FD2',tint:'#DCE7F8',top:3,units:9354,pax:5,
+  tags:['SUV compacta','Gasolina'],d:'La SUV de entrada de Chevrolet: posición de manejo alta y espacio para el día a día, a precio de auto.',
+  v:[['LT Manual',427800],['LT CVT',476300],['RS',508900]]},
+ {id:'captiva',n:'Captiva',cat:'suv',sub:'familiares',body:'suv',col:'#E9E6DF',tint:'#ECE8DE',top:4,units:8086,pax:7,
+  tags:['SUV familiar','Hasta 7 pasajeros','También híbrida'],d:'Mucho espacio por tu dinero. Versión de 5 o 7 pasajeros, y una híbrida enchufable en Eléctricos.',
+  v:[['LT 5 pasajeros',530800],['LT 7 pasajeros',557800],['Premier',601900],['Premier Black Edition',614000]]},
+ {id:'tornado',n:'Tornado Van',cat:'negocio',body:'van',col:'#F2F2EF',tint:'#E9EAE6',top:5,units:6903,pax:2,
+  tags:['Carga','Para tu negocio'],d:'Van compacta de carga, económica y ágil en ciudad. Ideal para repartos y negocios en Querétaro.',
+  v:[['LS',361600]]},
+ {id:'onix',n:'Onix',cat:'autos',body:'sedan',col:'#3B3F47',tint:'#E2E3E6',top:6,units:5626,pax:5,
+  tags:['Sedán','Motor turbo'],d:'El paso arriba del Aveo: más equipo, motor turbo y versión RedLine con look deportivo.',
+  v:[['LS Manual',358400],['LS Automática',391300],['LT Manual',412900],['LT Automática',442600],['Premier RedLine',459100]]},
+
+ {id:'tracker',n:'Tracker',cat:'suv',sub:'compactas',body:'suvs',col:'#B5462F',tint:'#F3DED8',pax:5,
+  tags:['SUV compacta'],d:'SUV compacta con más equipo y acabados, para ciudad y carretera.',
+  v:[['LT',545600],['Premier',591200]]},
+ {id:'trax',n:'Trax',cat:'suv',sub:'compactas',body:'suvs',col:'#1F2A44',tint:'#DDE1EA',pax:5,
+  tags:['SUV compacta','Diseño deportivo'],d:'Más larga y baja, con estilo deportivo y mucho espacio atrás.',
+  v:[['LT',608300],['RS',645400]]},
+ {id:'traverse',n:'Traverse',cat:'suv',sub:'familiares',body:'suvl',col:'#55595F',tint:'#E2E3E4',pax:7,
+  tags:['SUV grande','7 pasajeros'],d:'Tres filas de verdad para la familia completa y viajes largos.',
+  v:[['LT 7 pasajeros (2027)',1145700]]},
+ {id:'blazer',n:'Blazer',cat:'suv',sub:'familiares',body:'suv',col:'#A3121F',tint:'#F3D9DB',pax:5,
+  tags:['SUV mediana','Diseño deportivo'],d:'SUV mediana de diseño deportivo, con más potencia y equipo.',
+  v:[['Desde (2025)',1174900]]},
+ {id:'tahoe',n:'Tahoe',cat:'suv',sub:'familiares',body:'suvl',col:'#17191D',tint:'#DEDFE1',pax:7,
+  tags:['SUV de lujo','Tres filas'],d:'SUV grande con presencia, confort y capacidad de remolque.',
+  v:[['Desde',2089500]]},
+ {id:'suburban',n:'Suburban',cat:'suv',sub:'familiares',body:'suvl',col:'#2B2E33',tint:'#DEDFE1',pax:8,
+  tags:['SUV de lujo','La más espaciosa'],d:'La SUV más grande de Chevrolet: espacio para todos y todo su equipaje.',
+  v:[['Desde',2087500]]},
+
+ {id:'montana',n:'Montana',cat:'pickups',body:'pickup',col:'#C9A227',tint:'#F4ECCF',pax:5,
+  tags:['Pickup compacta','Doble cabina'],d:'Pickup compacta de doble cabina: se maneja como SUV y carga como pickup.',
+  v:[['LT',571700],['RS',640900]]},
+ {id:'silverado',n:'Silverado',cat:'pickups',body:'pickupl',col:'#6E747C',tint:'#E2E4E6',pax:5,
+  tags:['Pickup grande'],d:'Pickup grande para trabajo pesado y remolque.',
+  v:[['Desde',1014500]]},
+ {id:'colorado',n:'Colorado',cat:'pickups',body:'pickup',col:'#2E5B3A',tint:'#DCE7DF',pax:5,
+  tags:['Pickup mediana','Aventura'],d:'Pickup mediana con alma off-road para la sierra y el fin de semana.',
+  v:[['Desde',1122000]]},
+ {id:'cheyenne',n:'Cheyenne',cat:'pickups',body:'pickupl',col:'#111317',tint:'#DEDFE1',pax:5,
+  tags:['Pickup de lujo','Doble cabina'],d:'La pickup grande más equipada de Chevrolet: lujo, potencia y doble cabina.',
+  v:[['Desde',1258700]]},
+
+ {id:'express',n:'Express MAX',cat:'negocio',body:'vanl',col:'#F4F4F2',tint:'#E7E8E5',pax:2,
+  tags:['Van de carga','Diésel'],d:'Van grande de carga para flotillas y negocios que mueven volumen.',
+  v:[['Desde',799500]]},
+ {id:'expressev',n:'Express MAX EV',cat:'negocio',body:'vanl',col:'#E8F1F6',tint:'#DDEBF2',pax:2,ev:1,
+  tags:['Van de carga','Eléctrica'],d:'La versión eléctrica de la Express MAX: sin gasolina y con menos mantenimiento.',
+  v:[['Desde',1079000]]},
+ {id:'brightdrop',n:'BrightDrop',cat:'negocio',body:'vanl',col:'#FFFFFF',tint:'#E6ECEF',pax:2,ev:1,
+  tags:['Van de reparto','Eléctrica'],d:'Van eléctrica de reparto de última milla, diseñada para flotillas.',
+  v:[['Desde (2025)',1764100]]},
+
+ {id:'spark',n:'Spark EUV',cat:'ev',body:'suvs',col:'#3AA6A0',tint:'#D8EFED',pax:5,ev:1,
+  tags:['100% eléctrica','SUV compacta'],d:'La forma más accesible de pasarte a eléctrico con Chevrolet.',
+  v:[['Activ EV',471200],['Activ Bitono EV',471200]]},
+ {id:'captivaphev',n:'Captiva Híbrida',cat:'ev',body:'suv',col:'#D9DDE0',tint:'#E3EAEC',pax:5,ev:2,
+  tags:['Híbrida enchufable','SUV familiar'],d:'Lo mejor de los dos mundos: manejas en eléctrico en ciudad y tienes gasolina para carretera.',
+  v:[['LT PHEV',577500],['Premier PHEV',608000]]},
+ {id:'equinoxev',n:'Equinox EV',cat:'ev',body:'suv',col:'#7D8C9A',tint:'#E0E5EA',pax:5,ev:1,
+  tags:['100% eléctrica','SUV mediana'],d:'SUV eléctrica mediana con gran autonomía para el día a día y carretera.',
+  v:[['Desde',913500]]},
+ {id:'blazerev',n:'Blazer EV',cat:'ev',body:'suv',col:'#2F69C6',tint:'#DCE6F7',pax:5,ev:1,
+  tags:['100% eléctrica','Deportiva'],d:'La Blazer en eléctrico: diseño deportivo y aceleración inmediata.',
+  v:[['Desde (2026)',1245000]]},
+
+ {id:'corvette',n:'Corvette',cat:'vette',body:'sport',col:'#D2121F',tint:'#3A0D12',pax:2,
+  tags:['Deportivo','V8'],d:'El ícono deportivo de Chevrolet, de Stingray a ZR1X.',
+  v:[['Stingray (2026)',3311000],['Z06 (2027)',4289000],['ZR1 (2027)',5496500],['ZR1X (2027)',5887500]]}
+];
+var CATS=[
+ {k:'autos',n:'Autos',d:'Hatchback y sedán, económicos y rendidores.',ico:'sedan'},
+ {k:'suv',n:'SUVs',d:'Compactas para ciudad y familiares de hasta 8 pasajeros.',ico:'suv'},
+ {k:'pickups',n:'Pickups',d:'Para trabajo, familia y aventura.',ico:'pickup'},
+ {k:'negocio',n:'Para tu negocio',d:'Vans de carga y reparto, a gasolina, diésel o eléctricas.',ico:'van'},
+ {k:'ev',n:'Eléctricos',d:'100% eléctricos e híbrido enchufable.',ico:'suvs'},
+ {k:'vette',n:'Corvette',d:'El deportivo ícono de Chevrolet.',ico:'sport'}
+];
+/* Financiamiento: estimación. Cambia la tasa si conoces la del plan vigente. */
+var FIN={tasa:0.149,eng:0.2,plazo:60};
+var ENGS=[0.1,0.2,0.3,0.4],PLAZOS=[36,48,60,72];
+
+
+/* Color de exhibición de cada modelo: c = carrocería, g = brillo de la escena */
+var SHOW={aveo:['#C8102E','#FF3046'],s10:['#EEF0EF','#F2F6FF'],groove:['#A8D81A','#C6FF1A'],captiva:['#A9B89A','#B8F0A0'],tornado:['#EEF0EF','#8FD3FF'],onix:['#1C2740','#6E8BFF'],
+ tracker:['#B5462F','#FF6A3D'],trax:['#1F2A44','#6E8BFF'],traverse:['#55595F','#C9D2E6'],blazer:['#A3121F','#FF3046'],tahoe:['#17191D','#C9D2E6'],suburban:['#2B2E33','#C9D2E6'],
+ montana:['#C9A227','#FFC81A'],silverado:['#6E747C','#C9D2E6'],colorado:['#2E5B3A','#2BB673'],cheyenne:['#111317','#FFC81A'],
+ express:['#F4F4F2','#F2F6FF'],expressev:['#E8F1F6','#5BE3A8'],brightdrop:['#FFFFFF','#5BE3A8'],
+ spark:['#3AA6A0','#3FD8A8'],captivaphev:['#D9DDE0','#5BE3A8'],equinoxev:['#7D8C9A','#5BE3A8'],blazerev:['#2F69C6','#4D7CFF'],corvette:['#D2121F','#FF3046']};
+/* Fotos reales por modelo (PNG con fondo transparente, vista lateral o 3/4). Si existe, reemplaza la ilustración.
+   Ejemplo: aveo:'https://.../aveo.png' */
+var CAR_PHOTOS={aveo:'img/aveo.webp',s10:'img/s10.webp',groove:'img/groove.webp',captiva:'img/captiva.webp',captivaphev:'img/captiva.webp',tornado:'img/tornado.webp',onix:'img/onix.webp'};
+
+/* ===== MOTOR DE VENTAS (mismo de la landing de Espe) ===== */
+var MV={url:'https://rgnunjngtsgqgvplawfr.supabase.co',
+  key:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8',
+  slugPorDefecto:'paty'};
+var CFG={name:'Patricia Herrera',first:'Paty',role:'Asesora Chevrolet · Querétaro',bio:'',photo:'',avatar:'',initials:'PH',wa:'524426781733',tel:'+524426781733'};
+var AVISO_RESPONSABLE='[Nombre o razón social del responsable], con domicilio en [domicilio]';
+var AVISO_CONTACTO='[correo para ejercer derechos ARCO]';
+
+var qs=new URLSearchParams(location.search);
+var SLUG=(qs.get('a')||MV.slugPorDefecto).toLowerCase();
+var FOLIO=(qs.get('f')||'').toUpperCase()||null;
+var VIDEO=(qs.get('v')||'').toLowerCase()||null;
+var RED=(location.hash||'').slice(1);
+var SESION=(function(){try{var k='mv_ses',x=sessionStorage.getItem(k);if(!x){x=Math.random().toString(36).slice(2)+Date.now().toString(36);sessionStorage.setItem(k,x);}return x;}catch(e){return Math.random().toString(36).slice(2);}})();
+function rpc(fn,args,keep){
+  if(!MV.url||!MV.key)return Promise.reject(new Error('sin conexión'));
+  var h={'Content-Type':'application/json','apikey':MV.key};if(MV.key.indexOf('eyJ')===0)h.Authorization='Bearer '+MV.key;
+  return fetch(MV.url+'/rest/v1/rpc/'+fn,{method:'POST',headers:h,body:JSON.stringify(args),keepalive:!!keep})
+    .then(function(r){return r.text().then(function(t){var j=t?JSON.parse(t):null;if(!r.ok)throw new Error((j&&j.message)||('Error '+r.status));return j;});});
+}
+function track(tipo,datos,keep){rpc('mv_track',{p_slug:SLUG,p_sesion:SESION,p_tipo:tipo,p_folio:FOLIO,p_video:VIDEO,p_datos:datos||{}},keep).catch(function(){});}
+var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+var $=function(s){return document.querySelector(s);};
+function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function money(n){return '$'+Math.round(n).toLocaleString('en-US');}
+function byId(id){for(var i=0;i<CAT.length;i++)if(CAT[i].id===id)return CAT[i];return null;}
+function minP(m){return Math.min.apply(null,m.v.map(function(v){return v[1];}));}
+function maxP(m){return Math.max.apply(null,m.v.map(function(v){return v[1];}));}
+function pmt(price){var P=price*(1-FIN.eng),n=FIN.plazo,r=FIN.tasa/12;return P*r/(1-Math.pow(1+r,-n));}
+function glow(m){return (SHOW[m.id]||['#999','#C9D2E6'])[1];}
+function body(m){return (SHOW[m.id]||[m.col])[0];}
+var NMOD=CAT.length;
+
+/* ===== ilustraciones (siluetas genéricas con luz de escena) ===== */
+var BODY={
+ sedan:{p:'M14 70 Q12 62 16 57 Q20 52 36 50 L72 46 Q88 31 106 28 L144 28 Q160 29 174 41 L178 44 L210 47 Q222 49 226 57 L227 66 Q227 73 221 73 L200 73 A17 17 0 0 0 166 73 L80 73 A17 17 0 0 0 46 73 L19 73 Q14 73 14 70 Z',
+   w:'M80 46 Q93 33 108 31.5 L124 31.5 L124 46 Z M129 31.5 L142 31.5 Q156 32.5 168 44 L169 46 L129 46 Z',wh:[63,183],r:13.5,bl:[76,176,49],ds:[126]},
+ hatch:{p:'M22 70 Q20 62 24 57 Q28 52 44 50 L76 46 Q94 31 114 28 L150 27 Q168 27.5 180 36 L196 50 Q201 55 202 62 L202 70 Q202 73 198 73 L186 73 A17 17 0 0 0 152 73 L86 73 A17 17 0 0 0 52 73 L26 73 Q22 73 22 70 Z',
+   w:'M84 46 Q98 33 116 31 L132 31 L132 46 Z M137 31 L150 31 Q164 31.5 175 40 L180 46 L137 46 Z',wh:[69,169],r:13.5,bl:[80,190,49],ds:[134]},
+ suvs:{p:'M20 70 L20 58 Q22 50 34 48 L64 44 Q78 27 96 23 L172 22 Q188 22.5 198 34 L210 48 Q216 54 216 62 L216 70 Q216 73 212 73 L201 73 A19 19 0 0 0 163 73 L83 73 A19 19 0 0 0 45 73 L24 73 Q20 73 20 70 Z',
+   w:'M72 44 Q85 30 99 27 L128 27 L128 44 Z M133 27 L170 27 Q184 27.5 193 40 L195 44 L133 44 Z',wh:[64,182],r:15,cl:1,rail:[100,170,21],bl:[68,206,47],ds:[130]},
+ suv:{p:'M12 70 L12 56 Q14 48 28 46 L60 42 Q74 23 92 20 L192 19 Q208 19.5 216 33 L224 47 Q230 53 230 61 L230 70 Q230 73 226 73 L206 73 A19 19 0 0 0 168 73 L80 73 A19 19 0 0 0 42 73 L16 73 Q12 73 12 70 Z',
+   w:'M68 42 Q80 26 94 24 L130 24 L130 42 Z M135 24 L188 24 Q200 24.5 208 40 L209 42 L135 42 Z',wh:[61,187],r:15.5,cl:1,rail:[96,190,18],bl:[64,220,45],ds:[132]},
+ suvl:{p:'M8 70 L8 52 Q10 44 24 42 L52 39 Q64 18 82 15 L208 15 Q222 15 228 28 L233 45 Q235 51 235 59 L235 70 Q235 73 231 73 L212 73 A20 20 0 0 0 172 73 L76 73 A20 20 0 0 0 36 73 L12 73 Q8 73 8 70 Z',
+   w:'M58 39 Q70 21 84 19 L114 19 L114 39 Z M119 19 L160 19 L160 39 L119 39 Z M165 19 L204 19 Q216 19.5 222 37 L222 39 L165 39 Z',wh:[56,192],r:16.5,cl:1,rail:[86,206,14],bl:[56,228,42],ds:[116,162]},
+ pickup:{p:'M10 70 L10 55 Q12 47 26 45 L58 41 Q70 22 88 19 L130 19 Q138 19 140 28 L142 43 L226 43 Q230 43 230 49 L230 70 Q230 73 226 73 L208 73 A19 19 0 0 0 170 73 L84 73 A19 19 0 0 0 46 73 L14 73 Q10 73 10 70 Z',
+   w:'M66 41 Q76 24 90 23 L104 23 L104 41 Z M109 23 L127 23 Q134 23 135 31 L136 41 L109 41 Z',wh:[65,189],r:15,cl:1,x:'M144 47 L228 47',bl:[62,138,44],ds:[106]},
+ pickupl:{p:'M6 70 L6 51 Q8 43 22 41 L52 38 Q62 17 80 15 L134 15 Q142 15 144 25 L146 40 L232 40 Q236 40 236 46 L236 70 Q236 73 232 73 L214 73 A20 20 0 0 0 174 73 L80 73 A20 20 0 0 0 40 73 L10 73 Q6 73 6 70 Z',
+   w:'M58 38 Q68 20 82 19 L104 19 L104 38 Z M109 19 L132 19 Q138 19 139 27 L140 38 L109 38 Z',wh:[60,194],r:16.5,cl:1,x:'M150 44 L232 44',bl:[56,142,41],ds:[106]},
+ van:{p:'M12 70 L12 58 Q14 50 26 48 L44 44 Q54 22 70 18 L214 18 Q224 18 224 28 L224 70 Q224 73 220 73 L205 73 A17 17 0 0 0 171 73 L79 73 A17 17 0 0 0 45 73 L16 73 Q12 73 12 70 Z',
+   w:'M50 44 Q58 26 72 22 L96 22 L96 44 Z',wh:[62,188],r:13.5,x:'M104 24 L104 70',bl:[50,98,47]},
+ vanl:{p:'M8 70 L8 56 Q10 48 22 46 L38 42 Q48 16 66 12 L222 12 Q232 12 232 22 L232 70 Q232 73 228 73 L213 73 A18 18 0 0 0 177 73 L75 73 A18 18 0 0 0 39 73 L12 73 Q8 73 8 70 Z',
+   w:'M44 42 Q52 20 68 16 L92 16 L92 42 Z',wh:[57,195],r:14.5,x:'M100 18 L100 70',bl:[44,94,45]},
+ sport:{p:'M8 68 Q8 62 14 59 Q24 55 40 54 L84 50 Q104 37 124 35 L148 35 Q168 37 190 46 L220 51 Q232 54 233 62 L233 68 Q233 72 228 72 L208 72 A16 16 0 0 0 176 72 L74 72 A16 16 0 0 0 42 72 L13 72 Q8 72 8 68 Z',
+   w:'M92 50 Q107 40 124 38.5 L146 38.5 Q160 40 176 48 Z',wh:[58,192],r:14,bl:[90,180,52],ds:[132]}
+};
+function lum(hex){var c=parseInt(hex.slice(1),16);return (0.2126*(c>>16)+0.7152*(c>>8&255)+0.0722*(c&255))/255;}
+function carSVG(m,big){
+  var photo=CAR_PHOTOS[m.id];if(photo)return '<img src="'+esc(photo)+'" alt="">';
+  var b=BODY[m.body]||BODY.sedan,col=body(m),g=glow(m),light=lum(col)>.7,u='c'+Math.random().toString(36).slice(2,7);
+  var s='<svg viewBox="0 0 240 92" aria-hidden="true"><defs>'+
+   '<linearGradient id="'+u+'b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="'+(light?.15:.38)+'"/><stop offset=".38" stop-color="#fff" stop-opacity="0"/><stop offset=".62" stop-color="#000" stop-opacity=".05"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></linearGradient>'+
+   '<linearGradient id="'+u+'w" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2A3346"/><stop offset=".55" stop-color="#0B0F18"/><stop offset="1" stop-color="#1A2233"/></linearGradient>'+
+   '<radialGradient id="'+u+'r" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#C9CED6"/><stop offset=".55" stop-color="#5D636D"/><stop offset=".62" stop-color="#16181D"/><stop offset="1" stop-color="#0A0B0E"/></radialGradient>'+
+   '<linearGradient id="'+u+'h" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="'+g+'" stop-opacity="0"/><stop offset=".5" stop-color="'+g+'" stop-opacity=".9"/><stop offset="1" stop-color="'+g+'" stop-opacity="0"/></linearGradient>'+
+   '</defs>';
+  s+='<ellipse cx="120" cy="86" rx="112" ry="4.5" fill="#000" opacity=".55"/>';
+  s+='<path d="'+b.p+'" fill="'+col+'"/>';
+  s+='<path d="'+b.p+'" fill="url(#'+u+'b)"/>';
+  s+='<path d="'+b.p+'" fill="none" stroke="url(#'+u+'h)" stroke-width="1.2" opacity=".9"/>';
+  s+='<path d="'+b.w+'" fill="url(#'+u+'w)"/>';
+  s+='<path d="'+b.w+'" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width=".8"/>';
+  if(b.x)s+='<path d="'+b.x+'" stroke="#000" stroke-opacity=".35" stroke-width="1.4"/>';
+  if(b.bl)s+='<path d="M'+b.bl[0]+' '+b.bl[2]+' L'+b.bl[1]+' '+b.bl[2]+'" stroke="#fff" stroke-opacity="'+(light?.5:.22)+'" stroke-width=".9"/>';
+  if(b.ds)b.ds.forEach(function(x){s+='<path d="M'+x+' '+(b.bl?b.bl[2]+1:48)+' L'+(x-1)+' 70" stroke="#000" stroke-opacity=".3" stroke-width=".9"/><path d="M'+(x+7)+' '+((b.bl?b.bl[2]:48)+6)+' l7 0" stroke="#000" stroke-opacity=".35" stroke-width="1.6" stroke-linecap="round"/>';});
+  if(b.rail)s+='<path d="M'+b.rail[0]+' '+b.rail[2]+' L'+b.rail[1]+' '+b.rail[2]+'" stroke="#0B0D12" stroke-width="2.2" stroke-linecap="round"/>';
+  if(b.cl){var R=b.r+4.5;b.wh.forEach(function(x){s+='<path d="M'+(x-R)+' 73 A'+R+' '+R+' 0 0 1 '+(x+R)+' 73" fill="none" stroke="#0B0D12" stroke-width="3.6"/>';});s+='<path d="M'+(b.wh[0]+R)+' 71.5 L'+(b.wh[1]-R)+' 71.5" stroke="#0B0D12" stroke-width="3.2"/>';}
+  var hy=m.body==='sport'?63:(m.body==='suvl'||m.body==='vanl'||m.body==='pickupl'?56:60);
+  s+='<path d="M'+(m.body==='suvl'||m.body==='pickupl'||m.body==='vanl'?12:18)+' '+hy+' l12 -2" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/><circle cx="'+(m.body==='suvl'||m.body==='pickupl'||m.body==='vanl'?18:24)+'" cy="'+(hy-1)+'" r="9" fill="#fff" opacity=".10"/>';
+  s+='<path d="M'+(b.wh[1]+b.r+12)+' '+(hy+2)+' l8 0" stroke="#FF2A3A" stroke-width="3" stroke-linecap="round" opacity=".9"/>';
+  b.wh.forEach(function(x){s+='<circle cx="'+x+'" cy="76" r="'+(b.r+1.5)+'" fill="#05060B"/><circle cx="'+x+'" cy="76" r="'+b.r+'" fill="url(#'+u+'r)"/><circle cx="'+x+'" cy="76" r="'+(b.r*.22)+'" fill="#22252B"/>';});
+  return s+'</svg>';
+}
+
+/* ===== asesora ===== */
+function waLink(t){return CFG.wa?'https://wa.me/'+CFG.wa+'?text='+encodeURIComponent(t):'#cotizar';}
+var SRC={ig:'Instagram',tiktok:'TikTok',fb:'Facebook'},src=SRC[RED]||'';
+if(src)$('#fromText').textContent='Vienes de mi '+src+'. Aquí está toda la gama Chevrolet';
+var curModel=null;
+function quick(t){return 'Hola '+CFG.first+', '+(src?'vengo de tu '+src+'. Quiero':'quiero')+' cotizar un Chevrolet '+(t||(curModel?curModel.n:''))+'.'+(FOLIO?' Folio: '+FOLIO:'');}
+function refreshWa(){document.querySelectorAll('[data-wa]').forEach(function(a){a.href=waLink(quick());if(CFG.wa){a.target='_blank';a.rel='noopener';}else a.removeAttribute('target');});}
+function pintarAsesor(){
+  document.querySelectorAll('[data-cfg]').forEach(function(e){if(CFG[e.dataset.cfg])e.textContent=CFG[e.dataset.cfg];});
+  $('#meTitle').textContent='Soy '+CFG.first+' y vendo Chevrolet todos los días';
+  var img=function(u){return '<img src="'+esc(u)+'" alt="'+esc(CFG.name)+'">';};
+  $('#portrait').innerHTML=CFG.photo?img(CFG.photo):esc(CFG.initials);
+  var av=CFG.avatar||CFG.photo;$('#avatar').innerHTML=av?img(av):esc(CFG.initials);
+  if(CFG.tel){$('#callBtn').href='tel:'+CFG.tel;$('#callBtn').textContent='Llamar';}
+  $('#avisoTxt').innerHTML='<p>'+AVISO_RESPONSABLE+' es responsable del uso de tus datos. Tu nombre, WhatsApp y el modelo que te interesa se usan solo para que '+esc(CFG.name)+' te contacte, te envíe tu cotización, agende tu prueba de manejo y le dé seguimiento a tu compra.</p><p>No vendemos tus datos. Puedes pedir acceso, corrección, cancelación u oposición escribiendo a '+AVISO_CONTACTO+'.</p>';
+  refreshWa();
+}
+pintarAsesor();
+rpc('mv_asesor_publico',{p_slug:SLUG}).then(function(a){
+  if(!a)return;
+  CFG.name=a.nombre||CFG.name;var fw=(CFG.name.split(' ')[0]||'');CFG.first=fw==='Patricia'?'Paty':fw;
+  CFG.bio=a.bio||CFG.bio;CFG.photo=a.foto_url||'';CFG.avatar=a.foto_avatar_url||'';
+  CFG.initials=CFG.name.split(' ').map(function(w){return w[0];}).slice(0,2).join('').toUpperCase();
+  if(a.whatsapp){CFG.wa=a.whatsapp;CFG.tel='+'+a.whatsapp;}
+  if(a.telefono)CFG.tel=a.telefono;
+  pintarAsesor();
+}).catch(function(){});
+track('landing_visita',{red:RED||'web',ref:document.referrer?(function(){try{return new URL(document.referrer).hostname;}catch(e){return '';}})():''});
+document.addEventListener('click',function(e){var a=e.target.closest('[data-wa],#waOpen,#sWa');if(a&&CFG.wa)track('whatsapp_click',{desde:a.id||'boton',modelo:curModel?curModel.n:null},true);});
+
+/* ===== pintar: el modelo elegido repinta el auto, la escena y la interfaz ===== */
+var TOP=CAT.filter(function(m){return m.top;}).sort(function(a,b){return a.top-b.top;});
+function hex2rgb(h){var n=parseInt(h.slice(1),16);return [(n>>16&255)/255,(n>>8&255)/255,(n&255)/255];}
+var colCur=hex2rgb('#FFC81A'),colT=colCur.slice(),stage=$('#stage');
+function setModel(m,from){
+  if(!m)return;var first=!curModel;curModel=m;
+  var g=glow(m),root=document.documentElement;
+  root.style.setProperty('--paint',g);root.style.setProperty('--on-paint',lum(g)>.45?'#05060B':'#FFFFFF');colT=hex2rgb(g);
+  $('#pname').textContent=m.n;$('#phName').textContent=m.n;$('#phRank').textContent=m.top?'#'+m.top+' más vendido':m.tags[0];
+  $('#priceLine').innerHTML=m.n+' desde <b>'+money(minP(m))+'</b> · aprox. <b>'+money(pmt(minP(m)))+'</b> al mes. Precio de lista, sin bonos.';
+  document.querySelectorAll('.mod').forEach(function(d){d.setAttribute('aria-pressed',d.dataset.id===m.id?'true':'false');});
+  var car=$('#stageCar'),old=car.firstElementChild;
+  var tmp=document.createElement('div');tmp.innerHTML=carSVG(m,true);var nw=tmp.firstElementChild;
+  if(old&&!reduce){old.classList.add('out');setTimeout(function(){if(old.parentNode)old.parentNode.removeChild(old);},500);nw.classList.add('in');}else car.innerHTML='';
+  car.appendChild(nw);$('#stageMir').innerHTML=carSVG(m,true);
+  refreshWa();if(!first&&from)track('modelo_elegido',{modelo:m.n,desde:from});
+}
+$('#mods').innerHTML=TOP.map(function(m){return '<button class="mod" type="button" data-id="'+m.id+'" style="--c:'+body(m)+';--g:'+glow(m)+'"><i></i>'+m.n+' <small>#'+m.top+'</small></button>';}).join('');
+$('#mods').addEventListener('click',function(e){var b=e.target.closest('.mod');if(b)setModel(byId(b.dataset.id),'hero');});
+
+/* ===== tarjetas ===== */
+function card(m,rank){
+  var p=minP(m),badge=m.ev===1?'Eléctrico':m.ev===2?'Híbrido':m.pax>=7?m.pax+' pasajeros':'';
+  return '<button class="card" type="button" data-m="'+m.id+'" style="--mc:'+glow(m)+'"><div class="art">'+carSVG(m)+
+   (rank&&m.top?'<span class="rank">#'+m.top+'</span>':'')+(badge?'<span class="badge">'+badge+'</span>':'')+'</div>'+
+   '<div class="cb"><h3>'+m.n+'</h3>'+(rank&&m.units?'<span class="units">'+m.units.toLocaleString('en-US')+' vendidos en 6 meses</span>':'')+'<p>'+m.d+'</p>'+
+   '<div class="prow"><div><small>Desde</small><b>'+money(p)+'</b></div><div class="mo"><small>Aprox. al mes</small><b>'+money(pmt(p))+'</b></div></div></div></button>';
+}
+function renderTop(){$('#topRail').innerHTML=TOP.map(function(m){return card(m,true);}).join('');}
+
+/* ===== categorías ===== */
+var curCat='autos',curSub='todas';
+function cnt(k){return CAT.filter(function(m){return m.cat===k;}).length;}
+$('#tabs').innerHTML=CATS.filter(function(c){return c.k!=='vette';}).map(function(c){return '<button class="tab" role="tab" type="button" data-cat="'+c.k+'"><i class="'+(c.k==='ev'?'ev':'')+'"></i>'+c.n+' <small>'+cnt(c.k)+'</small></button>';}).join('');
+function showCat(k,user){
+  if(k==='vette'){openSheet('corvette');return;}
+  curCat=k;curSub='todas';
+  document.querySelectorAll('#tabs .tab').forEach(function(t){t.setAttribute('aria-selected',t.dataset.cat===k?'true':'false');});
+  document.querySelectorAll('#snavRow [data-cat]').forEach(function(t){t.classList.toggle('on',t.dataset.cat===k);});
+  renderCat();if(user)track('categoria',{categoria:k});
+}
+function renderCat(){
+  var c=CATS.filter(function(x){return x.k===curCat;})[0];
+  var list=CAT.filter(function(m){return m.cat===curCat&&(curSub==='todas'||m.sub===curSub);}).sort(function(a,b){return (a.top||99)-(b.top||99)||minP(a)-minP(b);});
+  var all=CAT.filter(function(m){return m.cat===curCat;});
+  var subs=curCat==='suv'?'<div class="subs">'+[['todas','Todas'],['compactas','Compactas · ciudad'],['familiares','Familiares y grandes']].map(function(s){return '<button class="opt" type="button" data-sub="'+s[0]+'" aria-pressed="'+(curSub===s[0])+'">'+s[1]+'</button>';}).join('')+'</div>':'';
+  $('#catBox').innerHTML='<div class="fam"><h3>'+c.n+'</h3><span class="tag">'+all.length+' modelos · desde '+money(Math.min.apply(null,all.map(minP)))+'</span><p>'+c.d+'</p></div>'+subs+'<div class="rail">'+list.map(function(m){return card(m,false);}).join('')+'</div>';
+}
+$('#tabs').addEventListener('click',function(e){var t=e.target.closest('.tab');if(t){showCat(t.dataset.cat,true);t.scrollIntoView({behavior:reduce?'auto':'smooth',inline:'center',block:'nearest'});}});
+$('#catBox').addEventListener('click',function(e){var s=e.target.closest('[data-sub]');if(s){curSub=s.dataset.sub;renderCat();}});
+(function(){var m=byId('corvette');$('#vette').style.setProperty('--mc',glow(m));
+  $('#vette').innerHTML='<div><small>Para soñar en grande</small><h3>Corvette</h3><p>De Stingray a ZR1X, desde '+money(minP(m))+'. Si es tu sueño, platiquemos.</p></div>'+carSVG(m);
+  $('#vette').addEventListener('click',function(){openSheet('corvette');});})();
+document.addEventListener('click',function(e){var c=e.target.closest('[data-m]');if(c)openSheet(c.dataset.m);});
+
+/* nav fija */
+$('#snavRow').innerHTML='<button class="sc" data-go="mas-vendidos"><i></i>Más vendidos</button>'+
+  CATS.filter(function(c){return c.k!=='vette';}).map(function(c){return '<button class="sc" data-cat="'+c.k+'">'+c.n+' <small>'+cnt(c.k)+'</small></button>';}).join('')+
+  '<button class="sc" data-go="mensualidad">Por mensualidad</button><button class="sc" data-go="a-cuenta">Auto a cuenta</button><button class="sc" data-go="cotizar">Cotizar</button>';
+$('#snavRow').addEventListener('click',function(e){var b=e.target.closest('.sc');if(!b)return;
+  if(b.dataset.cat){showCat(b.dataset.cat,true);$('#gama').scrollIntoView({behavior:reduce?'auto':'smooth'});}
+  else document.getElementById(b.dataset.go).scrollIntoView({behavior:reduce?'auto':'smooth'});});
+
+/* ===== mensualidad ===== */
+function seg(el,vals,fmt,key){el.innerHTML=vals.map(function(v){return '<button class="opt" type="button" data-v="'+v+'" aria-pressed="'+(FIN[key]===v)+'">'+fmt(v)+'</button>';}).join('');}
+function segs(){seg($('#segEng'),ENGS,function(v){return Math.round(v*100)+'%';},'eng');seg($('#segPlazo'),PLAZOS,function(v){return v+' meses';},'plazo');}
+segs();
+$('#segEng').addEventListener('click',function(e){var b=e.target.closest('.opt');if(b){FIN.eng=+b.dataset.v;onFin();}});
+$('#segPlazo').addEventListener('click',function(e){var b=e.target.closest('.opt');if(b){FIN.plazo=+b.dataset.v;onFin();}});
+var moT;
+function renderFits(){
+  var lim=+$('#mo').value;$('#moOut').textContent=money(lim);
+  var list=CAT.map(function(m){return {m:m,p:pmt(minP(m))};}).filter(function(x){return x.p<=lim;}).sort(function(a,b){return b.p-a.p;});
+  $('#fitCount').textContent=list.length?'Te alcanzan '+list.length+' modelo'+(list.length>1?'s':''):'Aún no te alcanza';
+  $('#fits').innerHTML=list.length?list.map(function(x){var m=x.m;return '<button class="fit" type="button" data-m="'+m.id+'" style="--mc:'+glow(m)+'">'+carSVG(m)+'<div><b>'+m.n+'</b><small>Desde '+money(minP(m))+'</small></div><div class="m">'+money(x.p)+'<small>al mes</small></div></button>';}).join('')
+    :'<div class="empty">Sube la mensualidad, el enganche o el plazo. O escríbeme: a veces hay promociones que bajan la mensualidad.</div>';
+  $('#fineTxt').textContent='Estimación de la versión de entrada con '+Math.round(FIN.eng*100)+'% de enganche, '+FIN.plazo+' meses y tasa referencial de '+(FIN.tasa*100).toFixed(1)+'% anual, sin seguro ni comisión. Tu mensualidad real depende del plan y de tu perfil.';
+}
+function trackMo(){clearTimeout(moT);moT=setTimeout(function(){track('mensualidad',{mensualidad:+$('#mo').value,enganche:FIN.eng,plazo:FIN.plazo});},1500);}
+function onFin(){segs();renderFits();renderTop();renderCat();renderSum();if(curModel)setPriceLine();trackMo();}
+function setPriceLine(){$('#priceLine').innerHTML=curModel.n+' desde <b>'+money(minP(curModel))+'</b> · aprox. <b>'+money(pmt(minP(curModel)))+'</b> al mes. Precio de lista, sin bonos.';}
+$('#mo').addEventListener('input',function(){renderFits();trackMo();});
+
+/* ===== ficha ===== */
+var sheet=$('#sheet'),scrim=$('#scrim'),cur=null,curV=0,lastFocus=null;
+function openSheet(id){
+  var m=byId(id);if(!m)return;cur=m;curV=0;lastFocus=document.activeElement;
+  sheet.style.setProperty('--mc',glow(m));renderSheet();
+  sheet.classList.add('on');scrim.classList.add('on');document.body.style.overflow='hidden';sheet.scrollTop=0;
+  setTimeout(function(){$('#sx').focus({preventScroll:true});},60);
+  setModel(m);track('modelo_visto',{modelo:m.n});
+}
+function renderSheet(){
+  var m=cur,mx=maxP(m);
+  var vers=m.v.map(function(v,i){return '<button class="ver" type="button" data-vi="'+i+'" aria-pressed="'+(i===curV)+'"><b class="vn">'+esc(v[0])+'</b><span class="pr">'+money(v[1])+'</span><div class="meter"><div class="t"><span style="width:'+Math.max(18,Math.round(v[1]/mx*100))+'%"></span></div><small>aprox. <b>'+money(pmt(v[1]))+'</b>/mes</small></div></button>';}).join('');
+  var opt=function(arr,key,fmt){return arr.map(function(v){return '<option value="'+v+'"'+(FIN[key]===v?' selected':'')+'>'+fmt(v)+'</option>';}).join('');};
+  $('#sheetIn').innerHTML='<div class="sart">'+carSVG(m)+'</div><div class="sbody"><h3 id="sTitle">'+m.n+'</h3><div class="tags">'+(m.top?'<span class="tag g">#'+m.top+' más vendido</span>':'')+m.tags.map(function(t){return '<span class="tag">'+t+'</span>';}).join('')+'</div><p>'+m.d+'</p>'+
+   '<div class="vers">'+vers+'</div>'+
+   '<div class="mini"><label>Enganche<select id="sEng">'+opt(ENGS,'eng',function(v){return Math.round(v*100)+'%';})+'</select></label><label>Plazo<select id="sPl">'+opt(PLAZOS,'plazo',function(v){return v+' meses';})+'</select></label></div>'+
+   '<p class="note" style="margin-top:12px">Precio de lista nov 2026, sin bonos. Mensualidad estimada, sin seguro ni comisión.</p>'+
+   '<div class="sact"><button class="btn glow" type="button" id="sQuote">Cotizar esta versión</button><a class="btn ghost" id="sWa" href="#">WhatsApp</a></div></div>';
+  var t=m.n+' '+m.v[curV][0];$('#sWa').href=waLink(quick(t));if(CFG.wa){$('#sWa').target='_blank';$('#sWa').rel='noopener';}
+}
+function closeSheet(){sheet.classList.remove('on');scrim.classList.remove('on');document.body.style.overflow='';if(lastFocus&&lastFocus.focus)lastFocus.focus({preventScroll:true});}
+$('#sx').addEventListener('click',closeSheet);scrim.addEventListener('click',closeSheet);
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&sheet.classList.contains('on'))closeSheet();});
+$('#sheetIn').addEventListener('click',function(e){
+  var v=e.target.closest('[data-vi]');if(v){curV=+v.dataset.vi;renderSheet();return;}
+  if(e.target.closest('#sQuote')||(e.target.closest('#sWa')&&!CFG.wa)){e.preventDefault();var m=cur;closeSheet();goQuote(m.id,curV);}
+});
+$('#sheetIn').addEventListener('change',function(e){if(e.target.id==='sEng')FIN.eng=+e.target.value;if(e.target.id==='sPl')FIN.plazo=+e.target.value;renderSheet();onFin();});
+(function(){var y0=null;sheet.addEventListener('touchstart',function(e){y0=sheet.scrollTop<=0?e.touches[0].clientY:null;},{passive:true});
+ sheet.addEventListener('touchmove',function(e){if(y0===null)return;var d=e.touches[0].clientY-y0;if(d>0)sheet.style.transform='translateY('+d+'px)';},{passive:true});
+ sheet.addEventListener('touchend',function(e){if(y0===null)return;var d=e.changedTouches[0].clientY-y0;sheet.style.transform='';if(d>110)closeSheet();y0=null;});})();
+
+/* ===== formulario ===== */
+var fMod=$('#fMod'),fVer=$('#fVer');
+var ORDER=CAT.slice().sort(function(a,b){return (a.top||99)-(b.top||99)||minP(a)-minP(b);});
+fMod.innerHTML=ORDER.map(function(m){return '<option value="'+m.id+'">'+m.n+'</option>';}).join('');
+function fillVer(){var m=byId(fMod.value);fVer.innerHTML=m.v.map(function(v,i){return '<option value="'+i+'">'+esc(v[0])+' · '+money(v[1])+'</option>';}).join('');renderSum();}
+function renderSum(){var m=byId(fMod.value),v=m.v[+fVer.value||0];$('#sum').style.setProperty('--paint',glow(m));
+  $('#sum').innerHTML=carSVG(m)+'<div><b>'+m.n+'</b><small>'+esc(v[0])+' · '+money(v[1])+'</small></div><div class="m">'+money(pmt(v[1]))+'<small>aprox. al mes · '+Math.round(FIN.eng*100)+'% / '+FIN.plazo+' m</small></div>';}
+fMod.addEventListener('change',fillVer);fVer.addEventListener('change',renderSum);fillVer();
+function goQuote(id,vi){fMod.value=id;fillVer();fVer.value=vi||0;renderSum();var m=byId(id);track('cotizar_click',{modelo:m.n,version:m.v[vi||0][0]});
+  $('#cotizar').scrollIntoView({behavior:reduce?'auto':'smooth'});setTimeout(function(){$('#nombre').focus({preventScroll:true});},700);}
+$('#form').addEventListener('submit',function(e){
+  e.preventDefault();var n=$('#nombre').value.trim(),err=$('#err');
+  if(!n){err.textContent='Escribe tu nombre para preparar el mensaje.';err.className='err show';$('#nombre').focus();return;}
+  if(!$('#acepto').checked){err.textContent='Para continuar, acepta el aviso de privacidad.';err.className='err show';$('#acepto').focus();return;}
+  err.className='err';
+  var m=byId(fMod.value),v=m.v[+fVer.value],cuenta=$('#cuenta').value==='Sí',btn=$('#form').querySelector('button[type=submit]');
+  var datos={p_slug:SLUG,p_sesion:SESION,p_folio:FOLIO,p_video:VIDEO,p_red:RED||'web',p_nombre:n,p_whatsapp:$('#wa').value,
+    p_modelo:m.n,p_version:v[0],p_color:null,p_pago:$('#pago').value+(cuenta?' + auto a cuenta':''),p_cuando:$('#cuando').value,p_prueba:$('#prueba').checked,p_consentimiento:true};
+  function listo(folio,ok){
+    if(folio)FOLIO=folio;
+    var t='Hola '+CFG.first+', soy '+n+'.'+(src?' Vengo de tu '+src+'.':'')+'\nMe interesa: Chevrolet '+m.n+' '+v[0]+'.\nPago: '+$('#pago').value.toLowerCase()+($('#pago').value==='Crédito'?' (enganche '+Math.round(FIN.eng*100)+'%, '+FIN.plazo+' meses)':'')+'. Compra: '+$('#cuando').value.toLowerCase()+'.'+(cuenta?'\nTengo auto para dar a cuenta.':'')+($('#prueba').checked?'\nQuiero agendar prueba de manejo.':'')+(FOLIO?'\nFolio: '+FOLIO:'');
+    $('#msg').textContent=t;$('#waOpen').href=waLink(t);$('#done').className='done show';
+    $('#doneNote').textContent=ok?'Tu folio '+FOLIO+' ya quedó registrado con '+CFG.first+'. Envía el mensaje para recibir tu cotización.':'Envía el mensaje para que '+CFG.first+' te responda con tu cotización.';
+    btn.disabled=false;btn.textContent='Preparar mi mensaje de WhatsApp';refreshWa();
+  }
+  btn.disabled=true;btn.textContent='Registrando tu folio…';
+  rpc('mv_guardar_lead',datos).then(function(f){listo(f,true);}).catch(function(){listo(null,false);});
+});
+$('#copy').addEventListener('click',function(){var b=this;try{navigator.clipboard.writeText($('#msg').textContent).then(function(){b.textContent='Copiado';},function(){b.textContent='Selecciona y copia';});}catch(x){b.textContent='Selecciona y copia';}});
+
+/* ===== auto a cuenta ===== */
+(function(){var y=new Date().getFullYear(),h='';for(var i=y;i>=y-15;i--)h+='<option>'+i+'</option>';h+='<option>Más antiguo</option>';$('#tAno').innerHTML=h;$('#tAno').value=String(y-5);})();
+$('#tradeForm').addEventListener('submit',function(e){
+  e.preventDefault();var mod=$('#tMod').value.trim()||'(sin especificar)';
+  var t='Hola '+CFG.first+', quiero dar mi auto a cuenta para un Chevrolet nuevo.\nMi auto: '+mod+' '+$('#tAno').value+', '+$('#tKm').value.toLowerCase()+' km.'+(FOLIO?'\nFolio: '+FOLIO:'');
+  track('auto_a_cuenta',{auto:mod,ano:$('#tAno').value,km:$('#tKm').value},true);
+  if(CFG.wa)window.open(waLink(t),'_blank','noopener');else{$('#cuenta').value='Sí';$('#cotizar').scrollIntoView({behavior:reduce?'auto':'smooth'});}
+});
+
+/* ===== aviso ===== */
+function abrirAviso(){var d=$('#aviso');if(d.showModal)d.showModal();else d.setAttribute('open','');}
+$('#verAviso').addEventListener('click',abrirAviso);$('#verAviso2').addEventListener('click',abrirAviso);
+$('#cerrarAviso').addEventListener('click',function(){var d=$('#aviso');if(d.close)d.close();else d.removeAttribute('open');});
+
+/* ===== arranque ===== */
+renderTop();showCat('autos');renderFits();
+setModel(byId(qs.get('m'))||TOP[0]);
+if('IntersectionObserver' in window){new IntersectionObserver(function(es){var out=!es[0].isIntersecting;$('#mbar').classList.toggle('on',out);$('#snav').classList.toggle('on',out);}).observe($('#inicio'));}
+(function(){var m=qs.get('m'),c=qs.get('c');
+  if(c&&CATS.some(function(x){return x.k===c;})){showCat(c);setTimeout(function(){$('#gama').scrollIntoView();},60);}
+  if(m&&byId(m))setTimeout(function(){openSheet(m);},500);})();
+
+/* ===== WebGL tunnel ===== */
+var cv=$('#gl'),gl=cv.getContext('webgl',{antialias:false,alpha:false,powerPreference:'high-performance'});
+var countEl=$('#count');
+if(!gl){countEl.textContent=String(NMOD);return;}
+var VS='attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
+var FS=[
+'precision highp float;',
+'uniform vec2 uRes;uniform float uTime,uZ,uCharge,uFocal;uniform vec3 uCol;uniform vec2 uCam;',
+'const float SP=6.5;const float R=1.75;const float FY=-1.05;',
+'float h21(vec2 p){return fract(sin(dot(p,vec2(41.3,289.1)))*43758.5453);}',
+'vec3 rings(vec3 ro,vec3 rd,float maxT){',
+' vec3 acc=vec3(0.);',
+' if(rd.z>=0.)return acc;',
+' float base=max(0.,floor((-ro.z-8.)/SP)+1.);',
+' for(int k=0;k<11;k++){',
+'  float i=base+float(k);',
+'  float zi=-8.-i*SP;',
+'  float t=(zi-ro.z)/rd.z;',
+'  if(t<=0.||t>maxT)continue;',
+'  vec3 p=ro+rd*t;',
+'  vec2 q=p.xy-vec2(0.,FY+R);',
+'  float d=abs(length(q)-R);',
+'  bool hero=i<.5;',
+'  float w=(hero?.026:.014)+t*.0011;',
+'  float core=w*w/(d*d+w*w);',
+'  float halo=.032*w/(d+w*3.);',
+'  vec3 c=mod(i,3.)==1.?vec3(.85,.9,1.):uCol;',
+'  float lit=1.;',
+'  if(hero){',
+'   float a=atan(q.y,q.x);',
+'   float u=fract(.25-a/6.2831853);',
+'   float sg=fract(u*72.);',
+'   float gap=smoothstep(0.,.1,sg)*smoothstep(1.,.82,sg);',
+'   float on=smoothstep(uCharge+.004,uCharge-.004,u);',
+'   float head=exp(-abs(u-uCharge)*90.)*step(uCharge,.999)*3.;',
+'   lit=mix(.07,1.25,on)+head;',
+'   core*=mix(.15,1.,gap);',
+'   c=uCol;',
+'  } else {',
+'   lit=.75+.25*sin(uTime*1.6-i*1.3);',
+'  }',
+'  acc+=c*(core*1.5+halo)*lit*exp(-t*.042);',
+' }',
+' return acc;',
+'}',
+'vec3 sky(vec3 rd){',
+' float hz=exp(-abs(rd.y)*7.);',
+' vec3 s=mix(vec3(.003,.004,.009),uCol*.05+vec3(.006,.007,.012),hz);',
+' float st=step(.9975,h21(floor(rd.xy*320.)))*smoothstep(.05,.4,rd.y);',
+' return s+st*.35;',
+'}',
+'void main(){',
+' vec2 uv=(gl_FragCoord.xy-.5*uRes)/uRes.y;',
+' vec3 ro=vec3(uCam.x,.12+uCam.y,uZ);',
+' vec3 rd=normalize(vec3(uv.x,uv.y-.06,-uFocal));',
+' vec3 col=sky(rd);',
+' float tf=1e4;',
+' if(rd.y<0.){',
+'  tf=(FY-ro.y)/rd.y;',
+'  vec3 pf=ro+rd*tf;',
+'  vec3 n=normalize(vec3(sin(pf.x*1.3+uTime*.5)*sin(pf.z*.7+uTime*.25)*.011,1.,sin(pf.z*1.6-uTime*.6)*sin(pf.x*.9)*.011));',
+'  vec3 rr=reflect(rd,n);',
+'  float fr=.18+.82*pow(1.-max(dot(-rd,n),0.),4.);',
+'  float fog=exp(-tf*.05);',
+'  vec3 fl=vec3(.004,.005,.009)*(.6+.4*h21(floor(pf.xz*40.)));',
+'  for(int s=0;s<2;s++){',
+'   float sx=s==0?-.75:.75;',
+'   float dir=s==0?1.:-1.;',
+'   float band=exp(-abs(pf.x-sx)*38.);',
+'   float pk=pow(max(0.,sin(pf.z*.35+uTime*2.4*dir)),18.);',
+'   vec3 lc=s==0?vec3(1.,.12,.15):vec3(.75,.85,1.);',
+'   fl+=lc*band*(.12+pk*1.6)*fog;',
+'  }',
+'  col=fl+rings(pf+n*.002,rr,80.)*fr*.9*fog+sky(rr)*fr*.4;',
+'  col=mix(sky(rd),col,fog*.9+.1);',
+' }',
+' col+=rings(ro,rd,tf);',
+' col=vec3(1.)-exp(-col*1.25);',
+' col=pow(col,vec3(.4545));',
+' col*=1.-.42*dot(uv*.85,uv*.85);',
+' col+=(h21(gl_FragCoord.xy+fract(uTime)*37.)-.5)*.025;',
+' gl_FragColor=vec4(col,1.);',
+'}'].join('\n');
+function sh(t,s){var o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);if(!gl.getShaderParameter(o,gl.COMPILE_STATUS)){console.error(gl.getShaderInfoLog(o));return null;}return o;}
+var pr=gl.createProgram(),vs=sh(gl.VERTEX_SHADER,VS),fs=sh(gl.FRAGMENT_SHADER,FS);
+if(!vs||!fs){countEl.textContent=String(NMOD);return;}
+gl.attachShader(pr,vs);gl.attachShader(pr,fs);gl.linkProgram(pr);gl.useProgram(pr);
+var buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+var loc=gl.getAttribLocation(pr,'p');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+var U={};['uRes','uTime','uZ','uCharge','uFocal','uCol','uCam'].forEach(function(n){U[n]=gl.getUniformLocation(pr,n);});
+
+var W=0,H=0,mobile=false;
+function resize(){mobile=innerWidth<=860;var dpr=Math.min(window.devicePixelRatio||1,mobile?1.4:1.6);W=Math.round(innerWidth*dpr);H=Math.round(innerHeight*dpr);cv.width=W;cv.height=H;gl.viewport(0,0,W,H);}
+resize();addEventListener('resize',resize);
+var mx=0,my=0,smx=0,smy=0;
+if(!reduce)addEventListener('pointermove',function(e){mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5;},{passive:true});
+
+var paintEl=document.querySelector('.hero .paint');
+function placePicker(){
+  if(mobile){paintEl.style.left='';paintEl.style.top='';return;}
+  var vh=innerHeight,vw=innerWidth,D=11,f=1.55;
+  var bx=vw/2+2.35/D*f*vh, by=vh/2-((-1.05-.12)/D*f+.06)*vh;
+  var pw=paintEl.offsetWidth||440;
+  var left=Math.min(vw-pw-16,Math.max(vw*.5,bx-pw/2));
+  paintEl.style.left=left+'px';paintEl.style.top=(by+18)+'px';
+}
+placePicker();addEventListener('resize',placePicker);
+var t0=performance.now(),last=t0,z=3,charge=reduce?1:0,running=true;
+if(reduce)countEl.textContent=String(NMOD);
+document.addEventListener('visibilitychange',function(){running=!document.hidden;if(running){last=performance.now();requestAnimationFrame(frame);}});
+function ease(x){return 1-Math.pow(1-x,3);}
+var R=1.75,FY=-1.05;
+function frame(now){
+  if(!running)return;
+  var dt=Math.min(.05,(now-last)/1000);last=now;var t=(now-t0)/1000;
+  if(!reduce){var c=Math.min(1,Math.max(0,(t-.35)/2.3));charge=ease(c);countEl.textContent=Math.round(charge*NMOD);}
+  var target=3-(scrollY/innerHeight)*6.5*.92;
+  var f=reduce?1:1-Math.exp(-dt*4.5);
+  z+=(target-z)*f;smx+=(mx-smx)*f*.7;smy+=(my-smy)*f*.7;
+  for(var k=0;k<3;k++)colCur[k]+=(colT[k]-colCur[k])*(reduce?1:1-Math.exp(-dt*5));
+  var heroK=Math.max(0,1-scrollY/(innerHeight*.9));
+  var camX=(mobile?0:-2.35*heroK)+smx*.5;
+  var camY=(mobile?-.55*heroK:0)-smy*.25;
+  var focal=mobile?1.15:1.55;
+  gl.uniform2f(U.uRes,W,H);gl.uniform1f(U.uTime,reduce?0:t);gl.uniform1f(U.uZ,z);
+  gl.uniform1f(U.uCharge,charge);gl.uniform1f(U.uFocal,focal);
+  gl.uniform3f(U.uCol,colCur[0],colCur[1],colCur[2]);gl.uniform2f(U.uCam,camX,camY);
+  gl.drawArrays(gl.TRIANGLES,0,3);
+  /* park the car inside the first ring: project the ring's base to screen space */
+  var D=z+8;
+  if(D>.6&&heroK>0){
+    var vh=innerHeight,vw=innerWidth;
+    var rpx=R/D*focal*vh;
+    var bx=vw/2+(-camX)/D*focal*vh;
+    var by=vh/2-((FY-(.12+camY))/D*focal+.06)*vh;
+    var w=rpx*2.35,h=w*.52;
+    stage.style.width=w+'px';stage.style.height=h+'px';
+    stage.style.transform='translate('+(bx-w/2)+'px,'+(by-h*.94)+'px)';
+    stage.style.opacity=Math.pow(heroK,1.6);stage.style.visibility='visible';
+  } else {stage.style.visibility='hidden';}
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

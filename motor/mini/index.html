@@ -147,7 +147,7 @@ h1,h2,h3{font-family:var(--display);font-weight:700;letter-spacing:-.025em;line-
 /* advisor */
 .advisor{display:grid;grid-template-columns:auto 1fr;gap:clamp(20px,3vw,36px);align-items:start}
 .portrait{width:clamp(110px,14vw,170px);aspect-ratio:3/4;border-radius:22px;background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--paint) 70%,white),var(--paint) 45%,#0b0e1a 100%);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:clamp(40px,5vw,60px);color:var(--on-paint);overflow:hidden;transition:background .6s}
-.portrait img{width:100%;height:100%;object-fit:cover}
+.portrait img{width:100%;height:100%;object-fit:cover;object-position:50% 20%}
 .promises{list-style:none;display:grid;gap:14px;margin-top:20px}
 .promises li{display:grid;grid-template-columns:28px 1fr;gap:12px;align-items:start}
 .promises li i{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--paint) 25%,transparent);font-style:normal;font-size:14px;font-weight:700}
@@ -445,7 +445,7 @@ function pintarAsesor(){
   document.querySelectorAll('[data-cfg]').forEach(function(e){e.textContent=CFG[e.dataset.cfg];});
   $('#meTitle').textContent='Soy '+CFG.first+' y vendo Mini todos los días';
   $('#portrait').innerHTML=CFG.photo?'<img src="'+esc(CFG.photo)+'" alt="'+esc(CFG.name)+'">':esc(CFG.initials);
-  $('#avatar').innerHTML=CFG.photo?'<img src="'+esc(CFG.photo)+'" alt="">':esc(CFG.initials);
+  var av=CFG.avatar||CFG.photo;$('#avatar').innerHTML=av?'<img src="'+esc(av)+'" alt="">':esc(CFG.initials);
   document.addEventListener('click',function(e){var a=e.target.closest('[data-wa],#waOpen');if(a)track('whatsapp_click',{desde:a.id||'boton',folio:FOLIO},true);});
   $('#avisoTxt').innerHTML='<p>'+AVISO_RESPONSABLE+' es responsable del uso de tus datos. Tu nombre, WhatsApp y el modelo que te interesa se usan solo para que '+esc(CFG.name)+' te contacte, te envíe tu cotización, agende tu prueba de manejo y le dé seguimiento a tu compra.</p><p>No vendemos tus datos. Puedes pedir acceso, corrección, cancelación u oposición escribiendo a '+AVISO_CONTACTO+'. También registramos de forma anónima cómo usas esta página (colores y modelos que ves) para mejorar la atención.</p>';
 }
@@ -453,7 +453,7 @@ pintarAsesor();
 rpc('mv_asesor_publico',{p_slug:SLUG}).then(function(a){
   if(!a)return;
   CFG.name=a.nombre;CFG.first=a.nombre.split(' ')[0];CFG.role=a.rol||CFG.role;CFG.agency=a.agencia||CFG.agency;
-  CFG.bio=a.bio||CFG.bio;CFG.photo=a.foto_url||CFG.photo;
+  CFG.bio=a.bio||CFG.bio;CFG.photo=a.foto_url||CFG.photo;CFG.avatar=a.foto_avatar_url||CFG.avatar;
   CFG.initials=a.nombre.split(' ').map(function(w){return w[0];}).slice(0,2).join('').toUpperCase();
   if(a.whatsapp){CFG.wa=a.whatsapp;CFG.tel='+'+a.whatsapp;}
   if(a.telefono)CFG.tel=a.telefono;

@@ -179,14 +179,14 @@ input[type=range]{width:100%;margin:18px 0 4px;accent-color:var(--paint);height:
 
 /* asesora */
 .advisor{display:grid;grid-template-columns:auto 1fr;gap:clamp(20px,3vw,36px);align-items:start}
-.portrait{width:clamp(110px,14vw,170px);aspect-ratio:3/4;border-radius:22px;background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--paint) 70%,white),var(--paint) 45%,#0b0e1a 100%);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:clamp(40px,5vw,60px);color:var(--on-paint);overflow:hidden;transition:background .6s}
+.portrait{width:clamp(150px,20vw,230px);aspect-ratio:3/4;border-radius:22px;background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--paint) 70%,white),var(--paint) 45%,#0b0e1a 100%);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:clamp(40px,5vw,60px);color:var(--on-paint);overflow:hidden;transition:background .6s}
 .portrait img{width:100%;height:100%;object-fit:cover;object-position:50% 20%}
 .promises{list-style:none;display:grid;gap:14px;margin-top:20px}
 .promises li{display:grid;grid-template-columns:28px 1fr;gap:12px;align-items:start}
 .promises li i{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--paint) 25%,transparent);font-style:normal;font-size:14px;font-weight:700}
 .promises b{display:block}
 .promises span{color:var(--dim);font-size:15px}
-@media(max-width:560px){.advisor{grid-template-columns:1fr}.portrait{width:120px}}
+@media(max-width:560px){.advisor{grid-template-columns:1fr}.portrait{width:170px}}
 
 /* formularios */
 form{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}
@@ -299,7 +299,7 @@ dialog#aviso p{color:var(--dim);font-size:14.5px}
 <nav class="snav" id="snav" aria-label="Categorías"><div class="row" id="snavRow"></div></nav>
 
 <header class="top">
-  <a class="me" href="#yo"><span class="av" id="avatar">PH</span><span><b data-cfg="name">Patricia Herrera</b><small data-cfg="role">Asesora Chevrolet · Querétaro</small></span></a>
+  <a class="me" href="#yo"><span class="av" id="avatar">PH</span><span><b data-cfg="name">Patricia Herrera</b><small data-cfg="role">Chevrolet Constituyentes · Querétaro</small></span></a>
   <a class="btn ghost" data-wa href="#cotizar">Escríbeme por WhatsApp</a>
 </header>
 
@@ -432,13 +432,13 @@ dialog#aviso p{color:var(--dim);font-size:14.5px}
     <details><summary>¿Los precios son finales?</summary><p>Son precios de lista de GM de México, vigentes del 3 al 30 de noviembre de 2026. No incluyen bonos ni promociones del mes: pídeme la cifra exacta y te digo cuánto queda con descuento.</p></details>
     <details><summary>¿La mensualidad que veo es real?</summary><p>Es una estimación para darte una idea. La final depende del plan de financiamiento, tu perfil, el seguro y la comisión. Te la confirmo por WhatsApp.</p></details>
     <details><summary>¿Reciben mi auto a cuenta?</summary><p>Sí. Mándame marca, modelo, año y kilometraje, y te digo cuánto te ayuda como enganche.</p></details>
-    <details><summary>¿Dónde está la agencia?</summary><p>En Querétaro. Escríbeme y te mando la ubicación y un horario para tu prueba de manejo.</p></details>
+    <details><summary>¿Dónde está la agencia?</summary><p>En Chevrolet Constituyentes: Av. Constituyentes Ote. 50, Col. Las Palmas, 76040, Querétaro, Qro. <a href="https://www.google.com/maps/search/?api=1&query=Chevrolet+Constituyentes+Av.+Constituyentes+Ote.+50+Las+Palmas+76040+Quer%C3%A9taro" target="_blank" rel="noopener" style="color:#fff;font-weight:700">Abrir en Google Maps</a>. Escríbeme y te aparto un horario para tu prueba de manejo.</p></details>
   </div></div>
 </section>
 </main>
 
 <footer>
-  <p><span data-cfg="name">Patricia Herrera</span>, asesora de ventas de autos nuevos Chevrolet en Querétaro.</p>
+  <p><span data-cfg="name">Patricia Herrera</span>, asesora de ventas de autos nuevos en Chevrolet Constituyentes. Av. Constituyentes Ote. 50, Col. Las Palmas, 76040, Querétaro, Qro. WhatsApp 442 678 1733.</p>
   <p>Precios de lista en pesos mexicanos publicados por GM de México, vigentes del 3 al 30 de noviembre de 2026; no incluyen bonos, seguros ni comisiones y pueden cambiar sin aviso. Mensualidades estimadas, sujetas a aprobación de crédito. Ranking de ventas: enero a junio de 2026, INEGI. Imágenes de referencia; el equipo y los colores varían por versión. Chevrolet es marca de su titular; esta es una página personal de asesoría de ventas, no un sitio oficial de Chevrolet ni de General Motors.</p>
   <p><button type="button" class="linkish" id="verAviso2">Aviso de privacidad</button></p>
 </footer>
@@ -569,7 +569,7 @@ var CAR_PHOTOS={aveo:'img/aveo.webp',s10:'img/s10.webp',groove:'img/groove.webp'
 var MV={url:'https://rgnunjngtsgqgvplawfr.supabase.co',
   key:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJnbnVuam5ndHNncWd2cGxhd2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1ODcxMjksImV4cCI6MjA4ODE2MzEyOX0.8gd4XNoBI2mwbV54cORvVGOmJVwdzEidti38AcsqhB8',
   slugPorDefecto:'paty'};
-var CFG={name:'Patricia Herrera',first:'Paty',role:'Asesora Chevrolet · Querétaro',bio:'',photo:'',avatar:'',initials:'PH',wa:'524426781733',tel:'+524426781733'};
+var CFG={name:'Patricia Herrera',first:'Paty',role:'Chevrolet Constituyentes · Querétaro',bio:'',photo:'paty-retrato.jpg',avatar:'paty-avatar.jpg',initials:'PH',wa:'524426781733',tel:'+524426781733'};
 var AVISO_RESPONSABLE='[Nombre o razón social del responsable], con domicilio en [domicilio]';
 var AVISO_CONTACTO='[correo para ejercer derechos ARCO]';
 
@@ -670,7 +670,7 @@ pintarAsesor();
 rpc('mv_asesor_publico',{p_slug:SLUG}).then(function(a){
   if(!a)return;
   CFG.name=a.nombre||CFG.name;var fw=(CFG.name.split(' ')[0]||'');CFG.first=fw==='Patricia'?'Paty':fw;
-  CFG.bio=a.bio||CFG.bio;CFG.photo=a.foto_url||'';CFG.avatar=a.foto_avatar_url||'';
+  CFG.bio=a.bio||CFG.bio;CFG.photo=a.foto_url||CFG.photo;CFG.avatar=a.foto_avatar_url||CFG.avatar;
   CFG.initials=CFG.name.split(' ').map(function(w){return w[0];}).slice(0,2).join('').toUpperCase();
   if(a.whatsapp){CFG.wa=a.whatsapp;CFG.tel='+'+a.whatsapp;}
   if(a.telefono)CFG.tel=a.telefono;

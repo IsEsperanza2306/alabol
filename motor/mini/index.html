@@ -362,7 +362,7 @@ dialog#aviso p{color:var(--dim);font-size:14.5px}
 
 <div class="mbar" id="mbar">
   <a class="btn glow" data-wa href="#cotizar">Cotizar en WhatsApp</a>
-  <a class="btn ghost" id="callBtn" href="#cotizar">Llamar</a>
+  <a class="btn ghost" id="callBtn" href="tel:+525519015646">Llamar</a>
 </div>
 
 <script>
@@ -446,7 +446,7 @@ function pintarAsesor(){
   $('#meTitle').textContent='Soy '+CFG.first+' y vendo Mini todos los días';
   $('#portrait').innerHTML=CFG.photo?'<img src="'+esc(CFG.photo)+'" alt="'+esc(CFG.name)+'">':esc(CFG.initials);
   var av=CFG.avatar||CFG.photo;$('#avatar').innerHTML=av?'<img src="'+esc(av)+'" alt="">':esc(CFG.initials);
-  document.addEventListener('click',function(e){var a=e.target.closest('[data-wa],#waOpen');if(a)track('whatsapp_click',{desde:a.id||'boton',folio:FOLIO},true);});
+  $('#callBtn').href='tel:'+CFG.tel;
   $('#avisoTxt').innerHTML='<p>'+AVISO_RESPONSABLE+' es responsable del uso de tus datos. Tu nombre, WhatsApp y el modelo que te interesa se usan solo para que '+esc(CFG.name)+' te contacte, te envíe tu cotización, agende tu prueba de manejo y le dé seguimiento a tu compra.</p><p>No vendemos tus datos. Puedes pedir acceso, corrección, cancelación u oposición escribiendo a '+AVISO_CONTACTO+'. También registramos de forma anónima cómo usas esta página (colores y modelos que ves) para mejorar la atención.</p>';
 }
 pintarAsesor();
@@ -464,7 +464,7 @@ function wa(t){return 'https://wa.me/'+CFG.wa+'?text='+encodeURIComponent(t);}
 var paintIdx=0;
 function quick(){return 'Hola '+CFG.first+', '+(src?'vengo de tu '+src+'. ':'')+'quiero cotizar un Mini 2027 en '+PAINTS[paintIdx].n+'.'+(FOLIO?' Folio: '+FOLIO:'');}
 function refreshWa(){document.querySelectorAll('[data-wa]').forEach(function(a){a.href=wa(quick());a.target='_blank';a.rel='noopener';});}
-$('#callBtn').href='tel:'+CFG.tel;
+document.addEventListener('click',function(e){var a=e.target.closest('[data-wa],#waOpen');if(a)track('whatsapp_click',{desde:a.id||'boton',folio:FOLIO},true);});
 
 /* ===== range explorer ===== */
 var tabs=$('#tabs'),famBox=$('#famBox'),fSel=$('#fSel'),vSel=$('#vSel'),cSel=$('#cSel');

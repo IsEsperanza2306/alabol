@@ -149,8 +149,9 @@ h1,h2,h3{font-family:var(--display);font-weight:700;letter-spacing:-.025em;line-
 .subs{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 .opt{min-height:42px;padding:0 16px;border-radius:999px;border:1px solid var(--edge);background:rgba(255,255,255,.04);font-weight:600;cursor:pointer;transition:background-color .2s,color .2s,border-color .2s}
 .opt[aria-pressed="true"]{background:var(--paint);color:var(--on-paint);border-color:var(--paint)}
-.vette{margin-top:22px;display:grid;grid-template-columns:1fr 1.1fr;align-items:center;gap:10px;border-radius:22px;border:1px solid rgba(255,48,70,.35);background:radial-gradient(80% 120% at 85% 100%,rgba(255,48,70,.28),transparent 60%),rgba(255,255,255,.03);padding:22px 24px;cursor:pointer;text-align:left;width:100%}
-.vette small{font-size:12px;font-weight:800;letter-spacing:.12em;color:#FF6B7A;text-transform:uppercase}
+.vette{margin-top:22px;display:grid;grid-template-columns:1fr 1.1fr;align-items:center;gap:10px;border-radius:22px;border:1px solid rgba(255,106,43,.4);background:radial-gradient(80% 120% at 85% 100%,rgba(255,106,43,.3),transparent 60%),rgba(255,255,255,.03);padding:22px 24px;cursor:pointer;text-align:left;width:100%}
+.vette img{width:100%;max-height:220px;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 18px 22px rgba(0,0,0,.5))}
+.vette small{font-size:12px;font-weight:800;letter-spacing:.12em;color:#FF8A4C;text-transform:uppercase}
 .vette h3{font-size:clamp(24px,2.6vw,34px);margin:4px 0}
 .vette p{color:var(--dim);font-size:14.5px}
 @media(max-width:620px){.vette{grid-template-columns:1fr}}
@@ -314,7 +315,7 @@ dialog#aviso p{color:var(--dim);font-size:14.5px}
       <a class="btn ghost" href="#mas-vendidos">Ver los más vendidos</a>
     </div>
     <div class="paint">
-      <div class="paint-head"><small>Los 6 más vendidos de México</small><b id="pname">Aveo</b></div>
+      <div class="paint-head"><small>Los 6 más vendidos y el ícono</small><b id="pname">Aveo</b></div>
       <div class="mods" id="mods" role="group" aria-label="Elige un modelo"></div>
     </div>
     <p class="price-line" id="priceLine"></p>
@@ -560,10 +561,10 @@ var SHOW={aveo:['#C8102E','#FF3046'],s10:['#EEF0EF','#F2F6FF'],groove:['#A8D81A'
  tracker:['#B5462F','#FF6A3D'],trax:['#1F2A44','#6E8BFF'],traverse:['#55595F','#C9D2E6'],blazer:['#A3121F','#FF3046'],tahoe:['#17191D','#C9D2E6'],suburban:['#2B2E33','#C9D2E6'],
  montana:['#C9A227','#FFC81A'],silverado:['#6E747C','#C9D2E6'],colorado:['#2E5B3A','#2BB673'],cheyenne:['#111317','#FFC81A'],
  express:['#F4F4F2','#F2F6FF'],expressev:['#E8F1F6','#5BE3A8'],brightdrop:['#FFFFFF','#5BE3A8'],
- spark:['#3AA6A0','#3FD8A8'],captivaphev:['#D9DDE0','#5BE3A8'],equinoxev:['#7D8C9A','#5BE3A8'],blazerev:['#2F69C6','#4D7CFF'],corvette:['#D2121F','#FF3046']};
+ spark:['#3AA6A0','#3FD8A8'],captivaphev:['#D9DDE0','#5BE3A8'],equinoxev:['#7D8C9A','#5BE3A8'],blazerev:['#2F69C6','#4D7CFF'],corvette:['#E8551C','#FF6A2B']};
 /* Fotos reales por modelo (PNG con fondo transparente, vista lateral o 3/4). Si existe, reemplaza la ilustración.
    Ejemplo: aveo:'https://.../aveo.png' */
-var CAR_PHOTOS={aveo:'img/aveo.webp',s10:'img/s10.webp',groove:'img/groove.webp',captiva:'img/captiva.webp',captivaphev:'img/captiva.webp',tornado:'img/tornado.webp',onix:'img/onix.webp'};
+var CAR_PHOTOS={aveo:'img/aveo.webp',s10:'img/s10.webp',groove:'img/groove.webp',captiva:'img/captiva.webp',captivaphev:'img/captiva.webp',tornado:'img/tornado.webp',onix:'img/onix.webp',corvette:'img/corvette.webp'};
 
 /* ===== MOTOR DE VENTAS (mismo de la landing de Espe) ===== */
 var MV={url:'https://rgnunjngtsgqgvplawfr.supabase.co',
@@ -696,7 +697,7 @@ function setModel(m,from){
   car.appendChild(nw);$('#stageMir').innerHTML=carSVG(m,true);
   refreshWa();if(!first&&from)track('modelo_elegido',{modelo:m.n,desde:from});
 }
-$('#mods').innerHTML=TOP.map(function(m){return '<button class="mod" type="button" data-id="'+m.id+'" style="--c:'+body(m)+';--g:'+glow(m)+'"><i></i>'+m.n+' <small>#'+m.top+'</small></button>';}).join('');
+$('#mods').innerHTML=TOP.concat([byId('corvette')]).map(function(m){return '<button class="mod" type="button" data-id="'+m.id+'" style="--c:'+body(m)+';--g:'+glow(m)+'"><i></i>'+m.n+' <small>'+(m.top?'#'+m.top:'★')+'</small></button>';}).join('');
 $('#mods').addEventListener('click',function(e){var b=e.target.closest('.mod');if(b)setModel(byId(b.dataset.id),'hero');});
 
 /* ===== tarjetas ===== */

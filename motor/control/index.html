@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src https://rgnunjngtsgqgvplawfr.supabase.co wss://rgnunjngtsgqgvplawfr.supabase.co; img-src 'self' data:; base-uri 'none'; form-action 'self'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Motor de Ventas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js" integrity="sha384-rwykjmWNwVxboyFmvK9OXN0wj9hnMHA2aAHtits54DuACyCq0M2PrSNxhRb+hvXT" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<section id="login" class="hidden">
+  <div class="login-card">
+    <div class="brand"><span class="brand-mark">▲</span> Motor de Ventas</div>
+    <h1>Entrar al panel</h1>
+    <p>Tu cartera activa, la lectura de cada cliente y lo que sigue.</p>
+    <form id="pinForm" autocomplete="off">
+      <label class="f" for="pinUsuario">Usuario</label>
+      <input class="i" id="pinUsuario" autocapitalize="none" autocomplete="username" spellcheck="false" required>
+      <label class="f" for="pinCodigo">PIN</label>
+      <input class="i" id="pinCodigo" type="password" inputmode="numeric" pattern="[0-9]{6,10}" autocomplete="current-password" required>
+      <button class="btn primary block" type="submit" id="pinBtn">Entrar</button>
+    </form>
+    <div class="msg" style="text-align:center"><button class="linkbtn" id="toggleCorreo">Entrar con correo</button></div>
+    <div id="correoWrap" class="hidden">
+    <form id="loginForm">
+      <label class="f" for="email">Correo</label>
+      <input class="i" id="email" type="email" autocomplete="email" required>
+      <div id="pwdWrap">
+        <label class="f" for="pwd">Contraseña</label>
+        <input class="i" id="pwd" type="password" autocomplete="current-password">
+      </div>
+      <button class="btn primary block" type="submit" id="loginBtn">Entrar</button>
+    </form>
+    <div class="msg" style="text-align:center"><button class="linkbtn" id="toggleMagic">Prefiero recibir un enlace por correo</button></div>
+    </div>
+    <div class="msg" id="loginMsg"></div>
+  </div>
+</section>
+
+<!-- ============ APP ============ -->
+<section id="app" class="hidden">
+  <header class="top">
+    <div class="wrap">
+      <div class="brand"><span class="brand-mark">▲</span> Motor de Ventas</div>
+      <div class="spacer"></div>
+      <select class="i" id="selAsesor" title="Asesor"></select>
+      <select class="i" id="selDias" title="Periodo">
+        <option value="7">7 días</option>
+        <option value="30" selected>30 días</option>
+        <option value="90">90 días</option>
+        <option value="365">12 meses</option>
+      </select>
+      <button class="btn sm" id="btnRefresh" title="Actualizar">↻</button>
+      <span class="who" id="who"></span>
+      <button class="btn sm" id="btnLogout">Salir</button>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-bottom:40px">
+    <div id="banners"></div>
+    <nav class="tabs hidden" id="tabs" aria-label="Vistas"></nav>
+    <div id="viewAdmin" class="hidden"></div>
+    <div id="viewNegocio" class="hidden"></div>
+    <div id="viewCartera">
+
+    <h2 class="sec">Métricas <small id="metSrc"></small></h2>
+    <div class="kpis" id="kpis"></div>
+    <div class="bars">
+      <div class="panel"><h3>Por ruta</h3><div id="barRuta"></div></div>
+      <div class="panel"><h3>Por etapa</h3><div id="barEtapa"></div></div>
+      <div class="panel"><h3>Motivos de pérdida</h3><div id="barPerdida"></div></div>
+    </div>
+
+    <h2 class="sec">Cartera activa <small id="carteraCount"></small></h2>
+    <div class="filters">
+      <input class="i" id="q" placeholder="Buscar nombre, folio, modelo…">
+      <span id="rutaChips"></span>
+      <button class="chipf" id="chipEspera">Esperando respuesta</button>
+    </div>
+    <div class="board" id="board"></div>
+
+    <div class="closed">
+      <div class="panel"><h3>Vendidos <span id="nVend"></span></h3><div id="listVend"></div></div>
+      <div class="panel"><h3>Perdidos <span id="nPerd"></span></h3><div id="listPerd"></div></div>
+    </div>
+    </div>
+  </main>
+</section>
+
+<div id="drawerRoot"></div>
+
+<script src="vistas.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

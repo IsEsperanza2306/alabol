@@ -40,7 +40,7 @@ const API = {
   async init(){
     if(DEMO){ S.user={email:'demo@motor'}; S.admin=true; return true; }
     if(!window.supabase){ throw new Error('No cargó la librería de Supabase. Revisa tu conexión.'); }
-    S.sb = window.supabase.createClient(CFG.url, CFG.key, {auth:{persistSession:true, detectSessionInUrl:true}});
+    S.sb = window.supabase.createClient(CFG.url, CFG.key, {auth:{persistSession:true, detectSessionInUrl:true, storage: window.sessionStorage}}) /* una sesión por pestaña: se puede abrir admin y asesor a la vez */;
     const { data:{ session } } = await S.sb.auth.getSession();
     S.user = session?.user || null;
     S.sb.auth.onAuthStateChange((ev, ses) => {

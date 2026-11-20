@@ -45,7 +45,7 @@ const API = {
     S.user = session?.user || null;
     S.sb.auth.onAuthStateChange((ev, ses) => {
       if(ev==='SIGNED_IN' && !S.user){ S.user=ses.user; boot(); }
-      if(ev==='SIGNED_OUT'){ S.user=null; S.leads=[]; S.tareas=[]; $('#board').innerHTML=''; showLogin(); }
+      if(ev==='SIGNED_OUT'){ S.user=null; S.leads=[]; S.tareas=[]; $('#board').innerHTML=''; showLogin(); if(!S.salidaManual && !$('#loginMsg').textContent){ $('#loginMsg').className='msg'; $('#loginMsg').textContent='Tu sesión se cerró. Vuelve a entrar.'; console.warn('[motor] sesión cerrada fuera del botón Salir'); } S.salidaManual=false; }
     });
     return !!S.user;
   },
@@ -425,7 +425,7 @@ $('#toggleMagic').onclick = () => {
   $('#loginBtn').textContent = magic ? 'Enviarme el enlace' : 'Entrar';
   $('#toggleMagic').textContent = magic ? 'Prefiero usar contraseña' : 'Prefiero recibir un enlace por correo';
 };
-$('#btnLogout').onclick = async () => { if(DEMO){ location.search=''; return; } await S.sb.auth.signOut(); };
+$('#btnLogout').onclick = async () => { if(DEMO){ location.search=''; return; } S.salidaManual = true; await S.sb.auth.signOut({scope:'local'}); };
 $('#btnRefresh').onclick = () => cargar().then(()=>toast('Actualizado'));
 $('#selAsesor').onchange = e => { S.asesorSel = e.target.value; cargar(); };
 $('#selDias').onchange = e => { S.dias = +e.target.value; cargar(); };
@@ -440,7 +440,7 @@ let ultimaActividad = Date.now();
 ['click','keydown','touchstart','scroll'].forEach(ev => addEventListener(ev, () => { ultimaActividad = Date.now(); }, {passive:true}));
 setInterval(async () => {
   if(!DEMO && S.user && Date.now() - ultimaActividad > INACTIVIDAD_MIN*60000){
-    await S.sb.auth.signOut(); cerrarLead(); $('#loginMsg').className='msg'; $('#loginMsg').textContent='Cerramos tu sesión por inactividad.';
+    S.salidaManual = true; await S.sb.auth.signOut({scope:'local'}); cerrarLead(); $('#loginMsg').className='msg'; $('#loginMsg').textContent='Cerramos tu sesión por inactividad.';
   }
 }, 60000);
 setInterval(() => { if(S.user && !document.hidden && !$('#drawerRoot').innerHTML) cargar().catch(()=>{}); }, 120000);

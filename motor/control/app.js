@@ -153,7 +153,7 @@ function renderBanners(){
   if(S.tieneLectura === false) b.push('<div class="banner">La lectura del cliente (calor, ruta y guía) todavía no está activa en la base. El panel ya está listo para mostrarla en cuanto se aplique la migración; mientras tanto ves etapas, tiempos y la línea de tiempo.</div>');
   $('#banners').innerHTML = b.join('');
 }
-function kpi(v, l, cls=''){ return `<div class="kpi ${cls}"><div class="v">${v ?? '—'}</div><div class="l">${l}</div></div>`; }
+function kpi(v, l, cls='', ring){ const r = (typeof ring==='number' && isFinite(ring)) ? `<div class="ring" style="--p:${Math.max(0,Math.min(100,ring))}"></div>` : ''; return `<div class="kpi ${cls}">${r}<div class="v">${v ?? '—'}</div><div class="l">${l}</div></div>`; }
 function bars(el, obj, labels={}){
   const ent = Object.entries(obj||{}).filter(([,n])=>n>0).sort((a,b)=>b[1]-a[1]);
   if(!ent.length){ el.innerHTML = '<div class="empty">Sin datos en el periodo.</div>'; return; }
@@ -167,7 +167,7 @@ function renderMetricas(){
   $('#kpis').innerHTML = [
     kpi(m.leads, 'Leads del periodo'),
     kpi(m.sin_contactar, 'Sin contactar', m.sin_contactar>0?'alert':''),
-    kpi(pct!=null ? pct+'%' : null, 'Contactados en 15 min', pct>=80?'good':(pct!=null&&pct<50?'alert':'')),
+    kpi(pct!=null ? pct+'%' : null, 'Contactados en 15 min', pct>=80?'good':(pct!=null&&pct<50?'alert':''), pct),
     kpi(m.mediana_primera_respuesta_min!=null ? m.mediana_primera_respuesta_min+' min' : null, 'Mediana 1.ª respuesta'),
     kpi(m.esperando_respuesta, 'Esperando respuesta', m.esperando_respuesta>0?'alert':''),
     kpi(S.tieneLectura===false ? null : m.calientes, 'Calientes (calor ≥ 65)'),

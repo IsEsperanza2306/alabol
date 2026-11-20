@@ -149,12 +149,12 @@ function renderAdmin(){
     <h2 class="sec">Indicadores del motor</h2>
     <div class="kpis">
       ${kpi(r.n,'Leads del periodo')}
-      ${kpi(r.pct15!=null?r.pct15+'%':null,`Atendidos en 15 min (meta ${META_15MIN}%)`, r.pct15>=META_15MIN?'good':(r.pct15!=null?'alert':''))}
+      ${kpi(r.pct15!=null?r.pct15+'%':null,`Atendidos en 15 min (meta ${META_15MIN}%)`, r.pct15>=META_15MIN?'good':(r.pct15!=null?'alert':''), r.pct15)}
       ${kpi(fmtMin(r.medianaSeg),'Mediana 1.ª respuesta')}
       ${kpi(r.sinContactar,'Sin contactar', r.sinContactar?'alert':'')}
       ${kpi(r.esperando,'Esperando respuesta', r.esperando?'alert':'')}
-      ${kpi(r.n?pct(r.pruebas,r.n)+'%':null,'Lead → prueba de manejo')}
-      ${kpi(r.n?pct(r.vendidos,r.n)+'%':null,'Lead → venta', r.vendidos?'good':'')}
+      ${kpi(r.n?pct(r.pruebas,r.n)+'%':null,'Lead → prueba de manejo','',r.n?pct(r.pruebas,r.n):undefined)}
+      ${kpi(r.n?pct(r.vendidos,r.n)+'%':null,'Lead → venta', r.vendidos?'good':'', r.n?pct(r.vendidos,r.n):undefined)}
       ${kpi(r.valor?r.valor.toLocaleString('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:0}):null,'Valor vendido')}
     </div>
 
@@ -188,7 +188,7 @@ function renderNegocio(){
     <div class="headline">${titular}</div>
     <div class="kpis big">
       ${kpi(r.n,'Prospectos')}
-      ${kpi(r.pct15!=null?r.pct15+'%':null,'Atendidos a tiempo (15 min)', r.pct15>=META_15MIN?'good':(r.pct15!=null?'alert':''))}
+      ${kpi(r.pct15!=null?r.pct15+'%':null,'Atendidos a tiempo (15 min)', r.pct15>=META_15MIN?'good':(r.pct15!=null?'alert':''), r.pct15)}
       ${kpi(r.pruebas,'Pruebas de manejo')}
       ${kpi(r.vendidos,'Ventas', r.vendidos?'good':'')}
     </div>

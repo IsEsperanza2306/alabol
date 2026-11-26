@@ -230,12 +230,12 @@ var BUCKET = 'verificaciones';
     var area = document.getElementById('report-area');
     area.innerHTML = '<div class="loading"><div class="spinner"></div><p>Buscando reporte...</p></div>';
 
-    sb.from('verificaciones').select('*').eq('folio', folio).limit(1).then(function(res) {
-      if (res.error || !res.data || !res.data.length) {
+    sb.rpc('certificado_publico', { p_folio: folio }).then(function(res) {
+      if (res.error || !res.data) {
         area.innerHTML = '<div class="not-found"><h2>Reporte no encontrado</h2><p>El folio "' + esc(folio) + '" no existe o aun esta en proceso.</p></div>';
         return;
       }
-      renderReport(res.data[0], area);
+      renderReport(res.data, area);
     });
   };
 

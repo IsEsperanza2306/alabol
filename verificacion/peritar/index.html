@@ -661,10 +661,15 @@ a:hover { text-decoration: underline; }
   // ── FETCH & INIT ──
 
   function fetchVerificacion(folio) {
+    var token = sesionPerito();
+    if (!token) {
+      location.href = '/login.html?redirect=' + encodeURIComponent('verificacion/peritar/?folio=' + folio);
+      return new Promise(function () {});
+    }
     return fetch(SB_URL + '/rest/v1/verificaciones?folio=eq.' + encodeURIComponent(folio) + '&limit=1', {
       headers: {
         'apikey': SK,
-        'Authorization': 'Bearer ' + SK,
+        'Authorization': 'Bearer ' + token,
         'Accept': 'application/json'
       }
     })

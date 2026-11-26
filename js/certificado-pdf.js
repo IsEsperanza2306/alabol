@@ -64,9 +64,9 @@
       var client = getSb();
       if (!client) { alert('Error de conexion. Recarga la pagina.'); resetBtn(btn); return; }
 
-      client.from('verificaciones').select('*').eq('folio', folio).limit(1).then(function (res) {
-        if (res.error || !res.data || !res.data.length) { alert('Reporte no encontrado'); resetBtn(btn); return; }
-        var v = res.data[0];
+      client.rpc('certificado_publico', { p_folio: folio }).then(function (res) {
+        if (res.error || !res.data) { alert('Reporte no encontrado'); resetBtn(btn); return; }
+        var v = res.data;
 
         // Load photos
         var fotos = v.fotos || {};

@@ -667,9 +667,7 @@
     };
 
     getSb()
-      .from('verificaciones')
-      .insert(insertData)
-      .select('id, folio')
+      .rpc('crear_verificacion', { p: insertData })
       .then(function (res) {
         if (res.error) throw res.error;
         if (!res.data || !res.data[0] || !res.data[0].folio) throw new Error('No se genero el folio. Intenta de nuevo.');
@@ -687,10 +685,7 @@
             }
           });
 
-          return getSb()
-            .from('verificaciones')
-            .update({ fotos: fotosJson })
-            .eq('id', row.id);
+          return getSb().rpc('verificacion_set_fotos', { p_id: row.id, p_fotos: fotosJson });
         });
       })
       .then(function (res) {
